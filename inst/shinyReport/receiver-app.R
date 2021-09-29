@@ -60,7 +60,7 @@ receiver_meta$receiver_deployment_datetime <- as.POSIXct(receiver_meta$receiver_
 receiver_meta$receiver_recovery_datetime <- as.POSIXct(receiver_meta$receiver_recovery_datetime, tz="UTC")
 
 
-merged_detections <- dplyr::left_join(receiver_meta, detections)
+#merged_detections <- dplyr::left_join(receiver_meta, detections)
 
 #Group the receiver metadata by station
 receiver_meta_station <- receiver_meta %>%
@@ -404,20 +404,20 @@ ui <- shiny::bootstrapPage(
                       shiny::sidebarPanel(width = 3,
                                           shinyWidgets::pickerInput(inputId = "select_installation2",
                                                                     label = htmltools::h5("Select installation"),
-                                                                    choices = c(sort(unique(merged_detections$installation_name))),
+                                                                    choices = c(sort(unique(receiver_meta$installation_name))),
                                                                     multiple = FALSE,
-                                                                    selected = c(sort(unique(merged_detections$installation_name)))[1],
+                                                                    selected = c(sort(unique(receiver_meta$installation_name)))[1],
                                                                     options = list('none-selected-text' = 'Please select installation')
                                           ),
                                           shiny::sliderInput("date_range",
                                                              htmltools::h5("Select date range"),
                                                              ticks = FALSE,
-                                                             min = min(merged_detections$receiver_deployment_datetime, na.rm = TRUE),
-                                                             max = max(merged_detections$receiver_recovery_datetime, na.rm =
+                                                             min = min(receiver_meta$receiver_deployment_datetime, na.rm = TRUE),
+                                                             max = max(receiver_meta$receiver_recovery_datetime, na.rm =
                                                                          TRUE),
                                                              value = range(
-                                                               min(merged_detections$receiver_deployment_datetime, na.rm = TRUE),
-                                                               max(merged_detections$receiver_recovery_datetime, na.rm =
+                                                               min(receiver_meta$receiver_deployment_datetime, na.rm = TRUE),
+                                                               max(receiver_meta$receiver_recovery_datetime, na.rm =
                                                                      TRUE)
                                                              ),
                                                              step = 100),
@@ -711,23 +711,38 @@ server <- function (input, output, session){
   })
   
   ## Reactive data for station efficiency index
+  reactive_detections_sei <- shiny::reactive({
+    detections %>%
+      dplyr::filter(detection_datetime >= input$date_range[1] &
+                      detection_datetime <= input$date_range[2])
+  })
+  
+  reactive_receivers_sei <- shiny::reactive({
+    receiver_meta %>%
+      dplyr::filter((receiver_deployment_datetime >= input$date_range[1] &
+                       receiver_deployment_datetime <= input$date_range[2]) |
+                      (receiver_recovery_datetime >= input$date_range[1] &
+                         receiver_recovery_datetime <= input$date_range[2]) |
+                      (receiver_deployment_datetime < input$date_range[1] &
+                         receiver_recovery_datetime > input$date_range[2]))
+  })
+  
+  
   reactive_sei <- shiny::reactive({
     shiny::req(input$select_installation2,input$date_range)
     
     
     if(input$select_installation != ""){
       
-      subset <- merged_detections %>%
+      merged_data <- dplyr::left_join(reactive_receivers_sei(), reactive_detections_sei())
+      
+      merged_data <- merged_data %>%
         dplyr::filter(installation_name %in% input$select_installation2)
       
-      subset <- subset[(subset$receiver_deployment_datetime >= input$date_range[1] &
-                          subset$receiver_deployment_datetime < input$date_range[2]) |
-                         (subset$receiver_recovery_datetime > input$date_range[1] &
-                            subset$receiver_recovery_datetime <= input$date_range[2]), ]
-      if(nrow(subset)==0){
+      if(nrow(merged_data)==0){
         return(NULL)
       }else{
-        sei_subset <- sei(data = subset, date1 = input$date_range[1], date2 = input$date_range[2])
+        sei_subset <- sei(data = merged_data, date1 = input$date_range[1], date2 = input$date_range[2])
         
         
         
@@ -748,21 +763,21 @@ server <- function (input, output, session){
     
     
     if(input$select_installation != ""){
-      subset <- merged_detections %>%
+      merged_data <- dplyr::left_join(reactive_receivers_sei(), reactive_detections_sei())
+      
+
+      
+      merged_data <- merged_data %>%
         dplyr::filter(installation_name %in% input$select_installation2)
       
-      subset <- subset[(subset$receiver_deployment_datetime >= input$date_range[1] &
-                          subset$receiver_deployment_datetime < input$date_range[2]) |
-                         (subset$receiver_recovery_datetime > input$date_range[1] &
-                            subset$receiver_recovery_datetime <= input$date_range[2]), ]
-      subset <- subset[, c("station_name", "receiver_name")]
+      subset <- merged_data[, c("station_name", "receiver_name")]
       
       subset<- subset %>%
         dplyr::group_by(receiver_name)%>%
         dplyr::summarise(station_name = station_name[1])
       
     }else{
-      subset <- merged_detections[, c("station_name", "receiver_name")]
+      subset <- merged_data[, c("station_name", "receiver_name")]
       subset<- subset %>%
         dplyr::group_by(receiver_name)%>%
         dplyr::summarise(station_name = station_name[1])
