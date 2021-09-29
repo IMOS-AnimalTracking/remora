@@ -84,7 +84,7 @@ p{ font-size: 20px; }
   font-size: 18px;
 }
 
-.nav-tabs {
-  font-size: 20px;
+.navbar-nav li a {
+  font-size: 18px;
 }
 

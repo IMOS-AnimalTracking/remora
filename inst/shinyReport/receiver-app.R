@@ -179,7 +179,7 @@ timezone_list <- c("UTC", "Australia/Adelaide", "Australia/Brisbane", "Australia
 
 ui <- shiny::bootstrapPage(
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
   #Code for creating the navigation bar at the top of the web page
   shiny::navbarPage(
@@ -190,11 +190,11 @@ ui <- shiny::bootstrapPage(
     title = shiny::div(
       shiny::img(
         src = 'white_remora.png',
-        height = '100',
-        width = '150',
+        height = '60',
+        width = '183',
         style = "vertical-align:middle"
       ),
-      style = "margin-top:-35px"
+      style = "margin-top:-25px; margin-right:-60px; margin-left:-60px"
     ),
     #Station location tab
     shiny::tabPanel(

@@ -135,8 +135,8 @@ ui <- shiny::bootstrapPage(
                      collapsible = TRUE,
                      #R package hex logo appears on the nav bar
                      id="nav", title = shiny::div(shiny::img(src='white_remora.png', 
-                                                             height='80', 
-                                                             width='244', 
+                                                             height='60', 
+                                                             width='183', 
                                                              style="vertical-align:middle"
                      ), 
                      style="margin-top:-25px; margin-right:-60px; margin-left:-60px"
