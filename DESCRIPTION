@@ -71,7 +71,6 @@ Imports:
     knitr,
     leaflet,
     lubridate,
-    lutz,
     magrittr,
     maps,
     mapview,
