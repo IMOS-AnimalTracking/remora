@@ -13,15 +13,15 @@ shinyReport <- function(type = "transmitter"){
   shinyOptions(wd = wd)
   
   if (type == "transmitter") {
-    appFile <- system.file(file.path("shinyReport", "transmitter-app.R"), package = "IMOStrack")
+    appFile <- system.file(file.path("shinyReport", "transmitter-app.R"), package = "remora")
     
   } else if (type == "receiver") {
-    appFile <- system.file(file.path("shinyReport", "receiver-app.R"), package = "IMOStrack")
+    appFile <- system.file(file.path("shinyReport", "receiver-app.R"), package = "remora")
 
   } else {
     stop(paste("Report type", type ,"doesn't exist"))
     
   }
   
-  runApp(appDir = appFile, launch.browser = TRUE, display.mode = "normal")
+  runApp(appDir = appFile, launch.browser = TRUE, display.mode = "normal", quiet = TRUE)
 }

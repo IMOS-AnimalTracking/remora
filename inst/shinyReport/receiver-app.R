@@ -183,12 +183,12 @@ ui <- shiny::bootstrapPage(
   ),
   #Code for creating the navigation bar at the top of the web page
   shiny::navbarPage(
-    windowTitle = "remora",
+    windowTitle = "remora Receiver Report",
     theme = shinythemes::shinytheme("flatly"),
     collapsible = TRUE,
     id = "nav",
-    title = shiny::div(
-      shiny::img(
+    title = htmltools::div(
+      htmltools::img(
         src = 'white_remora.png',
         height = '60',
         width = '183',
@@ -1163,7 +1163,9 @@ server <- function (input, output, session){
     
   })
   
-  
+  session$onSessionEnded(function() {
+    shiny::stopApp()
+  })
 }
 
-shiny::shinyApp(ui,server)
+shiny::shinyApp(ui, server)

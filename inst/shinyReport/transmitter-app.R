@@ -129,12 +129,12 @@ shared_detections <- crosstalk::SharedData$new(detections)
 
 ui <- shiny::bootstrapPage(
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css")),
-  shiny::navbarPage( windowTitle = "remora", #Appears in the tab of the browser
+  shiny::navbarPage( windowTitle = "remora Transmitter Report", #Appears in the tab of the browser
                      
                      theme = shinythemes::shinytheme("flatly"), 
                      collapsible = TRUE,
                      #R package hex logo appears on the nav bar
-                     id="nav", title = shiny::div(shiny::img(src='white_remora.png', 
+                     id="nav", title = htmltools::div(htmltools::img(src='white_remora.png',
                                                              height='60', 
                                                              width='183', 
                                                              style="vertical-align:middle"
@@ -164,7 +164,7 @@ ui <- shiny::bootstrapPage(
                                                                          
                                                                          #Slider for the transmitter deployment datetimes
                                                                          shiny::sliderInput("date", 
-                                                                                            shiny::h4("Transmitter deployment date"),
+                                                                                            htmltools::h4("Transmitter deployment date"),
                                                                                             ticks = FALSE, 
                                                                                             min = min(detections$transmitter_deployment_datetime),
                                                                                             max = max(detections$transmitter_deployment_datetime),
@@ -337,7 +337,7 @@ ui <- shiny::bootstrapPage(
 
 
 #Server for the shiny app: contains all the outputs and the reactive data
-server <- function (input, output, session){
+server <- function (input, output, session) {
   
   ####Reactive data (changes when user selects inputs)####
   
@@ -887,7 +887,9 @@ server <- function (input, output, session){
     
   }, ignoreInit = TRUE)
   
-  
+  session$onSessionEnded(function() {
+    shiny::stopApp()
+  })
 }
 
-shiny::shinyApp(ui,server)
+shiny::shinyApp(ui, server)
