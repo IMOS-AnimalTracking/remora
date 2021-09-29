@@ -1,38 +1,3 @@
-## Integrated Marine Observing System
-## Francisca Maron, Data Officer, Animal Tracking Facility, Sydney Institute of Marine Science
-
-
-
-#load required packages
-# if(!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project.org")
-# if(!require(ggplot2)) install.packages("ggplot2", repos = "http://cran.us.r-project.org")
-# if(!require(leaflet)) install.packages("leaflet", repos = "http://cran.us.r-project.org")
-# if(!require(plotly)) install.packages("plotly", repos = "http://cran.us.r-project.org")
-# if(!require(geojsonio)) install.packages("geojsonio", repos = "http://cran.us.r-project.org")
-# if(!require(shiny)) install.packages("shiny", repos = "http://cran.us.r-project.org")
-# if(!require(shinythemes)) install.packages("shinythemes", repos = "http://cran.us.r-project.org")
-# if(!require(sp)) install.packages("sp", repos = "http://cran.us.r-project.org")
-# if(!require(sf)) install.packages("sf", repos = "http://cran.us.r-project.org")
-# if(!require(data.table)) install.packages("data.table", repos = "http://cran.us.r-project.org" )
-# if(!require(DT)) install.packages("DT", repos = "http://cran.us.r-project.org" )
-# if(!require(crosstalk)) install.packages("crosstalk", repos = "http://cran.us.r-project.org" )
-# if(!require(ggraph)) install.packages("ggraph", repos = "http://cran.us.r-project.org" )
-# if(!require(colormap)) install.packages("colormap", repos = "http://cran.us.r-project.org" )
-# if(!require(igraph)) install.packages("igraph", repos = "http://cran.us.r-project.org" )
-# if(!require(remotes)) install.packages("remotes", repos = "http://cran.us.r-project.org" )
-# if(!require(shinycssloaders)) install_github("daattali/shinycssloaders" )
-# if(!require(gghalves)) install.packages("gghalves", repos = "http://cran.us.r-project.org" )
-# if(!require(ggdist)) install.packages("ggdist", repos = "http://cran.us.r-project.org" )
-# if(!require(stringr)) install.packages("stringr", repos = "http://cran.us.r-project.org" )
-# if(!require(shinyWidgets)) install.packages("shinyWidgets", repos = "http://cran.us.r-project.org" )
-# if(!require(RColorBrewer)) install.packages("RColorBrewer", repos = "http://cran.us.r-project.org" )
-# if(!require(lubridate)) install.packages("lubridate", repos = "http://cran.us.r-project.org" )
-# if(!require(purrr)) install.packages("purrr", repos = "http://cran.us.r-project.org" )
-# if(!require(tidyr)) install.packages("tidyr", repos = "http://cran.us.r-project.org" )
-# if(!require(lutz)) install.packages("lutz", repos = "http://cran.us.r-project.org" )
-#source("shinyReportFunctions.R") #Functions created for the transmitter report
-
-
 #Define pipe
 `%>%` <- dplyr::`%>%`
 
