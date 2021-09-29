@@ -48,3 +48,27 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Imports: 
+    data.table,
+    dplyr,
+    furrr,
+    future,
+    gdistance,
+    geosphere,
+    gmt,
+    lubridate,
+    maps,
+    parallel,
+    plyr,
+    raster (>= 3.0-2),
+    readr,
+    rgdal,
+    rgeos,
+    scales,
+    sp,
+    stringr,
+    tidyr,
+    tools
+Suggests: 
+    testthat (>= 3.0.0),
+    rnaturalearth
