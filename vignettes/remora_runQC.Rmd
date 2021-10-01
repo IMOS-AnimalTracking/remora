@@ -85,7 +85,7 @@ where the argument `logfile = "R/QC_log.txt"` specifies the path and name of the
 The QC output object `tag_qc` is a nested tibble with each row corresponding to an individual animal using the `transmitter_id`, `tag_id` and `tag_deployment_id` as a unique identifier:
 
 ```{r QC output, echo = FALSE}
-tag_qc <- readRDS("R/tag_qc.RDS")
+load("R/tag_qc.rda")
 tag_qc
 ```
 
@@ -98,7 +98,7 @@ dQC <- grabQC(tag_qc, what = "dQC") %>%
 dQC
 ```
 
-The `dQC` object can form the basis for subsequent annotation with environmental data (see `extractENV()`; [link to Vinays vignette](); and `mooringTable()`; [link to Ross and Kylies vignette]()) and analysis.  
+The `dQC` object can form the basis for subsequent annotation with environmental data (see `extractENV()`; [extractENV-vignette](remora_extractENV.html); and `extractMoor()`; [extractMoor-vignette](remora_extractMoor.html)) and analysis.  
 
 The metadata and animal measurements associated with QC'd detections can also be extracted in a compact form (without duplication of records):
 
@@ -127,4 +127,4 @@ The QC'd detections can be visualised as a map using the `plotQC()` function, wh
 ```{r plotQC, message=FALSE, warning=FALSE, fig.align='center'}
 plotQC(tag_qc, path = "images")
 ```
-![ ](images/Dusky_Whaler.png)
+![ ](images/Bull_Shark.png)

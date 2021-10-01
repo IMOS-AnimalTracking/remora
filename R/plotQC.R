@@ -3,9 +3,9 @@
 ##' @description \code{plotQC()} QC'd detections colour-coded by their
 ##' assessed validity status, overlaid on species expert distribution extent
 ##'
-##' @param x an IMOStrack output object with \code{class(IMOStrack_QC)}
+##' @param x a remora output object with \code{class(remora_QC)}
 ##' @param path string; path where maps will be saved. Default is to write plot
-##' to the working directory as a \code{.png} file
+##' to the working directory as a \code{.png} file. 
 ##'
 ##' @return produces maps showing species expert distribution and
 ##' location of QC'd detections
@@ -13,8 +13,8 @@
 ##' @examples
 ##' ## example QC'd data
 ##' data(test_data)
-##' ## Plot QC output
-##' plotQC(test_data)
+##' ## Plot QC output to graphics window
+##' plotQC(test_data, path = NULL)
 ##'
 ##' @importFrom tools file_ext
 ##' @importFrom data.table fread rbindlist
@@ -27,7 +27,9 @@
 
 plotQC <- function(x, path = getwd()) {
 
-    QCdata <- rbindlist(x$QC)
+  if(!inherits(x, "remora_QC")) stop("x must be a nested tibble with class `remora_QC`")
+  
+  QCdata <- rbindlist(x$QC)
 
 
 	species <- ddply(QCdata, '.'(QCdata$CAAB_species_id,
@@ -74,7 +76,7 @@ plotQC <- function(x, path = getwd()) {
 		                                     include.lowest=TRUE))
 		data$binned_detections <- as.numeric(binned_detects$bin)
 
-		  png(file = paste(path,
+		png(file = paste(path,
 		                 '/',
 		                 gsub(' ', '_', species$species_common_name[i]), ".png", sep= ""),
 		    width = 1920,
@@ -82,6 +84,7 @@ plotQC <- function(x, path = getwd()) {
 		    units = "px",
 		    res=92,
 		    bg = "white")
+
 
 		par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
 		## First panel - Australia's spatial extent

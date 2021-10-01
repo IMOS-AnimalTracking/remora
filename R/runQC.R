@@ -44,22 +44,22 @@
 ##' correct the data.
 ##'
 ##' @return the QC output is returned to the parent frame as a nested tibble
-##' with class `IMOStrack_QC`
+##' with class `remora_QC`
 ##'
 ##' @references Hoenner, X et al (2018) Australia’s continental-scale acoustic
 ##' tracking database and its automated quality control process. Scientific Data
 ##' 5, 170206. https://doi.org/10.1038/sdata.2017.206
 ##'
 ##' @examples
-##' ## specify files to QC
-##' files <- list(det = system.file(file.path("data","IMOS_detections.csv"),
-##'                     package = "IMOStrack"),
-##'               rmeta = system.file(file.path("data","IMOS_receiver_deployment_metadata.csv"),
-##'                     package = "IMOStrack"),
-##'               tmeta = system.file(file.path("data","IMOS_transmitter_deployment_metadata.csv"),
-##'                     package = "IMOStrack"),
-##'               meas = system.file(file.path("data","IMOS_animal_measurements.csv"),
-##'                     package = "IMOStrack"))
+##' ## specify files to QC - use supplied example .csv data
+##' files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"),
+##'                     package = "remora"),
+##'               rmeta = system.file(file.path("test_data","IMOS_receiver_deployment_metadata.csv"),
+##'                     package = "remora"),
+##'               tmeta = system.file(file.path("test_data","IMOS_transmitter_deployment_metadata.csv"),
+##'                     package = "remora"),
+##'               meas = system.file(file.path("test_data","IMOS_animal_measurements.csv"),
+##'                     package = "remora"))
 ##' qc.out <- runQC(files)
 ##' plotQC(qc.out)
 ##'
@@ -135,7 +135,7 @@ runQC <- function(x,
   out <- QC_result %>%
     do.call(rbind, .) %>%
     nest_by(., filename, .key = "QC")
-  class(out) <- append("IMOStrack_QC", class(out))
+  class(out) <- append("remora_QC", class(out))
 
   ## warn if any NA's in detection_datetime (caused by impossible dates,
   ##  eg. 30 Feb or 31 Feb)

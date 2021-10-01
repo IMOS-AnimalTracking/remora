@@ -2,7 +2,7 @@
 ##'
 ##' @description \code{grabQC()} lets you obtain subsets of the QC output
 ##'
-##' @param x a QC output object (a nested tibble)
+##' @param x a QC output object (a nested tibble with class `remora_QC`)
 ##' @param what defined subset of the QC output is to be grabbed; either
 ##' `detections`, `QCflags`, `dQC` (detections and QCflags),
 ##' `tag_meta` (transmitter deployment metadata),
@@ -29,11 +29,12 @@ grabQC <-
                     "meas")) {
     what <- match.arg(what)
 
-    if (!inherits(x, "IMOStrack_QC"))
-      stop("x must be an `IMOStrack_QC` output object")
+    if (!inherits(x, "remora_QC"))
+      stop("x must be a `remora_QC` output object")
+    
     if (!what %in% c("detections", "QCflags", "dQC", "tag_meta", "rec_meta", "meas"))
       stop(
-        "only `detections`, `QCflags`, `dQC`, `tag_meta`, `rec_meta`, or `meas` can be grabbed from an IMOStrack_QC object"
+        "only `detections`, `QCflags`, `dQC`, `tag_meta`, `rec_meta`, or `meas` can be grabbed from a remora_QC object"
       )
 
   out <- switch(what,

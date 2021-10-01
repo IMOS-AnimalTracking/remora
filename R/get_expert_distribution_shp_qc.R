@@ -65,14 +65,14 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 	## If unavailable from CSIRO's Geoserver, use historical shapefile from ALA
 
 		if(length(grep("&", spe)) == 0) {
-		  ALA.f <- list.files(file.path(system.file(package = "IMOStrack"), "ALA_Shapefile"))
+		  ALA.f <- list.files(file.path(system.file(package = "remora"), "ALA_Shapefile"))
 			if(length(ALA.f[grepl(spe, ALA.f)]) == 0) k <- NA
 			else k <- ALA.f[grepl(spe, ALA.f)]
 		} else {
 			spe <- strsplit(spe,"_&_")[[1]]
 			k <- matrix(ncol = 1, nrow = length(spe))
 			for (j in 1:length(spe)){
-			  ALA.f <- list.files(file.path(system.file(package = "IMOStrack"), "ALA_Shapefile"))
+			  ALA.f <- list.files(file.path(system.file(package = "remora"), "ALA_Shapefile"))
 			if(length(ALA.f[grepl(spe[j], ALA.f)]) == 0) k[j] <- NA else
 				k[j] <- ALA.f[grepl(spe[j], ALA.f)]
 			}
@@ -82,7 +82,7 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 			if (!is.na(k)){
 			  shp <- suppressWarnings(readOGR(
 			    dsn = system.file(file.path("ALA_Shapefile", k, paste0(k, ".shp")),
-			                      package = "IMOStrack"),
+			                      package = "remora"),
 			    k,
 			    verbose = F
 			  ))
@@ -101,7 +101,7 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 	      shp_1 <-
 	        suppressWarnings(readOGR(
 	          dsn = system.file(file.path("ALA_Shapefile", k[1], paste0(k[1], ".shp")),
-	                            package = "IMOStrack"),
+	                            package = "remora"),
 	          k[1],
 	          verbose = F
 	        ))
@@ -109,7 +109,7 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 	      shp_2 <-
 	        suppressWarnings(readOGR(
 	          dsn = system.file(file.path("ALA_Shapefile", k[2], paste0(k[2], ".shp")),
-	                            package = "IMOStrack"),
+	                            package = "remora"),
 	          k[2],
 	          verbose = F
 	        ))

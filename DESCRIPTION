@@ -1,6 +1,6 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.7.0.9600
+Version: 0.7.0.9610
 Authors@R: 
     c(person(given = "Ross",
            family = "Dwyer",
