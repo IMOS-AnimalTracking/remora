@@ -179,15 +179,12 @@ sei <- function(data, date1, date2){
   #Edit receiver recovery and deployment date based on the selected dates by the user.
   
   data <- data %>%
-    mutate(receiver_deployment_datetime = 
-             ifelse(receiver_deployment_datetime < date1, 
-                    date1, 
-                    receiver_deployment_datetime)) %>%
-    mutate(receiver_recovery_datetime = 
-             ifelse(receiver_recovery_datetime > date2, 
-                    date2, 
-                    receiver_recovery_datetime))
-  
+    mutate(receiver_deployment_datetime = as.POSIXct(ifelse(receiver_deployment_datetime < date1, 
+                                                            date1, receiver_deployment_datetime), 
+                                                     origin = "1970-01-01" , tz = "UTC")) %>%
+    mutate(receiver_recovery_datetime = as.POSIXct(ifelse(receiver_recovery_datetime > date2, 
+                                                          date2, receiver_recovery_datetime),
+                                                   origin = "1970-01-01", tz = "UTC"))
   det.per.station<- detections_in_range %>%
     group_by(station_name) %>%
     #Number of species detected on the receiver
