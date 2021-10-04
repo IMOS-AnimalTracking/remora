@@ -729,12 +729,12 @@ server <- function (input, output, session){
   
   
   reactive_sei <- shiny::reactive({
-    shiny::req(input$select_installation2,input$date_range)
+    shiny::req(input$select_installation2, input$date_range)
     
     
     if(input$select_installation != ""){
       
-      merged_data <- dplyr::left_join(reactive_receivers_sei(), reactive_detections_sei())
+      merged_data <- suppressMessages(dplyr::left_join(reactive_receivers_sei(), reactive_detections_sei()))
       
       merged_data <- merged_data %>%
         dplyr::filter(installation_name %in% input$select_installation2)
@@ -748,7 +748,7 @@ server <- function (input, output, session){
         
         plot_data <- sei_subset %>%
           dplyr::arrange(index) %>%
-          dplyr::mutate(rank = row_number())
+          dplyr::mutate(rank = dplyr::row_number())
         return(plot_data)
       }
       
@@ -763,7 +763,7 @@ server <- function (input, output, session){
     
     
     if(input$select_installation != ""){
-      merged_data <- dplyr::left_join(reactive_receivers_sei(), reactive_detections_sei())
+      merged_data <- suppressMessages(dplyr::left_join(reactive_receivers_sei(), reactive_detections_sei()))
       
 
       
@@ -776,7 +776,7 @@ server <- function (input, output, session){
         dplyr::group_by(receiver_name)%>%
         dplyr::summarise(station_name = station_name[1])
       
-    }else{
+    } else {
       subset <- merged_data[, c("station_name", "receiver_name")]
       subset<- subset %>%
         dplyr::group_by(receiver_name)%>%

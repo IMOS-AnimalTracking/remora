@@ -162,10 +162,10 @@ det_species_station <- function(data){
 ##' @param date1 start date for SEI calculation
 ##' @param date2 end date for SEI calculation
 ##' @return a tibble
-##' @importFrom dplyr group_by summarise %>% mutate
+##' @importFrom dplyr group_by summarise %>% mutate filter
 ##' @export
 sei <- function(data, date1, date2){
-  detections_in_range <- data[which((data$detection_datetime>=date1) & (data$detection_datetime<=date2)), ] 
+  detections_in_range <- data %>% filter(detection_datetime >= date1 & detection_datetime <= date2)
   #Number of tags detected across all stations
   n.tags.all <- length(unique(detections_in_range$transmitter_id[!is.na(detections_in_range$transmitter_id)]))
   #Number of species detected across all stations
@@ -173,7 +173,7 @@ sei <- function(data, date1, date2){
   #Number of unique days with detections across all stations
   detections_date_range_all <- length(unique(detections_in_range$date[!is.na(detections_in_range$date)]))
   #Number of days the array was active *In this case, array = installation
-  date_range_all <- date2-date1
+  date_range_all <- date2 - date1
   date_range_all <- as.numeric(date_range_all, units="days")
   
   #Edit receiver recovery and deployment date based on the selected dates by the user.
