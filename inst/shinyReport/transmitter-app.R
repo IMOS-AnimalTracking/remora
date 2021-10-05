@@ -778,7 +778,7 @@ server <- function (input, output, session) {
     par(mar = c(0,0,0,0))
     output$selected_date2 <- shiny::renderText("")
     arch_graph <- ggraph::ggraph(mygraph(), layout="linear") +
-      ggraph::geom_edge_arc(edge_colour="black", edge_alpha=0.2, edge_width=0.3, fold=TRUE) +
+      ggraph::geom_edge_arc(edge_colour="black", edge_alpha=0.3, edge_width=0.5, fold=TRUE) +
       ggraph::geom_node_point(ggplot2::aes(size=n, color=installation_name, fill=installation_name), alpha=0.7) +
       ggplot2::scale_size_continuous(range=c(5,20)) +
       ggplot2::scale_color_manual(values = reactive_installation_pal()) +
@@ -787,10 +787,10 @@ server <- function (input, output, session) {
       ggraph::theme_graph() +
       ggplot2::theme(
         legend.position="none",
-        plot.margin=grid::unit(c(0,0,0.4,0), "null"),
-        panel.spacing=grid::unit(c(0,0,3.4,0), "null")
+        plot.margin=grid::unit(c(0,0,0.2,0), "null")#,
+        #panel.spacing=grid::unit(c(0,0,3.4,0), "null")
       ) +
-      ggplot2::expand_limits(x = c(1, 1.5), y = c(-1, 1))
+      ggplot2::expand_limits(x = c(-1, 1.5), y = c(-5, 4))
     arch$plot<-arch_graph
     arch_graph
   })
