@@ -111,7 +111,7 @@ ui <- shiny::bootstrapPage(
                                                              width='183', 
                                                              style="vertical-align:middle"
                      ), 
-                     style="margin-top:-25px; margin-right:-60px; margin-left:-60px"
+                     style="margin-top:-16px; margin-right:-40px; margin-left:-40px"
                      ),
                      #Transmitter deployment location tab
                      shiny::tabPanel("Transmitter deployments",
