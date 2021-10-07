@@ -10,7 +10,7 @@ grabQC(
 )
 }
 \arguments{
-\item{x}{a QC output object (a nested tibble)}
+\item{x}{a QC output object (a nested tibble with class \code{remora_QC})}
 
 \item{what}{defined subset of the QC output is to be grabbed; either
 \code{detections}, \code{QCflags}, \code{dQC} (detections and QCflags),

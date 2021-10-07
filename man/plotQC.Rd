@@ -7,10 +7,10 @@
 plotQC(x, path = getwd())
 }
 \arguments{
-\item{x}{an IMOStrack output object with \code{class(IMOStrack_QC)}}
+\item{x}{a remora output object with \code{class(remora_QC)}}
 
 \item{path}{string; path where maps will be saved. Default is to write plot
-to the working directory as a \code{.png} file}
+to the working directory as a \code{.png} file.}
 }
 \value{
 produces maps showing species expert distribution and
@@ -23,7 +23,7 @@ assessed validity status, overlaid on species expert distribution extent
 \examples{
 ## example QC'd data
 data(test_data)
-## Plot QC output
-plotQC(test_data)
+## Plot QC output to graphics window
+plotQC(test_data, path = NULL)
 
 }

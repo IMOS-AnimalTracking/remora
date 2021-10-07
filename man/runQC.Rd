@@ -32,7 +32,7 @@ otherwise run across user-specified cores}
 }
 \value{
 the QC output is returned to the parent frame as a nested tibble
-with class \code{IMOStrack_QC}
+with class \code{remora_QC}
 }
 \description{
 conduct quality control (QC) on IMOS-ATF acoustic detections data
@@ -67,15 +67,15 @@ require the user to investigate the cause and take appropriate steps to
 correct the data.
 }
 \examples{
-## specify files to QC
-files <- list(det = system.file(file.path("data","IMOS_detections.csv"),
-                    package = "IMOStrack"),
-              rmeta = system.file(file.path("data","IMOS_receiver_deployment_metadata.csv"),
-                    package = "IMOStrack"),
-              tmeta = system.file(file.path("data","IMOS_transmitter_deployment_metadata.csv"),
-                    package = "IMOStrack"),
-              meas = system.file(file.path("data","IMOS_animal_measurements.csv"),
-                    package = "IMOStrack"))
+## specify files to QC - use supplied example .csv data
+files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"),
+                    package = "remora"),
+              rmeta = system.file(file.path("test_data","IMOS_receiver_deployment_metadata.csv"),
+                    package = "remora"),
+              tmeta = system.file(file.path("test_data","IMOS_transmitter_deployment_metadata.csv"),
+                    package = "remora"),
+              meas = system.file(file.path("test_data","IMOS_animal_measurements.csv"),
+                    package = "remora"))
 qc.out <- runQC(files)
 plotQC(qc.out)
 
