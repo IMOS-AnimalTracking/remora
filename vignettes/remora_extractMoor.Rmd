@@ -184,25 +184,11 @@ In order to identify which moorings do not have temporal coverage during the per
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
 # Which moorings have overlapping data with detections?
-getOverlap(det_dist0)
-```
-
-See that the `moor_site_code = GBRHIN` had very poor temporal coverage during our detection window - only ~3% of tag detections assigned to this mooring from our `getDistance()` function fell within the time window that this mooring was deployed. Let's drop this site from the moorings table (`moorT`) and re-run the `getDistance()` function to find a more appropriate mooring station for these detections which has greater temporal coverage.
-
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
-moorT_update <- moorT %>% 
-  filter(site_code != "GBRHIN")  # remove this site from our moorings table
-
-## rerun getDistance function with just those moorings with coverage
-det_dist <- getDistance(trackingData = qc_data, 
-                        moorLocations = moorT_update)
-
-# What is the overlap of detections with moorings without the GBRHIN site
-mooring_overlap <- getOverlap(det_dist)
+mooring_overlap <- getOverlap(det_dist0)
 mooring_overlap
 ```
 
-Much better - all our detections now have temporal overlap with mooring deployments. 
+As `Poverlap = 1` for all three moorings datasets, all our detections have temporal overlap with mooring deployments. 
 
 Let's plot the spatial arrangement of these mooring stations on an interactive map with our tag detections at receiver stations.
 
@@ -281,7 +267,7 @@ moorDat.l <- mooringDownload(moor_site_codes = moorIDs,
                              file_loc="imos.cache/moor/temperature",
                              itimeout=240)
 names(moorDat.l) # What moorings datasets do we have in memory
-head(moorDat.l$CH100) # what does this moorings dataset look like from moor_site_code = CH100?
+summary(moorDat.l$GBRPPS) # what does the GBRPPS moorings dataset look like?
 ```
 
 <br>
@@ -305,13 +291,13 @@ We can use the moorings data we've extracted to plot a depth-time plot showing t
 For example, we might want to plot temperature over depth at the GBRMYR mooring, `GBRMYR`, and then add all the bull shark detections over the same time period from the closest IMOS Animal Tracking Facility installation.
 
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
-plotDT(moorData=moorDat.l$GBRMYR, # have GBRMYR, GBRPPS and NRSYON available
-       moorName="GBRMYR",
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
+plotDT(moorData=moorDat.l$GBRPPS, # have GBRMYR, GBRPPS and NRSYON available
+       moorName="GBRPPS",
        dateStart="2013-11-01", 
        dateEnd="2014-02-01", 
        varName="temperature",
-       trackingData=det_dist,
+       trackingData=det_dist0,
        speciesID="Carcharhinus leucas",
        IDtype="species_scientific_name",
        detStart="2013-11-01", 
@@ -323,13 +309,12 @@ We can also visualise current `velocity` data with detections overlaid, where mo
 
 We need to make sure that the NetCDF file we have stored locally contains the velocity data. To achieve this, we firsty need to download this netCDF file using the `mooringDownload()` function and then save the file to a different folder location, in this case `imos.cache/moor/velocity`.
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
-# Download the moorings data for One Tree Island (GBROTE)
-plotDat.l <- mooringDownload(moor_site_codes = "GBROTE",
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
+plotDat.l <- mooringDownload(moor_site_codes = "GBRPPS", # have GBRMYR, GBRPPS and NRSYON available
                              fromWeb = TRUE, # Download the netCDF. If already downloaded, set as FALSE
                              sensorType="velocity", # sensor data to download
-                             itimeout=240,
-                             file_loc="imos.cache/moor/velocity") # Location where the netCDF is stored/saved
+                             file_loc="imos.cache/moor/velocity", # Location where the netCDF is stored/saved
+                             itimeout=240) 
             
 # plot the moorings data
 plotDT(moorData=plotDat.l$GBROTE, 
@@ -366,7 +351,7 @@ By default, each of the environmental sensors positioned on a mooring will be re
 
 <br>
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
-data_with_mooring_sst_all <- extractMoor(trackingData = det_dist,
+data_with_mooring_sst_all <- extractMoor(trackingData = det_dist0,
                                          file_loc="imos.cache/moor/temperature",
                                          sensorType = "temperature",
                                          timeMaxh = Inf,
