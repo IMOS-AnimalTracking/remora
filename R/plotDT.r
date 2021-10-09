@@ -1,5 +1,5 @@
 ##' @title Depth-time plot 
-##' @description Creates a depth-time plot from a sensor dataset from a specified IMOS mooring, with an option to overlay species detection records from tracking dataset from closest receiver 
+##' @description Creates an interactive depth-time plot from a sensor dataset from a specified IMOS mooring, with an option to overlay species detection records from tracking dataset from closest receiver 
 ##' @param moorData Dataframe containing the sensor data from a single IMOS mooring.
 ##' @param moorName Character string specifying mooring name using IMOS ID code.
 ##' @param dateStart Optional character string of start date of date range of mooring data to plot, as "YYYY-MM-DD"
@@ -11,13 +11,12 @@
 ##' @param detStart Optional character string of start date of date range of detections data to overlay on depth-time plot.
 ##' @param detEnd Optional character string of end date of date range of detections data to overlay on depth-time plot.
 ##' @importFrom lubridate date
-##' @importFrom dplyr mutate %>% filter group_by summarise distinct 
-##' @importFrom ggplot2 ggplot geom_tile aes scale_y_reverse ylab xlab scale_fill_distiller 
-##' @importFrom ggplot2 geom_vline 
+##' @importFrom dplyr mutate filter group_by summarise 
+##' @importFrom plotly plot_ly layout subplot
 ##' @importFrom viridis scale_fill_viridis
 ##' @export
 
-plotDT <- function(moorData, 
+plotlyDT <- function(moorData, 
                    moorName,
                    dateStart=NULL, 
                    dateEnd=NULL, 
@@ -33,13 +32,12 @@ plotDT <- function(moorData,
   
   if(!varName %in% c("temperature","vcur","ucur","psal")) 
     stop('Only "temperature", "vcur", "ucur" or "psal" can be provided as a valid varName')
-
+  
   moorData <- moorData %>% 
     mutate(mooring.date = date(moor_timestamp), 
-           depth_bin = round((moor_depth/5))*5) 
+                  depth_bin = round((moor_depth/5))*5) 
   if (!is.null(dateStart) | !is.null(dateEnd)){
-    dateStart <- date(dateStart)
-    dateEnd <- date(dateEnd)
+    dateStart <- date(dateStart); dateEnd <- date(dateEnd)
     moorData <- moorData %>% 
       dplyr::filter(mooring.date>=dateStart & mooring.date<=dateEnd)
   }
@@ -51,14 +49,40 @@ plotDT <- function(moorData,
       suppressMessages(
         summarise(moor_sea_temp = median(moor_sea_temp)) 
       )
-    p1 <- datplot %>% 
-      ggplot() +
-      geom_tile(aes(x=mooring.date, y=depth_bin, fill=moor_sea_temp)) +
-      scale_y_reverse() +
-      scale_fill_viridis(name = "Temperature (°C)") +
-      #scale_fill_distiller() +
-      ylab("Depth (m)") +
-      xlab("Date")
+    p1 <- plot_ly(
+      data = datplot,
+      x = ~mooring.date, y = ~depth_bin, z = ~moor_sea_temp, #text = ~paste('V2: ', V2),
+      hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
+                            '<br><b>Sea temperature (°C)</b>: %{z}<extra></extra> '),
+      name = " ",
+      type = "heatmap",
+      colorbar = list(title = "Sea Temperature (°C)", len = 0.5, y = 0.5)) %>% 
+      layout(
+      yaxis = list(title = "Depth (m)",
+                   autorange = "reversed",
+                   zeroline = FALSE),
+      xaxis = list(title = "Date",
+                   tickformat = '%d %b %Y',
+                   zeroline = FALSE)
+    )
+    
+    #Create other plot when plotling without detections (the colourbar has different position)
+    p3 <- plot_ly(
+      data = datplot,
+      x = ~mooring.date, y = ~depth_bin, z = ~moor_sea_temp, #text = ~paste('V2: ', V2),
+      hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
+                            '<br><b>Sea temperature (°C)</b>: %{z}<extra></extra> '),
+      name = " ",
+      type = "heatmap",
+      colorbar = list(title = "Sea Temperature (°C)")) %>% 
+      layout(
+        yaxis = list(title = "Depth (m)",
+                     autorange = "reversed",
+                     zeroline = FALSE),
+        xaxis = list(title = "Date",
+                     tickformat = '%d %b %Y',
+                     zeroline = FALSE)
+      )
   } else if (varName == "ucur") {
     datplot <- moorData %>% 
       dplyr::filter(!moor_ucur=="NaN") %>% 
@@ -67,14 +91,42 @@ plotDT <- function(moorData,
         summarise(moor_ucur = median(moor_ucur))
       )
     limit <- max(abs(datplot$moor_ucur)) * c(-1, 1)
-    p1 <- datplot %>% 
-      ggplot() +
-      geom_tile(aes(x=mooring.date, y=depth_bin, fill=moor_ucur)) +
-      scale_y_reverse() +
-      scale_fill_distiller(type="div", palette="RdBu", 
-                           limit=limit, name = "Eastward (u) velocity (m/s)") +
-      ylab("depth (m)") +
-      xlab("date")
+    p1 <- plot_ly(
+      data = datplot,
+      x = ~mooring.date, y = ~depth_bin, z = ~moor_ucur, 
+      hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
+                            '<br><b>Eastward (u) velocity (m/s)</b>: %{z}<extra></extra> '),
+      name = " ",
+      type = "heatmap",
+      colorbar = list(title = "Eastward velocity (m/s)", len = 0.5, y = 0.5),
+      colorscale = "RdBu" ) %>% 
+      layout(
+        yaxis = list(title = "Depth (m)",
+                     autorange = "reversed",
+                     zeroline = FALSE),
+        xaxis = list(title = "Date",
+                     tickformat = '%d %b %Y',
+                     zeroline = FALSE)
+      )
+    #Create other plot when plotling without detections (the colourbar has different position)
+    p3 <- pplot_ly(
+      data = datplot,
+      x = ~mooring.date, y = ~depth_bin, z = ~moor_ucur, 
+      hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
+                            '<br><b>Eastward (u) velocity (m/s)</b>: %{z}<extra></extra> '),
+      name = " ",
+      type = "heatmap",
+      colorbar = list(title = "Eastward velocity (m/s)"),
+      colorscale = "RdBu" ) %>% 
+      layout(
+        yaxis = list(title = "Depth (m)",
+                     autorange = "reversed",
+                     zeroline = FALSE),
+        xaxis = list(title = "Date",
+                     tickformat = '%d %b %Y',
+                     zeroline = FALSE)
+      )
+
   } else if (varName == "vcur") {
     datplot <- moorData %>% 
       dplyr::filter(!moor_vcur=="NaN") %>%
@@ -83,33 +135,87 @@ plotDT <- function(moorData,
         summarise(moor_vcur = median(moor_vcur))
       )
     limit <- max(abs(datplot$moor_vcur)) * c(-1, 1)
-    p1 <- datplot %>% 
-      ggplot() +
-      geom_tile(aes(x=mooring.date, y=depth_bin, fill=moor_vcur)) +
-      scale_y_reverse() +
-      scale_fill_distiller(type="div", palette="RdBu", 
-                           limit=limit, name = "Northward (v) velocity (m/s)") +
-      ylab("Depth (m)") +
-      xlab("Date")
-  }  else if (varName == "psal") {
+    p1 <- plot_ly(
+      data = datplot,
+      x = ~mooring.date, y = ~depth_bin, z = ~moor_vcur,
+      hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
+                            '<br><b>Northward (v) velocity (m/s)</b>: %{z}<extra></extra> '),
+      name = " ",
+      type = "heatmap",
+      colorbar = list(title = "Northward velocity (m/s)", len = 0.5, y = 0.5),
+      colorscale = "RdBu" ) %>% 
+      layout(
+        yaxis = list(title = "Depth (m)",
+                     autorange = "reversed",
+                     zeroline = FALSE),
+        xaxis = list(title = "Date",
+                     tickformat = '%d %b %Y',
+                     zeroline = FALSE)
+      )
+  
+    #Create other plot when plotling without detections (the colourbar has different position)    
+   p3 <- plot_ly(
+      data = datplot,
+      x = ~mooring.date, y = ~depth_bin, z = ~moor_vcur, 
+      hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
+                            '<br><b>Northward (v) velocity (m/s)</b>: %{z}<extra></extra> '),
+      name = " ",
+      type = "heatmap",
+      colorbar = list(title = "Northward velocity (m/s)"),
+      colorscale = "RdBu" ) %>% 
+     layout(
+        yaxis = list(title = "Depth (m)",
+                     autorange = "reversed",
+                     zeroline = FALSE),
+        xaxis = list(title = "Date",
+                     tickformat = '%d %b %Y',
+                     zeroline = FALSE)
+      )
+  } else if (varName == "psal") {
     datplot <- moorData %>% 
       dplyr::filter(!moor_psal=="NaN") %>%
       group_by(mooring.date,depth_bin) %>%
       suppressMessages(
         summarise(moor_psal = median(moor_psal))
       )
-  #  limit <- max(abs(datplot$moor_psal)) * c(-1, 1)
-    p1 <- datplot %>% 
-      ggplot() +
-      geom_tile(aes(x=mooring.date, y=depth_bin, fill=moor_psal)) +
-      scale_y_reverse() +
-      scale_fill_distiller(type="div", palette="RdBu", #limit=limit, 
-                           name = "Practical salinity") +
-      ylab("Depth (m)") +
-      xlab("Date")
-  }
-
-  
+    #  limit <- max(abs(datplot$moor_psal)) * c(-1, 1)
+    p1 <- plot_ly(
+      data = datplot,
+      x = ~mooring.date, y = ~depth_bin, z = ~moor_psal,
+      hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
+                            '<br><b>Practical salinity</b>: %{z}<extra></extra> '),
+      name = " ",
+      type = "heatmap",
+      colorbar = list(title = "Practical salinity", len = 0.5, y = 0.5),
+      colorscale = "RdBu" ) %>% 
+      layout(
+        yaxis = list(title = "Depth (m)",
+                     autorange = "reversed",
+                     zeroline = FALSE),
+        xaxis = list(title = "Date",
+                     tickformat = '%d %b %Y',
+                     zeroline = FALSE)
+      )
+    
+    #Create other plot when plotling without detections (the colourbar has different position)
+    p3 <- plot_ly(
+      data = datplot,
+      x = ~mooring.date, y = ~depth_bin, z = ~moor_psal,
+      hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
+                            '<br><b>Practical salinity</b>: %{z}<extra></extra> '),
+      name = " ",
+      type = "heatmap",
+      colorbar = list(title = "Practical salinity"),
+      colorscale = "RdBu" ) %>% 
+      layout(
+        yaxis = list(title = "Depth (m)",
+                     autorange = "reversed",
+                     zeroline = FALSE),
+        xaxis = list(title = "Date",
+                     tickformat = '%d %b %Y',
+                     zeroline = FALSE)
+      )
+}
   if(!is.null(trackingData)){
     trackingData <- trackingData %>% 
       dplyr::filter(moor_site_code == moorName) %>%
@@ -133,19 +239,31 @@ plotDT <- function(moorData,
       detIn <- trackingData %>% 
         dplyr::filter(species_scientific_name==speciesID)
     }
-    detUnique <- detIn %>% 
-      distinct(detection_date, .keep_all=TRUE)
+    detUnique <- detIn %>%
+      dplyr::filter(detection_date %in% datplot$mooring.date) %>%
+      group_by(transmitter_id, detection_date) %>%
+      summarise(n_detections = n(), species_common_name = species_common_name[1],.groups = 'drop')
     
     if (is.null(addDetections)==FALSE){
-      p1 +
-        geom_vline(data=detUnique, aes(xintercept = date(detection_date)),
-                   colour="black", size=0.3, alpha=0.4)
+      p2 <- plot_ly(data = detUnique, x = ~detection_date, y = ~transmitter_id, type = "scatter",
+                      mode = 'markers',
+                      marker = list(size = 12, colorbar = list(title = "Number of detections", len = 0.5, y =0.85), 
+                                    color = ~n_detections, colorscale = 'YlOrRd',
+                                    reversescale = TRUE),
+                      name = " ",
+                      text = ~species_common_name,
+                      hovertemplate = paste('<b>Number of detections</b>: %{marker.color}',
+                                            '<br><b>Species</b>: %{text}<extra></extra>')
+      ) %>% 
+        layout(
+          yaxis = list(title = ""),
+          xaxis = list(title = "Date",
+                       tickformat = '%d %b %Y')
+        )
+      subplot(p2, p1, nrows=2, shareX= TRUE, titleY = TRUE, shareY= FALSE) %>%
+        layout (hovermode = "x unified") 
     }
   } else {
-    p1
+    p3
   }
 }
-
-
-
-
