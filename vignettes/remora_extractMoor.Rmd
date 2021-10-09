@@ -30,23 +30,6 @@ vignette: >
 # Set workspace
 library(data.table); library(dplyr); library(sf); library(leaflet); library(RColorBrewer); library(classInt); library(ncdf4)
 
-# ## IDJ: Below should no longer be required if `remora` pkg is loaded & when appropriate ex. data is available in pkg
-# 
-# ## set file directory folderloc when developing vignette (need to remove/edit before release)
-# folderloc <- "/Users/uqrdwye2/Temp/GitHub/IMOStrack/"
-# 
-## Source the imos variable file and the functions from the IMOStrack folder
-# source(paste0(folderloc,"IMOStrack/R/imos_variables.R"))
-# source(paste0(folderloc,"IMOStrack/R/mooringTable.R"))
-# source(paste0(folderloc,"IMOStrack/R/getDistance.R"))
-# source(paste0(folderloc,"IMOStrack/R/getOverlap.R"))
-# source(paste0(folderloc,"IMOStrack/R/mooringDownload.R"))
-# source(paste0(folderloc,"IMOStrack/R/extractMoor.R"))
-# source(paste0(folderloc,"IMOStrack/R/merge.moor.R"))
-# source(paste0(folderloc,"IMOStrack/R/plotDT.R"))
-
-# data_with_sst_and_current <- read_csv("data/env_extract_output.csv")
-
 ```
 
 --------------------------------------
@@ -93,7 +76,6 @@ Lets start with a dataset that has undergone quality control (see `runQC()`; [li
 
 ```{r, eval = TRUE, message=FALSE, warning=FALSE}
 ## IDJ: replaced with call to .rda compressed file (currently using same QC detections as remora_extractEnv.Rmd)
-#test_data <- read_csv(paste0(folderloc,"example data/Townsville Reefs_Bull-sharks/QC_detections.csv"))
 load("data/TownsvilleReefQC.RData")
 
 ## Un-nest the output and retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)
@@ -275,7 +257,7 @@ leaflet() %>%
 
 Now that we have matched each animal detection with an appropriate `moor_site_code`, we will download the data time series for *moorings derived water temperature* for each mooring site code from the AODN Thredds file sever.
 
-Although this function provides the capacity to download various sensor types (i.e. `temperature`, `velocity`, `salinity` or `oxygen`), each variable can only be accessed one at a time using the `mooringDownload()` function. The netCDF files should then be saved locally within the working directory (e.g. within the folder `example data/Thredds/temperature`). 
+Although this function provides the capacity to download various sensor types (i.e. `temperature`, `velocity`, `salinity` or `oxygen`), each variable can only be accessed one at a time using the `mooringDownload()` function. The netCDF files should then be saved locally within the working directory (e.g. within the folder ` imos.cache/moor/temperature`). 
 
 There are a few parameters within the function that can help the user identify the variable required, and to manage the downloaded environmental layers:
 
@@ -320,40 +302,26 @@ When downloading dissolved `oxygen` data, four variables are downloaded: sensor 
 
 We can use the moorings data we've extracted to plot a depth-time plot showing three-dimensional variability in the physical parameter of interest over a specified time period, and then overlay animal tracking detections which are close to this mooring.
 
-For example, we might want to plot temperature over depth at the Heron Island mooring, `GBRHIS`, and then add all the bull shark detections over the same time period from the closest IMOS Animal Tracking Facility installation, which is approximately 10km away.
-
-If we set `addDetections=TRUE`, detections appear as solid vertical lines at the date of detection on the x-axis of the depth-time plot. We can ask for detections to be filtered by CAAB code, tag ID, common name or scientific name. If we set `addDetections=FALSE`, only the depth-time plot of physical data is displayed.
+For example, we might want to plot temperature over depth at the GBRMYR mooring, `GBRMYR`, and then add all the bull shark detections over the same time period from the closest IMOS Animal Tracking Facility installation.
 
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
-moorData = moorDat.l$GBRHIS
-moorName = "GBRHIS"
-varName = "temperature"
-dateStart = "2013-11-01"
-dateEnd = "2014-02-01"
-addDetections=TRUE
-trackingData=det_dist
-speciesID = "Carcharhinus leucas"
-IDtype = "species_scientific_name"
-detStart=dateStart
-detEnd=dateEnd
-
-plotDT(moorData=moorData, 
-       moorName=moorName,
-       dateStart=dateStart, 
-       dateEnd=dateEnd, 
-       varName=varName,
-       trackingData=trackingData,
-       speciesID=speciesID,
-       IDtype=IDtype,
-       detStart=detStart,
-       detEnd=detEnd)
+plotDT(moorData=moorDat.l$GBRMYR, # have GBRMYR, GBRPPS and NRSYON available
+       moorName="GBRMYR",
+       dateStart="2013-11-01", 
+       dateEnd="2014-02-01", 
+       varName="temperature",
+       trackingData=det_dist,
+       speciesID="Carcharhinus leucas",
+       IDtype="species_scientific_name",
+       detStart="2013-11-01", 
+       detEnd="2014-02-01")
 
 ```
 
-We can also visualise current `velocity` data with detections overlaid, where moorings have velocity sensors. For example, we can visualise the zonal, North-South (v) velocity (`vcur`) at the One Tree Island mooring, `GBROTE`, and overlay the bull shark detections associated with that mooring, which were detected approximately 9km away. 
+We can also visualise current `velocity` data with detections overlaid, where moorings have velocity sensors. For example, we can visualise the zonal, North-South (v) velocity (`vcur`) at the the same mooring mooring, and overlay the bull shark detections associated with that mooring.
 
-We need to make sure that the NetCDF file we have stored locally contains the velocity data. To achieve this, we firsty need to download this netCDF file using the `mooringDownload()` function and then save the file to a different folder location, in this case `example data/Thredds/velocity`.
+We need to make sure that the NetCDF file we have stored locally contains the velocity data. To achieve this, we firsty need to download this netCDF file using the `mooringDownload()` function and then save the file to a different folder location, in this case `imos.cache/moor/velocity`.
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
 # Download the moorings data for One Tree Island (GBROTE)
