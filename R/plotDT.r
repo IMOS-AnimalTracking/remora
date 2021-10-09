@@ -20,7 +20,7 @@ plotDT <- function(moorData,
                    moorName,
                    dateStart=NULL, 
                    dateEnd=NULL, 
-                   varName = "temperature",
+                   varName = c("temperature", "vcur", "ucur", "psal"),
                    trackingData=NULL,
                    speciesID,
                    IDtype = "CAAB",
@@ -34,10 +34,10 @@ plotDT <- function(moorData,
     stop('Only "temperature", "vcur", "ucur" or "psal" can be provided as a valid varName')
   
   moorData <- moorData %>% 
-    mutate(mooring.date = date(moor_timestamp), 
+    dplyr::mutate(mooring.date = lubridate::date(moor_timestamp), 
                   depth_bin = round((moor_depth/5))*5) 
   if (!is.null(dateStart) | !is.null(dateEnd)){
-    dateStart <- date(dateStart); dateEnd <- date(dateEnd)
+    dateStart <- lubridate::date(dateStart); dateEnd <- lubridate::date(dateEnd)
     moorData <- moorData %>% 
       dplyr::filter(mooring.date>=dateStart & mooring.date<=dateEnd)
   }
