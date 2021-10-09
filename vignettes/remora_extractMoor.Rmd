@@ -351,6 +351,7 @@ By default, each of the environmental sensors positioned on a mooring will be re
 
 <br>
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
+library(data.table)
 data_with_mooring_sst_all <- extractMoor(trackingData = det_dist0,
                                          file_loc="imos.cache/moor/temperature",
                                          sensorType = "temperature",
