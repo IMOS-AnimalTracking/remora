@@ -16,7 +16,7 @@
 ##' @importFrom viridis scale_fill_viridis
 ##' @export
 
-plotlyDT <- function(moorData, 
+plotDT <- function(moorData, 
                    moorName,
                    dateStart=NULL, 
                    dateEnd=NULL, 
