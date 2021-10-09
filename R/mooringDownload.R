@@ -18,7 +18,7 @@ mooringDownload <- function(moor_site_codes,
   
   sensorType <- match.arg(sensorType, choices = c("temperature","velocity","salinity","oxygen"))
   if(sensorType %in% c("temperature","velocity","salinity","oxygen")){
-    dir.create(file_loc,showWarnings = F) # Create the directory if it doesnt already exist
+    dir.create(file_loc,showWarnings = F, recursive = TRUE) # Create the directory if it doesnt already exist
     
     # Create function to run on a single mooring
     mooringDownload.1 <- function(moor_site_code,
