@@ -19,25 +19,33 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
-library(tidyverse)
-library(remora)
-## IDJ: Below should no longer be required if `remora` pkg is loaded & when appropriate ex. data is available in pkg
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+#### INSTALL PACKAGE FROM GITHUB ####
+#Install latest version of IMOStrack package from Github:
+# library(remotes)
+# MyAuthToken = "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" # personal API key generated at:https://github.com/settings/tokens
+# remotes::install_github('IMOS-AnimalTracking/remora', auth_token= MyAuthToken)
+#####################################
 
-## set file directory folderloc when developing vignette (need to remove/edit before release)
-folderloc <- "/Users/uqrdwye2/Temp/GitHub/IMOStrack/"
+# Set workspace
+library(data.table); library(dplyr); library(sf); library(leaflet); library(RColorBrewer); library(classInt); library(ncdf4)
 
+# ## IDJ: Below should no longer be required if `remora` pkg is loaded & when appropriate ex. data is available in pkg
+# 
+# ## set file directory folderloc when developing vignette (need to remove/edit before release)
+# folderloc <- "/Users/uqrdwye2/Temp/GitHub/IMOStrack/"
+# 
 ## Source the imos variable file and the functions from the IMOStrack folder
-source(paste0(folderloc,"IMOStrack/R/imos_variables.R"))
-source(paste0(folderloc,"IMOStrack/R/mooringTable.R"))
-source(paste0(folderloc,"IMOStrack/R/getDistance.R"))
-source(paste0(folderloc,"IMOStrack/R/getOverlap.R"))
-source(paste0(folderloc,"IMOStrack/R/mooringDownload.R"))
-source(paste0(folderloc,"IMOStrack/R/extractMoor.R"))
-source(paste0(folderloc,"IMOStrack/R/merge.moor.R"))
-source(paste0(folderloc,"IMOStrack/R/plotDT.R"))
+# source(paste0(folderloc,"IMOStrack/R/imos_variables.R"))
+# source(paste0(folderloc,"IMOStrack/R/mooringTable.R"))
+# source(paste0(folderloc,"IMOStrack/R/getDistance.R"))
+# source(paste0(folderloc,"IMOStrack/R/getOverlap.R"))
+# source(paste0(folderloc,"IMOStrack/R/mooringDownload.R"))
+# source(paste0(folderloc,"IMOStrack/R/extractMoor.R"))
+# source(paste0(folderloc,"IMOStrack/R/merge.moor.R"))
+# source(paste0(folderloc,"IMOStrack/R/plotDT.R"))
 
-data_with_sst_and_current <- read_csv("data/env_extract_output.csv")
+# data_with_sst_and_current <- read_csv("data/env_extract_output.csv")
 
 ```
 
@@ -63,6 +71,9 @@ The `imos_variables()` function will help the user identify currently available 
 
 
 ```{r, warning=FALSE}
+library(tidyverse)
+library(remora)
+
 imos_variables()
 ```
 
@@ -83,12 +94,12 @@ Lets start with a dataset that has undergone quality control (see `runQC()`; [li
 ```{r, eval = TRUE, message=FALSE, warning=FALSE}
 ## IDJ: replaced with call to .rda compressed file (currently using same QC detections as remora_extractEnv.Rmd)
 #test_data <- read_csv(paste0(folderloc,"example data/Townsville Reefs_Bull-sharks/QC_detections.csv"))
-load("data/QC_detections.rda")
+load("data/TownsvilleReefQC.RData")
 
-## Only retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)
-qc_data <- 
-  test_data %>% 
-  filter(Detection_QC %in% c(1,2))
+## Un-nest the output and retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)
+qc_data <- TR_qc %>% 
+  tidyr::unnest(QC) %>% 
+  dplyr::filter(Detection_QC %in% c(1,2)) 
 
 ```
 
@@ -97,6 +108,7 @@ qc_data <-
 Lets have a quick look at the spatial patterns in detection data for each tag deployment:
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.align='center'}
+library(ggplot2)
 library(ggspatial)
 
 qc_data %>% 
@@ -234,6 +246,7 @@ library(viridisLite)
 pal <- colorNumeric(palette = viridis(100), domain = domain)
 
 # make map
+library(leaflet)
 leaflet() %>%
   addProviderTiles("CartoDB.Positron") %>%
   addMarkers(lng = moorT_new$longitude, lat = moorT_new$latitude, 
@@ -283,7 +296,7 @@ moorIDs <- unique(mooring_overlap$moor_site_code)
 moorDat.l <- mooringDownload(moor_site_codes = moorIDs, 
                              sensorType="temperature", 
                              fromWeb = TRUE,
-                             file_loc=paste0(folderloc,"imos.cache/moor/temperature"),
+                             file_loc="imos.cache/moor/temperature",
                              itimeout=240)
 names(moorDat.l) # What moorings datasets do we have in memory
 head(moorDat.l$CH100) # what does this moorings dataset look like from moor_site_code = CH100?
@@ -346,7 +359,7 @@ We need to make sure that the NetCDF file we have stored locally contains the ve
 plotDat.l <- mooringDownload(moor_site_codes = "GBROTE",
                              sensorType="velocity",
                              fromWeb = TRUE,
-                             file_loc=paste0(folderloc,"imos.cache/moor/velocity"),
+                             file_loc="imos.cache/moor/velocity",
                              itimeout=240)
 
 moorData = plotDat.l$GBROTE
@@ -395,7 +408,7 @@ By default, each of the environmental sensors positioned on a mooring will be re
 <br>
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
 data_with_mooring_sst_all <- extractMoor(trackingData = det_dist,
-                                         file_loc=paste0(folderloc,"imos.cache/moor/temperature"),
+                                         file_loc="imos.cache/moor/temperature",
                                          sensorType = "temperature",
                                          timeMaxh = Inf,
                                          distMaxkm = Inf)
@@ -427,7 +440,7 @@ As each mooring line has multiple sensors deployed at various depths, we can spe
 # Run the same function again with time and distance thresholds
 # and when multiple sensors are available return the shallowest value at that time stamp
 data_with_mooring_sst_shallow <- extractMoor(trackingData = det_dist,
-                                             file_loc=paste0(folderloc,"imos.cache/moor/temperature"),
+                                             file_loc="imos.cache/moor/temperature",
                                              sensorType = "temperature",
                                              timeMaxh = 24,
                                              distMaxkm = 50,
@@ -518,7 +531,7 @@ data_with_mooring_sst_shallow %>%
 ---------------------------------------
 
 **Vignette version**
-0.0.3 (27 Sep 2021)
+0.1.0 (09 Oct 2021)
 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
