@@ -356,33 +356,24 @@ We can also visualise current `velocity` data with detections overlaid, where mo
 We need to make sure that the NetCDF file we have stored locally contains the velocity data. To achieve this, we firsty need to download this netCDF file using the `mooringDownload()` function and then save the file to a different folder location, in this case `example data/Thredds/velocity`.
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
+# Download the moorings data for One Tree Island (GBROTE)
 plotDat.l <- mooringDownload(moor_site_codes = "GBROTE",
-                             sensorType="velocity",
-                             fromWeb = TRUE,
-                             file_loc="imos.cache/moor/velocity",
-                             itimeout=240)
-
-moorData = plotDat.l$GBROTE
-moorName = "GBROTE"
-varName = "vcur"
-dateStart = "2013-11-01"
-dateEnd = "2014-02-01"
-trackingData=det_dist
-speciesID = "Carcharhinus leucas"
-IDtype = "species_scientific_name"
-detStart=dateStart
-detEnd=dateEnd
-
-plotDT(moorData=moorData, 
-       moorName=moorName,
-       dateStart=dateStart, 
-       dateEnd=dateEnd, 
-       varName=varName,
-       trackingData=trackingData,
-       speciesID=speciesID,
-       IDtype=IDtype,
-       detStart=detStart,
-       detEnd=detEnd)
+                             fromWeb = TRUE, # Download the netCDF. If already downloaded, set as FALSE
+                             sensorType="velocity", # sensor data to download
+                             itimeout=240,
+                             file_loc="imos.cache/moor/velocity") # Location where the netCDF is stored/saved
+            
+# plot the moorings data
+plotDT(moorData=plotDat.l$GBROTE, 
+       moorName="GBROTE",
+       dateStart="2013-11-01", 
+       dateEnd="2014-02-01", 
+       varName = "vcur",
+       trackingData=det_dist,
+       speciesID="Carcharhinus leucas",
+       IDtype="species_scientific_name",
+       detStart="2013-11-01",
+       detEnd="2014-02-01")
 ```
 
 
