@@ -144,7 +144,7 @@ Note that the map takes more time to load when the transmitter had higher number
 
 ## References
 
-1. Heupel, M., Mendoza, R., Espinoza, M., Lédée, E., Tobin, A., Bierwagen, S., de Faria, F., Matley, J., Simpfendorfer, C. (2021) Townsville Reefs. Australian Institute of Marine Science and James Cook University. (Available: Integrated Marine Observing System. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11).
+1. Heupel, M., Simpfendorfer, C., Espinoza, M., Bierwagen, S., de Faria, F., Lédée, E., Matley, J., Tobin, A. (2021) Townsville Reefs. Australian Institute of Marine Science and James Cook University. (Available: Integrated Marine Observing System. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11).
 
 2. IMOS 2021. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11.
 
