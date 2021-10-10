@@ -20,13 +20,11 @@ vignette: >
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 ## working when developing vignette
-library(tidyverse)
-# library(remora)
-source("R/imos_variables.R")
+require(tidyverse, quietly = TRUE)
+require(remora, quietly = TRUE)
 
-## IDJ: replaced with call to .rda compressed file
-#data_with_sst_and_current <- read_csv("data/env_extract_output.csv")
-load("data/env_extract_output.rda")
+## load extracted dataset for faster running of vignette
+data("env_extract_output")
 ```
 
 --------------------------------------
@@ -49,6 +47,8 @@ The `imos_variables()` function will help the user identify currently available 
 
 
 ```{r, warning=FALSE}
+library(remora)
+
 imos_variables()
 ```
 
@@ -68,13 +68,17 @@ Lets start with a dataset that has undergone quality control (see `runQC()`; [li
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
-## IDJ: replaced with call to .rda compressed file
-#test_data <- read_csv("data/QC_detections.csv")
-load("data/QC_detections.rda")
+library(raster)
+library(ggspatial)
+
+## Example dataset that has undergone quality control using the `runQC()` function
+data("TR_qc")
 
 ## Only retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)
 qc_data <- 
-  test_data %>% 
+  TR_qc %>% 
+  tidyr::unnest(cols = QC) %>%
+  dplyr::ungroup() %>% 
   filter(Detection_QC %in% c(1,2))
 
 ```
@@ -84,18 +88,17 @@ qc_data <-
 Lets have a quick look at the spatial patterns in detection data:
 
 ```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
-library(ggspatial)
 
 qc_data %>% 
-  filter(transmitter_id %in% unique(transmitter_id)[1:12]) %>% 
   group_by(transmitter_id, station_name, installation_name, receiver_deployment_longitude, receiver_deployment_latitude) %>% 
   summarise(num_det = n()) %>% 
   ggplot() +
   annotation_map_tile('cartolight') +
   geom_spatial_point(aes(x = receiver_deployment_longitude, y = receiver_deployment_latitude, 
                          size = num_det, color = installation_name), crs = 4326) +
-  facet_wrap(~transmitter_id, nrow = 2) +
-  theme(legend.position = "bottom")
+  facet_wrap(~transmitter_id, ncol = 2) +
+  labs(x = "Longitude", y = "Latitude", color = "Installation Name" , size = "Number of\nDetections") +
+  theme_bw()
 
 ```
 
@@ -112,6 +115,7 @@ qc_data %>%
   group_by(transmitter_id, date, installation_name) %>% 
   summarise(num_det = n()) %>% 
   ggplot(aes(x = date, y = transmitter_id, color = installation_name, size = num_det)) +
+  labs(x = "Date", y = NULL, color = "Installation Name", size = "Number of\nDetections") +
   geom_point() +
   theme_bw()
 
@@ -156,6 +160,7 @@ In these cases, a simple extraction will result in `NA`s where no overlap occurs
 #### *Interpolated sea surface temperature*
 
 ```{r, eval=FALSE, message=TRUE, warning=FALSE}
+
 data_with_sst <- 
   extractEnv(df = qc_data,
              X = "receiver_deployment_longitude", 
@@ -168,6 +173,7 @@ data_with_sst <-
              full_timeperiod = FALSE,
              folder_name = "test",
              .parallel = TRUE)
+
 ```
 
 <br>
@@ -177,6 +183,7 @@ data_with_sst <-
 We can now also append current data to this dataset:
 
 ```{r, eval=FALSE, message=TRUE, warning=FALSE}
+
 data_with_sst_and_current <- 
   data_with_sst %>% 
   extractEnv(X = "receiver_deployment_longitude", 
@@ -189,6 +196,7 @@ data_with_sst_and_current <-
              full_timeperiod = FALSE,
              folder_name = "test",
              .parallel = TRUE)
+
 ```
 
 
@@ -212,6 +220,7 @@ data_with_sst_and_current
 We can also now add the variables to the detection plots:
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
+
 summarised_data <-
   data_with_sst_and_current %>% 
   mutate(date = as.Date(detection_datetime)) %>% 
@@ -224,22 +233,25 @@ summarised_data <-
 ggplot(summarised_data, aes(x = date, y = transmitter_id, size = num_det, color = mean_sst)) +
   geom_point() +
   scale_color_viridis_c() +
-  labs(subtitle = "Interpolated sea surface temperature") +
+  labs(subtitle = "Interpolated sea surface temperature", x = "Date", 
+       y = NULL, color = "SST (˚C)", size = "Number of\nDetections") +
   theme_bw()
+
 ``` 
 
 ![ ](images/env_extract_plot3.png)
 
 ```{r, eval=FALSE, message=FALSE, warning=FALSE}
+
 ggplot(summarised_data) +
   geom_point(aes(x = date, y = transmitter_id, color = mean_current_velocity,
                  size = num_det)) +
   geom_spoke(aes(x = date, y = transmitter_id, angle = mean_current_bearing, radius = mean_current_velocity),
              arrow = arrow(length = unit(0.05, 'inches')), color = "grey", lwd = 0.1) +
-  labs(subtitle = "Direction and velocity of modeled surface currents") +
+  labs(subtitle = "Direction and velocity of modeled surface currents", x = "Date", 
+       y = NULL, color = "Current\nVelocity (ms-1)", size = "Number of\nDetections") +
   scale_color_viridis_c(option = "B") +
   theme_bw()
-  
 
 ```
 
@@ -252,17 +264,28 @@ ggplot(summarised_data) +
 If the environmental layers were cached, we can also look at how the variables altered spatially:
 
 ```{r, eval=FALSE, message=FALSE, warning=FALSE}
+
+## Detection data summary
+det_summary <-
+  qc_data %>% 
+  group_by(station_name, lon = receiver_deployment_longitude, lat = receiver_deployment_latitude) %>% 
+  summarise()
+
 ## Sea surface temperature
 sst_raster <- stack("imos.cache/rs variables/test/rs_sst_interpolated.grd")
 
-as.data.frame(sst_raster[[1:12]], xy = T) %>% 
-  pivot_longer(-c(1,2)) %>% 
-  ggplot() +
+sst_df <- 
+  as.data.frame(sst_raster[[1:12]], xy = T) %>% 
+  pivot_longer(-c(1,2))
+
+ggplot(sst_df) +
   geom_tile(aes(x, y, fill = value)) +
   scale_fill_viridis_c() +
-  labs(fill = "Interpolated SST", x = "Longitude", y = "Latitude") +
+  geom_point(data = det_summary, aes(x = lon, y = lat), size = 0.5, color = "red", inherit.aes = F) +
+  labs(fill = "Interpolated\nSST (˚C)", x = "Longitude", y = "Latitude") +
   coord_equal() +
-  facet_wrap(~name, nrow = 2)
+  facet_wrap(~name, nrow = 4) +
+  theme_bw()
 
 ```
 ![ ](images/env_extract_plot5.png)
@@ -277,24 +300,13 @@ library(metR)
 library(sf)
 
 ## read in vcur and ucur spatial data
-vcur_raster <- stack("imos.cache/rs variables/test/rs_vcur.grd")[[1:3]]
+vcur_raster <- stack("imos.cache/rs variables/test/rs_vcur.grd")[[1:4]]
 vcur_raster[is.na(values(vcur_raster))] <- 0
-ucur_raster <- stack("imos.cache/rs variables/test/rs_ucur.grd")[[1:3]]
+ucur_raster <- stack("imos.cache/rs variables/test/rs_ucur.grd")[[1:4]]
 ucur_raster[is.na(values(ucur_raster))] <- 0
 
-## calculate velocity
+## calculate velocity (ms-1)
 vel_raster <- sqrt(vcur_raster^2 + ucur_raster^2)
-
-## basemap
-map <-
-  ggplot2::map_data("world") %>% 
-  filter(region %in% "Australia") %>%
-  st_as_sf(coords = c("long", "lat"), crs = 4326) %>% 
-  group_by(group) %>% 
-  summarise(do_union = FALSE) %>% 
-  st_cast("MULTILINESTRING") %>%
-  st_cast("MULTIPOLYGON") %>% 
-  st_crop(extent(vcur_raster))
 
 ## extract values from raster stacks
 uv <-
@@ -308,12 +320,12 @@ uv <-
 
 ggplot() +
   geom_contour_fill(data = uv, aes(x = x, y = y, z = vel, fill = stat(level)),
-                    binwidth = 0.1, alpha = 0.7, inherit.aes = F) +
-  geom_streamline(data = uv, skip = 2, size = 0.05, L = 1, res = 5, jitter = 5, lineend = "round",
+                    binwidth = 0.05, alpha = 0.7, inherit.aes = F) +
+  geom_streamline(data = uv, skip = 0, size = 0.05, L = 1, res = 5, jitter = 5, lineend = "round",
                   aes(x = x, y = y, dx = u, dy = v), color = "white") +
-  geom_sf(data = map, fill = "grey", color = NA) +
   scale_fill_viridis_d(option = "B", name = "Current Velocity (m/s)") +
-  facet_wrap(~ date, nrow = 1) +
+  geom_point(data = det_summary, aes(x = lon, y = lat), size = 0.5, color = "red", inherit.aes = F) +
+  facet_wrap(~ date, nrow = 2) +
   labs(subtitle = "Modeled surface currents", x = "Longitude", y = "Latitude") +
   theme_bw()
 
@@ -321,15 +333,12 @@ ggplot() +
 ![ ](images/env_extract_plot6.png)
 
 
-
-
-
 <br>
 
 ---------------------------------------
 
 **Vignette version**
-0.0.2 (22 Sep 2021)
+0.0.3 (10 Oct 2021)
 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
