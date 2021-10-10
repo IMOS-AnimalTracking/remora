@@ -53,7 +53,7 @@ This package allows users to access a range of ocean datasets that have undergon
 The `imos_variables()` function will help the user identify currently available environmental layers that can be accessed and associated. Variables include spatial layers including `bathy` and `dist_to_land`, which provide distance measures of bathymetry (in meters) and proximity to land (in kilometers). Variable names that start with `rs_` are remote sensed environmental layers, and variables starting with `moor_` include in-situ environmental layers.
 
 
-```{r, warning=FALSE}
+```{r, warning=FALSE,message=FALSE}
 library(tidyverse)
 library(remora)
 
@@ -138,12 +138,12 @@ There is only one parameters within the function that can help the user identify
 <br>
 
 ```{r, eval=TRUE, message=TRUE, warning=FALSE}
-library(leaflet)
-
+# Generate a table containing IMOS moorings metadata for only those moorings with temperature data
 moorT <- mooringTable(sensorType="temperature")
 head(moorT)
 
 # PLot the location of the moorings with associated metadata
+library(leaflet)
 leaflet() %>%
   addProviderTiles("CartoDB.Positron") %>%
   addMarkers(lng = moorT$longitude, lat = moorT$latitude,
@@ -170,25 +170,24 @@ In this function, the user specifies which detection dataset with which they whi
 
 ```{r, eval=TRUE, message=TRUE, warning=FALSE}
 #Extract the nearest mooring to each station where a tag was detected
-det_dist0 <- getDistance(trackingData = qc_data, 
-                         moorLocations = moorT)
-head(det_dist0)
-
+det_dist <- getDistance(trackingData = qc_data, 
+                        moorLocations = moorT)
+head(det_dist)
 ```
 
 ## 
 
-In order to identify which moorings do not have temporal coverage during the period when tag detections were obtained, we have provided the `getOverlap()` function. In this function, we simply enter the detection dataset (`det_dist0`) which also contains the nearest moorings data generated using the above `getDistance()` function. What is returned is a table containing the proportion of tag detections that fell within the coverage period of the mooring deployment at which it was assigned: `moor_site_code`, `moor_coverage_start` and `moor_coverage_end`.
+In order to identify which moorings do not have temporal coverage during the period when tag detections were obtained, we have provided the `getOverlap()` function. In this function, we simply enter the detection dataset (`det_dist`) which also contains the nearest moorings data generated using the above `getDistance()` function. What is returned is a table containing the proportion of tag detections that fell within the coverage period of the mooring deployment at which it was assigned: `moor_site_code`, `moor_coverage_start` and `moor_coverage_end`.
 
 <br>
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
 # Which moorings have overlapping data with detections?
-mooring_overlap <- getOverlap(det_dist0)
+mooring_overlap <- getOverlap(det_dist)
 mooring_overlap
 ```
 
-As `Poverlap = 1` for all three moorings datasets, all our detections have temporal overlap with mooring deployments. 
+As `Poverlap = 1` for all three moorings datasets, all our detections have temporal overlap with these mooring deployments. IF some of the moorings had partial/no coverage during the tag release period, we would consider dropping these from the moorT object before re-running the `getDistance()` function.
 
 Let's plot the spatial arrangement of these mooring stations on an interactive map with our tag detections at receiver stations.
 
@@ -206,15 +205,12 @@ qs_stat <- qc_data %>%
             first_detection = min(detection_datetime),
             last_detection = max(detection_datetime))
 
-#icon.station <- makeAwesomeIcon(icon= 'flag', markerColor = 'darkred', iconColor = 'white')
-
-# make palette for no detections at stations
+# make palette for number of detections at stations
 library(viridisLite)
-(domain <- range(qs_stat$num_det)) # get domain of numeric data
+domain <- range(qs_stat$num_det) # get domain of numeric data for colour scalse
 pal <- colorNumeric(palette = viridis(100), domain = domain)
 
-# make map
-library(leaflet)
+# Draw the map
 leaflet() %>%
   addProviderTiles("CartoDB.Positron") %>%
   addMarkers(lng = moorT_new$longitude, lat = moorT_new$latitude, 
@@ -263,7 +259,7 @@ moorIDs <- unique(mooring_overlap$moor_site_code)
 ## set fromWeb = FALSE if loading from an existing folder within the working directory
 moorDat.l <- mooringDownload(moor_site_codes = moorIDs, 
                              sensorType="temperature", 
-                             fromWeb = FALSE, # Set as TRUE is 
+                             fromWeb = FALSE, 
                              file_loc="imos.cache/moor/temperature",
                              itimeout=240)
 names(moorDat.l) # What moorings datasets do we have in memory
@@ -297,7 +293,7 @@ plotDT(moorData=moorDat.l$GBRPPS, # have GBRMYR, GBRPPS and NRSYON available
        dateStart="2013-11-01", 
        dateEnd="2014-02-01", 
        varName="temperature",
-       trackingData=det_dist0,
+       trackingData=det_dist,
        speciesID="Carcharhinus leucas",
        IDtype="species_scientific_name",
        detStart="2013-11-01", 
@@ -351,7 +347,7 @@ By default, each of the environmental sensors positioned on a mooring will be re
 
 <br>
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
-data_with_mooring_sst_all <- extractMoor(trackingData = det_dist0,
+data_with_mooring_sst_all <- extractMoor(trackingData = det_dist,
                                          file_loc="imos.cache/moor/temperature",
                                          sensorType = "temperature",
                                          timeMaxh = Inf,
@@ -429,8 +425,8 @@ summarised_data_id <-
   mutate(date = as.Date(detection_datetime)) %>% 
   group_by(installation_name, date) %>% 
   dplyr::summarise(num_det = n(),
-            mean_temperature = mean(moor_sea_temp, na.rm = T)) %>%
-  drop_na(mean_temperature)
+            mean_temperature = mean(moor_sea_temp, na.rm = T)) #%>% drop_na(mean_temperature)
+
 
 ggplot(summarised_data_id, aes(x=date,y=installation_name,
                                size=num_det,color=mean_temperature)) +
