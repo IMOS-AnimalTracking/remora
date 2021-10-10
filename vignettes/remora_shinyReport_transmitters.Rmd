@@ -1,0 +1,157 @@
+---
+title: "remora_shinyReport_transmitters"
+subtitle: "Visualisations: Tagging Project"
+output:
+  html_document:
+    css: style.css
+    anchor_sections: false
+    toc: false
+    toc_float: 
+      collapsed: false
+      smooth_scroll: true
+    self_contained: true
+    theme: cerulean
+    highlight: pygments
+vignette: >
+  %\VignetteIndexEntry{remora_extractEnv}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+--------------------------------------
+
+The `remora` package includes statistics and visualisations for a **tagging** or **receiver array** project. The `shinyReport()` function allows users to create an interactive report of their projects, having different visualisation and analytical tools. All the plots and tables provided can be downloaded so the user can perform further analysis of the data. This report is an exploratory analysis and should not be considered as an extensive analysis. Currently, the focus of this package is to integrate animal telemetry data and environmental data housed within the [Integrated Marine Observing System](https://imos.org.au), and therefore primarily focuses within Australia. 
+<br>
+
+---------------------------------------
+
+# Tagging Project
+
+
+
+<br>
+
+The transmitter report provides users with basic statistics and visualisations for their tagging project. The report is in a Shiny App format which will open in the default browser. 
+
+<br>
+
+
+
+## Run Shiny App
+<br>
+The `remora` package should be installed to be able to call the functions. 
+
+The `shinyReport()` function requires the type of project to retrieve the respective report (i.e. receiver array or transmitter project).
+
+```{r, eval=FALSE}
+remotes::install_github("IMOS-AnimalTracking/remora")
+shinyReport("transmitters")
+```
+<br>
+
+The function will generate a pop-up window where the user can navigate through the folders and select the detections file from a tagging project. The detections can be accessed from the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au/projects)or the user can select their own data previously formatted to match the database.
+
+In this vignette, a sample data from the Townsville Reefs project will be displayed (Heupel et al., 2021).
+
+![](images/transmitter_report/select-detections.png)
+
+
+
+
+## Transmitter deployments
+
+<br>
+
+Map of the transmitter deployments colour coded by species. The user can filter by species and/or date of the transmitter deployment.
+
+When hovering on the bubbles additional information appears with the coordinates, station name and number of detections. 
+
+
+
+<br>
+
+![](images/transmitter_report/transmitter_deployments.png)
+
+
+
+
+
+
+## Transmitter detections
+
+<br>
+
+Bar plot of the number of detections per transmitter colour coded by species. The user can filter to by transmitters and/or species.
+
+When hovering on the bars additional information appears with the species common name, number of detections, station name and transmitter id. The plot can be downloaded by clicking on the camera icon on the top right corner.
+
+The summary table on the ledt panel shows the transmitter ID, number of detections per transmitter and species common name. The table can be downloaded as .CSV, Excel or PDF by clicking on the respective button. 
+
+
+<br>
+
+
+
+![](images/transmitter_report/transmitter_detections.png)
+
+## Detections over time
+
+<br>
+
+This tab comprises the abacus and connectivity plot. Users can filter both plots by transmitter(s) and date range. If the date is out of range a warning message will appear.
+
+<br>
+
+### Abacus plot
+
+<br>
+
+Interactive plot of the detections for the transmitter(s) selected colour coded by installation. When hovering on the plot, additional information is shown (transmitter ID, detection date and number of detections).
+
+The abacus plot can be saved by clicking on the camera icon in the top right corner of the plot. 
+
+<br>
+
+![](images/transmitter_report/abacus_plot.png)
+
+### Connectivity plot
+
+<br>
+
+The plot represents movement connections between receiver stations and installations visited by the selected transmitter(s).Colours identify separate installations and line thickness highlights the importance of these movement paths within the dataset.
+
+The connectivity plot can be saved by clicking on the "Download plot" button.
+
+<br>
+
+![](images/transmitter_report/connectivity_plot.png)
+
+
+## Detections network map 
+<br>
+
+The detections network map contains a leaflet map with the detections network for the transmitter selected. Each bubble represents the station at which the transmitter was detected and they are colour coded by number of detections (see legend on the right side of the map). The left panel shows the species common name, the total number of detections, stations and installations. <span style="color: red;">The user has to select a transmitter in order for the map to show the network.</span> 
+
+Note that the map takes more time to load when the transmitter had higher number of detections.
+
+<br>
+![](images/transmitter_report/detections_network_map.png)
+
+
+
+<br>
+
+*Note: To explore and visualise a Receiver Array project head to [remora_shinyReport_receivers vignette](remora_shinyReport_receivers.html)*
+
+## References
+
+1. Heupel, M., Mendoza, R., Espinoza, M., Lédée, E., Tobin, A., Bierwagen, S., de Faria, F., Matley, J., Simpfendorfer, C. (2021) Townsville Reefs. Australian Institute of Marine Science and James Cook University. (Available: Integrated Marine Observing System. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11).
+
+2. IMOS 2021. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11.
+
+**Vignette version**
+0.0.3 (11 Oct 2021)
+
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
+
+
