@@ -47,7 +47,7 @@ merge.moor <- function(trackingData, moorData, timeMaxh=Inf, distMaxkm=Inf) {
   # Extract the time difference between mooring and detection time
   #elapsed.time <- Envmatch$detection_datetime %--% Envmatch$moor_timestamp
   elapsed.time <- interval(Envmatch$detection_datetime,Envmatch$moor_timestamp)
-  Envmatch$timediff_h <- abs(lubridate::as.duration(elapsed.time) / dhours(1)) # Add the mismatch in time between the two datasets in hours
+  Envmatch$timediff_h <- abs(as.duration(elapsed.time) / dhours(1)) # Add the mismatch in time between the two datasets in hours
   Envmatch$timediff_h <- round(Envmatch$timediff_h,4) # round to 4 decimal places
   
   varnames <- names(moorData)[names(moorData) %in% c("moor_sea_temp", "moor_ucur", "moor_vcur", "moor_psal")] 

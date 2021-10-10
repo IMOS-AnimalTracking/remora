@@ -28,7 +28,7 @@ vignette: >
 #####################################
 
 # Set workspace
-library(data.table); library(dplyr); library(sf); library(leaflet); library(RColorBrewer); library(classInt); library(ncdf4)
+library(data.table); library(dplyr); library(sf); library(leaflet); library(RColorBrewer); library(classInt); library(ncdf4); library(lubridate)
 
 ```
 
@@ -263,7 +263,7 @@ moorIDs <- unique(mooring_overlap$moor_site_code)
 ## set fromWeb = FALSE if loading from an existing folder within the working directory
 moorDat.l <- mooringDownload(moor_site_codes = moorIDs, 
                              sensorType="temperature", 
-                             fromWeb = TRUE,
+                             fromWeb = FALSE, # Set as TRUE is 
                              file_loc="imos.cache/moor/temperature",
                              itimeout=240)
 names(moorDat.l) # What moorings datasets do we have in memory

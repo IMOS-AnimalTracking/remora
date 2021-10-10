@@ -122,11 +122,11 @@ extractMoor <- function(trackingData,
   # Group and nest by transmitter id
   
   if(sensorType == "temperature"){
-  comb.data.out <- dd2 %>% 
+    comb.data.out <- dd2 %>% 
     # dplyr::rename(moor_sea_temp = temperature,
     #               moor_depth = depth) %>%
     group_by(transmitter_id) %>% 
-    tnest()
+    nest()
   }
   
   if(sensorType == "velocity"){
