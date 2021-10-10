@@ -6,8 +6,8 @@
 #' @param timeMaxh optional numeric string containing the maximum time threshold in hours to merge detection and mooring sensor values. 
 #' @param distMaxkm optional numeric string containing the maximum distance threshold in km to merge detection and mooring sensor values. 
 #' @return The \code{trackingData} dataframe with the sensor values from the nearest  \code{moor_site_code} 
-#' @importFrom data.table setDT := setkey setcolorder setattr %--%
-#' @importFrom lubridate parse_date_time2
+#' @importFrom data.table setDT := setkey setcolorder setattr
+#' @importFrom lubridate parse_date_time2 interval
 #' @importFrom dplyr arrange mutate case_when select
 #' @keywords internal
 
@@ -45,7 +45,8 @@ merge.moor <- function(trackingData, moorData, timeMaxh=Inf, distMaxkm=Inf) {
   Envmatch <- Envmatch %>% arrange(detection_id, moor_depth)
   
   # Extract the time difference between mooring and detection time
-  elapsed.time <- Envmatch$detection_datetime %--% Envmatch$moor_timestamp
+  #elapsed.time <- Envmatch$detection_datetime %--% Envmatch$moor_timestamp
+  elapsed.time <- interval(Envmatch$detection_datetime,Envmatch$moor_timestamp)
   Envmatch$timediff_h <- abs(as.duration(elapsed.time) / dhours(1)) # Add the mismatch in time between the two datasets in hours
   Envmatch$timediff_h <- round(Envmatch$timediff_h,4) # round to 4 decimal places
   
