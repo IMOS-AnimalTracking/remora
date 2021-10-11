@@ -244,7 +244,7 @@ plotDT <- function(moorData,
       group_by(transmitter_id, detection_date) %>%
       summarise(n_detections = n(), species_common_name = species_common_name[1],.groups = 'drop')
     
-    if (is.null(addDetections)==FALSE){
+    if (!is.null(trackingData)){
       p2 <- plot_ly(data = detUnique, x = ~detection_date, y = ~transmitter_id, type = "scatter",
                       mode = 'markers',
                       marker = list(size = 12, colorbar = list(title = "Number of detections", len = 0.5, y =0.85), 
