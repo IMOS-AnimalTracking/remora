@@ -431,7 +431,7 @@ ui <- shiny::bootstrapPage(
                       shiny::mainPanel(
                         htmltools::h3("Station efficiency index"),
                         shiny::actionButton("learn_more", "Learn more", icon = shiny::icon("book-reader"), 
-                                            onclick = "window.open('https://resonate.readthedocs.io/en/latest/receiver_efficiency_index.html', '_blank' )"),
+                                            onclick = "window.open('https://doi.org/10.1016/j.fishres.2018.09.015', '_blank' )"),
                         htmltools::br(),
                         htmltools::br(),
                         #Text that appears when selected date is out of range
