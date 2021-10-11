@@ -282,12 +282,12 @@ When downloading dissolved `oxygen` data, four variables are downloaded: sensor 
 
 ## Creating a depth-time plot using moorings data, and adding detections
 
-We can use the moorings data we've extracted to plot a depth-time plot showing three-dimensional variability in the physical parameter of interest over a specified time period, and then overlay animal tracking detections which are close to this mooring.
+We can use the moorings data we've extracted to plot an interactive depth-time plot showing three-dimensional variability in the physical parameter of interest over a specified time period, and then plot the animal tracking detections which are close to this mooring. When hovering on the plot, a vertical line will appear so that it is easier to find the environmental variable associated to the detection.
 
 For example, we might want to plot temperature over depth at the GBRMYR mooring, `GBRMYR`, and then add all the bull shark detections over the same time period from the closest IMOS Animal Tracking Facility installation.
 
 
-```{r, eval=FALSE, message=FALSE, warning=FALSE}
+```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
 plotDT(moorData=moorDat.l$GBRPPS, # have GBRMYR, GBRPPS and NRSYON available
        moorName="GBRPPS",
        dateStart="2013-11-01", 
@@ -301,20 +301,20 @@ plotDT(moorData=moorDat.l$GBRPPS, # have GBRMYR, GBRPPS and NRSYON available
 
 ```
 
-We can also visualise current `velocity` data with detections overlaid, where moorings have velocity sensors. For example, we can visualise the zonal, North-South (v) velocity (`vcur`) at the the same mooring mooring, and overlay the bull shark detections associated with that mooring.
+We can also visualise current `velocity` data with the detections, where moorings have velocity sensors. For example, we can visualise the zonal, North-South (v) velocity (`vcur`) at the the same mooring, and plot the bull shark detections associated with that mooring.
 
 We need to make sure that the NetCDF file we have stored locally contains the velocity data. To achieve this, we firsty need to download this netCDF file using the `mooringDownload()` function and then save the file to a different folder location, in this case `imos.cache/moor/velocity`.
 
-```{r, eval=FALSE, message=FALSE, warning=FALSE}
-plotDat.l <- mooringDownload(moor_site_codes = "GBRPPS", # have GBRMYR, GBRPPS and NRSYON available
+```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
+plotDat.l <- mooringDownload(moor_site_codes = "GBRPPS", 
                              fromWeb = TRUE, # Download the netCDF. If already downloaded, set as FALSE
                              sensorType="velocity", # sensor data to download
                              file_loc="imos.cache/moor/velocity", # Location where the netCDF is stored/saved
                              itimeout=240) 
             
 # plot the moorings data
-plotDT(moorData=plotDat.l$GBROTE, 
-       moorName="GBROTE",
+plotDT(moorData=plotDat.l$GBRPPS, 
+       moorName="GBRPPS",
        dateStart="2013-11-01", 
        dateEnd="2014-02-01", 
        varName = "vcur",
