@@ -27,12 +27,9 @@ The `remora` package includes statistics and visualisations for a **tagging** or
 # Tagging Project
 
 
-
-<br>
-
 The transmitter report provides users with basic statistics and visualisations for their tagging project. The report is in a Shiny App format which will open in the user's default browser. 
 
-<br>
+
 
 
 
