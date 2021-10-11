@@ -12,10 +12,10 @@ shinyReport <- function(type = "transmitter"){
   wd <- getwd()
   shinyOptions(wd = wd)
   
-  if (type == "transmitter") {
+  if (type == "transmitters") {
     appFile <- system.file(file.path("shinyReport", "transmitter-app.R"), package = "remora")
     
-  } else if (type == "receiver") {
+  } else if (type == "receivers") {
     appFile <- system.file(file.path("shinyReport", "receiver-app.R"), package = "remora")
 
   } else {
