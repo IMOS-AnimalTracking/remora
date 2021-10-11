@@ -218,7 +218,7 @@ ui <- shiny::bootstrapPage(
                                            htmltools::h5("Select data to display:"),
                                            inline = TRUE,
                                            choices = c("Number of detections", 
-                                                       "Number of transmitters detected", "Number of species detected"),
+                                                       "Number of transmitters", "Number of species"),
                                            selected = "Number of detections",
                                            icon = shiny::icon("check"),
                                            bigger = TRUE,
@@ -871,7 +871,7 @@ server <- function (input, output, session){
         ) %>%
         leaflet::addLegend(pal = pal, values = station_location_sp$n.detections, opacity=.9,
                            position = "topright", title="Number of detections")
-    }else if(input$legend == "Number of transmitters detected"){
+    }else if(input$legend == "Number of transmitters"){
       leaflet::leafletProxy("mymap", data = reactive_station_location_sp()) %>% 
         leaflet::clearMarkers() %>%
         leaflet::clearShapes() %>%
@@ -895,7 +895,7 @@ server <- function (input, output, session){
         ) %>%
         leaflet::addLegend(pal = tag_pal, values = station_location_sp$n.transmitters, opacity=.9,
                            position = "topright", title="Number of transmitters")
-    }else if(input$legend=="Number of species detected"){
+    }else if(input$legend=="Number of species"){
       leaflet::leafletProxy("mymap", data=reactive_station_location_sp()) %>% 
         leaflet::clearMarkers() %>%
         leaflet::clearShapes() %>%
