@@ -30,7 +30,7 @@ The `remora` package includes statistics and visualisations for a **tagging** or
 
 <br>
 
-The transmitter report provides users with basic statistics and visualisations for their tagging project. The report is in a Shiny App format which will open in the default browser. 
+The transmitter report provides users with basic statistics and visualisations for their tagging project. The report is in a Shiny App format which will open in the user's default browser. 
 
 <br>
 
@@ -48,7 +48,7 @@ shinyReport("transmitters")
 ```
 <br>
 
-The function will generate a pop-up window where the user can navigate through the folders and select the detections file from a tagging project. The detections can be accessed from the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au/projects)or the user can select their own data previously formatted to match the database.
+The function will generate a pop-up window where the user can navigate through the folders and select the detections file from a tagging project. The detections can be accessed from the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au/projects) or the user can select their own data, previously formatted to match the database.
 
 In this vignette, a sample data from the Townsville Reefs project will be displayed (Heupel et al., 2021).
 
@@ -84,7 +84,7 @@ Bar plot of the number of detections per transmitter colour coded by species. Th
 
 When hovering on the bars additional information appears with the species common name, number of detections, station name and transmitter id. The plot can be downloaded by clicking on the camera icon on the top right corner.
 
-The summary table on the ledt panel shows the transmitter ID, number of detections per transmitter and species common name. The table can be downloaded as .CSV, Excel or PDF by clicking on the respective button. 
+The summary table on the left panel shows the transmitter ID, number of detections per transmitter and species common name. The table can be downloaded as .CSV, Excel or PDF by clicking on the respective button. 
 
 
 <br>
@@ -95,11 +95,9 @@ The summary table on the ledt panel shows the transmitter ID, number of detectio
 
 ## Detections over time
 
-<br>
-
 This tab comprises the abacus and connectivity plot. Users can filter both plots by transmitter(s) and date range. If the date is out of range a warning message will appear.
 
-<br>
+
 
 ### Abacus plot
 
