@@ -10,7 +10,7 @@
 ##' @param IDtype Character string describing type of species or tag identifier. Can be CAAB code, tag ID, common name or scientific name. Must match identifier in detections dataset.
 ##' @param detStart Optional character string of start date of date range of detections data to overlay on depth-time plot.
 ##' @param detEnd Optional character string of end date of date range of detections data to overlay on depth-time plot.
-##' @importFrom lubridate date
+##' @importFrom lubridate as_date
 ##' @importFrom dplyr mutate filter group_by summarise 
 ##' @importFrom plotly plot_ly layout subplot
 ##' @importFrom viridis scale_fill_viridis
@@ -34,10 +34,10 @@ plotDT <- function(moorData,
     stop('Only "temperature", "vcur", "ucur" or "psal" can be provided as a valid varName')
   
   moorData <- moorData %>% 
-    dplyr::mutate(mooring.date = lubridate::date(moor_timestamp), 
+    dplyr::mutate(mooring.date = lubridate::as_date(moor_timestamp), 
                   depth_bin = round((moor_depth/5))*5) 
   if (!is.null(dateStart) | !is.null(dateEnd)){
-    dateStart <- lubridate::date(dateStart); dateEnd <- lubridate::date(dateEnd)
+    dateStart <- lubridate::as_date(dateStart); dateEnd <- lubridate::as_date(dateEnd)
     moorData <- moorData %>% 
       dplyr::filter(mooring.date>=dateStart & mooring.date<=dateEnd)
   }
