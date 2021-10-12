@@ -102,7 +102,7 @@ qc_data %>%
 
 ```
 
-![ ](images/env_extract_plot1.png)
+![ ](images/env_extract/env_extract_plot1.png)
 
 <br>
 
@@ -121,7 +121,7 @@ qc_data %>%
 
 ```
 
-![ ](images/env_extract_plot2.png)
+![ ](images/env_extract/env_extract_plot2.png)
 
 <br>
 
@@ -149,7 +149,7 @@ Each variable will need to be accessed one at a time using the `extractEnv()` fu
 Remote sensed environmental data within coastal areas (where acoustic arrays are often deployed) are often unreliable due to shallow habitats and close proximity to turbid nearshore waters. The quality control process for Ocean colour variables within the IMOS dataset often remove pixels in close proximity to coastlines due to the low quality of environmental variables in these regions. Here is an example where coastal remote sensing data may not match up with positions of deployed acoustic arrays. 
 
 
-![ ](images/env_extract_plot7.png)
+![ ](images/env_extract/env_extract_plot7.png)
 
 In these cases, a simple extraction will result in `NA`s where no overlap occurs (e.g., black points in the figure above). To maximise the understanding of environmental variables in the region of coastal arrays, `extractEnv()` provides the functionality to fill gaps in the extraction data using the `fill_gaps` parameter. If `fill_gaps = TRUE`, the function will extract the median variable values within a buffer around points that do not overlap data pixels (broken buffers around black points in the figure above). The radius of the buffer around the points that do not overlap data can be user defined (in meters) using the additional `buffer` parameter. If no `buffer` value is provided by the user, the function will automatically choose a buffer radius based on the resolution of environmental layer [5 km for `rs_sst`, `rs_chl`, `rs_npp`, `rs_turbidity`; 15 km for `rs_sst_interpolated`; 20 km for `rs_current` and `rs_salinity`].
 
@@ -239,7 +239,7 @@ ggplot(summarised_data, aes(x = date, y = transmitter_id, size = num_det, color 
 
 ``` 
 
-![ ](images/env_extract_plot3.png)
+![ ](images/env_extract/env_extract_plot3.png)
 
 ```{r, eval=FALSE, message=FALSE, warning=FALSE}
 
@@ -255,7 +255,7 @@ ggplot(summarised_data) +
 
 ```
 
-![ ](images/env_extract_plot4.png)
+![ ](images/env_extract/env_extract_plot4.png)
 
 <br>
 <br>
@@ -288,7 +288,7 @@ ggplot(sst_df) +
   theme_bw()
 
 ```
-![ ](images/env_extract_plot5.png)
+![ ](images/env_extract/env_extract_plot5.png)
 
 <br>
 
@@ -330,7 +330,7 @@ ggplot() +
   theme_bw()
 
 ```
-![ ](images/env_extract_plot6.png)
+![ ](images/env_extract/env_extract_plot6.png)
 
 
 <br>
