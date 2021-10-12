@@ -99,6 +99,9 @@ shared_detections <- crosstalk::SharedData$new(detections)
 #The shiny app is divided by tabs (tab panels) which contain different visualisations and statistics
 #The structure is: Tag location map | Tag detections | Abacus plot and arch graph | Network map
 
+
+
+
 ui <- shiny::bootstrapPage(
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css")),
   shiny::navbarPage( windowTitle = "remora Transmitter Report", #Appears in the tab of the browser
@@ -284,7 +287,10 @@ ui <- shiny::bootstrapPage(
                                                                          shinyWidgets::pickerInput(inputId = "select_transmitter",
                                                                                                    label = htmltools::h5("Select transmitter"),
                                                                                                    choices = c(sort(unique(as.character(detections$tag_species)))),
-                                                                                                   multiple = FALSE),
+                                                                                                   selected = NULL,
+                                                                                                   multiple = TRUE,
+                                                                                                   options = list('none-selected-text' = 'Please select transmitter', 'max-options' = 1)
+                                                                                                   ),
                                                                          #tableOutput("view")
                                                                          #DTOutput("view")
                                                                          
@@ -633,6 +639,7 @@ server <- function (input, output, session) {
     leaflet::leafletProxy("mymap", data=reactive_tag_location_sp()) %>% 
       leaflet::clearMarkers() %>%
       leaflet::clearShapes() %>%
+      leaflet::clearControls() %>%
       leaflet::addMeasure(
         primaryLengthUnit = "kilometers",
         secondaryLengthUnit = "miles",
@@ -854,7 +861,11 @@ server <- function (input, output, session) {
         label= mytext_tracks(),
         stroke=FALSE) %>%
       leaflet::addLegend(pal = pal, values = vert()$n, opacity = 0.7, title = "Number of detections",
-                         position = "topright")
+                         position = "topright") %>%
+      leaflet::flyToBounds(lng1 = min(reactive_tracks()$receiver_deployment_longitude, na.rm = TRUE),
+                           lng2 = max(reactive_tracks()$receiver_deployment_longitude, na.rm = TRUE),
+                           lat1 = min(reactive_tracks()$receiver_deployment_latitude, na.rm = TRUE),
+                           lat2 = max(reactive_tracks()$receiver_deployment_latitude, na.rm = TRUE))
     
     
   }, ignoreInit = TRUE)

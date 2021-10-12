@@ -22,7 +22,8 @@
 ##'
 ##' @importFrom dplyr '%>%' filter
 ##' @importFrom utils txtProgressBar setTxtProgressBar download.file
-##' @importFrom raster raster stack extent crop addLayer setZ writeRaster
+##' @importFrom raster raster stack extent crop addLayer setZ writeRaster projection
+##' @importFrom sp CRS
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options
@@ -347,6 +348,7 @@
       raster::writeRaster(out_brick$vcur, filename = paste(path, "rs_vcur", sep = "/"), overwrite = T, format = .output_format) 
       raster::writeRaster(out_brick$ucur, filename = paste(path, "rs_ucur", sep = "/"), overwrite = T, format = .output_format) 
     } else {
+      if(is.na(raster::projection(out_brick))){raster::projection(out_brick) <- sp::CRS("EPSG:4326")}
       raster::writeRaster(out_brick, filename = paste(path, var_name, sep = "/"), overwrite = T, format = .output_format) 
     }
   }

@@ -75,7 +75,7 @@ extractMoor <- function(trackingData,
       select(-index) 
     
     
-    #  If there are 2 options for the depth sensor nearest the value provided user can select the lower or higher value or the mean of the two
+    #  If there are 2 options for the depth sensor nearest the value provided user can select the lower (min) or higher (max) value or the mean of the two
     if(scalc== "min"){
       dd1 <- dd %>%
         slice(which.min(moor_depth)) 
@@ -122,11 +122,11 @@ extractMoor <- function(trackingData,
   # Group and nest by transmitter id
   
   if(sensorType == "temperature"){
-  comb.data.out <- dd2 %>% 
+    comb.data.out <- dd2 %>% 
     # dplyr::rename(moor_sea_temp = temperature,
     #               moor_depth = depth) %>%
     group_by(transmitter_id) %>% 
-    tnest()
+    nest()
   }
   
   if(sensorType == "velocity"){

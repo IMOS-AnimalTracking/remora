@@ -218,7 +218,7 @@ ui <- shiny::bootstrapPage(
                                            htmltools::h5("Select data to display:"),
                                            inline = TRUE,
                                            choices = c("Number of detections", 
-                                                       "Number of transmitters detected", "Number of species detected"),
+                                                       "Number of transmitters", "Number of species"),
                                            selected = "Number of detections",
                                            icon = shiny::icon("check"),
                                            bigger = TRUE,
@@ -431,7 +431,7 @@ ui <- shiny::bootstrapPage(
                       shiny::mainPanel(
                         htmltools::h3("Station efficiency index"),
                         shiny::actionButton("learn_more", "Learn more", icon = shiny::icon("book-reader"), 
-                                            onclick = "window.open('https://resonate.readthedocs.io/en/latest/receiver_efficiency_index.html', '_blank' )"),
+                                            onclick = "window.open('https://doi.org/10.1016/j.fishres.2018.09.015', '_blank' )"),
                         htmltools::br(),
                         htmltools::br(),
                         #Text that appears when selected date is out of range
@@ -871,7 +871,7 @@ server <- function (input, output, session){
         ) %>%
         leaflet::addLegend(pal = pal, values = station_location_sp$n.detections, opacity=.9,
                            position = "topright", title="Number of detections")
-    }else if(input$legend == "Number of transmitters detected"){
+    }else if(input$legend == "Number of transmitters"){
       leaflet::leafletProxy("mymap", data = reactive_station_location_sp()) %>% 
         leaflet::clearMarkers() %>%
         leaflet::clearShapes() %>%
@@ -895,7 +895,7 @@ server <- function (input, output, session){
         ) %>%
         leaflet::addLegend(pal = tag_pal, values = station_location_sp$n.transmitters, opacity=.9,
                            position = "topright", title="Number of transmitters")
-    }else if(input$legend=="Number of species detected"){
+    }else if(input$legend=="Number of species"){
       leaflet::leafletProxy("mymap", data=reactive_station_location_sp()) %>% 
         leaflet::clearMarkers() %>%
         leaflet::clearShapes() %>%

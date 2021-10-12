@@ -1,21 +1,21 @@
 ##' @title Render Shiny report
 ##' @description Renders the Shiny App for transmitter and receiver reports. 
-##' @param type "transmitter" or "receiver" to produce the corresponding report
+##' @param type "transmitters" or "receivers" to produce the corresponding report
 ##' @return Shiny app with Transmitter or Receiver Project visualisations and statistics
 ##' @examples
-##' shinyReport(type = "transmitter")
+##' shinyReport(type = "transmitters")
 ##' @importFrom shiny runApp shinyOptions
 ##' @export
-shinyReport <- function(type = "transmitter"){
-  type <- match.arg(type, choices = c("transmitter", "receiver"))
+shinyReport <- function(type = "transmitters"){
+  type <- match.arg(type, choices = c("transmitters", "receivers"))
   
   wd <- getwd()
   shinyOptions(wd = wd)
   
-  if (type == "transmitter") {
+  if (type == "transmitters") {
     appFile <- system.file(file.path("shinyReport", "transmitter-app.R"), package = "remora")
     
-  } else if (type == "receiver") {
+  } else if (type == "receivers") {
     appFile <- system.file(file.path("shinyReport", "receiver-app.R"), package = "remora")
 
   } else {
