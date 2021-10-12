@@ -56,3 +56,17 @@ Continental-scale acoustic telemetry data collated as part of Australia’s Inte
 
 Oceanographic datasets are available from the IMOS Australian Ocean Data Network (www.aodn.org.au).
 
+## Licence
+NEED TO CONFIRM - Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+**Citation:**
+Jaine et al. remora: A R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. In preparation for Methods in Ecology and Evolution.
+
+**Contributors:**
+Ian Jonsen (IMOS Animal Tracking Facility, Macquarie University)
+Vinay Udyawer (Australian Institute of Marine Science)
+Ross Dwyer (University of the Sunshine Coast)
+Kylie Scales (University of the Sunshine Coast)
+Francisca Maron (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)
+Charlie Huveneers (Flinders University)
+Fabrice Jaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)
