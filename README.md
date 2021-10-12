@@ -2,7 +2,7 @@
   <img src="vignettes/images/remora_hex_logo.png" width="200">
 </p>
 <h1 align="center"><span style="color:#BEBEBE">re</span><span style="color:#808080"><b>mo</b></span><span style="color:#BEBEBE">ra</span></h1>
-<h4 align="center">An R package to facilitate the Rapid Extraction of Marine Observations for Roving Animals</h4>
+<h4 align="center">A R package to facilitate the Rapid Extraction of Marine Observations for Roving Animals</h4>
 
 <p align="center">
   <a href="#overview">Overview</a> •
@@ -12,12 +12,14 @@
   <a href="#data-accessibility">Data accessibility</a>
 </p>
 
-## Overview
-remora ...
-
-
-
 ![](vignettes/images/env_extract_plot6.png)
+
+## Overview
+We present remora, a new R package enabling the integration of animal acoustic telemetry data and oceanographic observations collected by ocean observing programs. It includes functions for:
+a) performing robust quality-control of acoustic telemetry data, 
+b) identifying available satellite-derived and sub-surface in situ oceanographic datasets coincident and collocated with the animal movement data, 
+c) extracting and appending these environmental data to animal movement data, 
+d) interactively exploring animal movements in space and time.
 
 ## Installation
 You will need the remotes package to install re**mo**ra:
