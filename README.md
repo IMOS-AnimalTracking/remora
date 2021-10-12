@@ -15,15 +15,17 @@
 ![](vignettes/images/env_extract/env_extract_plot6.png)
 
 ## Overview
-re*mo*ra is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
-- performing robust quality-control of acoustic telemetry data,  
-- identifying available satellite-derived and sub-surface in situ oceanographic datasets coincident and collocated with the animal movement data,  
-- extracting and appending these environmental data to animal movement data,  
-- interactively exploring animal movements in space and time.  
+re**mo**ra is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
+- performing robust quality-control of acoustic telemetry data as described in [Hoenner et al. 2018](https://doi.org/10.1038/sdata.2017.206) 
+- identifying available satellite-derived and sub-surface *in situ* oceanographic datasets coincident and collocated with the animal movement data  
+- extracting and appending these environmental data to animal movement data  
+- interactively exploring animal movements in space and time  
 
-Whilst the functions in re*mo*ra were primarily developed to work with acoustic telemetry data, with some minor data formatting, they will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
+Whilst the functions in re**mo**ra were primarily developed to work with acoustic telemetry data, with some minor data formatting, they will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
 
 ## Installation
+re**mo**ra requires R version > 3.5
+
 You will need the remotes package to install re**mo**ra:
 
 ```r
@@ -36,15 +38,18 @@ The latest stable version of re**mo**ra can be installed from GitHub:
 remotes::install_github('IMOS-AnimalTracking/remora')
 ```
 
-## Main Functions
-Here is a tentative description of the main remora functions + the functional workflow diagram
+## Key functionalities
+A set of functions within the re**mo**ra workflow allow users to run each of the below functionalities independently, as required. 
 
-A total of ... variables can be accessed and extracted using re**mo**ra...
+LINK TO WORKFLOW DIAGRAM HERE
 
-### runQC
-### extractEnv
-### extractMoor
-### shinyReport
+Quick links to vignettes for each functionality can be found below:  
+
+-[Quality control of acoustic telemetry data]()  
+-[Integration with remotely-sensed or gridded environmental data]()  
+-[Integration with *in situ* sub-surface oceanographic moooring data]()  
+-[Interactive visualisation of data associated with an acoustic receiver array]()  
+-[Interactive visualisation of data associated with an acoustic tagging project]()  
 
 ## Acknowledgements
 This work was funded by Australia’s Integrated Marine Observing System (IMOS, www.imos.org.au) and a Research Attraction and Acceleration Program grant from the Office of the New South Wales Chief Scientist & Engineer awarded to Sydney Institute of Marine Science. IMOS is enabled by the National Collaborative Research Infrastructure Strategy (NCRIS). It is operated by a consortium of institutions as an unincorporated joint venture, with the University of Tasmania as Lead Agent. 
