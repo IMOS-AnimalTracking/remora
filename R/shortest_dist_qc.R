@@ -18,6 +18,7 @@
 ##' @importFrom gdistance costDistance
 ##' @importFrom gmt geodist
 ##' @importFrom dplyr lag
+##' @importFrom stats approx
 ##'
 ##' @keywords internal
 ##'

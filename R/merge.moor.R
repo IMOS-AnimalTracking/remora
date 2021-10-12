@@ -25,7 +25,7 @@ merge.moor <- function(trackingData, moorData, timeMaxh=Inf, distMaxkm=Inf) {
   moorData <- moorData[,moor_timestamp := parse_date_time2(moor_timestamp, orders="YmdHMS", tz="UTC")]
   
   # Create new column in the tracking and moorings datasets to assist with merging
-  trackingData[, time := as.POSIXct(round(detection_datetime, units="hour"))]
+  trackingData[, time := as.POSIXct(round(detection_datetime, units="hours"))]
   moorData[, time := moor_timestamp]
   
   setkey(trackingData,time)    

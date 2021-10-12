@@ -39,10 +39,15 @@
 ##' @return a dataframe with the environmental variable appended as an extra column based on date of each detection
 ##'
 ##' @examples
+
+##' ## Identify all available variables
+##' \donttest{
+##' imos_variables()
+##' }
 ##' 
 ##' ## Input example detection dataset that have run through the quality control workflow (see 'runQC' function)
-##' require(tidyverse)
-##' data("TR_qc")
+##' library(tidyverse)
+##' data("TownsvilleReefQC")
 ##' 
 ##' qc_data <- 
 ##'   TR_qc %>% 
@@ -52,7 +57,7 @@
 ##' 
 ##' ## Extract daily interpolated sea surface temperature
 ##' data_with_sst <- 
-##'   env_extract(df = qc_data,
+##'   extractEnv(df = qc_data,
 ##'               X = "receiver_deployment_longitude", 
 ##'               Y = "receiver_deployment_latitude", 
 ##'               datetime = "detection_datetime", 

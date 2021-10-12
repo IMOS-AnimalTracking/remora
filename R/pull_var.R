@@ -20,7 +20,8 @@
 ##'
 ##' @examples
 ##'
-##' @importFrom dplyr '%>%' filter
+##' @importFrom dplyr '%>%' filter bind_rows n_distinct 
+##' @importFrom readr write_csv 
 ##' @importFrom utils txtProgressBar setTxtProgressBar download.file
 ##' @importFrom raster raster stack extent crop addLayer setZ writeRaster projection
 ##' @importFrom sp CRS
@@ -91,7 +92,7 @@
       
       future::plan("multisession", workers = .ncores)
       
-      par_function <- function(url, var_name, .crop, study_extent){
+      par_function1 <- function(url, var_name, .crop, study_extent){
         p()
         tryCatch({
           out_ras <- 
@@ -122,7 +123,7 @@
       
       ras_list <- 
         split(urls, urls$date) %>% 
-        furrr::future_map(.x = ., .f = par_function, var_name, .crop, study_extent, 
+        furrr::future_map(.x = ., .f = par_function1, var_name, .crop, study_extent, 
                           .options = furrr::furrr_options(seed = TRUE))
       
       out_brick <- raster::stack(ras_list)
@@ -221,7 +222,7 @@
       vcur_stack <- raster::stack()
       ucur_stack <- raster::stack()
       
-      par_function <- function(url, .crop, study_extent){
+      par_function2 <- function(url, .crop, study_extent){
         p()
         temp_nc <- fs::file_temp(ext = ".nc.gz")
         utils::download.file(url$url_name, destfile = temp_nc, quiet = TRUE)
@@ -258,7 +259,7 @@
       ras_list <- 
         urls %>% 
         split(., .$date) %>% 
-        furrr::future_map(.x = ., .f = par_function, .crop, study_extent, 
+        furrr::future_map(.x = ., .f = par_function2, .crop, study_extent, 
                           .options = furrr::furrr_options(seed = TRUE))
       
       out_brick <- list(gsla = gsla_stack, vcur = vcur_stack, ucur = ucur_stack)

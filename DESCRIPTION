@@ -1,6 +1,6 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.7.0.9610
+Version: 0.7.0.9999
 Authors@R: 
     c(person(given = "Ross",
            family = "Dwyer",
@@ -102,7 +102,8 @@ Suggests:
     testthat (>= 3.0.0),
     rnaturalearth,
     tcltk,
-    rmarkdown
+    rmarkdown,
+    hrbrthemes
 Remotes:
     shinycssloaders
 Depends: R (>= 3.5.0)

@@ -14,7 +14,7 @@ output:
   pdf_document:
     toc: no
 vignette: >
-  %\VignetteIndexEntry{remora_extractEnv}
+  %\VignetteIndexEntry{remora_extractMoor}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

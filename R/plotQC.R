@@ -22,6 +22,8 @@
 ##' @importFrom scales alpha
 ##' @importFrom maps map.axes
 ##' @importFrom sp plot
+##' @importFrom grDevices png dev.off
+##' @importFrom graphics par points legend mtext 
 ##'
 ##' @export
 

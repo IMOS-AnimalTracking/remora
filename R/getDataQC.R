@@ -16,7 +16,7 @@
 ##' @importFrom readr read_csv cols_only col_character col_integer col_guess
 ##' @importFrom readr col_logical col_datetime col_double
 ##' @importFrom dplyr '%>%' mutate left_join select group_by ungroup distinct
-##' @importFrom dplyr transmute any_of
+##' @importFrom dplyr transmute any_of everything
 ##' @importFrom lubridate dmy_hm dmy
 ##'
 ##' @keywords internal

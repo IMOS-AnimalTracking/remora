@@ -53,10 +53,10 @@ plotDT <- function(moorData,
       data = datplot,
       x = ~mooring.date, y = ~depth_bin, z = ~moor_sea_temp, #text = ~paste('V2: ', V2),
       hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
-                            '<br><b>Sea temperature (°C)</b>: %{z}<extra></extra> '),
+                            '<br><b>Sea temperature (\u0176C)</b>: %{z}<extra></extra> '),
       name = " ",
       type = "heatmap",
-      colorbar = list(title = "Sea Temperature (°C)", len = 0.5, y = 0.5)) %>% 
+      colorbar = list(title = "Sea Temperature (\u0176C)", len = 0.5, y = 0.5)) %>% 
       layout(
       yaxis = list(title = "Depth (m)",
                    autorange = "reversed",
@@ -71,10 +71,10 @@ plotDT <- function(moorData,
       data = datplot,
       x = ~mooring.date, y = ~depth_bin, z = ~moor_sea_temp, #text = ~paste('V2: ', V2),
       hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',
-                            '<br><b>Sea temperature (°C)</b>: %{z}<extra></extra> '),
+                            '<br><b>Sea temperature (\u0176C)</b>: %{z}<extra></extra> '),
       name = " ",
       type = "heatmap",
-      colorbar = list(title = "Sea Temperature (°C)")) %>% 
+      colorbar = list(title = "Sea Temperature (\u0176C)")) %>% 
       layout(
         yaxis = list(title = "Depth (m)",
                      autorange = "reversed",
@@ -109,7 +109,7 @@ plotDT <- function(moorData,
                      zeroline = FALSE)
       )
     #Create other plot when plotling without detections (the colourbar has different position)
-    p3 <- pplot_ly(
+    p3 <- plot_ly(
       data = datplot,
       x = ~mooring.date, y = ~depth_bin, z = ~moor_ucur, 
       hovertemplate = paste('<br><b>Depth (m)</b>: %{y}',

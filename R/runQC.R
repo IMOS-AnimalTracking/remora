@@ -73,6 +73,7 @@
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options
+##' @importFrom utils flush.console
 ##'
 ##' @export
 

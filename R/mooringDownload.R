@@ -1,7 +1,7 @@
 ##' @title Download the IMOS Mooring Data for a Single Mooring Site
 ##'
 ##' @description Downloads all IMOS mooring data for a specified, single mooring site
-##' @param moor_site_code character string if the name of the desired mooring (updated from moorID to match download file)
+##' @param moor_site_codes character vector of the name(s) of the desired mooring(s) (updated from moorID to match download file)
 ##' @param fromWeb logical string detailing whether or no the netCDF should be downloaded from the web or uploaded from a saved file location
 ##' @param sensorType character string detailing which sensor value we are interested in. Can be "temperature", "velocity", "salinity or "oxygen"."
 ##' @param itimeout integer value for number of seconds we are willing to wait before timeout to download netcdf from the web. Defaults to 60

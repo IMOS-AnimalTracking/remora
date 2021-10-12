@@ -13,7 +13,7 @@ output:
     theme: cerulean
     highlight: pygments
 vignette: >
-  %\VignetteIndexEntry{remora_extractEnv}
+  %\VignetteIndexEntry{remora_shinyReport_transmitters}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
