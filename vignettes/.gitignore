@@ -1,3 +1,4 @@
 *.html
 *.R
 QC_logfile.txt
+*.DS_Store
