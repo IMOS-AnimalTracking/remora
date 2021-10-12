@@ -39,11 +39,9 @@
 ##' @return a dataframe with the environmental variable appended as an extra column based on date of each detection
 ##'
 ##' @examples
-##' ## Identify all available variables
-##' imos_variables()
 ##' 
 ##' ## Input example detection dataset that have run through the quality control workflow (see 'runQC' function)
-##' library(tidyverse)
+##' require(tidyverse)
 ##' data("TR_qc")
 ##' 
 ##' qc_data <- 
