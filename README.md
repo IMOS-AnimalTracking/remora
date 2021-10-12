@@ -12,7 +12,7 @@
   <a href="#data-accessibility">Data accessibility</a>
 </p>
 
-![](vignettes/images/env_extract_plot6.png)
+![](vignettes/images/env_extract/env_extract_plot6.png)
 
 ## Overview
 We present remora, a new R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:
