@@ -13,7 +13,7 @@
   <a href="#installation">Installation</a> •
   <a href="#key-functionalities">Key functionalities</a> •
   <a href="#acknowledgements">Acknowledgements</a> •
-  <a href="#data-accessibility">Data accessibility</a>
+  <a href="#data-accessibility">Data accessibility</a> •
   <a href="#licence">Licence</a>
 </p>
 
@@ -59,6 +59,7 @@ Quick links to vignettes for each functionality can be found below:
 ## Acknowledgements
 <p align="left">
   <img src="vignettes/images/logos_banner.png" width="500"> 
+  
 This work was funded by Australia’s Integrated Marine Observing System (IMOS, www.imos.org.au) and a Research Attraction and Acceleration Program grant from the Office of the New South Wales Chief Scientist & Engineer awarded to Sydney Institute of Marine Science. IMOS is enabled by the National Collaborative Research Infrastructure Strategy (NCRIS). It is operated by a consortium of institutions as an unincorporated joint venture, with the University of Tasmania as Lead Agent. 
 
 We thank Michelle Heupel, Colin Simpfendorfer and Paul Butcher for allowing us access to the following sample datasets to aid code development.
