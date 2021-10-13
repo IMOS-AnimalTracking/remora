@@ -56,7 +56,7 @@ The detections data, receiver and transmitter metadata files are required to ena
 
 # Usage of the `runQC()` function
 
-The primary function for conducting the QC is `runQC()` function. Let's start with an example tracking project included in the `remora` package by first creating a `files` list:
+The primary function for conducting the QC is the `runQC()` function. Let's start with an example tagging project included in the `remora` package by first creating a `files` list:
 
 ```{r files 2, warning=FALSE}
 files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"), package = "remora"),
@@ -93,7 +93,7 @@ load("R/tag_qc.rda")
 tag_qc
 ```
 
-The `QC` list variable contains the QC'd detections data and metadata for each individual deployment. The utility function `grabQC()` provides a simple method to extract manageable segments of the QC output for subsequent review and analysis. For example, we can grab only the basic detection data with the QC flags and then filter the detections to retain only those flagged as 'valid' or 'likely valid':
+The `dQC` list variable contains the QC'd detections data and metadata for each individual deployment. The utility function `grabQC()` provides a simple method to extract manageable segments of the QC output for subsequent review and analysis. For example, we can grab only the basic detection data with the QC flags and then filter the detections to retain only those flagged as 'valid' or 'likely valid':
 
 ```{r grab dQC, message=FALSE}
 dQC <- grabQC(tag_qc, what = "dQC") %>%
