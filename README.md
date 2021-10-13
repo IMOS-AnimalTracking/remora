@@ -74,7 +74,9 @@ Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW
 - Oceanographic datasets are available from the [IMOS Australian Ocean Data Network](https://portal.aodn.org.au/).
 
 ## Licence
-NEED TO CONFIRM - Creative Commons Attribution 4.0 International (CC BY 4.0)
+<p align="left">
+  <img src="vignettes/images/gplv3-127x51.png" width="100"> 
+GNU General Public License (GPL>=3) https://www.gnu.org/licenses/gpl-3.0.en.html
 
 **Citation:**  
 Jaine *et al.* **remora**: A R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
