@@ -25,7 +25,7 @@ merge.moor <- function(trackingData, moorData, timeMaxh=Inf, distMaxkm=Inf) {
   moorData <- moorData[,moor_timestamp := parse_date_time2(moor_timestamp, orders="YmdHMS", tz="UTC")]
   
   # Create new column in the tracking and moorings datasets to assist with merging
-  trackingData[, time := as.POSIXct(round(detection_datetime, units="hours"))]
+  trackingData[, time := as.POSIXct(round.POSIXt(detection_datetime, units="hours"))]
   moorData[, time := moor_timestamp]
   
   setkey(trackingData,time)    
@@ -48,7 +48,7 @@ merge.moor <- function(trackingData, moorData, timeMaxh=Inf, distMaxkm=Inf) {
   #elapsed.time <- Envmatch$detection_datetime %--% Envmatch$moor_timestamp
   elapsed.time <- interval(Envmatch$detection_datetime,Envmatch$moor_timestamp)
   Envmatch$timediff_h <- abs(as.duration(elapsed.time) / dhours(1)) # Add the mismatch in time between the two datasets in hours
-  Envmatch$timediff_h <- round(Envmatch$timediff_h,4) # round to 4 decimal places
+  Envmatch$timediff_h <- round(Envmatch$timediff_h, 4) # round to 4 decimal places
   
   varnames <- names(moorData)[names(moorData) %in% c("moor_sea_temp", "moor_ucur", "moor_vcur", "moor_psal")] 
   
