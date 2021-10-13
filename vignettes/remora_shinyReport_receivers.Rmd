@@ -58,7 +58,7 @@ In this vignette, multi-year and multi-species data from the IMOS Heron Island r
 
 ## Detections map
 <br>
-Map of the detections recorded at each station in the receiver array. The user can select different datasets to overlay on the map including the number of detections, transmitters or species detected. Additionally, the date range can be modified with the time slider on the left panel. Hovering on the data points reveals pop-up text including the station name, installation name, number of detections, number of species, number of transmitters and the coordinates of the receiver station.
+Map of the detections recorded at each station in the receiver array. The user can select different datasets to overlay on the map including the number of detections, transmitters or species detected. Additionally, the date range can be modified with the time slider on the left panel. Hovering on the markers reveals pop-up text including the station name, installation name, number of detections, number of species, number of transmitters and the coordinates of the receiver station.
 
 <br>
 

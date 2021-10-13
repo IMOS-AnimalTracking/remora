@@ -52,16 +52,13 @@ In this vignette, a sample dataset from the Townsville Reefs project (Heupel et 
 ![](images/transmitter_report/select-detections.png)
 
 
-
-
 ## Transmitter deployments
 
 <br>
 
-Map of the transmitter deployments colour coded by species. The user can filter by species and/or date of the transmitter deployment.
+Map showcasing the locations of transmitter deployments associated with the selected tagging project, colour-coded by species. The user can filter according to the species and/or date of the transmitter deployment.
 
-When hovering on the bubbles additional information appears with the coordinates, station name and number of detections. 
-
+Hovering on the markers will reveal additional information including the coordinates, station name and number of detections - THIS DOES NOT MAKE SENSE - CHECK WITH FRANCISCA
 
 
 <br>
@@ -69,40 +66,30 @@ When hovering on the bubbles additional information appears with the coordinates
 ![](images/transmitter_report/transmitter_deployments.png)
 
 
-
-
-
-
 ## Transmitter detections
 
 <br>
 
-Bar plot of the number of detections per transmitter colour coded by species. The user can filter to by transmitters and/or species.
+Bar plot presenting the number of detections recorded per transmitter, colour-coded by species. The user can filter by transmitter ID and/or species. Hovering on the bars will reveal additional information including the species common name and number of detections recorded. The plot can be downloaded by clicking on the camera icon in the top right corner.
 
-When hovering on the bars additional information appears with the species common name, number of detections, station name and transmitter id. The plot can be downloaded by clicking on the camera icon on the top right corner.
-
-The summary table on the left panel shows the transmitter ID, number of detections per transmitter and species common name. The table can be downloaded as .CSV, Excel or PDF by clicking on the respective button. 
-
+The table on the left panel summarises the number of detections per transmitter per species. This summary table can be downloaded as a .CSV, Excel or .PDF file by clicking on the respective buttons. 
 
 <br>
-
-
 
 ![](images/transmitter_report/transmitter_detections.png)
 
 ## Detections over time
 
-This tab comprises the abacus and connectivity plot. Users can filter both plots by transmitter(s) and date range. If the date is out of range a warning message will appear.
-
+This tab comprises an interactive abacus plot as well as a connectivity plot allowing the exploration of transmitter detections through time. Users can filter both plots according to the transmitter ID(s) and date range of interest. A warning message will appear if the date is out of range.
 
 
 ### Abacus plot
 
 <br>
 
-Interactive plot of the detections for the transmitter(s) selected colour coded by installation. When hovering on the plot, additional information is shown (transmitter ID, detection date and number of detections).
+Interactive plot of the detections over time for the selected transmitter(s), colour-coded according to the receiver installation they were detected at. Hovering on the plot will reveal additional information including the detection date and number of detections recorded for the selected transmitter.
 
-The abacus plot can be saved by clicking on the camera icon in the top right corner of the plot. 
+The plot can be saved by clicking on the camera icon in the top right corner of the plot. 
 
 <br>
 
@@ -112,9 +99,9 @@ The abacus plot can be saved by clicking on the camera icon in the top right cor
 
 <br>
 
-The plot represents movement connections between receiver stations and installations visited by the selected transmitter(s).Colours identify separate installations and line thickness highlights the importance of these movement paths within the dataset.
+The connectivity plot represents movement connections recorded between receiver stations and installations visited by the selected transmitter(s). Colours identify separate installations in the dataset and line boldness highlights the importance of these movement paths within the dataset.
 
-The connectivity plot can be saved by clicking on the "Download plot" button.
+The plot can be saved by clicking on the "Download plot" button.
 
 <br>
 
@@ -124,18 +111,17 @@ The connectivity plot can be saved by clicking on the "Download plot" button.
 ## Detections network map 
 <br>
 
-The detections network map contains a leaflet map with the detections network for the transmitter selected. Each bubble represents the station at which the transmitter was detected and they are colour coded by number of detections (see legend on the right side of the map). The left panel shows the species common name, the total number of detections, stations and installations. <span style="color: red;">The user has to select a transmitter in order for the map to show the network.</span> 
+The detections network map features the connectivity paths between detections recorded for the selected transmitter. Each marker on the map represents the station at which the transmitter was detected, colour-coded by the number of detections recorded (see legend on the right side of the map). The left panel also presents the species common name, total number of detections as well as stations and installations that the transmitter was detected at. <span style="color: red;">The user has to select a transmitter in order for the map to show the network.</span> 
 
-Note that the map takes more time to load when the transmitter had higher number of detections.
+Note: the map may take more time to load depending on the number of detections for the selected transmitter.
 
 <br>
 ![](images/transmitter_report/detections_network_map.png)
 
 
-
 <br>
 
-*Note: To explore and visualise a Receiver Array project head to [remora_shinyReport_receivers vignette](remora_shinyReport_receivers.html)*
+*Note: To explore and visualise data relative to a receiver array project, head over to the [remora_shinyReport_receivers vignette](remora_shinyReport_receivers.html)*
 
 ## References
 
@@ -144,7 +130,7 @@ Note that the map takes more time to load when the transmitter had higher number
 2. IMOS 2021. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11.
 
 **Vignette version**
-0.0.3 (11 Oct 2021)
+0.0.4 (13 Oct 2021)
 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
