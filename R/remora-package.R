@@ -87,4 +87,7 @@ globalVariables(c(".", "year", "html", "type", "a", "fromdate", "todate", "media
                   "site_code", "mooring.date", "moor_site_code", "depth_bin",
                   "moor_sea_temp", "CAAB_species_id", "caab_dump", "CAAB_id",
                   "latitude", "longitude", "n.tags", "n.species", "detections_date_range",
-                  "date_range"))
+                  "date_range", "Count", "receiver_project_name.x", "transmitter_sensor_value",
+                  "transmitter_type", "transmitter_sensor_type", "transmitter_sensor_slope",
+                  "transmitter_sensor_unit", "transmitter_estimated_battery_life",
+                  "transmitter_status", "receiver_project_name", "measurement"))
