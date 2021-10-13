@@ -75,8 +75,8 @@ The primary function to extract and append in-situ data collected by the [IMOS N
 Lets start with a dataset that has undergone quality control (see `runQC()`; [link to Ians vignette]()).
 
 ```{r, eval = TRUE, message=FALSE, warning=FALSE}
-## IDJ: replaced with call to .rda compressed file (currently using same QC detections as remora_extractEnv.Rmd)
-load("data/TownsvilleReefQC.RData")
+## Example dataset that has undergone quality control using the `runQC()` function
+data("TR_qc")
 
 ## Un-nest the output and retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)
 qc_data <- TR_qc %>% 
@@ -105,9 +105,8 @@ qc_data %>%
                      crs = 4326) +
   facet_wrap(~transmitter_id,nrow=3) +
   theme(legend.position="bottom")
-
 ```
-
+![ ](images/env_extract/env_extract_plot1.png)
 <br>
 
 We can also have a look at the temporal pattern in detections:
@@ -122,6 +121,7 @@ qc_data %>%
   theme_bw()
 ```
 
+![ ](images/env_extract/env_extract_plot2.png)
 
 <br>
 
@@ -140,7 +140,6 @@ There is only one parameters within the function that can help the user identify
 ```{r, eval=TRUE, message=TRUE, warning=FALSE}
 # Generate a table containing IMOS moorings metadata for only those moorings with temperature data
 moorT <- mooringTable(sensorType="temperature")
-head(moorT)
 
 # PLot the location of the moorings with associated metadata
 library(leaflet)
@@ -154,7 +153,7 @@ leaflet() %>%
                            "Coverage end:", moorT$time_coverage_end))
 
 ```
-
+![ ](images/moor_extract/moor_extract_plot3.png)
 <br>
 
 ## Find closest mooring to our animal detections
@@ -172,7 +171,6 @@ In this function, the user specifies which detection dataset with which they whi
 #Extract the nearest mooring to each station where a tag was detected
 det_dist <- getDistance(trackingData = qc_data, 
                         moorLocations = moorT)
-head(det_dist)
 ```
 
 ## 
@@ -232,7 +230,7 @@ leaflet() %>%
                                  "First tag detection:",qs_stat$first_detection, "<br>",
                                  "Last tag detection:",qs_stat$last_detection))
 ```
-
+![ ](images/moor_extract/moor_extract_plot4.png)
 <br>
 
 ## Moorings data download
@@ -284,7 +282,7 @@ When downloading dissolved `oxygen` data, four variables are downloaded: sensor 
 
 We can use the moorings data we've extracted to plot an interactive depth-time plot showing three-dimensional variability in the physical parameter of interest over a specified time period, and then plot the animal tracking detections which are close to this mooring. When hovering on the plot, a vertical line will appear so that it is easier to find the environmental variable associated to the detection.
 
-For example, we might want to plot temperature over depth at the GBRMYR mooring, `GBRMYR`, and then add all the bull shark detections over the same time period from the closest IMOS Animal Tracking Facility installation.
+For example, we might want to plot temperature over depth at the GBRPPS mooring, `GBRPPS`, and then add all the bull shark detections over the same time period from the closest IMOS Animal Tracking Facility installation.
 
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
@@ -300,6 +298,7 @@ plotDT(moorData=moorDat.l$GBRPPS, # have GBRMYR, GBRPPS and NRSYON available
        detEnd="2014-02-01")
 
 ```
+![ ](images/moor_extract/moor_extract_plot5.png)
 
 We can also visualise current `velocity` data with the detections, where moorings have velocity sensors. For example, we can visualise the zonal, North-South (v) velocity (`vcur`) at the the same mooring, and plot the bull shark detections associated with that mooring.
 
@@ -324,7 +323,7 @@ plotDT(moorData=plotDat.l$GBRPPS,
        detStart="2013-11-01",
        detEnd="2014-02-01")
 ```
-
+![ ](images/moor_extract/moor_extract_plot6.png)
 
 ## Moorings data extraction
 Say we wanted to match each animal tag detection to the nearest mooring sensor value. How would we achieve this?
@@ -413,7 +412,7 @@ ggplot(summarised_data_id, aes(x = date, y = transmitter_id, size = num_det, col
   labs(subtitle = "In-situ sea water temperature (°C)") +
   theme_bw()
 ``` 
-
+![ ](images/moor_extract/moor_extract_plot7.png)
 <br>
 
 Alternatively we can view the appended detection plots grouped by `station_name` for only those installations which have mooring sensor data associated with it:
@@ -435,7 +434,7 @@ ggplot(summarised_data_id, aes(x=date,y=installation_name,
   labs(subtitle = "In-situ sea water temperature (°C)") +
   theme_bw()
 ``` 
-
+![ ](images/moor_extract/moor_extract_plot8.png)
 <br>
 
 Finally, we can plot the sensor values associated to a detection as a histogram showing the number of detection records associated with each sensor value.
@@ -453,7 +452,9 @@ data_with_mooring_sst_shallow %>%
   theme(
     plot.title = element_text(size=15)
   )
-  
+```  
+![ ](images/moor_extract/moor_extract_plot9.png)
+```{r, eval = TRUE, message=FALSE, warning=FALSE}
 # Next plot the depth data
 data_with_mooring_sst_shallow %>% 
   tidyr::unnest(cols = c(data)) %>% 
@@ -466,12 +467,12 @@ data_with_mooring_sst_shallow %>%
     plot.title = element_text(size=15)
   )
 ```
-
+![ ](images/moor_extract/moor_extract_plot10.png)
 
 ---------------------------------------
 
 **Vignette version**
-0.1.0 (09 Oct 2021)
+0.1.1 (13 Oct 2021)
 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
