@@ -57,15 +57,15 @@ Quick links to vignettes for each functionality can be found below:
 - [Interactive visualisation of data associated with an acoustic tagging project]()  
 
 ## Acknowledgements
-This work was funded by Australia’s Integrated Marine Observing System (IMOS, www.imos.org.au) and a Research Attraction and Acceleration Program grant from the Office of the New South Wales Chief Scientist & Engineer awarded to Sydney Institute of Marine Science. IMOS is enabled by the National Collaborative Research Infrastructure Strategy (NCRIS). It is operated by a consortium of institutions as an unincorporated joint venture, with the University of Tasmania as Lead Agent. 
-
 ADD IMOS AND NSW GOV LOGOS HERE
+
+This work was funded by Australia’s Integrated Marine Observing System (IMOS, www.imos.org.au) and a Research Attraction and Acceleration Program grant from the Office of the New South Wales Chief Scientist & Engineer awarded to Sydney Institute of Marine Science. IMOS is enabled by the National Collaborative Research Infrastructure Strategy (NCRIS). It is operated by a consortium of institutions as an unincorporated joint venture, with the University of Tasmania as Lead Agent. 
 
 We thank Michelle Heupel, Colin Simpfendorfer and Paul Butcher for allowing us access to the following sample datasets to aid code development.
 
-Heupel, M., Simpfendorfer, C., Espinoza, M., Bierwagen, S., de Faria, F., Ledee, E., Matley, J., Tobin, A. (2021) Townsville Reefs receiver array (Available: Integrated Marine Observing System. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11).
+Heupel, M., Simpfendorfer, C. *et al.* (2021) Townsville Reefs (Available: Integrated Marine Observing System. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11).
 
-Butcher, P., Smoothey, A., Peddemors, V., Brand, C., Gallen, C., Spaet, J., Patterson, T., Bradford, R. (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW Department of Primary Industries. (Available: Integrated Marine Observing System. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11).
+Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW Department of Primary Industries. (Available: Integrated Marine Observing System. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11).
 
 ## Data accessibility
 - Continental-scale acoustic telemetry data collated as part of Australia’s Integrated Marine Observing System (IMOS) are available through the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au). 
@@ -76,7 +76,7 @@ Butcher, P., Smoothey, A., Peddemors, V., Brand, C., Gallen, C., Spaet, J., Patt
 NEED TO CONFIRM - Creative Commons Attribution 4.0 International (CC BY 4.0)
 
 **Citation:**  
-Jaine et al. **remora**: A R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
+Jaine *et al.* **remora**: A R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
 
 **Contributors:**  
 **Ian Jonsen** @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)  
