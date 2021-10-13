@@ -92,4 +92,5 @@ globalVariables(c(".", "year", "html", "type", "a", "fromdate", "todate", "media
                   "transmitter_type", "transmitter_sensor_type", "transmitter_sensor_slope",
                   "transmitter_sensor_unit", "transmitter_estimated_battery_life",
                   "transmitter_status", "receiver_project_name", "measurement", 
-                  "detection_date", "transmitter_sensor_intercept"))
+                  "detection_date", "transmitter_sensor_intercept",
+                  "imos_variables_table"))
