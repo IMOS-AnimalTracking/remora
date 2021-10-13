@@ -12,7 +12,6 @@
 ##'
 ##' @return a tibble with urls from where to download environmental data and layer names (where applicable) 
 ##'
-##' @examples
 ##'
 ##' @importFrom dplyr '%>%' slice left_join transmute mutate filter select case_when
 ##' @importFrom magrittr %$% %<>%

@@ -32,7 +32,7 @@ imos_variables <- function(variable = NULL){
 Or leave as 'NULL' to see all variables available")} 
   }
   
-  data("env_extract_output")
+  data("env_extract_output", environment = environment())
   
   var_tab <- 
     var_tab %>% 

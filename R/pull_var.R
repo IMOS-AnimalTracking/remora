@@ -18,8 +18,6 @@
 ##'
 ##' @return a raster stack object with daily spatial environmental layers associated with detection dates
 ##'
-##' @examples
-##'
 ##' @importFrom dplyr '%>%' filter bind_rows n_distinct 
 ##' @importFrom readr write_csv 
 ##' @importFrom utils txtProgressBar setTxtProgressBar download.file

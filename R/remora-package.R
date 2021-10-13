@@ -36,6 +36,14 @@ NULL
 ##' @description ??
 NULL
 
+##' @name imos_variables_table
+##' @docType data
+##' @title ??
+##' @format .RData
+##' @keywords data
+##' @description ??
+NULL
+
 ## stop R CMD check generating NOTES about global variables
 globalVariables(c(".", "year", "html", "type", "a", "fromdate", "todate", "median", 
                   "var_fill", "layer", "par_function", "receiver_name", "receiver_deployment_longitude",

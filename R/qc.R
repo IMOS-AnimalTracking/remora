@@ -9,8 +9,6 @@
 ##'
 ##' @return temporal_outcome is a list with each element corresponding to a QC'd tag detection file
 ##'
-##' @examples
-##'
 ##' @importFrom dplyr '%>%' bind_cols
 ##' @importFrom sp 'coordinates<-' 'proj4string<-' 'proj4string' over
 ##' @importFrom geosphere distGeo

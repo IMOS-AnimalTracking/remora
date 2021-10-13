@@ -89,6 +89,7 @@ Imports:
     scales,
     sf,
     shiny,
+    shinycssloaders,
     shinythemes,
     shinyWidgets,
     sp,
@@ -103,9 +104,9 @@ Suggests:
     rnaturalearth,
     tcltk,
     rmarkdown,
-    hrbrthemes
-Remotes:
-    shinycssloaders
+    hrbrthemes,
+    classInt,
+    tidyverse
 Depends: R (>= 3.5.0)
 SystemRequirements: GDAL (>= 2.4.2), GEOS (>= 3.7.0), PROJ (>= 5.2.0)
 VignetteBuilder: knitr

@@ -14,8 +14,6 @@
 ##'
 ##' @return a dataframe with unique position, unique dates and extracted environmental variables 
 ##'
-##' @examples
-##'
 ##' @importFrom dplyr '%>%' mutate case_when select
 ##' @importFrom sf st_as_sf st_drop_geometry
 ##' @importFrom raster raster extract extent 
