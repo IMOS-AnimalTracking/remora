@@ -51,11 +51,11 @@ LINK TO WORKFLOW DIAGRAM HERE
 
 Quick links to vignettes for each functionality can be found below:  
 
+- [Interactive visualisation of data associated with an acoustic telemetry receiver array]()
+- [Interactive visualisation of data associated with an acoustic telemetry tagging project]()
 - [Quality control of acoustic telemetry data]()  
 - [Integration with remotely-sensed or gridded environmental data]()  
 - [Integration with *in situ* sub-surface oceanographic moooring data]()  
-- [Interactive visualisation of data associated with an acoustic receiver array]()  
-- [Interactive visualisation of data associated with an acoustic tagging project]()  
 
 ## Acknowledgements
 <p align="left">
