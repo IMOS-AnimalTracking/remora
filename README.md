@@ -69,7 +69,7 @@ Heupel, M., Simpfendorfer, C. *et al.* (2021) Townsville Reefs (Available: Integ
 Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW Department of Primary Industries. (Available: Integrated Marine Observing System. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11).
 
 ## Data accessibility
-- Continental-scale acoustic telemetry data collated as part of Australia’s Integrated Marine Observing System (IMOS) are available through the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au). 
+- Continental-scale acoustic telemetry data collated as part of Australia’s Integrated Marine Observing System (IMOS) are available via the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au). 
 
 - Oceanographic datasets are available from the [IMOS Australian Ocean Data Network](https://portal.aodn.org.au/).
 
