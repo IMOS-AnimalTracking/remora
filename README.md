@@ -17,6 +17,7 @@
   <a href="#licence">Licence</a>
 </p>
 
+<p align="center">
 ![](vignettes/images/env_extract/env_extract_plot6.png)
 
 ## Overview
