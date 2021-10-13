@@ -50,10 +50,10 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 
 	if(file.exists(file.path(tmp, CAAB_species_id, "CAAB_FISHMAPPolygon.shp"))){
 		shp <- suppressWarnings(readOGR(dsn = file.path(tmp, CAAB_species_id, 'CAAB_FISHMAPPolygon.shp'), verbose = F))
-		shp_b <- suppressWarnings(spTransform(shp, CRS = CRS("+proj=merc +ellps=GRS80")))
+		shp_b <- suppressWarnings(spTransform(shp, CRSobj = CRS("+proj=merc +ellps=GRS80")))
 		shp_b <- gBuffer(shp_b, width = 500000) ## 500 km buffer area
 		shp_b <- gSimplify(shp_b, tol = 0.01, topologyPreserve = TRUE)
-		shp_b <- spTransform(shp_b, CRS = CRS("+proj=longlat +datum=WGS84"))
+		shp_b <- spTransform(shp_b, CRSobj = CRS("+proj=longlat +datum=WGS84"))
 
 		## delete file after use - leave this commented for now as tempdir should be
 		##  deleted by R at end of session
@@ -87,10 +87,10 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 			    verbose = F
 			  ))
 			  shp_b <-
-			    suppressWarnings(spTransform(shp, CRS = CRS("+proj=merc +ellps=GRS80")))
+			    suppressWarnings(spTransform(shp, CRSobj = CRS("+proj=merc +ellps=GRS80")))
 			shp_b <- gBuffer(shp_b, width = 500000) ## 500 km buffer area
 			shp_b <- gSimplify(shp_b, tol = 0.01, topologyPreserve = TRUE)
-			shp_b <- spTransform(shp_b, CRS = CRS("+proj=longlat +datum=WGS84"))
+			shp_b <- spTransform(shp_b, CRSobj = CRS("+proj=longlat +datum=WGS84"))
 
 			return(shp_b)
 			}
@@ -120,20 +120,20 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 
 	    if (!is.na(k[1]) & !is.na(k[2])) {
 	      shp_1 <-
-	        suppressWarnings(spTransform(shp_1, CRS = CRS("+proj=merc +ellps=GRS80")))
+	        suppressWarnings(spTransform(shp_1, CRSobj = CRS("+proj=merc +ellps=GRS80")))
 	      shp_2 <-
-	        suppressWarnings(spTransform(shp_2, CRS = CRS("+proj=merc +ellps=GRS80")))
+	        suppressWarnings(spTransform(shp_2, CRSobj = CRS("+proj=merc +ellps=GRS80")))
 	      shp_1 <- gBuffer(shp_1, width = 0, byid = TRUE)
 	      shp_2 <- gBuffer(shp_2, width = 0, byid = TRUE)
 	      shp <- gUnion(shp_1, shp_2)
 	    }
-	    shp <- spTransform(shp, CRS = CRS("+proj=longlat +datum=WGS84"))
+	    shp <- spTransform(shp, CRSobj = CRS("+proj=longlat +datum=WGS84"))
 	    shp_b <-
-	      suppressWarnings(spTransform(shp, CRS = CRS("+proj=merc +ellps=GRS80")))
+	      suppressWarnings(spTransform(shp, CRSobj = CRS("+proj=merc +ellps=GRS80")))
 	    shp_b <- gBuffer(shp_b, width = 500000) ## 500 km buffer area
 	    shp_b <- gSimplify(shp_b, tol = 0.01, topologyPreserve = TRUE)
 	    shp_b <-
-	      spTransform(shp_b, CRS = CRS("+proj=longlat +datum=WGS84"))
+	      spTransform(shp_b, CRSobj = CRS("+proj=longlat +datum=WGS84"))
 	    if (exists("shp_1"))
 	      rm(shp_1)
 	    if (exists("shp_2"))

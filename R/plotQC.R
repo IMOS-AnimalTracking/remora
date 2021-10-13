@@ -78,7 +78,7 @@ plotQC <- function(x, path = getwd()) {
 		                                     include.lowest=TRUE))
 		data$binned_detections <- as.numeric(binned_detects$bin)
 
-		png(file = paste(path,
+		png(filename = paste(path,
 		                 '/',
 		                 gsub(' ', '_', species$species_common_name[i]), ".png", sep= ""),
 		    width = 1920,

@@ -36,7 +36,7 @@ extractMoor <- function(trackingData,
     trackingData.1 <- out[[x]] # Get the tracking dataset associated with a single mooring
     
     # load moorings dataframe from a single site.code matching that of the detections dataframe
-    moorData.1 <- mooringDownload(moor_site_code=moorName.1,
+    moorData.1 <- mooringDownload(moor_site_codes = moorName.1,
                                   fromWeb = FALSE,
                                   sensorType=sensorType,
                                   itimeout = 240,
