@@ -1,45 +1,61 @@
 ##' @title Extract and append remote sensing environmental data to detection data
 ##'
-##' @description Accesses and download environmental data from the IMOS THREDDS server and
-##' append variables to detection data based on date of detection
+##' @description Accesses and download environmental data from the IMOS THREDDS 
+##' server and append variables to detection data based on date of detection
 ##'
-##' @param df detection data source in data frame with at the minimum a X, Y and date time field
+##' @param df detection data source in data frame with at the minimum a X, Y and
+##' date time field
 ##' @param X name of column with X coordinate or longitude (EPSG 4326)
 ##' @param Y name of column with Y coordinate or latitude (EPSG 4326)
-##' @param datetime name of column with date time stamp (Coordinated Universal Time; UTC)
+##' @param datetime name of column with date time stamp (Coordinated Universal 
+##' Time; UTC)
 ##' @param env_var variable needed options include ('rs_sst', 'rs_sst_interpolated', 
-##' 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'bathy', 'dist_to_land', 'rs_current')
-##' @param folder_name name of folder within 'imos.cache' where downloaded rasters should be saved. 
-##' default NULL produces automatic folder names based on study extent
-##' @param verbose should function provide details of what operation is being conducted. Set to `FALSE` to keep it quiet
-##' @param cache_layers should the extracted environmental data be cached within the working directory? 
-##' if FALSE stored in temporary folder and discarded after environmental extraction
-##' @param crop_layers should the extracted environmental data be cropped to within the study site
-##' @param full_timeperiod should environmental variables extracted for each day across full monitoring period, 
-##' time and memory consuming for long projects
-##' @param fill_gaps should the function use a spatial buffer to estimate environmental variables for detections where there is missing data.
-##' Default is `FALSE` to save computational time.
-##' @param buffer radius of buffer (in m) around each detection from which environmental variables should be extracted from. A median value of pixels 
-##' that fall within the buffer will be used if `fill_gaps = TRUE`. If `NULL` a buffer will be chosen based on the resolution of environmental layer. 
-##' A numeric value (in m) can be used here to customise buffer radius.
-##' @param output_format File type for cached environmental layers. See \code{\link[raster]{writeFormats}}. The default format is 'raster'.
+##' 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'bathy', 'dist_to_land', 
+##' 'rs_current')
+##' @param folder_name name of folder within 'imos.cache' where downloaded rasters 
+##' should be saved. default NULL produces automatic folder names based on study extent
+##' @param verbose should function provide details of what operation is being conducted. 
+##' Set to `FALSE` to keep it quiet
+##' @param cache_layers should the extracted environmental data be cached within
+##' the working directory? if FALSE stored in temporary folder and discarded 
+##' after environmental extraction
+##' @param crop_layers should the extracted environmental data be cropped to 
+##' within the study site
+##' @param full_timeperiod should environmental variables extracted for each day
+##' across full monitoring period, time and memory consuming for long projects
+##' @param fill_gaps should the function use a spatial buffer to estimate 
+##' environmental variables for detections where there is missing data. Default 
+##' is `FALSE` to save computational time.
+##' @param buffer radius of buffer (in m) around each detection from which 
+##' environmental variables should be extracted from. A median value of pixels 
+##' that fall within the buffer will be used if `fill_gaps = TRUE`. If `NULL` a 
+##' buffer will be chosen based on the resolution of environmental layer. A 
+##' numeric value (in m) can be used here to customise buffer radius.
+##' @param output_format File type for cached environmental layers. See 
+##' \code{\link[raster]{writeFormats}}. The default format is 'raster'.
 ##' @param .parallel should the function be run in parallel 
-##' @param .ncores number of cores to use if set to parallel. If none provided, uses \code{\link[parallel]{detectCores}}
-##'  to determine number.
+##' @param .ncores number of cores to use if set to parallel. If none provided, 
+##' uses \code{\link[parallel]{detectCores}} to determine number.
 ##'
-##' @details The `extractEnv` function allows the user to access, download and append a range of environmental variables to each detection
-##' within a telemetry data set. We advocate for users to first undertake a quality control step using the \code{\link{runQC()}} function 
-##' before further analysis, however the functionality to append environmental data will work on any dataset that has at the minimum spatial
-##' coordinates (i.e., latitude, longitude; in EPSG 4326) and a timestamp (in UTC) for each detection event. 
-##' Quality controlled environmental variables housed in the IMOS Thredds server will be extracted for each specific coordinate at the specific 
-##' timestamp where available. A summary table of the full range of environmental variables currently available can be accessed using 
-##' the \code{\link{imos_variables}} function.
+##' @details The `extractEnv` function allows the user to access, download and 
+##' append a range of environmental variables to each detection within a telemetry
+##' data set. We advocate for users to first undertake a quality control step using
+##' the \code{\link{runQC()}} function before further analysis, however the 
+##' functionality to append environmental data will work on any dataset that has
+##' at the minimum spatial coordinates (i.e., latitude, longitude; in EPSG 4326)
+##' and a timestamp (in UTC) for each detection event. Quality controlled 
+##' environmental variables housed in the IMOS Thredds server will be extracted 
+##' for each specific coordinate at the specific timestamp where available. A 
+##' summary table of the full range of environmental variables currently 
+##' available can be accessed using the \code{\link{imos_variables}} function.
 ##' 
 ##'
-##' @return a dataframe with the environmental variable appended as an extra column based on date of each detection
+##' @return a dataframe with the environmental variable appended as an extra 
+##' column based on date of each detection
 ##'
 ##' @examples
-##' ## Input example detection dataset that have run through the quality control workflow (see 'runQC' function)
+##' ## Input example detection dataset that have run through the quality control
+##' ##   workflow (see 'runQC' function)
 ##' library(tidyverse)
 ##' data("TownsvilleReefQC")
 ##' 
