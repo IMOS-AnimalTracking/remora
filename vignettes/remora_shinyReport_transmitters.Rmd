@@ -58,7 +58,7 @@ In this vignette, a sample dataset from the Townsville Reefs project (Heupel et 
 
 Map showcasing the locations of transmitter deployments associated with the selected tagging project, colour-coded by species. The user can filter according to the species and/or date of the transmitter deployment.
 
-Hovering on the markers will reveal additional information including the coordinates, station name and number of detections - THIS DOES NOT MAKE SENSE - CHECK WITH FRANCISCA
+Hovering on the markers will reveal additional information including the transmitter ID, species common name and deployment coordinates.
 
 
 <br>
