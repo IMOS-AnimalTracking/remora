@@ -22,10 +22,10 @@
 
 ## Overview
 **remora** is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
+- Interactively exploring animal movements in space and time from acoustic telemetry data
 - Performing robust quality-control of acoustic telemetry data as described in [Hoenner et al. 2018](https://doi.org/10.1038/sdata.2017.206) 
 - Identifying available satellite-derived and sub-surface *in situ* oceanographic datasets coincident and collocated with the animal movement data, based on regional Ocean Observing Systems  
 - Extracting and appending these environmental data to animal movement data  
-- Interactively exploring animal movements in space and time  
 
 Whilst the functions in **remora** were primarily developed to work with acoustic telemetry data, the oceanographic data extraction and integration functionalities will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
 
