@@ -24,7 +24,4 @@ a list of data.frames by individual tag deployments ready for QC
 accesses files downloaded from the IMOS ATF WebApp and convert them to
 a format expected by the IMOS ATF Quality Control functions. For internal use only
 }
-\examples{
-
-}
 \keyword{internal}

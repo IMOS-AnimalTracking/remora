@@ -1,21 +1,11 @@
 ---
 title: "remora_extractEnv"
 subtitle: "Integrating remotely sensed environmental data with QC'd animal detections"
-output:
-  html_document:
-    css: style.css
-    anchor_sections: false
-    toc: false
-    toc_float: 
-      collapsed: false
-      smooth_scroll: true
-    self_contained: true
-    theme: cerulean
-    highlight: pygments
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{remora_extractEnv}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -24,7 +14,7 @@ require(tidyverse, quietly = TRUE)
 require(remora, quietly = TRUE)
 
 ## load extracted dataset for faster running of vignette
-data("env_extract_output")
+data("env_extract_output", envir = environment())
 ```
 
 --------------------------------------
@@ -72,7 +62,7 @@ library(raster)
 library(ggspatial)
 
 ## Example dataset that has undergone quality control using the `runQC()` function
-data("TR_qc")
+data("TownsvilleReefQC")
 
 ## Only retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)
 qc_data <- 

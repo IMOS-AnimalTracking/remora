@@ -37,7 +37,4 @@ Extract variables from pulled variables
 Internal function to conduct raster extraction of environmental variables from downloaded raster stack (\code{env_stack}) and detection
 positions (\code{unique_positions})
 }
-\examples{
-
-}
 \keyword{internal}

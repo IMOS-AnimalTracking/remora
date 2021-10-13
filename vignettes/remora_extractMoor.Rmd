@@ -1,22 +1,11 @@
 ---
 title: "remora_extractMoor"
 subtitle: "Integrating in-situ moorings data from the National Mooring Network with QC'd animal detections"
-output:
-  html_document:
-    anchor_sections: no
-    toc: no
-    toc_float:
-      collapsed: no
-      smooth_scroll: yes
-    self_contained: yes
-    theme: cerulean
-    highlight: pygments
-  pdf_document:
-    toc: no
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{remora_extractMoor}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}

@@ -1,21 +1,11 @@
 ---
 title: "remora_runQC"
 subtitle: "Quality-controlling animal detections"
-output: 
-  html_document:
-    css: style.css
-    anchor_sections: false
-    toc: false
-    toc_float: 
-      collapsed: false
-      smooth_scroll: true
-    self_contained: true
-    theme: cerulean
-    highlight: pygments
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{remora_runQC}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -76,7 +66,7 @@ We invoke the QC using `runQC()`:
 tag_qc <- runQC(files, logfile = "R/QC_log.txt", .parallel = TRUE, .progress = FALSE)
 ```
 
-```{r save QC, echo=FALSE, message=FALSE}
+```{r save QC, eval=FALSE, echo=FALSE, message=FALSE}
 tag_qc <- runQC(files, logfile = "R/QC_log.txt", .parallel = TRUE, .progress = FALSE)
 save(tag_qc, file = "R/tag_qc.rda")
 ```

@@ -24,7 +24,4 @@ Internal function to check, define and create urls for the \code{\link{.pull_var
 \details{
 Internal function to build URLs for specific environmental variables and dates from IMOS Thredds server (http://thredds.aodn.org.au/)
 }
-\examples{
-
-}
 \keyword{internal}

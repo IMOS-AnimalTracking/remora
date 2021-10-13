@@ -47,7 +47,4 @@ Accesses and download environmental data from the IMOS THREDDS server
 \details{
 Internal function to download environmental raster layers from IMOS Thredds server (http://thredds.aodn.org.au/)
 }
-\examples{
-
-}
 \keyword{internal}

@@ -1,21 +1,11 @@
 ---
 title: "remora_shinyReport_transmitters"
 subtitle: "Visualisations: Tagging Project"
-output:
-  html_document:
-    css: style.css
-    anchor_sections: false
-    toc: false
-    toc_float: 
-      collapsed: false
-      smooth_scroll: true
-    self_contained: true
-    theme: cerulean
-    highlight: pygments
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{remora_shinyReport_transmitters}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
 ---
 --------------------------------------
 

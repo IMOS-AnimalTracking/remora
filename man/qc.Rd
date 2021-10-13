@@ -20,7 +20,4 @@ Subjects tag detections to 8 quality control tests and appends results to each d
 \details{
 ...
 }
-\examples{
-
-}
 \keyword{internal}
