@@ -57,7 +57,9 @@ Quick links to vignettes for each functionality can be found below:
 - [Interactive visualisation of data associated with an acoustic tagging project]()  
 
 ## Acknowledgements
-ADD IMOS AND NSW GOV LOGOS HERE
+<p align="left">
+  <img src="vignettes/images/IMOS_logo-stacked_transparent.png">
+  <img src="vignettes/images/NSW_Government_logo.jpg">
 
 This work was funded by Australia’s Integrated Marine Observing System (IMOS, www.imos.org.au) and a Research Attraction and Acceleration Program grant from the Office of the New South Wales Chief Scientist & Engineer awarded to Sydney Institute of Marine Science. IMOS is enabled by the National Collaborative Research Infrastructure Strategy (NCRIS). It is operated by a consortium of institutions as an unincorporated joint venture, with the University of Tasmania as Lead Agent. 
 
