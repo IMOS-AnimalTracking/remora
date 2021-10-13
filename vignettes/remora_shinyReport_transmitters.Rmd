@@ -19,25 +19,25 @@ vignette: >
 ---
 --------------------------------------
 
-The `remora` package includes statistics and visualisations for a **tagging** or **receiver array** project. The `shinyReport()` function allows users to create an interactive report of their projects, having different visualisation and analytical tools. All the plots and tables provided can be downloaded so the user can perform further analysis of the data. This report is an exploratory analysis and should not be considered as an extensive analysis. Currently, the focus of this package is to integrate animal telemetry data and environmental data housed within the [Integrated Marine Observing System](https://imos.org.au), and therefore primarily focuses within Australia. 
+The `remora` package includes statistics and data visualisations for acoustic telemetry **receiver array** and **tagging** projects. The `shinyReport()` function allows users to create an interactive data report for their projects, which comprises a range of visualisations and analytical tools to aid data exploration and project management. The resulting plots and tables  can be downloaded for further use and analysis. This interactive report is an exploratory tool and should not be considered an extensive analysis toolkit. 
+
+Currently, the focus of the `remora` package is to integrate animal telemetry data and oceanographic observations collated by Australia's [Integrated Marine Observing System](https://imos.org.au). Therefore, the geographical scope of available datasets is currently restricted to the Australiasia region. 
 <br>
 
 ---------------------------------------
 
 # Tagging Project
 
-
-The transmitter report provides users with basic statistics and visualisations for their tagging project. The report is in a Shiny App format which will open in the user's default browser. 
-
-
-
+The receiver array report provides users with basic summary statistics and data visualisations for their acoustic telemetry receiver array project. When called, the function produces an interactive Shiny App that will open in the user's default internet browser.
 
 
 ## Run Shiny App
 <br>
-The `remora` package should be installed to be able to call the functions. 
+The `remora` package should be installed prior to calling the functions described in this vignette.
 
-The `shinyReport()` function requires the type of project to retrieve the respective report (i.e. receiver array or transmitter project).
+The `shinyReport()` function requires the user to specify the type of report to produce. Two options are available depending on whether the user wishes to produce a report for their receiver array project (`receivers`) or tagging project (`transmitters`). 
+
+This vignette describes the receiver array (`transmitters`) report.
 
 ```{r, eval=FALSE}
 remotes::install_github("IMOS-AnimalTracking/remora")
@@ -45,9 +45,9 @@ shinyReport("transmitters")
 ```
 <br>
 
-The function will generate a pop-up window where the user can navigate through the folders and select the detections file from a tagging project. The detections can be accessed from the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au/projects) or the user can select their own data, previously formatted to match the database.
+The `shinyReport()` function will generate a pop-up window enabling the user to navigate and select the detections data .CSV file for the receiver array project of their choice. Once this file is loaded, another pop-up window will appear prompting the user to select the corresponding receiver deployment metadata file. These files can be accessed via the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au/projects). Alternatively, the user can select their own data, previously formatted to match the IMOS database output format.
 
-In this vignette, a sample data from the Townsville Reefs project will be displayed (Heupel et al., 2021).
+In this vignette, a sample dataset from the Townsville Reefs project (Heupel et al. 2021) archived in the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au/projects) is presented.
 
 ![](images/transmitter_report/select-detections.png)
 
