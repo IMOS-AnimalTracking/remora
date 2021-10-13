@@ -4,7 +4,7 @@
 ##'
 ##' @param dates detection data source in data frame with at the minimum a X, Y and date time field
 ##' @param var_name variable needed options include available options ('rs_sst', 'rs_sst_interpolated', 
-##' 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current'). For 'bathy' and 'dist_to_land', \code{\link{.pull_var}} downloads 
+##' 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current'). For 'bathy' and 'dist_to_land', \code{\link{dot-pull_var}} downloads 
 ##' them directly without the need for this subroutine.
 ##' @param verbose should function provide details of what operation is being conducted. Set to `FALSE` to keep it quiet
 ##'
