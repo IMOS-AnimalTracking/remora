@@ -1,9 +1,19 @@
 ---
-title: "remora_shinyReport_receivers"
+title: "shinyReport_receivers"
 subtitle: "Data Visualisations: Receiver Array Report"
-output: rmarkdown::html_vignette
+output: 
+  html_document:
+    css: style.css
+    anchor_sections: false
+    toc: false
+    toc_float: 
+      collapsed: false
+      smooth_scroll: true
+    self_contained: true
+    theme: cerulean
+    highlight: pygments
 vignette: >
-  %\VignetteIndexEntry{remora_shinyReport_receivers}
+  %\VignetteIndexEntry{shinyReport_receivers}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---

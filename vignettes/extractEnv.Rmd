@@ -1,9 +1,19 @@
 ---
-title: "remora_extractEnv"
+title: "extractEnv"
 subtitle: "Integrating remotely sensed environmental data with QC'd animal detections"
-output: rmarkdown::html_vignette
+output: 
+  html_document:
+    css: style.css
+    anchor_sections: false
+    toc: false
+    toc_float: 
+      collapsed: false
+      smooth_scroll: true
+    self_contained: true
+    theme: cerulean
+    highlight: pygments
 vignette: >
-  %\VignetteIndexEntry{remora_extractEnv}
+  %\VignetteIndexEntry{extractEnv}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
