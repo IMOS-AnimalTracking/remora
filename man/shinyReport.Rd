@@ -4,10 +4,10 @@
 \alias{shinyReport}
 \title{Render Shiny report}
 \usage{
-shinyReport(type = "transmitter")
+shinyReport(type = "transmitters")
 }
 \arguments{
-\item{type}{"transmitter" or "receiver" to produce the corresponding report}
+\item{type}{"transmitters" or "receivers" to produce the corresponding report}
 }
 \value{
 Shiny app with Transmitter or Receiver Project visualisations and statistics
@@ -16,5 +16,5 @@ Shiny app with Transmitter or Receiver Project visualisations and statistics
 Renders the Shiny App for transmitter and receiver reports.
 }
 \examples{
-shinyReport(type = "transmitter")
+shinyReport(type = "transmitters")
 }

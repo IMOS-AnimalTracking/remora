@@ -13,6 +13,8 @@ mooringDownload(
 )
 }
 \arguments{
+\item{moor_site_codes}{character vector of the name(s) of the desired mooring(s) (updated from moorID to match download file)}
+
 \item{fromWeb}{logical string detailing whether or no the netCDF should be downloaded from the web or uploaded from a saved file location}
 
 \item{sensorType}{character string detailing which sensor value we are interested in. Can be "temperature", "velocity", "salinity or "oxygen"."}
@@ -20,8 +22,6 @@ mooringDownload(
 \item{itimeout}{integer value for number of seconds we are willing to wait before timeout to download netcdf from the web. Defaults to 60}
 
 \item{file_loc}{character string for the location of the saved files}
-
-\item{moor_site_code}{character string if the name of the desired mooring (updated from moorID to match download file)}
 }
 \value{
 The \code{moorData} dataframe with the sensor information time series for a given \code{site_code}

@@ -78,21 +78,21 @@ timestamp where available. A summary table of the full range of environmental va
 the \code{\link{imos_variables}} function.
 }
 \examples{
-## Identify all available variables
-imos_variables()
-
 ## Input example detection dataset that have run through the quality control workflow (see 'runQC' function)
 library(tidyverse)
-load("qc.RData")
-det <- 
-  qc \%>\% 
-  unnest(cols = c(QC))
+data("TownsvilleReefQC")
+
+qc_data <- 
+  TR_qc \%>\% 
+  tidyr::unnest(cols = c(QC)) \%>\% 
+  dplyr::ungroup() \%>\% 
+  dplyr::filter(Detection_QC \%in\% c(1,2))
 
 ## Extract daily interpolated sea surface temperature
 data_with_sst <- 
-  env_extract(df = qc_data,
-              X = "longitude", 
-              Y = "latitude", 
+  extractEnv(df = qc_data,
+              X = "receiver_deployment_longitude", 
+              Y = "receiver_deployment_latitude", 
               datetime = "detection_datetime", 
               env_var = "rs_sst_interpolated",
               cache_layers = TRUE,

@@ -9,7 +9,7 @@ plotDT(
   moorName,
   dateStart = NULL,
   dateEnd = NULL,
-  varName = "temperature",
+  varName = c("temperature", "vcur", "ucur", "psal"),
   trackingData = NULL,
   speciesID,
   IDtype = "CAAB",
@@ -39,5 +39,5 @@ plotDT(
 \item{detEnd}{Optional character string of end date of date range of detections data to overlay on depth-time plot.}
 }
 \description{
-Creates a depth-time plot from a sensor dataset from a specified IMOS mooring, with an option to overlay species detection records from tracking dataset from closest receiver
+Creates an interactive depth-time plot from a sensor dataset from a specified IMOS mooring, with an option to overlay species detection records from tracking dataset from closest receiver
 }
