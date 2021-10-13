@@ -32,9 +32,10 @@ imos_variables <- function(variable = NULL){
 Or leave as 'NULL' to see all variables available")} 
   }
   
+  data("env_extract_output")
+  
   var_tab <- 
-    readr::read_csv("https://raw.githubusercontent.com/IMOS-AnimalTracking/environmental_layers/main/2021-06-09_imos_variables_table.csv", 
-                    col_types = readr::cols()) %>% 
+    var_tab %>% 
     {if (!is.null(variable)) subset(., Variable %in% {{variable}}) else .}
   
   knitr::kable(var_tab, format = "html") %>%
