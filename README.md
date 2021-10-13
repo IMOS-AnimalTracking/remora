@@ -1,3 +1,4 @@
+[![Github All Releases](https://img.shields.io/github/downloads/IMOS-AnimalTracking/remora/total.svg)]() 
 <p align="center">
   <img src="vignettes/images/remora_hex_logo.png" width="200">
 </p>
@@ -17,10 +18,10 @@
 
 ## Overview
 re**mo**ra is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
-- performing robust quality-control of acoustic telemetry data as described in [Hoenner et al. 2018](https://doi.org/10.1038/sdata.2017.206) 
-- identifying available satellite-derived and sub-surface *in situ* oceanographic datasets coincident and collocated with the animal movement data, based on regional Ocean Observing Systems  
-- extracting and appending these environmental data to animal movement data  
-- interactively exploring animal movements in space and time  
+- Performing robust quality-control of acoustic telemetry data as described in [Hoenner et al. 2018](https://doi.org/10.1038/sdata.2017.206) 
+- Identifying available satellite-derived and sub-surface *in situ* oceanographic datasets coincident and collocated with the animal movement data, based on regional Ocean Observing Systems  
+- Extracting and appending these environmental data to animal movement data  
+- Interactively exploring animal movements in space and time  
 
 Whilst the functions in re**mo**ra were primarily developed to work with acoustic telemetry data, the oceanographic data extraction and integration functionalities will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
 
