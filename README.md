@@ -18,7 +18,7 @@
 ## Overview
 re**mo**ra is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
 - performing robust quality-control of acoustic telemetry data as described in [Hoenner et al. 2018](https://doi.org/10.1038/sdata.2017.206) 
-- identifying available satellite-derived and sub-surface *in situ* oceanographic datasets coincident and collocated with the animal movement data  
+- identifying available satellite-derived and sub-surface *in situ* oceanographic datasets coincident and collocated with the animal movement data, based on regional Ocean Observing Systems  
 - extracting and appending these environmental data to animal movement data  
 - interactively exploring animal movements in space and time  
 
@@ -57,7 +57,7 @@ This work was funded by Australia’s Integrated Marine Observing System (IMOS, 
 
 ADD IMOS AND NSW GOV LOGOS HERE
 
-We thank Michelle Heupel, Colin Simpfendorfer and Paul Butcher for allowing us access the following sample datasets to aid code development.
+We thank Michelle Heupel, Colin Simpfendorfer and Paul Butcher for allowing us access to the following sample datasets to aid code development.
 
 Heupel, M., Simpfendorfer, C., Espinoza, M., Bierwagen, S., de Faria, F., Ledee, E., Matley, J., Tobin, A. (2021) Townsville Reefs receiver array (Available: Integrated Marine Observing System. Animal Tracking Database. https://animaltracking.aodn.org.au. Accessed: 2021-10-11).
 
@@ -71,10 +71,10 @@ Butcher, P., Smoothey, A., Peddemors, V., Brand, C., Gallen, C., Spaet, J., Patt
 ## Licence
 NEED TO CONFIRM - Creative Commons Attribution 4.0 International (CC BY 4.0)
 
-**Citation:**
+**Citation:**  
 Jaine et al. remora: A R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
 
-**Contributors:**
+**Contributors:**  
 Ian Jonsen @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)  
 Vinay Udyawer @vinayudyawer (Australian Institute of Marine Science)  
 Ross Dwyer @RossDwyer (University of the Sunshine Coast)  
