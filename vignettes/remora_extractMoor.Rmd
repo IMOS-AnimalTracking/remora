@@ -23,7 +23,7 @@ vignette: >
 #### INSTALL PACKAGE FROM GITHUB ####
 #Install latest version of IMOStrack package from Github:
 # library(remotes)
-# MyAuthToken = "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" # personal API key generated at:https://github.com/settings/tokens
+#MyAuthToken = "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" # personal API key generated at:https://github.com/settings/tokens
 #remotes::install_github('IMOS-AnimalTracking/remora', auth_token= MyAuthToken)
 #####################################
 
@@ -89,7 +89,7 @@ qc_data <- TR_qc %>%
 
 Lets have a quick look at the spatial patterns in detection data for each tag deployment:
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.align='center'}
+```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 library(ggplot2)
 library(ggspatial)
 
@@ -111,7 +111,7 @@ qc_data %>%
 
 We can also have a look at the temporal pattern in detections:
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.align='center'}
+```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 qc_data %>% 
   mutate(date = as.Date(detection_datetime)) %>% 
   group_by(transmitter_id, date, installation_name) %>% 
@@ -137,7 +137,7 @@ There is only one parameters within the function that can help the user identify
 + **sensorType**: the name of the environmental variable to download and append. This can be `temperature`, `velocity`, `salinity`, `oxygen`.
 <br>
 
-```{r, eval=TRUE, message=TRUE, warning=FALSE}
+```{r, eval=FALSE, message=TRUE, warning=FALSE}
 # Generate a table containing IMOS moorings metadata for only those moorings with temperature data
 moorT <- mooringTable(sensorType="temperature")
 
@@ -151,7 +151,6 @@ leaflet() %>%
                            "Standard names:", moorT$standard_names, "<br>",
                            "Coverage start:", moorT$time_coverage_start, "<br>",
                            "Coverage end:", moorT$time_coverage_end))
-
 ```
 ![ ](images/moor_extract/moor_extract_plot3.png)
 <br>
@@ -167,7 +166,7 @@ In this function, the user specifies which detection dataset with which they whi
 
 <br>
 
-```{r, eval=TRUE, message=TRUE, warning=FALSE}
+```{r, eval=FALSE, message=TRUE, warning=FALSE}
 #Extract the nearest mooring to each station where a tag was detected
 det_dist <- getDistance(trackingData = qc_data, 
                         moorLocations = moorT)
@@ -179,7 +178,7 @@ In order to identify which moorings do not have temporal coverage during the per
 
 <br>
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
 # Which moorings have overlapping data with detections?
 mooring_overlap <- getOverlap(det_dist)
 mooring_overlap
@@ -189,7 +188,7 @@ As `Poverlap = 1` for all three moorings datasets, all our detections have tempo
 
 Let's plot the spatial arrangement of these mooring stations on an interactive map with our tag detections at receiver stations.
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
 # Filter for only those moorings which are closest to receivers and also have overlapping detection intervals
 moorT_new <- moorT %>% 
   filter(site_code %in% mooring_overlap$moor_site_code)
@@ -249,7 +248,7 @@ There are a few parameters within the function that can help the user identify t
 
 <br>
 
-```{r, eval=TRUE, message=TRUE, warning=FALSE}
+```{r, eval=FALSE, message=TRUE, warning=FALSE}
 ## Creates vector of moorings that we want to download
 moorIDs <- unique(mooring_overlap$moor_site_code)
 
@@ -261,7 +260,7 @@ moorDat.l <- mooringDownload(moor_site_codes = moorIDs,
                              file_loc="imos.cache/moor/temperature",
                              itimeout=240)
 names(moorDat.l) # What moorings datasets do we have in memory
-summary(moorDat.l$GBRPPS) # what does the GBRPPS moorings dataset look like?
+#[1] "GBRMYR" "GBRPPS" "NRSYON"
 ```
 
 <br>
@@ -285,7 +284,7 @@ We can use the moorings data we've extracted to plot an interactive depth-time p
 For example, we might want to plot temperature over depth at the GBRPPS mooring, `GBRPPS`, and then add all the bull shark detections over the same time period from the closest IMOS Animal Tracking Facility installation.
 
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
+```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
 plotDT(moorData=moorDat.l$GBRPPS, # have GBRMYR, GBRPPS and NRSYON available
        moorName="GBRPPS",
        dateStart="2013-11-01", 
@@ -304,7 +303,7 @@ We can also visualise current `velocity` data with the detections, where mooring
 
 We need to make sure that the NetCDF file we have stored locally contains the velocity data. To achieve this, we firsty need to download this netCDF file using the `mooringDownload()` function and then save the file to a different folder location, in this case `imos.cache/moor/velocity`.
 
-```{r, eval=TRUE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
+```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
 plotDat.l <- mooringDownload(moor_site_codes = "GBRPPS", 
                              fromWeb = TRUE, # Download the netCDF. If already downloaded, set as FALSE
                              sensorType="velocity", # sensor data to download
@@ -345,7 +344,7 @@ Sea water `temperature`, current `velocity`, or `salinity` data can be accessed 
 By default, each of the environmental sensors positioned on a mooring will be returned for a certain timestamp. For example, if 10 sensors are positioned on a mooring, each hourly timestamp for that mooring witll have 10 sensor readings.  
 
 <br>
-```{r, eval=TRUE, message=FALSE, warning=FALSE}
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
 data_with_mooring_sst_all <- extractMoor(trackingData = det_dist,
                                          file_loc="imos.cache/moor/temperature",
                                          sensorType = "temperature",
@@ -355,7 +354,7 @@ data_with_mooring_sst_all <- extractMoor(trackingData = det_dist,
 
 We can see the extracted environmental variables are appended as new columns to the input dataset as a nested tibble. You can look at the contents of this by using the `unnest()` function in the `tidyr` package.
 
-```{r, eval = TRUE, warning=FALSE, message=FALSE}
+```{r, eval = FALSE, warning=FALSE, message=FALSE}
 data_with_mooring_sst_all # By default the output is a nested tibble
 
 # Unnest tibble to reveal the first 10 rows of the data
@@ -375,7 +374,7 @@ In this example, we will limit our function so that only detections within 24h a
 
 As each mooring line has multiple sensors deployed at various depths, we can specify which sensor we want returned by setting a `targetDepthm`. Here we set this as `targetDepthm=0` to return the sensor value that is nearest to the water surface.
 
-```{r, eval=TRUE, message=TRUE, warning=FALSE}
+```{r, eval=FALSE, message=TRUE, warning=FALSE}
 # Run the same function again with time and distance thresholds
 # and when multiple sensors are available return the shallowest value at that time stamp
 data_with_mooring_sst_shallow <- extractMoor(trackingData = det_dist,
@@ -389,14 +388,14 @@ data_with_mooring_sst_shallow <- extractMoor(trackingData = det_dist,
 data_with_mooring_sst_shallow
 ```
 
-Notice that this new merged dataset `data_with_mooring_sst_shallow` is now much smaller than the original one `data_with_mooring_sst_all`?This is because we have extracted only selected a single sensor value for each detection timestamp. We have also dropped those rows from the dataset which not did meet the time and distance thresholds.   
+Notice that this new merged dataset `data_with_mooring_sst_shallow` is now much smaller than the original one `data_with_mooring_sst_all`? This is because we have extracted only selected a single sensor value for each detection timestamp. We have also dropped those rows from the dataset which not did meet the time and distance thresholds.   
 
 <br>
 
 ##Examining the appended environmental data
 Now let's see how the detections of our tagged animals corresponded with variations in sea water temperature. First let's add the in-situ temperature values to the detection plots grouped by `transmitter_id`:
 
-```{r, eval = TRUE, message=FALSE, warning=FALSE}
+```{r, eval = FALSE, message=FALSE, warning=FALSE}
 summarised_data_id <-
   data_with_mooring_sst_shallow %>% 
   tidyr::unnest(cols = c(data)) %>% 
@@ -417,7 +416,7 @@ ggplot(summarised_data_id, aes(x = date, y = transmitter_id, size = num_det, col
 
 Alternatively we can view the appended detection plots grouped by `station_name` for only those installations which have mooring sensor data associated with it:
 
-```{r, eval = TRUE, message=FALSE, warning=FALSE}
+```{r, eval = FALSE, message=FALSE, warning=FALSE}
 summarised_data_id <-
   data_with_mooring_sst_shallow %>% 
   tidyr::unnest(cols = c(data)) %>% 
@@ -439,7 +438,7 @@ ggplot(summarised_data_id, aes(x=date,y=installation_name,
 
 Finally, we can plot the sensor values associated to a detection as a histogram showing the number of detection records associated with each sensor value.
 
-```{r, eval = TRUE, message=FALSE, warning=FALSE}
+```{r, eval = FALSE, message=FALSE, warning=FALSE}
 library(hrbrthemes)
 # First plot the temperature data
 data_with_mooring_sst_shallow %>% 
@@ -454,7 +453,7 @@ data_with_mooring_sst_shallow %>%
   )
 ```  
 ![ ](images/moor_extract/moor_extract_plot9.png)
-```{r, eval = TRUE, message=FALSE, warning=FALSE}
+```{r, eval = FALSE, message=FALSE, warning=FALSE}
 # Next plot the depth data
 data_with_mooring_sst_shallow %>% 
   tidyr::unnest(cols = c(data)) %>% 
