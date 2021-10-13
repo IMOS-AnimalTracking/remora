@@ -56,7 +56,7 @@ imos_variables()
 
 <br>
 
-In this vignette we will explore accessing and integrating gridded data. A suite of additional functions can be used to access and extract *in situ* sub-surface data from moorings (see `mooringTable()`; [link to Ross and Kylies vignette]()).
+In this vignette we will explore accessing and integrating gridded data. A suite of additional functions can be used to access and extract *in situ* sub-surface data from moorings (see `mooringTable()`; [extractMoor.html]()).
 
 
 <br>
@@ -66,7 +66,7 @@ In this vignette we will explore accessing and integrating gridded data. A suite
 ## Load example dataset
 
 The primary function to extract and append remote sensing data to acoustic detection data is the `extractEnv()` function.
-Lets start with a dataset that has undergone quality control (see `runQC()`; [link to Ians vignette]()).
+Lets start with a dataset that has undergone quality control (see `runQC()`; [runQC.html]()).
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)

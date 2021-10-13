@@ -61,7 +61,7 @@ imos_variables()
 
 <br>
 
-In this vignette we will explore accessing and extracting in-situ data from the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork). A suite of additional functions is also available to access enbvironmental data gatehred via remote sensing (see `extractEnv()`; [link to Vinay's vignette]()).
+In this vignette we will explore accessing and extracting in-situ data from the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork). A suite of additional functions is also available to access enbvironmental data gatehred via remote sensing (see `extractEnv()`; [extractENV.html]()).
 
 
 <br>
@@ -71,7 +71,7 @@ In this vignette we will explore accessing and extracting in-situ data from the 
 ## Load example dataset
 
 The primary function to extract and append in-situ data collected by the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork) to acoustic detection data is the `extractMoor()` function.
-Lets start with a dataset that has undergone quality control (see `runQC()`; [link to Ians vignette]()).
+Lets start with a dataset that has undergone quality control (see `runQC()`; [runQC.html]()).
 
 ```{r, eval = TRUE, message=FALSE, warning=FALSE}
 ## Example dataset that has undergone quality control using the `runQC()` function
