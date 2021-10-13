@@ -90,4 +90,4 @@ globalVariables(c(".", "year", "html", "type", "a", "fromdate", "todate", "media
                   "date_range", "Count", "receiver_project_name.x", "transmitter_sensor_value",
                   "transmitter_type", "transmitter_sensor_type", "transmitter_sensor_slope",
                   "transmitter_sensor_unit", "transmitter_estimated_battery_life",
-                  "transmitter_status", "receiver_project_name", "measurement"))
+                  "transmitter_status", "receiver_project_name", "measurement", "detection_date"))
