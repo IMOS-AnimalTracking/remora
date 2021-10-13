@@ -32,10 +32,10 @@ imos_variables <- function(variable = NULL){
 Or leave as 'NULL' to see all variables available")} 
   }
   
-  data("env_extract_output", envir = environment())
+  data("imos_variables_table", envir = environment())
   
   var_tab <- 
-    var_tab %>% 
+    imos_variables_table %>% 
     {if (!is.null(variable)) subset(., Variable %in% {{variable}}) else .}
   
   knitr::kable(var_tab, format = "html") %>%

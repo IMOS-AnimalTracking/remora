@@ -3,7 +3,8 @@
 \docType{data}
 \name{TownsvilleReefQC}
 \alias{TownsvilleReefQC}
-\title{Quality-cnotrolled bull shark detections (5 individuals, subsampled for efficiency)}
+\title{Quality-controlled bull shark detections (5 individuals,
+subsampled for efficiency)}
 \format{
 .RData
 }

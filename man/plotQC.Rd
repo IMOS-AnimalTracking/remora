@@ -22,8 +22,8 @@ assessed validity status, overlaid on species expert distribution extent
 }
 \examples{
 ## example QC'd data
-data(test_data)
+data(TownsvilleReefQC)
 ## Plot QC output to graphics window
-plotQC(test_data, path = NULL)
+plotQC(TownsvilleReefQC, path = NULL)
 
 }

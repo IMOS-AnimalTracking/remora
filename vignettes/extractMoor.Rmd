@@ -78,7 +78,7 @@ Lets start with a dataset that has undergone quality control (see `runQC()`; [ru
 data("TownsvilleReefQC")
 
 ## Un-nest the output and retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)
-qc_data <- TR_qc %>% 
+qc_data <- TownsvilleReefQC %>% 
   tidyr::unnest(QC) %>% 
   dplyr::filter(Detection_QC %in% c(1,2)) 
 

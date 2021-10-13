@@ -14,7 +14,7 @@ tracking database and its automated quality control process. Scientific Data
 5, 170206. https://doi.org/10.1038/sdata.2017.206
 }
 \seealso{
-runQC
+runQC extractEnv extractMoor shinyReport
 }
 \author{
 Ross Dwyer, Xavier Hoenner, Charlie Huveneers, Fabrice Jaine, Ian Jonsen, Francisca Maron, Kylie Scales, Vinay Udyawer

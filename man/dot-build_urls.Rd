@@ -10,7 +10,7 @@
 \item{dates}{detection data source in data frame with at the minimum a X, Y and date time field}
 
 \item{var_name}{variable needed options include available options ('rs_sst', 'rs_sst_interpolated',
-'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current'). For 'bathy' and 'dist_to_land', \code{\link{.pull_var}} downloads
+'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current'). For 'bathy' and 'dist_to_land', .pull_var() downloads
 them directly without the need for this subroutine.}
 
 \item{verbose}{should function provide details of what operation is being conducted. Set to \code{FALSE} to keep it quiet}
@@ -19,7 +19,7 @@ them directly without the need for this subroutine.}
 a tibble with urls from where to download environmental data and layer names (where applicable)
 }
 \description{
-Internal function to check, define and create urls for the \code{\link{.pull_var}} subroutine
+Internal function to check, define and create urls for the .pull_var() subroutine
 }
 \details{
 Internal function to build URLs for specific environmental variables and dates from IMOS Thredds server (http://thredds.aodn.org.au/)

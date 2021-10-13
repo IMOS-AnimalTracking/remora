@@ -24,7 +24,7 @@ require(tidyverse, quietly = TRUE)
 require(remora, quietly = TRUE)
 
 ## load extracted dataset for faster running of vignette
-data("env_extract_output", envir = environment())
+data("data_with_sst_and_current", envir = environment())
 ```
 
 --------------------------------------
@@ -78,7 +78,7 @@ data("TownsvilleReefQC")
 
 ## Only retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)
 qc_data <- 
-  TR_qc %>% 
+  TownsvilleReefQC %>% 
   tidyr::unnest(cols = QC) %>%
   dplyr::ungroup() %>% 
   filter(Detection_QC %in% c(1,2))

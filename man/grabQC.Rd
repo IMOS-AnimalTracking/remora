@@ -26,7 +26,7 @@ a data frame with the requested subset of the QC output
 }
 \examples{
 ## grab detections and QCflags from example QC output
-data(qc)
-d.qc <- grabQC(qc, what = "dQC")
+data(TownsvilleReefQC)
+d.qc <- grabQC(TownsvilleReefQC, what = "dQC")
 
 }

@@ -42,9 +42,9 @@ is written to \code{QCsummary.csv}. The summary contains the following informati
 }
 \examples{
 ## example QC'd data
-data(test_data)
+data(TownsvilleReefQC)
 ## write QC output
-writeQC(test_data, summary = TRUE)
+writeQC(TownsvilleReefQC, summary = TRUE)
 
 }
 \references{

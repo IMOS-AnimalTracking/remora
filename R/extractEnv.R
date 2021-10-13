@@ -60,7 +60,7 @@
 ##' data("TownsvilleReefQC")
 ##' 
 ##' qc_data <- 
-##'   TR_qc %>% 
+##'   TownsvilleReefQC %>% 
 ##'   tidyr::unnest(cols = c(QC)) %>% 
 ##'   dplyr::ungroup() %>% 
 ##'   dplyr::filter(Detection_QC %in% c(1,2))

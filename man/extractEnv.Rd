@@ -83,7 +83,7 @@ server and append variables to detection data based on date of detection
 The \code{extractEnv} function allows the user to access, download and
 append a range of environmental variables to each detection within a telemetry
 data set. We advocate for users to first undertake a quality control step using
-the \code{\link{runQC()}} function before further analysis, however the
+the \code{\link{runQC}} function before further analysis, however the
 functionality to append environmental data will work on any dataset that has
 at the minimum spatial coordinates (i.e., latitude, longitude; in EPSG 4326)
 and a timestamp (in UTC) for each detection event. Quality controlled
@@ -99,7 +99,7 @@ library(tidyverse)
 data("TownsvilleReefQC")
 
 qc_data <- 
-  TR_qc \%>\% 
+  TownsvilleReefQC \%>\% 
   tidyr::unnest(cols = c(QC)) \%>\% 
   dplyr::ungroup() \%>\% 
   dplyr::filter(Detection_QC \%in\% c(1,2))

@@ -40,7 +40,6 @@ The `shinyReport()` function requires the user to specify the type of report to 
 This vignette describes the receiver array (`transmitters`) report.
 
 ```{r, eval=FALSE}
-remotes::install_github("IMOS-AnimalTracking/remora")
 shinyReport("transmitters")
 ```
 <br>

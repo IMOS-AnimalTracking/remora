@@ -29,9 +29,9 @@
 ##'
 ##' @examples
 ##' ## example QC'd data
-##' data(test_data)
+##' data(TownsvilleReefQC)
 ##' ## write QC output
-##' writeQC(test_data, summary = TRUE)
+##' writeQC(TownsvilleReefQC, summary = TRUE)
 ##' 
 ##' @references Hoenner X et al. (2018) Australia’s continental-scale acoustic tracking database and its automated quality control process. Sci Data 5, 170206 https://doi.org/10.1038/sdata.2017.206
 ##' 

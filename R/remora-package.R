@@ -7,7 +7,7 @@
 ##' @docType package
 ##' @author Ross Dwyer, Xavier Hoenner, Charlie Huveneers, Fabrice Jaine, Ian Jonsen, Francisca Maron, Kylie Scales, Vinay Udyawer
 ##'
-##' @seealso runQC
+##' @seealso runQC extractEnv extractMoor shinyReport
 ##' @references Hoenner, X et al. (2018) Australia’s continental-scale acoustic
 ##' tracking database and its automated quality control process. Scientific Data
 ##' 5, 170206. https://doi.org/10.1038/sdata.2017.206
@@ -19,7 +19,8 @@ NULL
 
 ##' @name TownsvilleReefQC
 ##' @docType data
-##' @title Quality-cnotrolled bull shark detections (5 individuals, subsampled for efficiency)
+##' @title Quality-controlled bull shark detections (5 individuals, 
+##' subsampled for efficiency)
 ##' @format .RData
 ##' @keywords data
 ##' @description Example bull shark acoustic tracking data. Data were sourced from
@@ -28,7 +29,7 @@ NULL
 ##' Strategy and the Super Science Initiative.
 NULL
 
-##' @name env_extract_output
+##' @name data_with_sst_and_current
 ##' @docType data
 ##' @title ??
 ##' @format .RData
