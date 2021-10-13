@@ -29,21 +29,23 @@ data("env_extract_output")
 
 --------------------------------------
 
-Another key functionality of the `remora` package allows users to integrate acoustic telemetry data and environmental and habitat information. This package allows the user to match a range of environmental variables to each detection. Associating environmental data to detections provides a means to analyse environmental or habitat drivers of occurrence, presence and movement of animal monitored using acoustic telemetry. We advocate for users to first undertake a quality control step using the `tag_qc()` function and workflow before further analysis, however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. Currently, the focus of this package is to integrate animal telemetry data and environmental data housed within the [Integrated Marine Observing System](https://imos.org.au), and therefore primarily focuses within Australia. As this package develops, more sources of environmental data will be added to allow for users to access more datasets across Australia and globally.
+Another key functionality of the `remora` package allows users to integrate acoustic telemetry data and environmental and habitat information. This package allows the user to match a range of environmental variables to each detection. Associating environmental data to detections provides a means to analyse environmental or habitat drivers of occurrence, presence and movement of animal monitored using acoustic telemetry. We advocate for users to first undertake a quality control step using the `tag_qc()` function and workflow before further analysis, however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. 
+
+Currently, the focus of this package is to integrate animal telemetry data and environmental data collated by Australia's [Integrated Marine Observing System](https://imos.org.au). Therefore, the geographical scope of available datasets is currently restricted to the Australiasia region. As this package develops, more sources of environmental data will be added to enable users to access more datasets across Australia and globally.
 
 <br>
 
 # Types of environmental data
 
-This package allows users to access a range of ocean datasets that have undergone a quality control process and housed within the [Integrated Marine Observing System](https://imos.org.au) database and can also be explored through the [Australian Ocean Data Network portal](https://portal.aodn.org.au). There are primarily two types of environmental data that users can currently access:
+This package allows users to access a range of ocean observing datasets that have undergone a quality control process and housed within the [Integrated Marine Observing System](https://imos.org.au). These datasets can also be explored through the [Australian Ocean Data Network portal](https://portal.aodn.org.au). There are primarily two types of environmental data that users can currently access:
 
-*1. Remote sensed environmental data*
+*1. Remotely-sensed or gridded environmental data*
 
-*2. In-situ environmental data from moorings at fixed locations*
+*2. In situ sub-surface environmental data from moorings at fixed locations*
 
 <br>
 
-The `imos_variables()` function will help the user identify currently available environmental layers that can be accessed and associated. Variables include spatial layers including `bathy` and `dist_to_land`, which provide distance measures of bathymetry (in meters) and proximity to land (in kilometers). Variable names that start with `rs_` are remote sensed environmental layers, and variables starting with `moor_` include in-situ environmental layers.
+The `imos_variables()` function will help the user identify currently available environmental layers that can be accessed and associated. Variables include spatial layers including `bathy` and `dist_to_land`, which provide distance measures of bathymetry (in meters) and proximity to land (in kilometers). Variable names that start with `rs_` are remotely-sensed or gridded environmental layers, and variables starting with `moor_` include *in situ* sub-surface mooring environmental layers.
 
 
 ```{r, warning=FALSE}
@@ -54,7 +56,7 @@ imos_variables()
 
 <br>
 
-In this vignette we will explore accessing and integrating remote sensed data. A suite of additional functions can be used to access and extract in-situ data from moorings (see `mooringTable()`; [link to Ross and Kylies vignette]()).
+In this vignette we will explore accessing and integrating gridded data. A suite of additional functions can be used to access and extract *in situ* sub-surface data from moorings (see `mooringTable()`; [link to Ross and Kylies vignette]()).
 
 
 <br>
