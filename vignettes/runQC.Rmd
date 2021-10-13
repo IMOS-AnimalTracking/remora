@@ -128,7 +128,7 @@ qc
 
 The QC'd detections can be visualised as a map using the `plotQC()` function, which produces a `.png` file for each species present in the data. By default the file(s) is/are named with the species' common name(s) and are written to the working directory. The file(s) can be saved elsewhere by using the `path` argument:
 
-```{r plotQC, message=FALSE, warning=FALSE, fig.align='center'}
+```{r plotQC, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 plotQC(tag_qc, path = "images")
 ```
 ![ ](images/Bull_Shark.png)

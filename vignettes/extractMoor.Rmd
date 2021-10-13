@@ -75,7 +75,7 @@ Lets start with a dataset that has undergone quality control (see `runQC()`; [ru
 
 ```{r, eval = TRUE, message=FALSE, warning=FALSE}
 ## Example dataset that has undergone quality control using the `runQC()` function
-data("TR_qc")
+data("TownsvilleReefQC")
 
 ## Un-nest the output and retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)
 qc_data <- TR_qc %>% 
