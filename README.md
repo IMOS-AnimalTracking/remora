@@ -7,9 +7,10 @@
 <p align="center">
   <a href="#overview">Overview</a> •
   <a href="#installation">Installation</a> •
-  <a href="#main-functions">Main Functions</a> •
+  <a href="#key-functionalities">Key functionalities</a> •
   <a href="#acknowledgements">Acknowledgements</a> •
   <a href="#data-accessibility">Data accessibility</a>
+  <a href="#licence">Licence</a>
 </p>
 
 ![](vignettes/images/env_extract/env_extract_plot6.png)
@@ -21,7 +22,7 @@ re**mo**ra is a R package enabling the integration of animal acoustic telemetry 
 - extracting and appending these environmental data to animal movement data  
 - interactively exploring animal movements in space and time  
 
-Whilst the functions in re**mo**ra were primarily developed to work with acoustic telemetry data, with some minor data formatting, they will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
+Whilst the functions in re**mo**ra were primarily developed to work with acoustic telemetry data, the oceanographic data extraction and integration functionalities will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
 
 ## Installation
 re**mo**ra requires R version > 3.5
@@ -74,11 +75,12 @@ NEED TO CONFIRM - Creative Commons Attribution 4.0 International (CC BY 4.0)
 Jaine et al. remora: A R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
 
 **Contributors:**
-Ian Jonsen @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)
-Vinay Udyawer @vinayudyawer (Australian Institute of Marine Science)
-Ross Dwyer @RossDwyer (University of the Sunshine Coast)
-Kylie Scales @KScales (University of the Sunshine Coast)
-Francisca Maron @fmaron (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)
-Xavier Hoenner @xhoenner (Commonwealth Scientific and Industrial Research Organisation)
-Charlie Huveneers @huve0001 (Flinders University)
-Fabrice Jaine @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)
+Ian Jonsen @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)  
+Vinay Udyawer @vinayudyawer (Australian Institute of Marine Science)  
+Ross Dwyer @RossDwyer (University of the Sunshine Coast)  
+Kylie Scales @KScales (University of the Sunshine Coast)  
+Francisca Maron @fmaron (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
+Xavier Hoenner @xhoenner (Commonwealth Scientific and Industrial Research Organisation)  
+Charlie Huveneers @huve0001 (Flinders University)  
+Fabrice Jaine @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
+
