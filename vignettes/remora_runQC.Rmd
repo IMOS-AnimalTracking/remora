@@ -26,20 +26,20 @@ require(remora, quietly = TRUE)
 
 --------------------------------------
 
-The typical entry point to the `remora` package will be to apply quality control (QC) processes to acoustic detections data downloaded via the [IMOS AODN WebApp](https://animaltracking.aodn.org.au). The `remora` package uses the QC process described in [Hoenner et al. (2018)](https://www.nature.com/articles/sdata2017206) with necessary modifications to accommodate the WebApp data and metadata formats. The QC workflow has been made as simple as possible, given the constraint of manually downloading the data and metadata prior to interaction with `remora`. This vignette describes the QC workflow. 
+The typical entry point to the `remora` package will be to apply quality control (QC) processes to acoustic telemetry detections data downloaded via the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au). The `remora` package uses the QC process described in [Hoenner et al. (2018)](https://www.nature.com/articles/sdata2017206), with necessary modifications to accommodate the IMOS database's data and metadata formats. The QC workflow has been made as simple as possible, given the constraint of manually downloading the data and metadata prior to interaction with `remora`. This vignette describes the QC workflow. 
 
 
 # Required data
 
-Typically, users will download four `.csv` files via the WebApp interface:
+Typically, users will download four `.csv` files via the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au):
 
-*1. Tag detections data*
+*1. Transmitter detections data*, accessible via the [detections page](https://animaltracking.aodn.org.au/detection)
 
-*2. Transmitter deployment metadata*
+*2. Transmitter deployment metadata*, accessible via the [transmitters page](https://animaltracking.aodn.org.au/transmitters/transmitter)
 
-*3. Receiver deployment metadata*
+*3. Receiver deployment metadata*, accessible via the [receiver deployments page](https://animaltracking.aodn.org.au/receivers/deployment)
 
-*4. Animal measurements data*
+*4. Animal measurements data*, downloaded along with either detections or transmitter deployment metadata
 
 <br>
 
