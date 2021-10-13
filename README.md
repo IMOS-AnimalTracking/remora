@@ -1,5 +1,7 @@
-[![Github All Releases](https://img.shields.io/github/downloads/IMOS-AnimalTracking/remora/total.svg)]() 
+[![Github All Releases](https://img.shields.io/github/downloads/IMOS-AnimalTracking/remora/total.svg/<green>)]() 
 [![Github All Releases](https://img.shields.io/github/forks/IMOS-AnimalTracking/remora)]()
+[![Github All Releases](https://img.shields.io/github/issues/IMOS-AnimalTracking/remora]()
+
 <p align="center">
   <img src="vignettes/images/remora_hex_logo.png" width="200">
 </p>
