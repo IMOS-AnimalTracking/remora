@@ -20,31 +20,31 @@
 ![](vignettes/images/env_extract/env_extract_plot6.png)
 
 ## Overview
-re**mo**ra is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
+**remora** is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
 - Performing robust quality-control of acoustic telemetry data as described in [Hoenner et al. 2018](https://doi.org/10.1038/sdata.2017.206) 
 - Identifying available satellite-derived and sub-surface *in situ* oceanographic datasets coincident and collocated with the animal movement data, based on regional Ocean Observing Systems  
 - Extracting and appending these environmental data to animal movement data  
 - Interactively exploring animal movements in space and time  
 
-Whilst the functions in re**mo**ra were primarily developed to work with acoustic telemetry data, the oceanographic data extraction and integration functionalities will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
+Whilst the functions in **remora** were primarily developed to work with acoustic telemetry data, the oceanographic data extraction and integration functionalities will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
 
 ## Installation
-re**mo**ra requires R version > 3.5
+**remora** requires R version > 3.5
 
-You will need the remotes package to install re**mo**ra:
+You will need the remotes package to install **remora**:
 
 ```r
 install.packages("remotes")
 library("remotes")     
 ```
-The latest stable version of re**mo**ra can be installed from GitHub:
+The latest stable version of **remora** can be installed from GitHub:
 
 ```r
 remotes::install_github('IMOS-AnimalTracking/remora')
 ```
 
 ## Key functionalities
-A set of functions within the re**mo**ra workflow allow users to run each of the below functionalities independently, as required. 
+A set of functions within the **remora** workflow allow users to run each of the below functionalities independently, as required. 
 
 LINK TO WORKFLOW DIAGRAM HERE
 
@@ -76,15 +76,15 @@ Butcher, P., Smoothey, A., Peddemors, V., Brand, C., Gallen, C., Spaet, J., Patt
 NEED TO CONFIRM - Creative Commons Attribution 4.0 International (CC BY 4.0)
 
 **Citation:**  
-Jaine et al. remora: A R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
+Jaine et al. **remora**: A R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
 
 **Contributors:**  
-Ian Jonsen @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)  
-Vinay Udyawer @vinayudyawer (Australian Institute of Marine Science)  
-Ross Dwyer @RossDwyer (University of the Sunshine Coast)  
-Kylie Scales @KScales (University of the Sunshine Coast)  
-Francisca Maron @fmaron (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
-Xavier Hoenner @xhoenner (Commonwealth Scientific and Industrial Research Organisation)  
-Charlie Huveneers @huve0001 (Flinders University)  
-Fabrice Jaine @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
+**Ian Jonsen** @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)  
+**Vinay Udyawer** @vinayudyawer (Australian Institute of Marine Science)  
+**Ross Dwyer** @RossDwyer (University of the Sunshine Coast)  
+**Kylie Scales** @KScales (University of the Sunshine Coast)  
+**Francisca Maron** @fmaron (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
+**Xavier Hoenner** @xhoenner (Commonwealth Scientific and Industrial Research Organisation)  
+**Charlie Huveneers** @huve0001 (Flinders University)  
+**Fabrice Jain**e @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
 
