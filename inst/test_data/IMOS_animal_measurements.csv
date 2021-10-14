@@ -1,6 +1,6 @@
-"","transmitter_id","transmitter_deployment_id","measurement_type","measurement_value","measurement_unit","comments"
-"1","A69-9002-14765",43669972,"FORK LENGTH",215,"cm",NA
-"2","A69-9002-14762",43669944,"FORK LENGTH",200,"cm",NA
-"3","A69-9002-13824",93016182,"FORK LENGTH",207,"cm",NA
-"4","A69-9002-13809",77523186,"FORK LENGTH",164,"cm",NA
-"5","A69-9002-13807",69918684,"FORK LENGTH",235,"cm",NA
+transmitter_id,transmitter_deployment_id,measurement_type,measurement_value,measurement_unit,comments
+A69-9002-14765,43669972,FORK LENGTH,215,cm,NA
+A69-9002-14762,43669944,FORK LENGTH,200,cm,NA
+A69-9002-13824,93016182,FORK LENGTH,207,cm,NA
+A69-9002-13809,77523186,FORK LENGTH,164,cm,NA
+A69-9002-13807,69918684,FORK LENGTH,235,cm,NA

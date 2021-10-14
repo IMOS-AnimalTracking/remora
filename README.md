@@ -2,6 +2,8 @@
 [![Github All Releases](https://img.shields.io/github/forks/IMOS-AnimalTracking/remora)]()
 [![Github All Releases](https://img.shields.io/github/issues/IMOS-AnimalTracking/remora)]()
 
+[![R-CMD-check](https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg)](https://github.com/IMOS-AnimalTracking/remora/actions)
+
 <p align="center">
   <img src="vignettes/images/remora_hex_logo.png" width="200">
 </p>
@@ -30,7 +32,7 @@
 Whilst the functions in **remora** were primarily developed to work with acoustic telemetry data, the oceanographic data extraction and integration functionalities will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
 
 ## Installation
-**remora** requires R version > 3.5
+**remora** requires R version >= 3.6.0
 
 You will need the remotes package to install **remora**:
 
