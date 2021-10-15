@@ -56,6 +56,8 @@
 ##' @examples
 ##' ## Input example detection dataset that have run through the quality control
 ##' ##   workflow (see 'runQC' function)
+##' 
+##' \dontrun{
 ##' library(tidyverse)
 ##' data("TownsvilleReefQC")
 ##' 
@@ -78,7 +80,7 @@
 ##'               fill_gaps = TRUE,
 ##'               folder_name = "test",
 ##'               .parallel = TRUE)
-##'
+##'}
 ##'
 ##' @importFrom dplyr '%>%' mutate distinct pull left_join select
 ##' @importFrom raster raster extent
