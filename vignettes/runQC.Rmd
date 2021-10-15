@@ -132,3 +132,13 @@ The QC'd detections can be visualised as a map using the `plotQC()` function, wh
 plotQC(tag_qc, path = "images")
 ```
 ![ ](images/Bull_Shark.png)
+
+<br>
+
+---------------------------------------
+
+**Vignette version**
+0.0.3 (15 Oct 2021)
+
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
