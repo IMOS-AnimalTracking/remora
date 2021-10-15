@@ -50,8 +50,6 @@ BugReports: https://github.com/IMOS-AnimalTracking/remora/issues
 License: AGPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
 Imports: 
     colormap,
     crosstalk,
@@ -114,3 +112,5 @@ Suggests:
 Depends: R (>= 3.6.0)
 SystemRequirements: GDAL (>= 2.4.2), GEOS (>= 3.7.0), PROJ (>= 5.2.0)
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2

@@ -44,3 +44,5 @@ inst/doc
 QC_logfile.txt
 /*.DS_Store
 */.DS_Store
+/doc/
+/Meta/
