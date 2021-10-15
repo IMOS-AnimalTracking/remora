@@ -43,7 +43,7 @@ library("remotes")
 The latest stable version of **remora** can be installed from GitHub:
 
 ```r
-remotes::install_github('IMOS-AnimalTracking/remora')
+remotes::install_github('IMOS-AnimalTracking/remora', build_vignettes = TRUE)
 ```
 
 ## Key functionalities
