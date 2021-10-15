@@ -95,6 +95,8 @@ available can be accessed using the \code{\link{imos_variables}} function.
 \examples{
 ## Input example detection dataset that have run through the quality control
 ##   workflow (see 'runQC' function)
+
+\dontrun{
 library(tidyverse)
 data("TownsvilleReefQC")
 
@@ -117,6 +119,6 @@ data_with_sst <-
               fill_gaps = TRUE,
               folder_name = "test",
               .parallel = TRUE)
-
+}
 
 }
