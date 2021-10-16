@@ -61,10 +61,13 @@
 ##'               meas = system.file(file.path("test_data","IMOS_animal_measurements.csv"),
 ##'                     package = "remora"))
 ##' qc.out <- runQC(files)
-##' plotQC(qc.out)
+##' plotQC(qc.out, path = NULL) # plots to default graphics device
 ##'
 ##' ## get detections with QC flags
 ##' d.qc <- grabQC(qc.out, what = "dQC")
+##' 
+##' ## clean up
+##' system("rm QC_logfile.txt")
 ##'
 ##' @importFrom stringr str_split
 ##' @importFrom readr read_csv cols col_character col_double col_integer col_datetime

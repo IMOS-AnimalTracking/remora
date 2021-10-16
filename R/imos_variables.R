@@ -17,7 +17,6 @@
 ##' imos_variables(variable = "rs_sst_interpolated")
 ##'
 ##' @importFrom dplyr '%>%' 
-##' @importFrom readr read_csv cols
 ##' @importFrom knitr kable
 ##' @importFrom kableExtra kable_paper column_spec
 ##' 
@@ -38,8 +37,8 @@ Or leave as 'NULL' to see all variables available")}
     imos_variables_table %>% 
     {if (!is.null(variable)) subset(., Variable %in% {{variable}}) else .}
   
-  knitr::kable(var_tab, format = "html") %>%
-    kableExtra::kable_paper(full_width = F) %>%
-    kableExtra::column_spec(1, bold = T) %>%
-    kableExtra::column_spec(6, width = "30em")
+  kable(var_tab, format = "html") %>%
+    kable_paper(full_width = F) %>%
+    column_spec(1, bold = T) %>%
+    column_spec(6, width = "30em")
 }

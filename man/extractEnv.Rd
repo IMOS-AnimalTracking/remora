@@ -99,24 +99,28 @@ available can be accessed using the \code{\link{imos_variables}} function.
 library(tidyverse)
 data("TownsvilleReefQC")
 
+## simplify & subset data for speed
 qc_data <- 
   TownsvilleReefQC \%>\% 
-  tidyr::unnest(cols = c(QC)) \%>\% 
-  dplyr::ungroup() \%>\% 
-  dplyr::filter(Detection_QC \%in\% c(1,2))
+  unnest(cols = c(QC)) \%>\% 
+  ungroup() \%>\% 
+  filter(Detection_QC \%in\% c(1,2)) \%>\%
+  filter(filename == unique(filename)[1]) \%>\%
+  slice(1:20)
 
 ## Extract daily interpolated sea surface temperature
+## cache_layers & fill_gaps args set to FALSE for speed
 data_with_sst <- 
   extractEnv(df = qc_data,
               X = "receiver_deployment_longitude", 
               Y = "receiver_deployment_latitude", 
               datetime = "detection_datetime", 
               env_var = "rs_sst_interpolated",
-              cache_layers = TRUE,
+              cache_layers = FALSE,
               crop_layers = TRUE,
               full_timeperiod = FALSE,
-              fill_gaps = TRUE,
+              fill_gaps = FALSE,
               folder_name = "test",
-              .parallel = TRUE)
+              .parallel = FALSE)
 
 }

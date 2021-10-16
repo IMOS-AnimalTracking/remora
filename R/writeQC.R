@@ -28,10 +28,12 @@
 ##' @return .csv files and/or a QCsummary.csv file are written to the specified \code{path}
 ##'
 ##' @examples
+##' \dontrun{
 ##' ## example QC'd data
 ##' data(TownsvilleReefQC)
 ##' ## write QC output
 ##' writeQC(TownsvilleReefQC, summary = TRUE)
+##' }
 ##' 
 ##' @references Hoenner X et al. (2018) Australia’s continental-scale acoustic tracking database and its automated quality control process. Sci Data 5, 170206 https://doi.org/10.1038/sdata.2017.206
 ##' 

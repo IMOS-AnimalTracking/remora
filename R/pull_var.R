@@ -21,12 +21,11 @@
 ##' @importFrom dplyr '%>%' filter bind_rows n_distinct 
 ##' @importFrom readr write_csv 
 ##' @importFrom utils txtProgressBar setTxtProgressBar download.file
-##' @importFrom raster raster stack extent crop addLayer setZ writeRaster projection
+##' @importFrom raster raster stack extent crop addLayer setZ writeRaster projection projection<-
 ##' @importFrom sp CRS
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options
-##' @importFrom purrr map
 ##' @importFrom tibble tibble
 ##' @importFrom progressr progressor with_progress
 ##' @importFrom R.utils gunzip
@@ -45,10 +44,10 @@
   ## setup parallelisation
   if(.parallel){
     if(is.null(.ncores)) {
-      .ncores <- parallel::detectCores()
+      .ncores <- detectCores()
     } else {
       ## check if n_cores <= detectCores else return warning
-      if(.ncores > parallel::detectCores()) 
+      if(.ncores > detectCores()) 
         warning("process to be run across more cores than available, this may not be efficient")
     } 
   }
@@ -62,8 +61,8 @@
       ## Update with IMOS github repo link
       url <- "https://github.com/IMOS-AnimalTracking/environmental_layers/blob/main/bathymetry_AustralianEEZ.tif?raw=true"
       out_brick <-
-        try(raster::raster(url, verbose = FALSE) %>%
-              {if (.crop) raster::crop(.,study_extent) else .} , silent=TRUE)
+        try(raster(url, verbose = FALSE) %>%
+              {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
       names(out_brick) <- "bathy"
     }
     
@@ -71,8 +70,8 @@
     if(var_name %in% "dist_to_land"){
       url <- "https://github.com/IMOS-AnimalTracking/environmental_layers/blob/main/dist_to_land_AustralianEEZ.tif?raw=true"
       out_brick <-
-        try(raster::raster(url, verbose = FALSE) %>%
-              {if (.crop) raster::crop(.,study_extent) else .} , silent=TRUE)
+        try(raster(url, verbose = FALSE) %>%
+              {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
       names(out_brick) <- "dist_to_land"
     }
     
@@ -88,14 +87,14 @@
     if(.parallel){
       message("Downloading environmental data in parallel across ", .ncores, " cores...")
       
-      future::plan("multisession", workers = .ncores)
+      plan("multisession", workers = .ncores)
       
       par_function1 <- function(url, var_name, .crop, study_extent){
         p()
         tryCatch({
           out_ras <- 
-            try(raster::raster(url$url_name, varname = url$layer, verbose = FALSE) %>%
-                  {if (.crop) raster::crop(.,study_extent) else .}, silent=TRUE)
+            try(raster(url$url_name, varname = url$layer, verbose = FALSE) %>%
+                  {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
           
           if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
             names(out_ras) <- substr(out_ras@z[[1]], start = 1, stop = 10)
@@ -108,7 +107,7 @@
         }, 
         error = function(e) {
           error_log <<- bind_rows(error_log, url)
-          out_ras <<- raster::stack()
+          out_ras <<- stack()
         }
         )
         return(out_ras)
@@ -117,16 +116,16 @@
       ## establish a log to store all erroneous urls
       error_log <- tibble(date = as.Date(NULL), url_name = NULL, layer = NULL)
       
-      p <- progressr::progressor(steps = nrow(urls))
+      p <- progressor(steps = nrow(urls))
       
       ras_list <- 
         split(urls, urls$date) %>% 
-        furrr::future_map(.x = ., .f = par_function1, var_name, .crop, study_extent, 
-                          .options = furrr::furrr_options(seed = TRUE))
+        future_map(.x = ., .f = par_function1, var_name, .crop, study_extent, 
+                          .options = furrr_options(seed = TRUE))
       
-      out_brick <- raster::stack(ras_list)
+      out_brick <- stack(ras_list)
       
-      future::plan("sequential")
+      plan("sequential")
       
     } else {
       ## Looped version
@@ -137,11 +136,11 @@
       
       for(i in 1:nrow(urls)){
         if(i %in% 1){
-          pb <- utils::txtProgressBar(max = nrow(urls), style = 3)
+          pb <- txtProgressBar(max = nrow(urls), style = 3)
           tryCatch({
             out_brick <-
-              try(raster::raster(urls$url_name[i], varname = urls$layer[i], verbose = FALSE) %>%
-                    {if (.crop) raster::crop(.,study_extent) else .} , silent=TRUE)
+              try(raster(urls$url_name[i], varname = urls$layer[i]) %>%
+                    {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
             
             if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
               names(out_brick) <- substr(out_brick@z[[1]], start = 1, stop = 10)
@@ -158,8 +157,8 @@
         } else {
           tryCatch({
             out_layer <- 
-              try(raster::raster(urls$url_name[i], varname = urls$layer[i], verbose = FALSE) %>%
-                    {if (.crop) raster::crop(.,study_extent) else .}, silent=TRUE)
+              try(raster(urls$url_name[i], varname = urls$layer[i]) %>%
+                    {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
             
             if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
               names(out_layer) <- substr(out_layer@z[[1]], start = 1, stop = 10)
@@ -170,7 +169,7 @@
               names(out_layer) <- as.character(out_layer@z[[1]])
             }
             
-            out_brick <- raster::addLayer(out_brick, out_layer) 
+            out_brick <- addLayer(out_brick, out_layer) 
             
           }, 
           error = function(e) {
@@ -178,7 +177,7 @@
           }
           )
         }
-        utils::setTxtProgressBar(pb, i)
+        setTxtProgressBar(pb, i)
       }
       
       ## provide log of error prone urls
@@ -195,8 +194,7 @@
       gsub("\\.", "-", .) %>% 
       as.Date()
     
-    out_brick <- raster::setZ(x = out_brick, z = zval, name = "date")
-    
+    out_brick <- setZ(x = out_brick, z = zval, name = "date")
   }
 
   ## Current layers
@@ -205,105 +203,106 @@
     built_urls <- .build_urls(dates, var_name, verbose = verbose)
     
     ## error log
-    error_log <- built_urls %>% dplyr::filter(is.na(layer))
+    error_log <- built_urls %>% filter(is.na(layer))
     
     ## extract urls with data
-    urls <- built_urls %>% dplyr::filter(!is.na(layer))
+    urls <- built_urls %>% filter(!is.na(layer))
     
     ## download raster files from built urls
     if(.parallel){
       message("Downloading IMOS Ocean Current data in parallel across ", .ncores, " cores...")
       
-      future::plan("multisession", workers = .ncores)
+      plan("multisession", workers = .ncores)
       
-      gsla_stack <- raster::stack()
-      vcur_stack <- raster::stack()
-      ucur_stack <- raster::stack()
+      gsla_stack <- stack()
+      vcur_stack <- stack()
+      ucur_stack <- stack()
       
       par_function2 <- function(url, .crop, study_extent){
         p()
-        temp_nc <- fs::file_temp(ext = ".nc.gz")
-        utils::download.file(url$url_name, destfile = temp_nc, quiet = TRUE)
-        nc_path <- R.utils::gunzip(temp_nc)
+        temp_nc <- file_temp(ext = ".nc.gz")
+        download.file(url$url_name, destfile = temp_nc, quiet = TRUE)
+        nc_path <- gunzip(temp_nc)
         
         tryCatch({
           gsla <<- 
-            try(raster::raster(nc_path, varname = "GSLA", verbose = FALSE) %>% 
-                  {if (.crop) raster::crop(.,study_extent) else .}, silent=TRUE)
+            try(raster(nc_path, varname = "GSLA", verbose = FALSE) %>% 
+                  {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
           names(gsla) <- url$date[1]
-          gsla_stack <<- raster::addLayer(gsla_stack, gsla)
+          gsla_stack <<- addLayer(gsla_stack, gsla)
           
           vcur <<- 
-            try(raster::raster(nc_path, varname = "VCUR", verbose = FALSE) %>% 
-                  {if (.crop) raster::crop(.,study_extent) else .}, silent=TRUE)
+            try(raster(nc_path, varname = "VCUR", verbose = FALSE) %>% 
+                  {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
           names(vcur) <- url$date[1]
-          vcur_stack <<- raster::addLayer(vcur_stack, vcur)
+          vcur_stack <<- addLayer(vcur_stack, vcur)
           
           ucur <<- 
-            try(raster::raster(nc_path, varname = "UCUR", verbose = FALSE) %>% 
-                  {if (.crop) raster::crop(.,study_extent) else .}, silent=TRUE)
+            try(raster(nc_path, varname = "UCUR", verbose = FALSE) %>% 
+                  {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
           names(ucur) <- url$date[1]
-          ucur_stack <<- raster::addLayer(ucur_stack, ucur)
+          ucur_stack <<- addLayer(ucur_stack, ucur)
           
           },
           error = function(e) {
             message(e)
           })
-        return(tibble::tibble(date = url$date, url_name = url$url_name, tempfile = temp_nc))
+        return(tibble(date = url$date, url_name = url$url_name, tempfile = temp_nc))
       }
       
-      p <- progressr::progressor(steps = nrow(urls))
+      p <- progressor(steps = nrow(urls))
       
       ras_list <- 
         urls %>% 
         split(., .$date) %>% 
-        furrr::future_map(.x = ., .f = par_function2, .crop, study_extent, 
-                          .options = furrr::furrr_options(seed = TRUE))
+        future_map(.x = ., .f = par_function2, .crop, study_extent, 
+                          .options = furrr_options(seed = TRUE))
       
       out_brick <- list(gsla = gsla_stack, vcur = vcur_stack, ucur = ucur_stack)
       
-      future::plan("sequential")
+      plan("sequential")
       
     } else {
       ## Looped version
       ## run through urls to download, crop and stack environmental variables
       
-      gsla_stack <- raster::stack()
-      vcur_stack <- raster::stack()
-      ucur_stack <- raster::stack()
+      gsla_stack <- stack()
+      vcur_stack <- stack()
+      ucur_stack <- stack()
       
-      pb <- utils::txtProgressBar(max = nrow(urls), style = 3)
+      pb <- txtProgressBar(max = nrow(urls), style = 3)
       
       for(i in 1:nrow(urls)){
-        temp_nc <- fs::file_temp(ext = ".nc.gz")
-        utils::download.file(urls$url_name[i], destfile = temp_nc, quiet = TRUE)
-        nc_path <- R.utils::gunzip(temp_nc)
+        temp_nc <- file_temp(ext = ".nc.gz")
+        download.file(urls$url_name[i], destfile = temp_nc, quiet = TRUE)
+        nc_path <- gunzip(temp_nc)
         tryCatch({
           gsla <- 
-            try(raster::raster(nc_path, varname = "GSLA", verbose = FALSE) %>% 
-                  {if (.crop) raster::crop(.,study_extent) else .}, silent = TRUE)
+            try(raster(nc_path, varname = "GSLA") %>% 
+                  {if (.crop) crop(.,study_extent) else .}, silent = TRUE)
           names(gsla) <- urls$date[i]
-          gsla_stack <- raster::addLayer(gsla_stack, gsla)
+          gsla_stack <- addLayer(gsla_stack, gsla)
           
           vcur <- 
-            try(raster::raster(nc_path, varname = "VCUR", verbose = FALSE) %>% 
-                  {if (.crop) raster::crop(.,study_extent) else .}, silent = TRUE)
+            try(raster(nc_path, varname = "VCUR") %>% 
+                  {if (.crop) crop(.,study_extent) else .}, silent = TRUE)
           names(vcur) <- urls$date[i]
-          vcur_stack <- raster::addLayer(vcur_stack, vcur)
+          vcur_stack <- addLayer(vcur_stack, vcur)
           
           ucur <- 
-            try(raster::raster(nc_path, varname = "UCUR", verbose = FALSE) %>% 
-                  {if (.crop) raster::crop(.,study_extent) else .}, silent = TRUE)
+            try(raster(nc_path, varname = "UCUR") %>% 
+                  {if (.crop) crop(.,study_extent) else .}, silent = TRUE)
           names(ucur) <- urls$date[i]
-          ucur_stack <- raster::addLayer(ucur_stack, ucur)
+          ucur_stack <- addLayer(ucur_stack, ucur)
           
         },
         error = function(e) {
           message(e)
         })
         
-        utils::setTxtProgressBar(pb, i)
+        setTxtProgressBar(pb, i)
       }
+      
       out_brick <- list(gsla = gsla_stack, vcur = vcur_stack, ucur = ucur_stack)
     }
     
@@ -343,14 +342,16 @@
     
     ## Save as requested raster output format
     if(var_name %in% "rs_current"){
-      raster::writeRaster(out_brick$gsla, filename = paste(path, "rs_gsla", sep = "/"), overwrite = T, format = .output_format) 
-      raster::writeRaster(out_brick$vcur, filename = paste(path, "rs_vcur", sep = "/"), overwrite = T, format = .output_format) 
-      raster::writeRaster(out_brick$ucur, filename = paste(path, "rs_ucur", sep = "/"), overwrite = T, format = .output_format) 
+      writeRaster(out_brick$gsla, filename = paste(path, "rs_gsla", sep = "/"), overwrite = T, format = .output_format) 
+      writeRaster(out_brick$vcur, filename = paste(path, "rs_vcur", sep = "/"), overwrite = T, format = .output_format) 
+      writeRaster(out_brick$ucur, filename = paste(path, "rs_ucur", sep = "/"), overwrite = T, format = .output_format) 
     } else {
-      if(is.na(raster::projection(out_brick))){raster::projection(out_brick) <- sp::CRS("EPSG:4326")}
-      raster::writeRaster(out_brick, filename = paste(path, var_name, sep = "/"), overwrite = T, format = .output_format) 
+      if(is.na(projection(out_brick))){
+        projection(out_brick) <- CRS("EPSG:4326")
+        }
+      writeRaster(out_brick, filename = paste(path, var_name, sep = "/"), overwrite = T, format = .output_format) 
     }
-  }
+  } 
 
   return(out_brick)  
   

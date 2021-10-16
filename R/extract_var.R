@@ -27,13 +27,13 @@
   ## Configure unique_positions to allow extraction
   pos_sf <- 
     unique_positions %>% 
-    sf::st_as_sf(coords = c(1,2), crs = 4326, remove = F) %>% 
-    dplyr::mutate(layer = paste0("X", gsub("\\-", ".", date)))
+    st_as_sf(coords = c(1,2), crs = 4326, remove = F) %>% 
+    mutate(layer = paste0("X", gsub("\\-", ".", date)))
   
   ## setup output dataset
   out_data <-
     pos_sf %>% 
-    sf::st_drop_geometry()
+    st_drop_geometry()
   
   if(env_var %in% "rs_current"){
     env_names <- c("rs_gsla", "rs_vcur", "rs_ucur")
@@ -57,7 +57,7 @@
   if(env_var %in% "rs_current"){
     ## extraction current datasets run through each current dataset (gsla, vcur, ucur)
     for(c in 1:length(env_names)){
-      ext_matrix <- raster::extract(env_stack[[c]], pos_sf)
+      ext_matrix <- extract(env_stack[[c]], pos_sf)
       variable <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
@@ -71,7 +71,7 @@
       
       ## gap filling
       if(.fill_gaps){
-        ext_matrix_fill <- raster::extract(env_stack[[c]], pos_sf, buffer = .buffer, fun = median)
+        ext_matrix_fill <- extract(env_stack[[c]], pos_sf, buffer = .buffer, fun = median)
         variable_fill <- vector()
         for (i in 1:nrow(ext_matrix)) {
           val <-
@@ -88,22 +88,22 @@
       if(length(variable) > 0){
         out_data <-
           out_data %>% 
-          dplyr::mutate(variable = variable) %>% 
-          {if(.fill_gaps) dplyr::mutate(., 
+          mutate(variable = variable) %>% 
+          {if(.fill_gaps) mutate(., 
                                         var_fill = variable_fill,
-                                        variable = dplyr::case_when(is.na(variable) ~ var_fill,
+                                        variable = case_when(is.na(variable) ~ var_fill,
                                                                     TRUE ~ variable)) %>% 
-              dplyr::select(., -var_fill) else .}
+              select(., -var_fill) else .}
         colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[c]
       } else {
         out_data <-
           out_data %>% 
-          dplyr::mutate(variable = NA) %>% 
-          {if(.fill_gaps) dplyr::mutate(., 
+          mutate(variable = NA) %>% 
+          {if(.fill_gaps) mutate(., 
                                         var_fill = variable_fill,
-                                        variable = dplyr::case_when(is.na(variable) ~ var_fill,
+                                        variable = case_when(is.na(variable) ~ var_fill,
                                                                     TRUE ~ variable)) %>% 
-              dplyr::select(., -var_fill) else .}
+              select(., -var_fill) else .}
         colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[c]
       }
     }
@@ -111,19 +111,19 @@
   
   if(env_var %in% c("bathy", "dist_to_land")) {
     ## extraction for single/fixed layer ('bathy', 'dist_to_land')
-    ext_matrix <- raster::extract(env_stack, pos_sf)
+    ext_matrix <- extract(env_stack, pos_sf)
     variable <- ext_matrix
     
     ## Append extracted variables to pos_sf dataset
     if(length(variable) > 0){
       out_data <- 
         out_data %>% 
-        dplyr::mutate(variable = variable) 
+        mutate(variable = variable) 
       colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names
     } else {
       out_data <-
         out_data %>% 
-        dplyr::mutate(variable = NA) 
+        mutate(variable = NA) 
       colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names
     }
   }
@@ -131,7 +131,7 @@
   
   if(env_var %in% c("rs_sst", "rs_sst_interpolated", "rs_salinity", "rs_chl", "rs_turbidity", "rs_npp")) {
     ## extraction for time-series raster stacks
-    ext_matrix <- raster::extract(env_stack, pos_sf)
+    ext_matrix <- extract(env_stack, pos_sf)
     variable <- vector()
     for (i in 1:nrow(ext_matrix)) {
       val <-
@@ -145,7 +145,7 @@
     
     ## gap filling
     if(.fill_gaps){
-      ext_matrix_fill <- raster::extract(env_stack, pos_sf, buffer = .buffer, fun = median)
+      ext_matrix_fill <- extract(env_stack, pos_sf, buffer = .buffer, fun = median)
       variable_fill <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
@@ -161,22 +161,22 @@
     if(length(variable) > 0){
       out_data <- 
         out_data %>% 
-        dplyr::mutate(variable = variable) %>% 
-        {if(.fill_gaps) dplyr::mutate(., 
+        mutate(variable = variable) %>% 
+        {if(.fill_gaps) mutate(., 
                                       var_fill = variable_fill,
-                                      variable = dplyr::case_when(is.na(variable) ~ var_fill,
+                                      variable = case_when(is.na(variable) ~ var_fill,
                                                                   TRUE ~ variable)) %>% 
-            dplyr::select(., -var_fill) else .}
+            select(., -var_fill) else .}
       colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names
     } else {
       out_data <-
         out_data %>% 
-        dplyr::mutate(variable = NA) %>% 
-        {if(.fill_gaps) dplyr::mutate(., 
+        mutate(variable = NA) %>% 
+        {if(.fill_gaps) mutate(., 
                                       var_fill = variable_fill,
-                                      variable = dplyr::case_when(is.na(variable) ~ var_fill,
+                                      variable = case_when(is.na(variable) ~ var_fill,
                                                                   TRUE ~ variable)) %>% 
-            dplyr::select(., -var_fill) else .}
+            select(., -var_fill) else .}
       colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names
     }
   }

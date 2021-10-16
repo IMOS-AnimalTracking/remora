@@ -14,7 +14,7 @@
 ##'
 ##'
 ##' @importFrom dplyr '%>%' slice left_join transmute mutate filter select case_when
-##' @importFrom magrittr %$% %<>%
+##' @importFrom magrittr '%$%'
 ##' @importFrom xml2 read_html as_list
 ##' @importFrom purrr map_dfr
 ##' @importFrom tibble tibble
@@ -106,7 +106,7 @@
     }
     
     catalog <-
-      tibble::tibble(date = sub_dates, 
+      tibble(date = sub_dates, 
                      fdates = format(date, "%Y%m%d"),
                      year = format(date, "%Y"),
                      base_url = paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/SRS/SSS/aquarius/L3/7day/", year, "/"),
@@ -120,27 +120,27 @@
       base <- unique(m$base_url)[1]
       url_list <-
         paste0(base, "catalog.html") %>% 
-        xml2::read_html() %>%
-        xml2::as_list() %$%
+        read_html() %>%
+        as_list() %$%
         html %$%
         body %$%
         table %>% 
-        purrr::map_dfr(function(x){if(is.null(x$td$a$tt[[1]])) return(NULL)
-          tibble::tibble(end_url = x$td$a$tt[[1]],
+        map_dfr(function(x){if(is.null(x$td$a$tt[[1]])) return(NULL)
+          tibble(end_url = x$td$a$tt[[1]],
                          fromdate = as.Date(substr(end_url, start = 2, stop = 9), "%Y%m%d"),
                          todate = as.Date(substr(end_url, start = 11, stop = 18), "%Y%m%d"),
                          type = substr(end_url, start = 30, stop = 30))}) %>% 
-        dplyr::filter(type %in% "_") %>% 
-        dplyr::select(-type) %>% 
-        dplyr::slice(-1) %>% 
-        dplyr::mutate(a = "a")
+        filter(type %in% "_") %>% 
+        select(-type) %>% 
+        slice(-1) %>% 
+        mutate(a = "a")
       
       out_join <-
         m %>% 
         mutate(a = "a") %>% 
-        dplyr::left_join(url_list, by = "a") %>% 
-        dplyr::select(-a) %>% 
-        dplyr::filter(date >= fromdate & date <= todate)
+        left_join(url_list, by = "a") %>% 
+        select(-a) %>% 
+        filter(date >= fromdate & date <= todate)
 
       return(out_join)
     }
@@ -148,11 +148,11 @@
     find_df <-
       catalog %>%
       split(., .$year) %>%
-      purrr::map_dfr( ~ find_url(.x), .progress = T) 
+      map_dfr( ~ find_url(.x), .progress = T) 
     
     url_df <-
       find_df %>% 
-      dplyr::transmute(date = date,
+      transmute(date = date,
                        url_name = paste0(start_url, end_url),
                        layer = "SSS")
   }
@@ -171,7 +171,7 @@
     sub_dates <-  dates[dates > as.Date("1993-01-01")]
     
     catalog <-
-      tibble::tibble(date = sub_dates, 
+      tibble(date = sub_dates, 
                      fdates = format(date, "%Y%m%d"),
                      year = format(date, "%Y"),
                      base_url = paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM00/", year, "/"),
@@ -185,31 +185,31 @@
       base <- unique(m$base_url)[1]
       url_list <-
        paste0(base, "catalog.html") %>% 
-       xml2::read_html() %>%
-       xml2::as_list() %$%
+       read_html() %>%
+       as_list() %$%
        html %$%
        body %$%
        table %>% 
-       purrr::map_dfr(function(x){if(is.null(x$td$a$tt[[1]])) return(NULL)
-         tibble::tibble(end_url = x$td$a$tt[[1]],
+       map_dfr(function(x){if(is.null(x$td$a$tt[[1]])) return(NULL)
+         tibble(end_url = x$td$a$tt[[1]],
                         fdates = substr(end_url, start = 22, stop = 29),
                         date = as.Date(fdates, "%Y%m%d"))}) %>% 
-       dplyr::slice(-1)
+       slice(-1)
      
       out_join <-
         m %>% 
-        dplyr::left_join(url_list, by = c("date", "fdates"))
+        left_join(url_list, by = c("date", "fdates"))
       return(out_join)
     }
     
     find_df <-
       catalog %>%
       split(., .$year) %>%
-      purrr::map_dfr( ~ find_url(.x), .progress = T) 
+      map_dfr( ~ find_url(.x), .progress = T) 
     
     url_df <-
       find_df %>% 
-      dplyr::transmute(date = date,
+      transmute(date = date,
                        url_name = paste0(start_url, end_url),
                        layer = case_when(!is.na(end_url) ~ 1))
     
@@ -232,7 +232,7 @@
                          fdates, end_url) 
     }
     
-    url_df <- tibble::tibble(date = sub_dates, url_name, layer) 
+    url_df <- tibble(date = sub_dates, url_name, layer) 
   }
   
   return(url_df)

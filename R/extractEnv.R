@@ -60,25 +60,29 @@
 ##' library(tidyverse)
 ##' data("TownsvilleReefQC")
 ##' 
+##' ## simplify & subset data for speed
 ##' qc_data <- 
 ##'   TownsvilleReefQC %>% 
-##'   tidyr::unnest(cols = c(QC)) %>% 
-##'   dplyr::ungroup() %>% 
-##'   dplyr::filter(Detection_QC %in% c(1,2))
+##'   unnest(cols = c(QC)) %>% 
+##'   ungroup() %>% 
+##'   filter(Detection_QC %in% c(1,2)) %>%
+##'   filter(filename == unique(filename)[1]) %>%
+##'   slice(1:20)
 ##' 
 ##' ## Extract daily interpolated sea surface temperature
+##' ## cache_layers & fill_gaps args set to FALSE for speed
 ##' data_with_sst <- 
 ##'   extractEnv(df = qc_data,
 ##'               X = "receiver_deployment_longitude", 
 ##'               Y = "receiver_deployment_latitude", 
 ##'               datetime = "detection_datetime", 
 ##'               env_var = "rs_sst_interpolated",
-##'               cache_layers = TRUE,
+##'               cache_layers = FALSE,
 ##'               crop_layers = TRUE,
 ##'               full_timeperiod = FALSE,
-##'               fill_gaps = TRUE,
+##'               fill_gaps = FALSE,
 ##'               folder_name = "test",
-##'               .parallel = TRUE)
+##'               .parallel = FALSE)
 ##'
 ##' @importFrom dplyr '%>%' mutate distinct pull left_join select
 ##' @importFrom raster raster extent
@@ -110,21 +114,21 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   ## define date range
   unique_dates <- 
     df %>%
-    dplyr::mutate(date = lubridate::date(!!as.name(datetime))) %>%
-    dplyr::distinct(date) %>%
-    dplyr::pull(date) 
+    mutate(date = date(!!as.name(datetime))) %>%
+    distinct(date) %>%
+    pull(date) 
   
   date_range <- range(unique_dates)
   
   ## define spatial extent and extend by 40%
-  study_extent <- raster::extent(c(min(df[[X]]), max(df[[X]]), min(df[[Y]]), max(df[[Y]]))) * 1.4
+  study_extent <- extent(c(min(df[[X]]), max(df[[X]]), min(df[[Y]]), max(df[[Y]]))) * 1.4
   
   ## define unique positions (for quicker environmental variable extraction)
   unique_positions <-
     ungroup(df) %>% 
-    dplyr::mutate(date = lubridate::date(!!as.name(datetime))) %>%
-    dplyr::distinct(!!as.name(X), !!as.name(Y), date) %>% 
-    dplyr::select(!!as.name(X), !!as.name(Y), date)
+    mutate(date = date(!!as.name(datetime))) %>%
+    distinct(!!as.name(X), !!as.name(Y), date) %>% 
+    select(!!as.name(X), !!as.name(Y), date)
   
   ## define dates of detection and date range and catalog all dates between start and end if .full_timeperiod = TRUE
   if(full_timeperiod){
@@ -151,7 +155,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   }
   
   if(.parallel){
-    progressr::with_progress(
+    with_progress(
       try(
         suppressWarnings(
           env_stack <- .pull_env(dates = dates, study_extent = study_extent,
@@ -184,8 +188,8 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   ## Combine environmental data with input detection data
   output <- 
     df %>% 
-    dplyr::mutate(date = lubridate::date(!!as.name(datetime))) %>%
-    dplyr::left_join(env_data, by = c(X, Y, "date"))
+    mutate(date = date(!!as.name(datetime))) %>%
+    left_join(env_data, by = c(X, Y, "date"))
   
   
   ## Calculate additional variables for current data (current direction and velocity)

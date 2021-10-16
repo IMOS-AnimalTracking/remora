@@ -3,7 +3,9 @@
 ##' @param type "transmitters" or "receivers" to produce the corresponding report
 ##' @return Shiny app with Transmitter or Receiver Project visualisations and statistics
 ##' @examples
+##' \dontrun{
 ##' shinyReport(type = "transmitters")
+##' }
 ##' @importFrom shiny runApp shinyOptions
 ##' @export
 shinyReport <- function(type = "transmitters"){

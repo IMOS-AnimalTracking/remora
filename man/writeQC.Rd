@@ -41,10 +41,12 @@ is written to \code{QCsummary.csv}. The summary contains the following informati
 }
 }
 \examples{
+\dontrun{
 ## example QC'd data
 data(TownsvilleReefQC)
 ## write QC output
 writeQC(TownsvilleReefQC, summary = TRUE)
+}
 
 }
 \references{

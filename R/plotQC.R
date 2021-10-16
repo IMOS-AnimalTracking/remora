@@ -78,17 +78,33 @@ plotQC <- function(x, path = getwd()) {
 		                                     include.lowest=TRUE))
 		data$binned_detections <- as.numeric(binned_detects$bin)
 
-		png(filename = paste(path,
-		                 '/',
-		                 gsub(' ', '_', species$species_common_name[i]), ".png", sep= ""),
+		if (!is.null(path)) {
+		  png(
+		    filename = paste(
+		      path,
+		      '/',
+		      gsub(' ', '_', species$species_common_name[i]),
+		      ".png",
+		      sep = ""
+		    ),
 		    width = 1920,
 		    height = 800,
 		    units = "px",
-		    res=92,
-		    bg = "white")
-
-
-		par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+		    res = 92,
+		    bg = "white"
+		  )
+		  par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+		  
+		} else {
+		  par(width = 1920,
+		      height = 800,
+		      units = "px",
+		      res = 92, 
+		      mfrow=c(1,2),
+		      oma = c(0, 0, 2, 0)
+		      )
+		}
+		
 		## First panel - Australia's spatial extent
 
 		if(requireNamespace("rnaturalearth", quietly = TRUE)) {

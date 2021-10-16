@@ -16,5 +16,7 @@ Shiny app with Transmitter or Receiver Project visualisations and statistics
 Renders the Shiny App for transmitter and receiver reports.
 }
 \examples{
+\dontrun{
 shinyReport(type = "transmitters")
+}
 }
