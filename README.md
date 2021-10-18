@@ -21,12 +21,8 @@
   <a href="#licence">Licence</a>
 </p>
 
-<p>
-<img src="vignettes/images/env_extract/env_extract_plot6.png" width="50%" align="left"> <img src="vignettes/images/env_extract/env_extract_plot3.png" width="50%">
-</p>
-<br>
-<p align = "left">
-<img src="vignettes/images/plotDT_output.png" width="50%"><img src="vignettes/images/env_extract/env_extract_plot7.png" width="50%"> 
+<p align="center">
+<img src="vignettes/images/overview-images.png">
 </p>
 
 <br>
