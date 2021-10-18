@@ -22,7 +22,9 @@
 </p>
 
 <p align="center">
+
 <img src="vignettes/images/overview-images.png">
+
 </p>
 
 <br>
