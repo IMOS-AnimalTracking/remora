@@ -7,6 +7,8 @@
 <p align="center">
   <img src="vignettes/images/remora_hex_logo.png" width="200">
 </p>
+
+
 <h1 align="center"><span style="color:#BEBEBE">re</span><span style="color:#808080"><b>mo</b></span><span style="color:#BEBEBE">ra</span></h1>
 <h4 align="center">A R package to facilitate the Rapid Extraction of Marine Observations for Roving Animals</h4>
 
@@ -20,7 +22,12 @@
 </p>
 
 <p align="center">
-<img src=(vignettes/images/env_extract/env_extract_plot6.png)>
+
+<img src="vignettes/images/overview-images.png">
+
+</p>
+
+<br>
 
 ## Overview
 **remora** is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
@@ -62,7 +69,8 @@ Quick links to vignettes for each functionality can be found below:
 ## Acknowledgements
 <p align="left">
   <img src="vignettes/images/logos_banner.png" width="500"> 
-  
+</p>
+
 This work was funded by Australia’s Integrated Marine Observing System (IMOS, www.imos.org.au) and a Research Attraction and Acceleration Program grant from the Office of the New South Wales Chief Scientist & Engineer awarded to Sydney Institute of Marine Science. IMOS is enabled by the National Collaborative Research Infrastructure Strategy (NCRIS). It is operated by a consortium of institutions as an unincorporated joint venture, with the University of Tasmania as Lead Agent. 
 
 We thank Michelle Heupel, Colin Simpfendorfer and Paul Butcher for allowing us access to the following sample datasets to aid code development.
@@ -77,9 +85,8 @@ Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW
 - Oceanographic datasets are available from the [IMOS Australian Ocean Data Network](https://portal.aodn.org.au/).
 
 ## Licence
-<p align="left">
-  <img src="vignettes/images/gplv3-127x51.png" width="100">
-GNU General Public License (GPL>=3) https://www.gnu.org/licenses/gpl-3.0.en.html
+
+![](vignettes/images/gplv3-127x51.png) GNU General Public License (GPL>=3) https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
 **Citation:**  
