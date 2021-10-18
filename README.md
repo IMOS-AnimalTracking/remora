@@ -23,8 +23,8 @@
 
 
 
-![](vignettes/images/env_extract/env_extract_plot6.png){width=50%}![](vignettes/images/env_extract/env_extract_plot7.png){width=50%}
-![](vignettes/images/plotDT_output.png){width=50%}![](vignettes/images/env_extract/env_extract_plot3.png){width=50%}
+![](vignettes/images/env_extract/env_extract_plot6.png){width="50%"}![](vignettes/images/env_extract/env_extract_plot7.png){width="50%"}
+![](vignettes/images/plotDT_output.png){width="50%"}![](vignettes/images/env_extract/env_extract_plot3.png){width="50%"}
 
 ## Overview
 **remora** is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
