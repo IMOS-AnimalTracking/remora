@@ -106,27 +106,19 @@ plotQC <- function(x, path = getwd()) {
 		par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
 		
 		## First panel - Australia's spatial extent
-
-		if(requireNamespace("rnaturalearth", quietly = TRUE)) {
-		wm <- rnaturalearth::ne_countries(scale=50, returnclass = "sp")
-		## use maps:: to avoid conflict with purrr::map
-		maps::map(wm,
-		    xlim=c(100, 165),
-		    ylim = c(-45, -5),
-		    fill = TRUE,
-		    col = "grey")
-		} else {
+		##   use maps::map to avoid conflict with purrr::map
 		  maps::map("world",
 		      xlim=c(100, 165),
 		      ylim = c(-45, -5),
 		      fill = TRUE,
-		      col = "grey")
-		}
+		      col = "grey",
+		      border = "grey")
 			map.axes()
 			if (!is.null(class(expert_shp))) {
 			  plot(expert_shp,
 			       add = T,
-			       col = alpha('dark blue', 0.25)
+			       col = alpha('dark blue', 0.25),
+			       border = alpha('dark blue', 0.25)
 			       )
 			}
 
@@ -231,10 +223,10 @@ plotQC <- function(x, path = getwd()) {
 			  plot(expert_shp,
 			       xlim=xr,
 			       ylim=yr,
-			       col = alpha('dark blue', 0.25))
+			       col = alpha('dark blue', 0.25),
+			       border = alpha('dark blue', 0.25))
 			}
-      if(exists("wm")) maps::map(wm, add = TRUE, fill = TRUE, col = 'grey')
-			else maps::map("world", add = TRUE, fill = TRUE, col = 'grey')
+			maps::map("world", add = TRUE, fill = TRUE, col = "grey", border = "grey")
 			map.axes()
 			## Plot receiver locations
 			## points(rec$deployment_longitude[which(!rec$station_name %in% unique(data$station_name))],
