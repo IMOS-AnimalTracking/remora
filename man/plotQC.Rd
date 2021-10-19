@@ -23,7 +23,14 @@ assessed validity status, overlaid on species expert distribution extent
 \examples{
 ## example QC'd data
 data(TownsvilleReefQC)
+
 ## Plot QC output to graphics window
 plotQC(TownsvilleReefQC, path = NULL)
+
+\dontrun{
+## Plot QC output, saved to the working directory as .png file(s) 
+##   using species common name(s)
+plotQC(TownsvilleReefQC)
+}
 
 }

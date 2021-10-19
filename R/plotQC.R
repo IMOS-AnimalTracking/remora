@@ -13,9 +13,16 @@
 ##' @examples
 ##' ## example QC'd data
 ##' data(TownsvilleReefQC)
+##' 
 ##' ## Plot QC output to graphics window
 ##' plotQC(TownsvilleReefQC, path = NULL)
-##'
+##' 
+##' \dontrun{
+##' ## Plot QC output, saved to the working directory as .png file(s) 
+##' ##   using species common name(s)
+##' plotQC(TownsvilleReefQC)
+##' }
+##' 
 ##' @importFrom tools file_ext
 ##' @importFrom data.table fread rbindlist
 ##' @importFrom plyr ldply '.' ddply count
@@ -93,17 +100,10 @@ plotQC <- function(x, path = getwd()) {
 		    res = 92,
 		    bg = "white"
 		  )
-		  par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
 		  
-		} else {
-		  par(width = 1920,
-		      height = 800,
-		      units = "px",
-		      res = 92, 
-		      mfrow=c(1,2),
-		      oma = c(0, 0, 2, 0)
-		      )
-		}
+		} 
+
+		par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
 		
 		## First panel - Australia's spatial extent
 
@@ -192,7 +192,7 @@ plotQC <- function(x, path = getwd()) {
 					        'blue',
 					        alpha('dark blue', 0.5)),
 					pch = c(19, 19, 19, 19, 4, 15),
-					cex = 1,
+					cex = ifelse(!is.null(path), 1, 0.5),
 					bg="transparent",
 					bty = 'n',
 					xjust = 0.5,
