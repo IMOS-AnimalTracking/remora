@@ -20,7 +20,8 @@
 ##' @importFrom sp spTransform CRS
 ##' @importFrom rgdal readOGR
 ##' @importFrom rgeos gBuffer gSimplify gUnion
-##' @importFrom utils download.file unzip
+##' @importFrom utils download.file
+##' @importFrom zip unzip
 ##'
 ##' @keywords internal
 ##'
