@@ -122,7 +122,7 @@ The table on the left panel summarises the names of the receivers deployed at ea
 ![](images/receiver_report/array_performance.png)
 
 
-*Note: To explore and visualise data relative to a tagging project, head over to the [remora_shinyReport_transmitters vignette](remora_shinyReport_transmitters.html)*
+*Note: To explore and visualise data relative to a tagging project, head over to the [shinyReport_transmitters vignette](shinyReport_transmitters.html)*
 
 ## References
 1. Ellis, R.D., Flaherty-Walia, K.E., Collins, A.B., Bickford, J.W., Boucek, R., Walters Burnsed S.L., Lowerre-Barbieri, S.K. (2019) Acoustic telemetry array evolution: From species- and project-specific designs to large-scale, multispecies, cooperative networks. Fisheries Research (209): 186-195. https://doi.org/10.1016/j.fishres.2018.09.015
