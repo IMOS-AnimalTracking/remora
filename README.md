@@ -36,7 +36,7 @@
 - Identifying available satellite-derived and sub-surface *in situ* oceanographic datasets coincident and collocated with the animal movement data, based on regional Ocean Observing Systems  
 - Extracting and appending these environmental data to animal movement data  
 
-Whilst the functions in **remora** were primarily developed to work with acoustic telemetry data, the oceanographic data extraction and integration functionalities will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
+Whilst the functions in **remora** were primarily developed to work with acoustic telemetry data, the environmental data extraction and integration functionalities will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).
 
 ## Installation
 **remora** requires R version >= 3.6.0
@@ -54,17 +54,23 @@ remotes::install_github('IMOS-AnimalTracking/remora', build_vignettes = TRUE)
 ```
 
 ## Key functionalities
+<p align="center">
+  <img src="vignettes/images/workflow_diagram.png" width="400">
+</p>
+
 A set of functions within the **remora** workflow allow users to run each of the below functionalities independently, as required. 
 
-LINK TO WORKFLOW DIAGRAM HERE
+- Interactive visualisation of data associated with an acoustic telemetry receiver array
+- Interactive visualisation of data associated with an acoustic telemetry tagging project
+- Quality control of acoustic telemetry data
+- Integration with remotely-sensed or gridded environmental data  
+- Integration with *in situ* sub-surface oceanographic moooring data
 
-Quick links to vignettes for each functionality can be found below:  
+The vignettes for each functionality can be accessed in R using the following code:  
 
-- [Interactive visualisation of data associated with an acoustic telemetry receiver array]()
-- [Interactive visualisation of data associated with an acoustic telemetry tagging project]()
-- [Quality control of acoustic telemetry data]()  
-- [Integration with remotely-sensed or gridded environmental data]()  
-- [Integration with *in situ* sub-surface oceanographic moooring data]()  
+```r
+browseVignettes(package = "remora")
+```
 
 ## Acknowledgements
 <p align="left">
@@ -82,7 +88,7 @@ Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW
 ## Data accessibility
 - Continental-scale acoustic telemetry data collated as part of Australia’s Integrated Marine Observing System (IMOS) are available via the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au). 
 
-- Oceanographic datasets are available from the [IMOS Australian Ocean Data Network](https://portal.aodn.org.au/).
+- Environmental and oceanographic datasets are available from the [IMOS Australian Ocean Data Network](https://portal.aodn.org.au/).
 
 ## Licence
 
@@ -100,5 +106,5 @@ Jaine *et al.* **remora**: A R package to facilitate Rapid Extraction of Marine 
 **Francisca Maron** @fmaron (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
 **Xavier Hoenner** @xhoenner (Commonwealth Scientific and Industrial Research Organisation)  
 **Charlie Huveneers** @huve0001 (Flinders University)  
-**Fabrice Jain**e @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
+**Fabrice Jaine** @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
 
