@@ -11,7 +11,7 @@
 choose_file <- function(caption) {
   if (exists('utils::choose.files')) {
     ## Windows
-    ff <- choose.files(default = getwd(), caption = caption) 
+    ff <- utils::choose.files(default = getwd(), caption = caption) 
   } else if (requireNamespace("tcltk", quietly = TRUE)) {
     ## MacOS, Linux if tcltk package installed
     ff <- tcltk::tk_choose.files(default = getwd(), caption = caption)
