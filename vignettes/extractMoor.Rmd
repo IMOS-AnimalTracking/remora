@@ -19,13 +19,6 @@ vignette: >
 ---
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-#### INSTALL PACKAGE FROM GITHUB ####
-#Install latest version of IMOStrack package from Github:
-# library(remotes)
-#MyAuthToken = "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" # personal API key generated at:https://github.com/settings/tokens
-#remotes::install_github('IMOS-AnimalTracking/remora', auth_token= MyAuthToken)
-#####################################
-
 # Set workspace
 library(data.table); library(dplyr); library(sf); library(leaflet); library(RColorBrewer); library(classInt); library(ncdf4); library(lubridate)
 

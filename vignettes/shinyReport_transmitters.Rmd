@@ -37,7 +37,7 @@ The `remora` package should be installed prior to calling the functions describe
 
 The `shinyReport()` function requires the user to specify the type of report to produce. Two options are available depending on whether the user wishes to produce a report for their receiver array project (`receivers`) or tagging project (`transmitters`). 
 
-This vignette describes the receiver array (`transmitters`) report.
+This vignette describes the tagging project (`transmitters`) report.
 
 ```{r, eval=FALSE}
 shinyReport("transmitters")
