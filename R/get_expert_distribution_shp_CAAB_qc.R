@@ -10,7 +10,8 @@
 ##' @return shp is a SpatialPolygons object of the species' distribution
 ##'
 ##' @importFrom rgdal readOGR
-##' @importFrom utils download.file unzip
+##' @importFrom utils download.file
+##' @importFrom zip unzip
 ##'
 ##' @keywords internal
 

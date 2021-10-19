@@ -100,7 +100,8 @@ Imports:
     tidyr,
     tools,
     viridis,
-    xml2
+    xml2,
+    zip
 Suggests: 
     testthat (>= 3.0.0),
     rnaturalearth,
