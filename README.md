@@ -1,6 +1,10 @@
-[![Github All Releases](https://img.shields.io/github/downloads/IMOS-AnimalTracking/remora/total.svg)]() 
-[![Github All Releases](https://img.shields.io/github/forks/IMOS-AnimalTracking/remora)]()
-[![Github All Releases](https://img.shields.io/github/issues/IMOS-AnimalTracking/remora)]()
+[![IMOS-AnimalTracking - remora](https://img.shields.io/static/v1?label=IMOS-AnimalTracking&message=remora&color=blue&logo=github)](https://github.com/IMOS-AnimalTracking/remora)
+[![issues - remora](https://img.shields.io/github/issues/IMOS-AnimalTracking/remora)](https://github.com/IMOS-AnimalTracking/remora/issues)
+[![stars - remora](https://img.shields.io/github/stars/IMOS-AnimalTracking/remora?style=social)](https://github.com/IMOS-AnimalTracking/remora)
+[![forks - remora](https://img.shields.io/github/forks/IMOS-AnimalTracking/remora?style=social)](https://github.com/IMOS-AnimalTracking/remora)
+[![watchers - remora](https://img.shields.io/github/watchers/IMOS-AnimalTracking/remora?style=social)](https://github.com/IMOS-AnimalTracking/remora)
+
+
 
 [![R-CMD-check](https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg)](https://github.com/IMOS-AnimalTracking/remora/actions)
 
