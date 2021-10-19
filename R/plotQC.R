@@ -54,10 +54,9 @@ plotQC <- function(x, path = getwd()) {
 
 	for (i in 1:nrow(species)){
 		expert_shp <-
-		  try(get_expert_distribution_shp(CAAB_species_id = species$CAAB_species_id[i], 
-		                                  spe = species$species_scientific_name[i]), 
+		  try(get_expert_distribution_shp_CAAB(CAAB_species_id = species$CAAB_species_id[i]), 
 		      silent = TRUE)
-		if(class(expert_shp) == 'NULL') {
+		if(is.null(class(expert_shp))) {
 			print(paste('No expert distribution shapefile available for species ',
 			            caab_dump$COMMON_NAME[which(caab_dump$SPCODE == CAAB_id)],
 			            ' (',
@@ -66,7 +65,8 @@ plotQC <- function(x, path = getwd()) {
 			            caab_dump$AUTHORITY[which(caab_dump$SPCODE == CAAB_id)], ')',
 			            sep = ''))
 		} else if (inherits(expert_shp, "try-error")) {
-		  stop("\nDownload of species expert distribution unsuccessful\n")
+		  print("\nCould not download species expert distribution file\n")
+		  expert_shp <- NULL
 		}
 		
 		data <- QCdata[which(QCdata$CAAB_species_id == species$CAAB_species_id[i]), ]
@@ -110,21 +110,32 @@ plotQC <- function(x, path = getwd()) {
 		par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
 		
 		## First panel - Australia's spatial extent
-		##   use maps::map to avoid conflict with purrr::map
+		if (!is.null(class(expert_shp))) {
+		  plot(expert_shp,
+		       xlim = c(100, 165),
+		       ylim = c(-45, -4),
+		       col = alpha('dark blue', 0.25),
+		       border = alpha('dark blue', 0.25)
+		  )
+		  ##   use maps::map to avoid conflict with purrr::map
 		  maps::map("world",
-		      xlim=c(100, 165),
-		      ylim = c(-45, -5),
-		      fill = TRUE,
-		      col = "grey",
-		      border = "grey")
-			map.axes()
-			if (!is.null(class(expert_shp))) {
-			  plot(expert_shp,
-			       add = T,
-			       col = alpha('dark blue', 0.25),
-			       border = alpha('dark blue', 0.25)
-			       )
-			}
+		            xlim=c(100, 165),
+		            ylim = c(-45, -5),
+		            fill = TRUE,
+		            col = "grey",
+		            border = "grey",
+		            add = TRUE)
+		  map.axes()
+		} else {
+		  maps::map("world",
+		            xlim=c(100, 165),
+		            ylim = c(-45, -5),
+		            fill = TRUE,
+		            col = "grey",
+		            border = "grey")
+		  map.axes()
+		}
+			
 
 		## Plot receiver locations
 		## points(rec$deployment_longitude[which(!rec$station_name %in% unique(data$station_name))],
