@@ -42,8 +42,6 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
           extra-packages: rcmdcheck
-
-      - uses: r-lib/actions/check-r-package@v1
       
       - name: "[Custom block] [Linux] Install spatial libraries"
         if: runner.os == 'Linux'
@@ -56,19 +54,7 @@ jobs:
           rm '/usr/local/bin/gfortran'
           brew install pkg-config gdal proj geos
       
-      - name: Install dependencies
-        run: |
-          remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
-        shell: Rscript {0}
-      
-      - name: Check
-        env:
-          _R_CHECK_CRAN_INCOMING_: false
-        run: |
-          options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--no-examples"), error_on = "error", check_dir = "check")
-        shell: Rscript {0}
+      - uses: r-lib/actions/check-r-package@v1
 
       - name: Upload check results
         if: failure()
