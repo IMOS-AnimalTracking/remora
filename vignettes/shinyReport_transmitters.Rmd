@@ -120,7 +120,7 @@ Note: the map may take more time to load depending on the number of detections f
 
 <br>
 
-*Note: To explore and visualise data relative to a receiver array project, head over to the [remora_shinyReport_receivers vignette](remora_shinyReport_receivers.html)*
+*Note: To explore and visualise data relative to a receiver array project, head over to the [shinyReport_receivers vignette](shinyReport_receivers.html)*
 
 ## References
 
