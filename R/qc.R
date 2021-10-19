@@ -81,7 +81,7 @@ qc <- function(x, logfile) {
   ## Find corresponding ALA shapefile based on species name
   shp_b <- NULL
   if (!is.na(spe) & !is.na(CAAB_species_id))
-    shp_b <- get_expert_distribution_shp(CAAB_species_id, spe)
+    shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe), silent = TRUE)
 
   ## if no shape file or spe or CAAB_species_id is missing then append to logfile & continue
   if(is.null(shp_b)) {
@@ -90,9 +90,18 @@ qc <- function(x, logfile) {
                 ": shapefile not available for ", spe, "; Dectection distribution not tested"),
           file = logfile,
           append = TRUE)
+  } else if(inherits(shp_b, "try-error")) {
+    ## write to logfile
+    write(paste0(x$filename[1],
+                 ": shapefile could not be downloaded for ", spe, "; Dectection distribution not tested"),
+          file = logfile,
+          append = TRUE)
+    shp_b <- NULL
   }
 
-  ## Converts unique sets of lat/lon detection coordinates and release lat/lon coordinates to SpatialPoints to test subsequently whether or not detections are in distribution range
+  ## Converts unique sets of lat/lon detection coordinates and release lat/lon 
+  ##  coordinates to SpatialPoints to test subsequently whether or not detections 
+  ##  are in distribution range
   if (!is.null(shp_b)) {
     ll <- unique(data.frame(x$longitude, x$latitude))
     coordinates(ll) <- ~ x.longitude + x.latitude
