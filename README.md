@@ -55,7 +55,7 @@ remotes::install_github('IMOS-AnimalTracking/remora', build_vignettes = TRUE)
 
 ## Key functionalities
 <p align="center">
-  <img src="vignettes/images/workflow_diagram.png" width="400">
+  <img src="vignettes/images/workflow_diagram.png">
 </p>
 
 A set of functions within the **remora** workflow allow users to run each of the below functionalities independently, as required. 
