@@ -54,7 +54,7 @@ plotQC <- function(x, path = getwd()) {
 
 	for (i in 1:nrow(species)){
 		expert_shp <-
-		  get_expert_distribution_shp_CAAB(CAAB_species_id = species$CAAB_species_id[i])
+		  try(get_expert_distribution_shp_CAAB(CAAB_species_id = species$CAAB_species_id[i]), silent = TRUE)
 		if(class(expert_shp) == 'NULL') {
 			print(paste('No expert distribution shapefile available for species ',
 			            caab_dump$COMMON_NAME[which(caab_dump$SPCODE == CAAB_id)],
@@ -63,8 +63,10 @@ plotQC <- function(x, path = getwd()) {
 			            ', ',
 			            caab_dump$AUTHORITY[which(caab_dump$SPCODE == CAAB_id)], ')',
 			            sep = ''))
+		} else if (inherits(expert_shp, "try-error")) {
+		  stop("\nDownload of species expert distribution unsuccessful\n")
 		}
-
+		
 		data <- QCdata[which(QCdata$CAAB_species_id == species$CAAB_species_id[i]), ]
 		releases <- unique(data.frame(data$transmitter_deployment_longitude,
 		                              data$transmitter_deployment_latitude,
