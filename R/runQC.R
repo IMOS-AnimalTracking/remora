@@ -6,8 +6,6 @@
 ##' deployment metadata, and animal measurements data files. These data must be
 ##' downloaded from the IMOS-ATF Web App (URL), or have exactly the same
 ##' structure and variable names as the Web App data.
-##' @param logfile a character string with the file path and file name for
-##' writing the QC logfile (default is `QC_logfile.txt` saved in the working directory)
 ##' @param .parallel logical; run QC tests in parallel across multiple processors
 ##' (default is FALSE)
 ##' @param .ncores integer; number of cores to run in parallel. If NULL and
@@ -29,13 +27,12 @@
 ##' merged data (see \code{examples} & \code{vignette}).
 ##'
 ##' Utility functions are provided to subset the merged data in various ways
-##' from the nested tibble and to visualise the QC results (see \code{examples} f
+##' from the nested tibble and to visualise the QC results (see \code{examples} 
 ##' & \code{vignette}).
 ##'
-##' A logfile is written to a `.txt` file. By default, this file is written to
-##' the working directory but a file path can be provided via the \code{logfile}
-##' argument. The logfile documents potential data issues discovered during the
-##' QC process: e.g., `transmitter_deployment_id`'s present in the detections
+##' A QC log is written to `QC_logfile.txt` in the working directory. The 
+##' logfile documents potential data issues discovered during the QC process: 
+##' e.g., `transmitter_deployment_id`'s present in the detections
 ##' file but not in the transmitter metadata file (if supplied);
 ##' `receiver_deployment_id`'s present in the detections file but not in the
 ##' receiver metadata file (if supplied); NA's present in transmitter deployment
@@ -81,7 +78,6 @@
 ##' @export
 
 runQC <- function(x,
-                   logfile = "QC_logfile.txt",
                    .parallel = FALSE,
                    .ncores = detectCores() - 2,
                    .progress = TRUE) {
@@ -89,8 +85,10 @@ runQC <- function(x,
   ## check if n_cores <= detectCores else return warning
   if(.ncores > detectCores())
     warning("process to be run across more cores than available, this may not be efficient")
-
+  
   ## create logfile object to record QC warnings
+  ## write logfile to working directory
+  logfile <- "QC_logfile.txt"
   write("", file = logfile)
 
   message("Reading data...\n")
