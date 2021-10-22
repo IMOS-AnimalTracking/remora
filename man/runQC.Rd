@@ -4,22 +4,13 @@
 \alias{runQC}
 \title{run IMOS-ATF acoustic detections quality control process}
 \usage{
-runQC(
-  x,
-  logfile = "QC_logfile.txt",
-  .parallel = FALSE,
-  .ncores = detectCores() - 2,
-  .progress = TRUE
-)
+runQC(x, .parallel = FALSE, .ncores = detectCores() - 2, .progress = TRUE)
 }
 \arguments{
 \item{x}{a 4-element list of paths to detections, receiver and transmitter
 deployment metadata, and animal measurements data files. These data must be
 downloaded from the IMOS-ATF Web App (URL), or have exactly the same
 structure and variable names as the Web App data.}
-
-\item{logfile}{a character string with the file path and file name for
-writing the QC logfile (default is \code{QC_logfile.txt} saved in the working directory)}
 
 \item{.parallel}{logical; run QC tests in parallel across multiple processors
 (default is FALSE)}
@@ -52,13 +43,12 @@ The user can then employ these flags, in various combinations, to filter the
 merged data (see \code{examples} & \code{vignette}).
 
 Utility functions are provided to subset the merged data in various ways
-from the nested tibble and to visualise the QC results (see \code{examples} f
+from the nested tibble and to visualise the QC results (see \code{examples}
 & \code{vignette}).
 
-A logfile is written to a \code{.txt} file. By default, this file is written to
-the working directory but a file path can be provided via the \code{logfile}
-argument. The logfile documents potential data issues discovered during the
-QC process: e.g., \code{transmitter_deployment_id}'s present in the detections
+A QC log is written to \code{QC_logfile.txt} in the working directory. The
+logfile documents potential data issues discovered during the QC process:
+e.g., \code{transmitter_deployment_id}'s present in the detections
 file but not in the transmitter metadata file (if supplied);
 \code{receiver_deployment_id}'s present in the detections file but not in the
 receiver metadata file (if supplied); NA's present in transmitter deployment
