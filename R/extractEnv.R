@@ -128,7 +128,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
     ungroup(df) %>% 
     mutate(date = date(!!as.name(datetime))) %>%
     distinct(!!as.name(X), !!as.name(Y), date) %>% 
-    select(!!as.name(X), !!as.name(Y), date)
+    dplyr::select(!!as.name(X), !!as.name(Y), date)
   
   ## define dates of detection and date range and catalog all dates between start and end if .full_timeperiod = TRUE
   if(full_timeperiod){

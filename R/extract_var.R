@@ -93,7 +93,7 @@
                                         var_fill = variable_fill,
                                         variable = case_when(is.na(variable) ~ var_fill,
                                                                     TRUE ~ variable)) %>% 
-              select(., -var_fill) else .}
+              dplyr::select(., -var_fill) else .}
         colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[c]
       } else {
         out_data <-
@@ -103,7 +103,7 @@
                                         var_fill = variable_fill,
                                         variable = case_when(is.na(variable) ~ var_fill,
                                                                     TRUE ~ variable)) %>% 
-              select(., -var_fill) else .}
+              dplyr::select(., -var_fill) else .}
         colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[c]
       }
     }
@@ -166,7 +166,7 @@
                                       var_fill = variable_fill,
                                       variable = case_when(is.na(variable) ~ var_fill,
                                                                   TRUE ~ variable)) %>% 
-            select(., -var_fill) else .}
+            dplyr::select(., -var_fill) else .}
       colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names
     } else {
       out_data <-
@@ -176,7 +176,7 @@
                                       var_fill = variable_fill,
                                       variable = case_when(is.na(variable) ~ var_fill,
                                                                   TRUE ~ variable)) %>% 
-            select(., -var_fill) else .}
+            dplyr::select(., -var_fill) else .}
       colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names
     }
   }
