@@ -319,12 +319,6 @@ server <- function (input, output, session) {
   
   ####Reactive data (changes when user selects inputs)####
   
-  #Reactive data for tag location map (changes when selecting date)
-  # reactive_data <- reactive({detections[detections$transmitter_deployment_datetime >= input$date[1] & 
-  #                                         detections$transmitter_deployment_datetime <= input$date[2], ]
-  #   
-  # })
-  
   reactive_tag_location <- shiny::reactive({
     req(input$species_select)
     tag_location <- tag_location[tag_location$transmitter_deployment_datetime >= input$date[1] & 
@@ -713,12 +707,15 @@ server <- function (input, output, session) {
   
   shiny::observeEvent (input$select_species,{
     shiny::req(input$select_species)
+    if (input$select_species == "All species"){
+      subset <- detections
+    }
     subset <- detections %>% 
       dplyr::filter(species_common_name %in% input$select_species)
     
     shinyWidgets::updatePickerInput(session = session, inputId = "select_transmitter_id",
                                     choices = sort(unique(subset$transmitter_id)),
-                                    options = list('none-selected-text' = 'Please select station'))
+                                    options = list('none-selected-text' = 'Please select transmitter'))
   }, ignoreInit = TRUE)
   
   ####Transmitter detections per day####
