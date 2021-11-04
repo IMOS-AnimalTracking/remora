@@ -569,7 +569,7 @@ server <- function (input, output, session){
     if (input$select_timezone != "UTC"){
       detections <- data.table::setDF(detections) %>% 
         dplyr::mutate(detection_local_datetime = purrr::map2(.x = detection_datetime, .y = input$select_timezone, 
-                                                             .f = function(x, y) {with_tz(time = x, tzone = y)}))%>%
+                                                             .f = function(x, y) {lubridate::with_tz(time = x, tzone = y)}))%>%
         tidyr::unnest(detection_local_datetime)
       detections$month <- format(detections$detection_local_datetime, format = "%B")
     }else{
@@ -641,7 +641,7 @@ server <- function (input, output, session){
     if (input$select_timezone != "UTC"){
       detections <- data.table::setDF(detections) %>% 
         dplyr::mutate(detection_local_datetime = purrr::map2(.x = detection_datetime, .y = input$select_timezone, 
-                                                             .f = function(x, y) {with_tz(time = x, tzone = y)}))%>%
+                                                             .f = function(x, y) {lubridate::with_tz(time = x, tzone = y)}))%>%
         tidyr::unnest(detection_local_datetime)
       detections$hour<-format(detections$detection_local_datetime, format="%H")
       detections$hour<-as.numeric(detections$hour)
