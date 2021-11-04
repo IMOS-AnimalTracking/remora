@@ -29,7 +29,7 @@ data("data_with_sst_and_current", envir = environment())
 
 --------------------------------------
 
-Another key functionality of the `remora` package allows users to integrate acoustic telemetry data and environmental and habitat information. This package allows the user to match a range of environmental variables to each detection. Associating environmental data to detections provides a means to analyse environmental or habitat drivers of occurrence, presence and movement of animal monitored using acoustic telemetry. We advocate for users to first undertake a quality control step using the `tag_qc()` function and workflow before further analysis, however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. 
+Another key functionality of the `remora` package allows users to integrate acoustic telemetry data and environmental and habitat information. This package allows the user to match a range of environmental variables to each detection. Associating environmental data to detections provides a means to analyse environmental or habitat drivers of occurrence, presence and movement of animal monitored using acoustic telemetry. We advocate for users to first undertake a quality control step using the `runQC()` function and workflow before further analysis (see `vignette('runQC')`), however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. 
 
 Currently, the focus of this package is to integrate animal telemetry data and environmental data collated by Australia's [Integrated Marine Observing System](https://imos.org.au). Therefore, the geographical scope of available datasets is currently restricted to the Australiasia region. As this package develops, more sources of environmental data will be added to enable users to access more datasets across Australia and globally.
 
@@ -56,7 +56,7 @@ imos_variables()
 
 <br>
 
-In this vignette we will explore accessing and integrating gridded data. A suite of additional functions can be used to access and extract *in situ* sub-surface data from moorings (see `mooringTable()`; [extractMoor.html]()).
+In this vignette we will explore accessing and integrating gridded data. A suite of additional functions can be used to access and extract *in situ* sub-surface data from moorings (see `vignette('extractMoor')`).
 
 
 <br>
@@ -66,7 +66,7 @@ In this vignette we will explore accessing and integrating gridded data. A suite
 ## Load example dataset
 
 The primary function to extract and append remote sensing data to acoustic detection data is the `extractEnv()` function.
-Lets start with a dataset that has undergone quality control (see `runQC()`; [runQC.html]()).
+Lets start with a dataset that has undergone quality control (see `vignette('runQC')`).
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)

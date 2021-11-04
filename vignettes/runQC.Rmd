@@ -103,7 +103,7 @@ dQC <- grabQC(tag_qc, what = "dQC") %>%
 dQC
 ```
 
-The `dQC` object can form the basis for subsequent annotation with environmental data (see `extractENV()`; [extractENV-vignette](extractENV.html); and `extractMoor()`; [extractMoor-vignette](extractMoor.html)) and analysis.  
+The `dQC` object can form the basis for subsequent annotation with environmental data (see `vignette('extractEnv')`; and `vignette('extractMoor')`) and analysis.  
 
 The metadata and animal measurements associated with QC'd detections can also be extracted in a compact form (without duplication of records):
 
