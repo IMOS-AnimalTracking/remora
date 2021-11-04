@@ -718,6 +718,14 @@ server <- function (input, output, session){
   })
   
   reactive_receivers_sei <- shiny::reactive({
+    #Some receiver metadata doesn't contain all receivers recovery. For this index to work, we have to analyse
+    #just the complete data
+    receiver_meta <- receiver_meta[!is.na(receiver_meta$receiver_recovery_datetime),]
+    
+    #The POSIXct was ran at the start of the code, but if there was some NAs this won't be able to run. 
+    #Mac and Linux auto convert to POSIXct but not Windows
+    receiver_meta$receiver_recovery_datetime <- as.POSIXct(receiver_meta$receiver_recovery_datetime, tz="UTC")
+    
     receiver_meta %>%
       dplyr::filter((receiver_deployment_datetime >= input$date_range[1] &
                        receiver_deployment_datetime <= input$date_range[2]) |
