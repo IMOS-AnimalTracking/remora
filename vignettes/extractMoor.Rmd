@@ -28,7 +28,7 @@ library(data.table); library(dplyr); library(sf); library(leaflet); library(RCol
 
 Another key functionality of the `remora` package allows users to integrate acoustic telemetry data with physical and biological parameters collected on the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork). The National Mooring Network is a collection of mooring arrays strategically positioned in Australian coastal waters that includes regional arrays of shelf moorings, acidification moorings, acoustic observatories and a network of National Reference Stations. This package allows the user to match environmental data collected from these mooring stations to each tag detection. Associating environmental data to detections provides a means to analyse environmental or habitat drivers of occurrence, presence and movement of animal monitored using acoustic telemetry. 
 
-We advocate for users to first undertake a quality control step using the `runQC()` function and workflow before further analysis, however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. Currently, the focus of this package is to integrate animal telemetry data and environmental data housed within the [Integrated Marine Observing System](https://imos.org.au), and therefore primarily focuses within Australia. As this package develops, more sources of environmental data will be added to allow for users to access more datasets across Australia and globally.
+We advocate for users to first undertake a quality control step using the `runQC()` function and workflow before further analysis (see `vignette('runQC')`), however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. Currently, the focus of this package is to integrate animal telemetry data and environmental data housed within the [Integrated Marine Observing System](https://imos.org.au), and therefore primarily focuses within Australia. As this package develops, more sources of environmental data will be added to allow for users to access more datasets across Australia and globally.
 
 <br>
 
@@ -54,7 +54,7 @@ imos_variables()
 
 <br>
 
-In this vignette we will explore accessing and extracting in-situ data from the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork). A suite of additional functions is also available to access enbvironmental data gatehred via remote sensing (see `extractEnv()`; [extractENV.html]()).
+In this vignette we will explore accessing and extracting in-situ data from the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork). A suite of additional functions is also available to access enbvironmental data gatehred via remote sensing (see `vignette('extractEnv')`).
 
 
 <br>
@@ -64,7 +64,7 @@ In this vignette we will explore accessing and extracting in-situ data from the 
 ## Load example dataset
 
 The primary function to extract and append in-situ data collected by the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork) to acoustic detection data is the `extractMoor()` function.
-Lets start with a dataset that has undergone quality control (see `runQC()`; [runQC.html]()).
+Lets start with a dataset that has undergone quality control (see `vignette('runQC')`).
 
 ```{r, eval = TRUE, message=FALSE, warning=FALSE}
 ## Example dataset that has undergone quality control using the `runQC()` function
