@@ -132,7 +132,7 @@ runQC <- function(x,
 
   ## notify if any entries in QC logfile
   if(file.size(logfile) > 1) {
-    message("\n Please see", logfile, " for potential data and/or metadata issues\n")
+    message("\n Please see ", logfile, " for potential data and/or metadata issues\n")
   }
 
 

@@ -36,7 +36,10 @@
 
 plotQC <- function(x, path = getwd()) {
 
-  if(!inherits(x, "remora_QC")) stop("x must be a nested tibble with class `remora_QC`")
+  if(!inherits(x, "remora_QC")) 
+    stop("x must be a nested tibble with class `remora_QC`")
+  if(!dir.exists(path)) 
+    stop("Plot cannot be saved to the specified path, make sure the directory exists!")
   
   QCdata <- rbindlist(x$QC)
 
@@ -51,6 +54,7 @@ plotQC <- function(x, path = getwd()) {
 	                       'species_scientific_name',
 	                       'species_common_name',
 	                       'freq')
+	species$CAAB_species_id <- 3701802
 
 	for (i in 1:nrow(species)){
 		expert_shp <-
@@ -65,7 +69,7 @@ plotQC <- function(x, path = getwd()) {
 			            caab_dump$AUTHORITY[which(caab_dump$SPCODE == CAAB_id)], ')',
 			            sep = ''))
 		} else if (inherits(expert_shp, "try-error")) {
-		  print("\nCould not download species expert distribution file\n")
+		  print("Could not download species expert distribution file")
 		  expert_shp <- NULL
 		}
 		
@@ -91,13 +95,12 @@ plotQC <- function(x, path = getwd()) {
 
 		if (!is.null(path)) {
 		  png(
-		    filename = paste(
-		      path,
-		      '/',
-		      gsub(' ', '_', species$species_common_name[i]),
-		      ".png",
-		      sep = ""
-		    ),
+		    filename = paste0(
+		      file.path(
+		        path,
+		        gsub(' ', '_', species$species_common_name[i])
+		        ),
+		      ".png"),
 		    width = 1920,
 		    height = 800,
 		    units = "px",

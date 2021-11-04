@@ -73,11 +73,11 @@ files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"), pa
 We invoke the QC using `runQC()`:
 
 ```{r runQC, eval = FALSE, message=FALSE}
-tag_qc <- runQC(files, logfile = "R/QC_log.txt", .parallel = TRUE, .progress = FALSE)
+tag_qc <- runQC(files, .parallel = TRUE, .progress = FALSE)
 ```
 
 ```{r save QC, eval=FALSE, echo=FALSE, message=FALSE}
-tag_qc <- runQC(files, logfile = "R/QC_log.txt", .parallel = TRUE, .progress = FALSE)
+tag_qc <- runQC(files, .parallel = TRUE, .progress = FALSE)
 save(tag_qc, file = "R/tag_qc.rda")
 ```
 where the argument `logfile = "R/QC_log.txt"` specifies the path and name of the QC logfile that records issues found in the data and/or metadata during the QC process. By default, the QC logfile is saved to the working directory. Entries in the logfile provide some indication of a problem that the user may wish to explore and follow up as appropriate. Simple issues, such as detection or receiver deployment latitudes in the northern hemisphere, are resolved automatically and corrected in the QC'd data output. The `.parallel = TRUE` argument runs the QC in parallel across the available number of processor cores - 2. This can be modified using the `.ncores` argument. If `.parallel = FALSE` then the QC is run sequentially, which can take considerable time but may be more efficient for projects with a small number of transmitters. The `.progress = FALSE` argument turns off the QC progress indicator, it is set to `TRUE` (turned on) by default but set to `FALSE` here to keep the vignette tidy.  
@@ -96,6 +96,7 @@ tag_qc
 The `dQC` list variable contains the QC'd detections data and metadata for each individual deployment. The utility function `grabQC()` provides a simple method to extract manageable segments of the QC output for subsequent review and analysis. For example, we can grab only the basic detection data with the QC flags and then filter the detections to retain only those flagged as 'valid' or 'likely valid':
 
 ```{r grab dQC, message=FALSE}
+require(dplyr)
 dQC <- grabQC(tag_qc, what = "dQC") %>%
   filter(Detection_QC %in% 1:2)
 

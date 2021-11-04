@@ -15,7 +15,7 @@
 ##' data(TownsvilleReefQC)
 ##' d.qc <- grabQC(TownsvilleReefQC, what = "dQC")
 ##'
-##' @importFrom dplyr '%>%' select ungroup distinct
+##' @importFrom dplyr "%>%" select ungroup distinct
 ##' @importFrom tidyr unnest
 ##'
 ##' @export
