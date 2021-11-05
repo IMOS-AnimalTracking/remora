@@ -21,7 +21,7 @@ vignette: >
 
 The `remora` package includes statistics and data visualisations for acoustic telemetry **receiver array** and **tagging** projects. The `shinyReport()` function allows users to create an interactive data report for their projects, which comprises a range of visualisations and analytical tools to aid data exploration and project management. The resulting plots and tables  can be downloaded for further use and analysis. This interactive report is an exploratory tool and should not be considered an extensive analysis toolkit. 
 
-Currently, the focus of the `remora` package is to integrate animal telemetry data and oceanographic observations collated by Australia's [Integrated Marine Observing System](https://imos.org.au). Therefore, the geographical scope of available datasets is currently restricted to the Australiasia region. 
+Currently, the focus of the `remora` package is to integrate animal telemetry data and oceanographic observations collated by Australia's [Integrated Marine Observing System](https://imos.org.au). Therefore, the geographical scope of available datasets is currently restricted to the Australasia region. 
 <br>
 
 ---------------------------------------
@@ -42,17 +42,34 @@ The `shinyReport()` function requires the user to specify the type of report to 
 This vignette describes the receiver array (`receivers`) report.
 
 ```{r, eval=FALSE}
+library("remora")
 shinyReport("receivers")
 ```
 <br>
 
-The `shinyReport()` function will generate a pop-up window enabling the user to navigate and select the detections data .CSV file for the receiver array project of their choice. Once this file is loaded, another pop-up window will appear prompting the user to select the corresponding receiver deployment metadata file. These files can be accessed via the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au/projects). Alternatively, the user can select their own data, previously formatted to match the IMOS database output format.
-
-In this vignette, multi-year and multi-species data from the IMOS Heron Island receiver array project are presented as an example.
+The `shinyReport()` function will generate a pop-up window enabling the user to navigate and select the detections data .CSV file for the receiver array project of their choice. Once this file is loaded, another pop-up window will appear prompting the user to select the corresponding receiver deployment metadata file. *Note: the pop-up windows might appear in the background of RStudio for some OS.*
 
 ![](images/receiver_report/select_detections.png)
 
 ![](images/receiver_report/select_receiver_metadata.png)
+
+
+These files can be accessed via the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au). 
+
+For the detections file, access the [Detections tab](https://animaltracking.aodn.org.au/detection), filter by "Receiver Deployment Project Name", and download the data.
+
+![](images/receiver_report/detections-webapp.png)
+<br>
+<br>
+
+For the receiver metadata file, access the [Receiver Deployments tab](https://animaltracking.aodn.org.au/receivers/deployment), filter by the same project selected above, and download the data.
+
+![](images/receiver_report/receivers-webapp.png)
+<br>
+
+Alternatively, the user can select their own data, previously formatted to match the IMOS database output format.
+
+In this vignette, multi-year and multi-species data from the IMOS Heron Island receiver array project are presented as an example.
 
 
 ## Detections map
@@ -111,9 +128,35 @@ The plot can be saved by clicking on the camera icon in the top right corner.
 ## Array performance
 <br>
 
-Plot of the Station Efficiency Index, modified from [Ellis et al. (2019)](https://doi.org/10.1016/j.fishres.2018.09.015). This index assesses the performance of a station in the context of the entire receiver array. Values range from 0 to 1, with higher values indicating higher performance. The user can filter by installation and date range (i.e. days where the station was considered active). Hovering on the plot will reveal additional information including the value of the index for each station. 
+Plot of the Station Efficiency Index, modified from [Ellis et al. (2019)](https://doi.org/10.1016/j.fishres.2018.09.015). This index assesses the performance of a station in the context of the entire receiver array. Values range from 0 to 1, with higher values indicating higher performance. 
 
-The plot can be saved by clicking on the camera icon in the top right corner.
+$$
+SEI = \frac{T_s}{T_a} \cdot \frac{S_s}{S_a} \cdot \frac{DD_s}{DD_a} \cdot \frac{D_a}{D_s}
+$$
+Where:
+
+- $SEI$ = Station Efficiency Index
+- $T_s$ = Number of tags detected on the station for the date range selected
+- $T_a$ = Number of tags detected across all stations for the date range selected
+- $S_s$ = Number of species detected on the station for the date range selected
+- $S_a$ = Number of species detected across all stations for the date range selected
+- $DD_s$ = Number of unique days with detections for the station and date range selected
+- $DD_a$ = Number of unique days for the date range selected
+- $D_a$ = Number of days for the date range selected
+- $D_s$ = Number of days that the station was active*
+
+
+\**Note:*
+
+- *If the station was active for more days than the date range selected* $D_a = D_s$
+
+- *If the station was active before the date range selected, the start date of* $D_s$ *will be the same as the start date for* $D_a$
+
+- *If the station was active until after the end date for the date range selected, the end date of* $D_s$ *will be the same as the end date for* $D_a$ 
+
+<br>
+
+The user can filter by installation and date range (i.e. days where the station was considered active). Hovering on the plot will reveal additional information including the value of the index for each station. The plot can be saved by clicking on the camera icon in the top right corner.
 
 The table on the left panel summarises the names of the receivers deployed at each station for the installation and date range selected. This table can be saved as .CSV, Excel or .PDF by clicking on the respective buttons.
 
@@ -132,7 +175,7 @@ The table on the left panel summarises the names of the receivers deployed at ea
 <br>
 
 **Vignette version**
-0.0.4 (13 Oct 2021)
+0.0.5 (5 Nov 2021)
 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
