@@ -26,7 +26,6 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
 
   ## detections
   if(is.null(det)) stop("\033[31;1mCan not run QC without a detections file!\033[0m\n")
-  nm <- names(read.csv(det))[20]
   
   det_data <- suppressWarnings(read_csv(det,
                                           col_types = cols(
