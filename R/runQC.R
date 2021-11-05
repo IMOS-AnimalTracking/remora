@@ -94,7 +94,7 @@ runQC <- function(x,
   logfile <- "QC_logfile.txt"
   write("", file = logfile)
 
-  message("Reading data...\n")
+  message("Reading data...")
   all_data <- get_data(
     det = x$det,
     rmeta = x$rmeta,
@@ -132,7 +132,7 @@ runQC <- function(x,
 
   ## notify if any entries in QC logfile
   if(file.size(logfile) > 1) {
-    message("\n Please see", logfile, " for potential data and/or metadata issues\n")
+    message("\n Please see ", logfile, " for potential data and/or metadata issues\n")
   }
 
 

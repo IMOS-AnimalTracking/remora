@@ -60,11 +60,14 @@ correct the data.
 ## specify files to QC - use supplied example .csv data
 files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"),
                     package = "remora"),
-              rmeta = system.file(file.path("test_data","IMOS_receiver_deployment_metadata.csv"),
+              rmeta = system.file(file.path("test_data",
+              "IMOS_receiver_deployment_metadata.csv"),
                     package = "remora"),
-              tmeta = system.file(file.path("test_data","IMOS_transmitter_deployment_metadata.csv"),
+              tmeta = system.file(file.path("test_data",
+              "IMOS_transmitter_deployment_metadata.csv"),
                     package = "remora"),
-              meas = system.file(file.path("test_data","IMOS_animal_measurements.csv"),
+              meas = system.file(file.path("test_data",
+              "IMOS_animal_measurements.csv"),
                     package = "remora"))
 qc.out <- runQC(files)
 plotQC(qc.out, path = NULL) # plots to default graphics device

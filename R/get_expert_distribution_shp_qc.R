@@ -40,7 +40,7 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 	  if (!file.exists(file.path(tmp, CAAB_species_id, "CAAB_FISHMAP.shp"))) {
 	    ## To circumvent download even if the specified CAAB_species_id not on Geoserver
 	    download.file(URL, file.path(tmp, paste0(CAAB_species_id, ".zip")), quiet = TRUE)
-	    zip::unzip(
+	    unzip(
 	      file.path(tmp, paste0(CAAB_species_id, ".zip")),
 	      exdir = file.path(tmp, CAAB_species_id),
 	      overwrite = TRUE

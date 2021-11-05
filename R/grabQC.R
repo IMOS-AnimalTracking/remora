@@ -8,14 +8,22 @@
 ##' `tag_meta` (transmitter deployment metadata),
 ##' `rec_meta` (receiver deployment metadata), or
 ##' `meas` (animal measurements)
+##' @param flag specifies which quality controlled detections to return 
+##' (see examples): any combination of: `valid`, `likely valid`, 
+##' `likely invalid`, `invalid`, or `all`. The default is to return all 
+##' detections. Ignored if `what` is any of `tag_meta`, `rec_meta` or `meas`.
 ##' @return a data frame with the requested subset of the QC output
 ##'
 ##' @examples
-##' ## grab detections and QCflags from example QC output
+##' ## grab detections and QCflags from example QC output & return only the
+##' ## `valid` and `likely valid` detections
 ##' data(TownsvilleReefQC)
+##' d.qc <- grabQC(TownsvilleReefQC, what = "dQC", flag = c("valid", "likely valid"))
+##' 
+##' ## return all detections
 ##' d.qc <- grabQC(TownsvilleReefQC, what = "dQC")
 ##'
-##' @importFrom dplyr '%>%' select ungroup distinct
+##' @importFrom dplyr "%>%" select ungroup distinct nest_by
 ##' @importFrom tidyr unnest
 ##'
 ##' @export
@@ -26,16 +34,54 @@ grabQC <-
                     "QCflags",
                     "tag_meta",
                     "rec_meta",
-                    "meas")) {
+                    "meas"),
+           flag = "all") {
     what <- match.arg(what)
+    flag <- match.arg(
+      flag,
+      choices = c("valid",
+                  "likely valid",
+                  "likely invalid",
+                  "invalid",
+                  "all"),
+      several.ok = TRUE
+    )
 
     if (!inherits(x, "remora_QC"))
-      stop("x must be a `remora_QC` output object")
+      stop("\033[31;1mx must be a `remora_QC` output object\033[0m")
     
     if (!what %in% c("detections", "QCflags", "dQC", "tag_meta", "rec_meta", "meas"))
       stop(
-        "only `detections`, `QCflags`, `dQC`, `tag_meta`, `rec_meta`, or `meas` can be grabbed from a remora_QC object"
+        "\033[31;1monly `detections`, `QCflags`, `dQC`, `tag_meta`, `rec_meta`, or `meas` can be grabbed from a remora_QC object\033[0m"
       )
+    if (any(!flag %in% c("valid",
+                     "likely valid",
+                     "likely invalid",
+                     "invalid",
+                     "all")))
+      stop(
+        "\033[31;1monly the flags: `valid`, `likely valid`, `likely invalid`, `valid`, or `all` can be returned from a remora_QC object\033[0m"
+      )
+    
+    ## if using old `transmitter_sensor_value` then change name
+    xx <- unnest(x, cols = c(QC)) %>% ungroup()
+    if(!"transmitter_sensor_raw_value" %in% names(xx)) {
+      names(xx)[names(xx) == "transmitter_sensor_value"] <- "transmitter_sensor_raw_value"
+      x <- nest_by(xx, filename, .key = "QC")
+    }
+
+    fl <- which(c("valid",
+                  "likely valid",
+                  "likely invalid",
+                  "invalid",
+                  "all") %in% flag)
+    
+    if(all(length(fl) == 1, fl == 5)) {
+        fl <- 1:4 
+      } else if(length(fl) > 1 & 5 %in% fl) {
+        # avoids error if "all" included with other options
+        fl <- 1:4
+      }
 
   out <- switch(what,
          detections = {
@@ -50,12 +96,13 @@ grabQC <-
                detection_datetime,
                receiver_deployment_longitude,
                receiver_deployment_latitude,
-               transmitter_sensor_value,
+               transmitter_sensor_raw_value,
                installation_name,
                station_name,
                receiver_name,
                receiver_deployment_id
-             ))
+             ) %>%
+               filter(Detection_QC %in% fl))
          },
          QCflags = {
            suppressMessages(unnest(x, cols = QC) %>%
@@ -71,7 +118,8 @@ grabQC <-
                ReleaseDate_QC,
                ReleaseLocation_QC,
                Detection_QC
-             ))
+             ) %>%
+               filter(Detection_QC %in% fl))
          },
          dQC = {
            suppressMessages(unnest(x, cols = QC) %>%
@@ -85,7 +133,7 @@ grabQC <-
                detection_datetime,
                receiver_deployment_longitude,
                receiver_deployment_latitude,
-               transmitter_sensor_value,
+               transmitter_sensor_raw_value,
                installation_name,
                station_name,
                receiver_name,
@@ -98,7 +146,8 @@ grabQC <-
                ReleaseDate_QC,
                ReleaseLocation_QC,
                Detection_QC
-            ))
+            ) %>%
+               filter(Detection_QC %in% fl))
          },
          tag_meta = {
            try(suppressMessages(unnest(x, cols = QC) %>%
@@ -127,8 +176,9 @@ grabQC <-
                transmitter_recovery_datetime,
                transmitter_recovery_longitude,
                transmitter_recovery_latitude
-             ) %>%
-             distinct()), silent = TRUE)
+             ) %>% 
+               distinct()
+               ), silent = TRUE)
          },
          rec_meta = {
            try(suppressMessages(unnest(x, cols = QC) %>%
@@ -147,9 +197,10 @@ grabQC <-
                receiver_recovery_datetime,
                receiver_recovery_longitude,
                receiver_recovery_latitude
-             ) %>%
-            rename(depth_below_surface = receiver_depth) %>%
-              distinct()), silent = TRUE)
+             ) %>% 
+               rename(depth_below_surface = receiver_depth) %>%
+               distinct()
+               ), silent = TRUE)
          },
          meas = {
            try(suppressMessages(unnest(x, cols = QC) %>%
@@ -158,10 +209,11 @@ grabQC <-
               tag_id,
               transmitter_deployment_id,
               measurement
-            ) %>%
-            distinct()), silent = TRUE)
+            ) %>% 
+              distinct()
+            ), silent = TRUE)
          })
-
+  
   if(inherits(out, "try-error")) {
     if(what == "tag_meta")
       stop("transmitter metadata can not be returned as they were not supplied for the QC")
@@ -170,7 +222,9 @@ grabQC <-
     else if(what == "meas")
       stop("animal measurements can not be returned as they were not supplied for the QC")
   } else {
-    out %>% ungroup() %>% select(-filename)
+    out <- out %>% ungroup() %>% select(-filename)
   }
 
+  if(nrow(out) == 0) message(paste0("no quality-controlled detections with the flag(s): ", flag, "\n"))
+  return(out)
 }

@@ -28,7 +28,7 @@ library(data.table); library(dplyr); library(sf); library(leaflet); library(RCol
 
 Another key functionality of the `remora` package allows users to integrate acoustic telemetry data with physical and biological parameters collected on the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork). The National Mooring Network is a collection of mooring arrays strategically positioned in Australian coastal waters that includes regional arrays of shelf moorings, acidification moorings, acoustic observatories and a network of National Reference Stations. This package allows the user to match environmental data collected from these mooring stations to each tag detection. Associating environmental data to detections provides a means to analyse environmental or habitat drivers of occurrence, presence and movement of animal monitored using acoustic telemetry. 
 
-We advocate for users to first undertake a quality control step using the `runQC()` function and workflow before further analysis, however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. Currently, the focus of this package is to integrate animal telemetry data and environmental data housed within the [Integrated Marine Observing System](https://imos.org.au), and therefore primarily focuses within Australia. As this package develops, more sources of environmental data will be added to allow for users to access more datasets across Australia and globally.
+We advocate for users to first undertake a quality control step using the `runQC()` function and workflow before further analysis (see `vignette('runQC')`), however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. Currently, the focus of this package is to integrate animal telemetry data and environmental data housed within the [Integrated Marine Observing System](https://imos.org.au), and therefore primarily focuses within Australia. As this package develops, more sources of environmental data will be added to allow for users to access more datasets across Australia and globally.
 
 <br>
 
@@ -54,7 +54,7 @@ imos_variables()
 
 <br>
 
-In this vignette we will explore accessing and extracting in-situ data from the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork). A suite of additional functions is also available to access enbvironmental data gatehred via remote sensing (see `extractEnv()`; [extractENV.html]()).
+In this vignette we will explore accessing and extracting in-situ data from the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork). A suite of additional functions is also available to access enbvironmental data gatehred via remote sensing (see `vignette('extractEnv')`).
 
 
 <br>
@@ -64,7 +64,7 @@ In this vignette we will explore accessing and extracting in-situ data from the 
 ## Load example dataset
 
 The primary function to extract and append in-situ data collected by the [IMOS National Mooring Network](https://imos.org.au/facilities/nationalmooringnetwork) to acoustic detection data is the `extractMoor()` function.
-Lets start with a dataset that has undergone quality control (see `runQC()`; [runQC.html]()).
+Lets start with a dataset that has undergone quality control (see `vignette('runQC')`).
 
 ```{r, eval = TRUE, message=FALSE, warning=FALSE}
 ## Example dataset that has undergone quality control using the `runQC()` function
@@ -293,7 +293,7 @@ plotDT(moorData=moorDat.l$GBRPPS, # have GBRMYR, GBRPPS and NRSYON available
 
 We can also visualise current `velocity` data with the detections, where moorings have velocity sensors. For example, we can visualise the zonal, North-South (v) velocity (`vcur`) at the the same mooring, and plot the bull shark detections associated with that mooring.
 
-We need to make sure that the NetCDF file we have stored locally contains the velocity data. To achieve this, we firsty need to download this netCDF file using the `mooringDownload()` function and then save the file to a different folder location, in this case `imos.cache/moor/velocity`.
+We need to make sure that the NetCDF file we have stored locally contains the velocity data. To achieve this, we firstly need to download this netCDF file using the `mooringDownload()` function and then save the file to a different folder location, in this case `imos.cache/moor/velocity`.
 
 ```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
 plotDat.l <- mooringDownload(moor_site_codes = "GBRPPS", 
@@ -326,9 +326,9 @@ Sea water `temperature`, current `velocity`, or `salinity` data can be accessed 
 + **trackingData**: the data frame with the detection data
 + **file_loc**: the name of the folder where the NetCDF files for the moorings are stored
 + **sensorType**: name of mooring sensor to query. Can be `temperature`, `velocity` or `salinity`.
-+ **timeMaxh**: optional numeric string containing the maximum time threshold in hours to merge detection and mooring sensor values. To run function without a timeout threshold, set as `Inf`.
-+ **distMaxkm**: optional numeric string containing the maximum distance threshold in kilometers to include in output. To run function without distance threshold, set as `Inf`.
-+ **targetDepthm**: extracts the nearest sensor to this depth value. Set as `NA` to return all sensor records at this mooring
++ **timeMaxh**: optional numeric string containing the maximum time threshold in hours to merge detection and mooring sensor values. The default value is `Inf`, which allows to run the function without a timeout threshold.
++ **distMaxkm**: optional numeric string containing the maximum distance threshold in kilometers to include in output. The default value is `Inf`, which allows to run the function without distance threshold.
++ **targetDepthm**: extracts the nearest sensor to this depth value. The default value is `NA`, which returns all sensor records at this mooring
 + **scalc**: when there are two options for sensors nearest the idepth provided, should the lower (`min`) or higher (`max`) depth value be returned? Users can also specify a `mean` of the available values, or `NA` to return both sensor values. 
 
 <br>
@@ -384,7 +384,7 @@ Notice that this new merged dataset `data_with_mooring_sst_shallow` is now much 
 
 <br>
 
-##Examining the appended environmental data
+## Examining the appended environmental data
 Now let's see how the detections of our tagged animals corresponded with variations in sea water temperature. First let's add the in-situ temperature values to the detection plots grouped by `transmitter_id`:
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
@@ -463,7 +463,7 @@ data_with_mooring_sst_shallow %>%
 ---------------------------------------
 
 **Vignette version**
-0.1.1 (13 Oct 2021)
+0.1.2 (05 Nov 2021)
 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
