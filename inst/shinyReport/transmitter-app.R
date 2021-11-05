@@ -239,7 +239,7 @@ ui <- shiny::bootstrapPage(
                                                                               shinycssloaders::withSpinner(color ="#3b6e8f", type = 7),
                                                                             htmltools::br(),
                                                                             htmltools::br(),
-                                                                            htmltools::p(paste("\U2022","Hover on the plot to see station name, date and number of detections.")),
+                                                                            htmltools::p(paste("\U2022","Hover on the plot to see station name, date, number of detections, species and transmitter ID.")),
                                                                             htmltools::br(),
                                                                             htmltools::p(paste("\U2022","Save the plot by clicking the camera icon in the top right corner."))
                                                             ),
