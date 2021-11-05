@@ -403,7 +403,8 @@ server <- function (input, output, session) {
       detections <- detections %>%
         dplyr::group_by(station_name, date) %>%
         dplyr::summarise(n.detections = dplyr::n(), installation_name = installation_name[1],
-                         species_common_name = species_common_name[1], .groups = "drop")
+                         species_common_name = species_common_name[1], transmitter_id = transmitter_id[1],
+                         .groups = "drop")
       return(detections)
     }else if (input$select_tag != "" && input$select_tag != "All transmitters"){
       detections <- detections %>%
@@ -411,7 +412,8 @@ server <- function (input, output, session) {
       detections <- detections %>%
         dplyr::group_by(station_name, date) %>%
         dplyr::summarise(n.detections = dplyr::n(), installation_name = installation_name[1],
-                         species_common_name = species_common_name[1], .groups = "drop")
+                         species_common_name = species_common_name[1], transmitter_id = transmitter_id[1],
+                         .groups = "drop")
       return(detections)
     }else{
       return(NULL)
@@ -718,7 +720,7 @@ server <- function (input, output, session) {
     }
   }, ignoreInit = TRUE)
   
-  ####Transmitter detections per day####
+  ####Detections over time####
   
   
   
@@ -744,7 +746,10 @@ server <- function (input, output, session) {
     
     output$selected_date <- shiny::renderText("")
     p <- ggplot2::ggplot(detections_subset(), mapping = ggplot2::aes(x=date, y=station_name, color=installation_name,
-                                                                     text= paste("detections:", n.detections))) +
+                                                                     text= paste("detections:", n.detections, "</br>",
+                                                                                 "species:", species_common_name, "</br>",
+                                                                                 "transmitter_id:", transmitter_id)%>%
+                                                                       lapply(htmltools::HTML))) +
       ggplot2::xlab("Date") +
       ggplot2::ylab("Station name") +
       ggplot2::geom_point(size=4, alpha=0.7, stroke=0.1) +
