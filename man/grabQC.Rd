@@ -6,7 +6,8 @@
 \usage{
 grabQC(
   x,
-  what = c("dQC", "detections", "QCflags", "tag_meta", "rec_meta", "meas")
+  what = c("dQC", "detections", "QCflags", "tag_meta", "rec_meta", "meas"),
+  flag = "all"
 )
 }
 \arguments{
@@ -17,6 +18,10 @@ grabQC(
 \code{tag_meta} (transmitter deployment metadata),
 \code{rec_meta} (receiver deployment metadata), or
 \code{meas} (animal measurements)}
+
+\item{flag}{specifies which quality controlled detectionsto return
+(see examples): any combination of: \code{valid}, \verb{likely valid},
+\verb{likely invalid}, \code{invalid}, or \code{all}. The default is to return all detections}
 }
 \value{
 a data frame with the requested subset of the QC output
@@ -25,8 +30,12 @@ a data frame with the requested subset of the QC output
 \code{grabQC()} lets you obtain subsets of the QC output
 }
 \examples{
-## grab detections and QCflags from example QC output
+## grab detections and QCflags from example QC output & return only the
+## `valid` and `likely valid` detections
 data(TownsvilleReefQC)
+d.qc <- grabQC(TownsvilleReefQC, what = "dQC", flag = c("valid", "likely valid"))
+
+## return all detections
 d.qc <- grabQC(TownsvilleReefQC, what = "dQC")
 
 }

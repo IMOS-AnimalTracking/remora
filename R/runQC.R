@@ -94,7 +94,7 @@ runQC <- function(x,
   logfile <- "QC_logfile.txt"
   write("", file = logfile)
 
-  message("Reading data...\n")
+  message("Reading data...")
   all_data <- get_data(
     det = x$det,
     rmeta = x$rmeta,

@@ -27,9 +27,9 @@
 ##' @importFrom data.table fread rbindlist
 ##' @importFrom plyr ldply '.' ddply count
 ##' @importFrom scales alpha
-##' @importFrom maps map.axes
+##' @importFrom maps map.axes map
 ##' @importFrom sp plot
-##' @importFrom grDevices png dev.off
+##' @importFrom grDevices png dev.off extendrange
 ##' @importFrom graphics par points legend mtext 
 ##'
 ##' @export
@@ -37,9 +37,11 @@
 plotQC <- function(x, path = getwd()) {
 
   if(!inherits(x, "remora_QC")) 
-    stop("x must be a nested tibble with class `remora_QC`")
-  if(!dir.exists(path)) 
-    stop("Plot cannot be saved to the specified path, make sure the directory exists!")
+    stop("\033[31;1mx must be a nested tibble with class `remora_QC`\033[0m")
+  if(!is.null(path)) {
+    if(!dir.exists(path)) 
+      stop("\033[31;1mPlot cannot be saved to the specified path, make sure the directory exists!\033[0m")
+  }
   
   QCdata <- rbindlist(x$QC)
 
@@ -54,12 +56,13 @@ plotQC <- function(x, path = getwd()) {
 	                       'species_scientific_name',
 	                       'species_common_name',
 	                       'freq')
-	species$CAAB_species_id <- 3701802
+	
 
 	for (i in 1:nrow(species)){
 		expert_shp <-
 		  try(get_expert_distribution_shp_CAAB(CAAB_species_id = species$CAAB_species_id[i]), 
 		      silent = TRUE)
+		
 		if(is.null(class(expert_shp))) {
 			print(paste('No expert distribution shapefile available for species ',
 			            caab_dump$COMMON_NAME[which(caab_dump$SPCODE == CAAB_id)],
@@ -69,10 +72,10 @@ plotQC <- function(x, path = getwd()) {
 			            caab_dump$AUTHORITY[which(caab_dump$SPCODE == CAAB_id)], ')',
 			            sep = ''))
 		} else if (inherits(expert_shp, "try-error")) {
-		  print("Could not download species expert distribution file")
+		  cat("\033[0;34mCould not download shapefile, mapping without species expert distribution\033[0m")
 		  expert_shp <- NULL
 		}
-		
+  
 		data <- QCdata[which(QCdata$CAAB_species_id == species$CAAB_species_id[i]), ]
 		releases <- unique(data.frame(data$transmitter_deployment_longitude,
 		                              data$transmitter_deployment_latitude,
@@ -93,6 +96,8 @@ plotQC <- function(x, path = getwd()) {
 		                                     include.lowest=TRUE))
 		data$binned_detections <- as.numeric(binned_detects$bin)
 
+		## turn warnings off
+		options(warn = -1)
 		if (!is.null(path)) {
 		  png(
 		    filename = paste0(
@@ -110,7 +115,7 @@ plotQC <- function(x, path = getwd()) {
 		  
 		} 
 
-		par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+		par(mfrow = c(1,2), oma = c(0, 0, 2, 0))
 		
 		## First panel - Australia's spatial extent
 		if (!is.null(class(expert_shp))) {
@@ -120,9 +125,9 @@ plotQC <- function(x, path = getwd()) {
 		       col = alpha('dark blue', 0.25),
 		       border = alpha('dark blue', 0.25)
 		  )
-		  ##   use maps::map to avoid conflict with purrr::map
-		  maps::map("world",
-		            xlim=c(100, 165),
+		  
+		  map("world",
+		            xlim = c(100, 165),
 		            ylim = c(-45, -5),
 		            fill = TRUE,
 		            col = "grey",
@@ -130,8 +135,8 @@ plotQC <- function(x, path = getwd()) {
 		            add = TRUE)
 		  map.axes()
 		} else {
-		  maps::map("world",
-		            xlim=c(100, 165),
+		  map("world",
+		            xlim = c(100, 165),
 		            ylim = c(-45, -5),
 		            fill = TRUE,
 		            col = "grey",
@@ -188,26 +193,42 @@ plotQC <- function(x, path = getwd()) {
 			       cex = 2,
 			       lwd = 2)
 
-			legend(x = 135, y = -25, #centre on Australia landmass
-			       legend = c('Valid detections',
-			                  'Likely valid detections',
-			                  'Likely invalid detections',
-			                  'Invalid detections',
-			                  'Tag release location',
-			                  'Species expert distribution extent'),
-					col = c('#1A9641',
-					        '#A6D96A',
-					        '#FDAE61',
-					        '#D7191C',
-					        'blue',
-					        alpha('dark blue', 0.5)),
-					pch = c(19, 19, 19, 19, 4, 15),
-					cex = ifelse(!is.null(path), 1, 0.5),
-					bg="transparent",
-					bty = 'n',
-					xjust = 0.5,
-					yjust = 0.5)
-
+			leg <- c(
+			  'Valid detections',
+			  'Likely valid detections',
+			  'Likely invalid detections',
+			  'Invalid detections',
+			  'Tag release location',
+			  'Species expert distribution extent'
+			)
+			col <- c('#1A9641',
+			         '#A6D96A',
+			         '#FDAE61',
+			         '#D7191C',
+			         'blue',
+			         alpha('dark blue', 0.5))
+			pch <- c(19, 19, 19, 19, 4, 15)
+			
+			if (is.null(expert_shp)) {
+			  leg <- leg[1:5]
+			  col <- col[1:5]
+			  pch <- pch[1:5]
+			}
+			
+			legend(
+			  x = 135,
+			  y = -25,
+			  #centre on Australia landmass
+			  legend = leg,
+			  col = col,
+			  pch = pch,
+			  cex = ifelse(!is.null(path), 1, 0.5),
+			  bg = "transparent",
+			  bty = 'n',
+			  xjust = 0.5,
+			  yjust = 0.5
+			)
+			
 		## Second panel - data's spatial extent + 10 %
 			diff_long <- .1 * (max(c(releases$transmitter_deployment_longitude,
 			                         data$receiver_deployment_longitude),
@@ -237,15 +258,31 @@ plotQC <- function(x, path = getwd()) {
 			              data$receiver_deployment_latitude),
 			            na.rm=T) +
 			          diff_lat)
-			if (class(expert_shp) != 'NULL') {
+			
+			if (!is.null(class(expert_shp))) {
 			  plot(expert_shp,
-			       xlim=xr,
-			       ylim=yr,
+			       xlim = xr,
+			       ylim = yr,
 			       col = alpha('dark blue', 0.25),
-			       border = alpha('dark blue', 0.25))
+			       border = alpha('dark blue', 0.25)
+			       )
+			  
+			  map("world", 
+			            add = TRUE, 
+			            fill = TRUE, 
+			            col = "grey", 
+			            border = "grey")
+			  map.axes()
+			} else {
+			  map("world",
+			            xlim = extendrange(r=xr, f=0.05),
+			            ylim = extendrange(r=yr, f=0.05),
+			            fill = TRUE,
+			            col = "grey",
+			            border = "grey")
+			  map.axes()
 			}
-			maps::map("world", add = TRUE, fill = TRUE, col = "grey", border = "grey")
-			map.axes()
+			
 			## Plot receiver locations
 			## points(rec$deployment_longitude[which(!rec$station_name %in% unique(data$station_name))],
 			##  rec$deployment_latitude[which(!rec$station_name %in% unique(data$station_name))],
@@ -309,4 +346,7 @@ plotQC <- function(x, path = getwd()) {
 		      line = -2)
 		if(!is.null(path)) dev.off()
 	}
+	## turn warnings back on
+	options(warn = 0)
+	
 }

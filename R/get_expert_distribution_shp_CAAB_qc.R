@@ -31,7 +31,7 @@ get_expert_distribution_shp_CAAB <- function(CAAB_species_id){
       download.file(URL, file.path(tmp, paste0(CAAB_species_id, ".zip")), 
                     method = "auto",
                     quiet = TRUE)
-      zip::unzip(
+      unzip(
         file.path(tmp, paste0(CAAB_species_id, ".zip")),
         exdir = file.path(tmp, CAAB_species_id),
         overwrite = TRUE

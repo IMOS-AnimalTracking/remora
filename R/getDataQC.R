@@ -25,7 +25,9 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   rec_meta <- tag_meta <- anim_meas <- NULL
 
   ## detections
-  if(is.null(det)) stop("\nCan not run QC without a detections file!\n")
+  if(is.null(det)) stop("\033[31;1mCan not run QC without a detections file!\033[0m\n")
+  nm <- names(read.csv(det))[20]
+  
   det_data <- suppressWarnings(read_csv(det,
                                           col_types = cols(
                                             detection_datetime = col_datetime(),
@@ -44,24 +46,17 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                                             receiver_id = col_integer(),
                                             receiver_name = col_character(),
                                             receiver_deployment_id = col_integer(),
-                                            receiver_deployment_longitude = col_double(),
-                                            receiver_deployment_latitude = col_double(),
                                             transmitter_sensor_type = col_character(),
-                                            transmitter_sensor_value = col_double(),
                                             transmitter_sensor_unit = col_character(),
-                                            transmitter_sensor_slope = col_double(),
-                                            transmitter_sensor_intercept = col_double(),
                                             transmitter_type = col_character(),
                                             transmitter_serial_number = col_guess(),
                                             transmitter_estimated_battery_life = col_integer(),
                                             transmitter_status = col_character(),
-                                            transmitter_deployment_longitude = col_double(),
-                                            transmitter_deployment_latitude = col_double(),
                                             transmitter_deployment_datetime = col_datetime(),
-                                            transmitter_dual_sensor = col_logical()
+                                            transmitter_dual_sensor = col_logical(),
+                                            .default = col_double()
                                           ),
-                                        na = c("","null","NA"),
-                                        quoted_na = FALSE
+                                        na = c("","null","NA")
                                         ))
 
   ## drop any unnamed columns, up to a possible 20 of them...
