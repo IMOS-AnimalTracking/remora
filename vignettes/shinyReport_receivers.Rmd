@@ -128,7 +128,7 @@ The plot can be saved by clicking on the camera icon in the top right corner.
 ## Array performance
 <br>
 
-Plot of the Station Efficiency Index, modified from [Ellis et al. (2019)](https://doi.org/10.1016/j.fishres.2018.09.015). This index assesses the performance of a station in the context of the entire receiver array. Values range from 0 to 1, with higher values indicating higher performance. 
+Plot of the Station Efficiency Index, modified from [Ellis et al. (2019)](https://doi.org/10.1016/j.fishres.2018.09.015) and based on the [resonATe toolkit](https://resonate.readthedocs.io/en/latest/receiver_efficiency_index.html). This index assesses the performance of a station in the context of the entire receiver array. Values range from 0 to 1, with higher values indicating higher performance. 
 
 $$
 SEI = \frac{T_s}{T_a} \cdot \frac{S_s}{S_a} \cdot \frac{DD_s}{DD_a} \cdot \frac{D_a}{D_s}
