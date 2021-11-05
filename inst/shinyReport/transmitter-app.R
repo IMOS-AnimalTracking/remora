@@ -1,5 +1,6 @@
 ## define pipe
 `%>%` <- dplyr::`%>%`
+`%notin%` <- Negate(`%in%`)
 
 #### Loading data ####
 
@@ -707,15 +708,14 @@ server <- function (input, output, session) {
   
   shiny::observeEvent (input$select_species,{
     shiny::req(input$select_species)
-    if (input$select_species == "All species"){
-      subset <- detections
-    }
+    if ("All species" %notin% input$select_species){
     subset <- detections %>% 
       dplyr::filter(species_common_name %in% input$select_species)
     
     shinyWidgets::updatePickerInput(session = session, inputId = "select_transmitter_id",
                                     choices = sort(unique(subset$transmitter_id)),
                                     options = list('none-selected-text' = 'Please select transmitter'))
+    }
   }, ignoreInit = TRUE)
   
   ####Transmitter detections per day####
