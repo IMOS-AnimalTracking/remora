@@ -47,7 +47,7 @@ shinyReport("receivers")
 ```
 <br>
 
-The `shinyReport()` function will generate a pop-up window enabling the user to navigate and select the detections data .CSV file for the receiver array project of their choice. Once this file is loaded, another pop-up window will appear prompting the user to select the corresponding receiver deployment metadata file. *Note: the pop-up windows might appear in the background of RStudio for some OS.*
+The `shinyReport()` function will generate a pop-up window enabling the user to navigate and select the detections data .CSV file for the receiver array project of their choice. Once this file is loaded, another pop-up window will appear prompting the user to select the corresponding receiver deployment metadata file. *Note: the pop-up windows appear in the background of RStudio for some OS.*
 
 ![](images/receiver_report/select_detections.png)
 
@@ -56,13 +56,13 @@ The `shinyReport()` function will generate a pop-up window enabling the user to 
 
 These files can be accessed via the [IMOS Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au). 
 
-For the detections file, access the [Detections tab](https://animaltracking.aodn.org.au/detection), filter by "Receiver Deployment Project Name", and download the data.
+For the detections file, the user can access the [Detections tab](https://animaltracking.aodn.org.au/detection), filter by "Receiver Deployment Project Name", and download the data.
 
 ![](images/receiver_report/detections-webapp.png)
 <br>
 <br>
 
-For the receiver metadata file, access the [Receiver Deployments tab](https://animaltracking.aodn.org.au/receivers/deployment), filter by the same project selected above, and download the data.
+For the receiver metadata file, the user can access the [Receiver Deployments tab](https://animaltracking.aodn.org.au/receivers/deployment), filter by the same project selected above, and download the data.
 
 ![](images/receiver_report/receivers-webapp.png)
 <br>
