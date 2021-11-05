@@ -8,9 +8,10 @@
 ##' `tag_meta` (transmitter deployment metadata),
 ##' `rec_meta` (receiver deployment metadata), or
 ##' `meas` (animal measurements)
-##' @param flag specifies which quality controlled detectionsto return 
+##' @param flag specifies which quality controlled detections to return 
 ##' (see examples): any combination of: `valid`, `likely valid`, 
-##' `likely invalid`, `invalid`, or `all`. The default is to return all detections
+##' `likely invalid`, `invalid`, or `all`. The default is to return all 
+##' detections. Ignored if `what` is any of `tag_meta`, `rec_meta` or `meas`.
 ##' @return a data frame with the requested subset of the QC output
 ##'
 ##' @examples
@@ -176,8 +177,7 @@ grabQC <-
                transmitter_recovery_longitude,
                transmitter_recovery_latitude
              ) %>% 
-               distinct() %>%
-               filter(Detection_QC %in% fl)
+               distinct()
                ), silent = TRUE)
          },
          rec_meta = {
@@ -199,8 +199,7 @@ grabQC <-
                receiver_recovery_latitude
              ) %>% 
                rename(depth_below_surface = receiver_depth) %>%
-               distinct() %>%
-               filter(Detection_QC %in% fl)
+               distinct()
                ), silent = TRUE)
          },
          meas = {
@@ -211,11 +210,10 @@ grabQC <-
               transmitter_deployment_id,
               measurement
             ) %>% 
-              distinct() %>%
-              filter(Detection_QC %in% fl)
+              distinct()
             ), silent = TRUE)
          })
-
+  
   if(inherits(out, "try-error")) {
     if(what == "tag_meta")
       stop("transmitter metadata can not be returned as they were not supplied for the QC")

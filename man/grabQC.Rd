@@ -19,9 +19,10 @@ grabQC(
 \code{rec_meta} (receiver deployment metadata), or
 \code{meas} (animal measurements)}
 
-\item{flag}{specifies which quality controlled detectionsto return
+\item{flag}{specifies which quality controlled detections to return
 (see examples): any combination of: \code{valid}, \verb{likely valid},
-\verb{likely invalid}, \code{invalid}, or \code{all}. The default is to return all detections}
+\verb{likely invalid}, \code{invalid}, or \code{all}. The default is to return all
+detections. Ignored if \code{what} is any of \code{tag_meta}, \code{rec_meta} or \code{meas}.}
 }
 \value{
 a data frame with the requested subset of the QC output
