@@ -292,7 +292,8 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         -transmitter_status.y,
         -species_common_name.y,
         -species_scientific_name.y,
-        -animal_sex.y)
+        -animal_sex.y,
+        -embargo_date.x)
 ## deal with any cases where deploy lon/lat is missing in detections but not metadata
     if(any(is.na(dd$transmitter_deployment_longitude.x)) |
        any(is.na(dd$transmitter_deployment_latitude.x))) {
