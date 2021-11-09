@@ -332,7 +332,8 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         transmitter_status = transmitter_status.x,
         transmitter_deployment_longitude = transmitter_deployment_longitude.x,
         transmitter_deployment_latitude = transmitter_deployment_latitude.x,
-        transmitter_deployment_datetime = transmitter_deployment_datetime.x
+        transmitter_deployment_datetime = transmitter_deployment_datetime.x,
+        embargo_date = embargo_date.y
       )
   }
 

@@ -100,9 +100,11 @@ grabQC <-
                installation_name,
                station_name,
                receiver_name,
-               receiver_deployment_id
-             ) %>%
-               filter(Detection_QC %in% fl))
+               receiver_deployment_id,
+               Detection_QC
+             ) %>% 
+               filter(Detection_QC %in% fl) %>% 
+               select(-Detection_QC))
          },
          QCflags = {
            suppressMessages(unnest(x, cols = QC) %>%
