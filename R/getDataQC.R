@@ -64,6 +64,12 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     det_data <- det_data %>% select(-any_of(drops))
   }
 
+  ## add embargo_date variable if not present so downstream code works
+  if(!"embargo_date" %in% names(det_data)) {
+    det_data <- det_data %>% 
+      mutate(embargo_date = NA)
+  }
+
   ## receiver deployment metadata - required for receiver depth
   if(!is.null(rmeta)) {
     rec_meta <- suppressMessages(suppressWarnings(read_csv(rmeta)))
