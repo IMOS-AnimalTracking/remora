@@ -194,6 +194,9 @@
       gsub("\\.", "-", .) %>% 
       as.Date()
     
+    if(is.na(projection(out_brick))){
+      projection(out_brick) <- CRS("EPSG:4326")
+    }
     out_brick <- setZ(x = out_brick, z = zval, name = "date")
   }
 
@@ -332,6 +335,7 @@
     
   ## If caching raster stack, define and set up folders to store files locally
   if(.cache){
+    dir.create("imos.cache", showWarnings = FALSE)
     dir.create("imos.cache/rs variables", showWarnings = FALSE)
     if(is.null(folder_name)){
       path <- file.path("imos.cache/rs variables", paste("extent", paste0(round(study_extent[1:4]), collapse = "_"), sep = "_"))

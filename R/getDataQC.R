@@ -25,7 +25,8 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   rec_meta <- tag_meta <- anim_meas <- NULL
 
   ## detections
-  if(is.null(det)) stop("\nCan not run QC without a detections file!\n")
+  if(is.null(det)) stop("\033[31;1mCan not run QC without a detections file!\033[0m\n")
+  
   det_data <- suppressWarnings(read_csv(det,
                                           col_types = cols(
                                             detection_datetime = col_datetime(),
@@ -44,30 +45,29 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                                             receiver_id = col_integer(),
                                             receiver_name = col_character(),
                                             receiver_deployment_id = col_integer(),
-                                            receiver_deployment_longitude = col_double(),
-                                            receiver_deployment_latitude = col_double(),
                                             transmitter_sensor_type = col_character(),
-                                            transmitter_sensor_value = col_double(),
                                             transmitter_sensor_unit = col_character(),
-                                            transmitter_sensor_slope = col_double(),
-                                            transmitter_sensor_intercept = col_double(),
                                             transmitter_type = col_character(),
                                             transmitter_serial_number = col_guess(),
                                             transmitter_estimated_battery_life = col_integer(),
                                             transmitter_status = col_character(),
-                                            transmitter_deployment_longitude = col_double(),
-                                            transmitter_deployment_latitude = col_double(),
                                             transmitter_deployment_datetime = col_datetime(),
-                                            transmitter_dual_sensor = col_logical()
+                                            transmitter_dual_sensor = col_logical(),
+                                            .default = col_double()
                                           ),
-                                        na = c("","null","NA"),
-                                        quoted_na = FALSE
+                                        na = c("","null","NA")
                                         ))
 
   ## drop any unnamed columns, up to a possible 20 of them...
   if(any(paste0("X",1:20) %in% names(det_data))) {
     drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(det_data)]
     det_data <- det_data %>% select(-any_of(drops))
+  }
+
+  ## add embargo_date variable if not present so downstream code works
+  if(!"embargo_date" %in% names(det_data)) {
+    det_data <- det_data %>% 
+      mutate(embargo_date = NA)
   }
 
   ## receiver deployment metadata - required for receiver depth
@@ -298,7 +298,8 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         -transmitter_status.y,
         -species_common_name.y,
         -species_scientific_name.y,
-        -animal_sex.y)
+        -animal_sex.y,
+        -embargo_date.x)
 ## deal with any cases where deploy lon/lat is missing in detections but not metadata
     if(any(is.na(dd$transmitter_deployment_longitude.x)) |
        any(is.na(dd$transmitter_deployment_latitude.x))) {
@@ -337,7 +338,8 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         transmitter_status = transmitter_status.x,
         transmitter_deployment_longitude = transmitter_deployment_longitude.x,
         transmitter_deployment_latitude = transmitter_deployment_latitude.x,
-        transmitter_deployment_datetime = transmitter_deployment_datetime.x
+        transmitter_deployment_datetime = transmitter_deployment_datetime.x,
+        embargo_date = embargo_date.y
       )
   }
 

@@ -82,7 +82,8 @@ globalVariables(c(".", "year", "html", "type", "a", "fromdate", "todate", "media
                   "DistanceRelease_QC", "ReleaseDate_QC", "ReleaseLocation_QC",
                   "Detection_QC", "transmitter_serial_number", "placement",
                   "transmitter_deployment_locality", "transmitter_deployment_comments",
-                  "embargo_date", "transmitter_recovery_datetime", "transmitter_recovery_longitude",
+                  "embargo_date", "embargo_date.x", "embargo_date.y", 
+                  "transmitter_recovery_datetime", "transmitter_recovery_longitude",
                   "transmitter_recovery_latitude", "receiver_depth", "filename", "Variable",
                   "moor_timestamp", "time", "moor_depth", "breakthres", "i.moor_site_code",
                   "site_code", "mooring.date", "moor_site_code", "depth_bin",
@@ -93,4 +94,4 @@ globalVariables(c(".", "year", "html", "type", "a", "fromdate", "todate", "media
                   "transmitter_sensor_unit", "transmitter_estimated_battery_life",
                   "transmitter_status", "receiver_project_name", "measurement", 
                   "detection_date", "transmitter_sensor_intercept",
-                  "imos_variables_table"))
+                  "imos_variables_table", "transmitter_sensor_raw_value"))
