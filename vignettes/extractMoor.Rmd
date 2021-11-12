@@ -124,7 +124,7 @@ Lets have a quick look at the spatial arrangement of the IMOS National Mooring N
 In this example, we will identify and plot the location of moorings in Australian coastal waters which have records of *sea water temperature*
 
 Each variable will need to be accessed one at a time using the `mooringDownload()` function. 
-There is only one parameters within the function that can help the user identify the variable required:
+There is only one parameter within the function that can help the user identify the variable required:
 
 + **sensorType**: the name of the environmental variable to download and append. This can be `temperature`, `velocity`, `salinity`, `oxygen`.
 <br>
