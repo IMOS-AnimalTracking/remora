@@ -54,6 +54,10 @@ files <- list(det = "path_to/IMOS_detections.csv",
 
 The detections data, receiver and transmitter metadata files are required to enable the full QC process, however because of some redundancy in variables among the detections data and metadata files, a partial QC can be conducted when one or both metadata files are missing. In these latter cases, the path for a missing metadata file is set to `rmeta = NULL` and/or `tmeta = NULL`; a warning will be issued when the QC is run. Similarly, if no animal measurements data are present the path is set to `meas = NULL`. The presence or absence of this latter file does not affect the QC process.
 
+### What if my tags are detected across many reciever array projects?
+
+In situations where tagged animals may be detected across several receiver projects, we recommend downloading the entire IMOS receiver metadata file via the Web App. This file is relatively compact and the single download will save users time by not having to manually determine and download receiver metadata from many individual projects. 
+
 # Usage of the `runQC()` function
 
 The primary function for conducting the QC is the `runQC()` function. Let's start with an example tagging project included in the `remora` package by first creating a `files` list:
