@@ -161,7 +161,10 @@ In this function, the user specifies which detection dataset with which they whi
 ```{r, eval=FALSE, message=TRUE, warning=FALSE}
 #Extract the nearest mooring to each station where a tag was detected
 det_dist <- getDistance(trackingData = qc_data, 
-                        moorLocations = moorT)
+                        moorLocations = moorT,
+                        X = "receiver_deployment_longitude",
+                        Y = "receiver_deployment_latitude",
+                        datetime = "detection_datetime")
 ```
 
 ## 

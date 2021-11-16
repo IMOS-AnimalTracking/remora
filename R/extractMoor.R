@@ -115,7 +115,8 @@ extractMoor <- function(trackingData,
     dd2 <- dd1 %>%
       ungroup() %>%
       mutate(detection_id1 = as.numeric(levels(detection_id))[detection_id]) %>%
-      arrange(detection_id1)
+      arrange(detection_id1) %>%
+      select(-detection_id1) # drop the detection_id1 column
   }
   
   # Change column names so easily distinguishable from rs data
