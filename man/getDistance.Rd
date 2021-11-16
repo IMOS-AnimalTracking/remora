@@ -4,12 +4,25 @@
 \alias{getDistance}
 \title{Find closest mooring}
 \usage{
-getDistance(trackingData, moorLocations)
+getDistance(
+  trackingData,
+  moorLocations,
+  X = "receiver_deployment_longitude",
+  Y = "receiver_deployment_latitude",
+  datetime = "detection_datetime"
+)
 }
 \arguments{
 \item{trackingData}{dataframe containing acoustic detection data in IMOS QC format}
 
 \item{moorLocations}{dataframe containing the locations of IMOS moorings}
+
+\item{X}{name of column with X coordinate or longitude (EPSG 4326)}
+
+\item{Y}{name of column with Y coordinate or latitude (EPSG 4326)}
+
+\item{datetime}{name of column with date time stamp (Coordinated Universal
+Time; UTC)}
 }
 \value{
 The \code{trackingData} dataframe with the nearest  \code{moor_site_code} to each acoustic detection
