@@ -507,8 +507,11 @@ server <- function (input, output, session) {
           data.frame(from = reactive_tracks()$station_name[i], to = reactive_tracks()$station_name[i+1])
         }})
       dat <- dplyr::bind_rows(rows)}
-    dat <- dat %>%
-      dplyr::filter(from != to)
+    
+    if(length(unique(reactive_tracks()$station_name))>1){
+      dat <- dat %>%
+        dplyr::filter(from != to)
+    }
     return(dat)
   })
   
