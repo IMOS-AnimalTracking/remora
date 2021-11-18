@@ -105,6 +105,8 @@ shared_detections <- crosstalk::SharedData$new(detections)
 
 ui <- shiny::bootstrapPage(
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css")),
+  #CSS for picker input text when nothing is selected
+  tags$style(".bs-placeholder {color: #FFFFFF !important; font-weight: bold !important;}"),
   shiny::navbarPage( windowTitle = "remora Transmitter Report", #Appears in the tab of the browser
                      
                      theme = shinythemes::shinytheme("flatly"), 
