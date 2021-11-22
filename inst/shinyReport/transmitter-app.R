@@ -105,6 +105,8 @@ shared_detections <- crosstalk::SharedData$new(detections)
 
 ui <- shiny::bootstrapPage(
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css")),
+  #CSS for picker input text when nothing is selected
+  tags$style(".bs-placeholder {color: #FFFFFF !important; font-weight: bold !important;}"),
   shiny::navbarPage( windowTitle = "remora Transmitter Report", #Appears in the tab of the browser
                      
                      theme = shinythemes::shinytheme("flatly"), 
@@ -507,8 +509,11 @@ server <- function (input, output, session) {
           data.frame(from = reactive_tracks()$station_name[i], to = reactive_tracks()$station_name[i+1])
         }})
       dat <- dplyr::bind_rows(rows)}
-    dat <- dat %>%
-      dplyr::filter(from != to)
+    
+    if(length(unique(reactive_tracks()$station_name))>1){
+      dat <- dat %>%
+        dplyr::filter(from != to)
+    }
     return(dat)
   })
   

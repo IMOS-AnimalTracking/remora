@@ -17,12 +17,14 @@ staging branch:
 
 
 <h1 align="center"><span style="color:#BEBEBE">re</span><span style="color:#808080"><b>mo</b></span><span style="color:#BEBEBE">ra</span></h1>
-<h4 align="center">A R package to facilitate the Rapid Extraction of Marine Observations for Roving Animals</h4>
+<h4 align="center">An R package to facilitate the Rapid Extraction of Marine Observations for Roving Animals</h4>
 
 <p align="center">
   <a href="#overview">Overview</a> •
   <a href="#installation">Installation</a> •
   <a href="#key-functionalities">Key functionalities</a> •
+  <a href="#what-to-do-if-you-encounter-a-problem">Issues</a> •
+  <a href="#how-to-contribute">Contributions</a> •
   <a href="#acknowledgements">Acknowledgements</a> •
   <a href="#data-accessibility">Data accessibility</a> •
   <a href="#licence">Licence</a>
@@ -37,7 +39,8 @@ staging branch:
 <br>
 
 ## Overview
-**remora** is a R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:  
+**remora** is an R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:
+
 - Interactively exploring animal movements in space and time from acoustic telemetry data
 - Performing robust quality-control of acoustic telemetry data as described in [Hoenner et al. 2018](https://doi.org/10.1038/sdata.2017.206) 
 - Identifying available satellite-derived and sub-surface *in situ* oceanographic datasets coincident and collocated with the animal movement data, based on regional Ocean Observing Systems  
@@ -79,6 +82,31 @@ The vignettes for each functionality can be accessed in R using the following co
 browseVignettes(package = "remora")
 ```
 
+## What to do if you encounter a problem
+
+If you are convinced you have encountered a bug or
+unexpected/inconsistent behaviour when using remora, you can post an
+issue [here](https://github.com/IMOS-AnimalTracking/remora/issues). First, have
+a read through the posted issues to see if others have encountered the
+same problem and whether a solution has been offered. You can reply to
+an existing issue if you have the same problem and have more details to
+share or you can submit a new issue. 
+
+To submit an issue, you will need
+to *clearly* describe the issue, include a reproducible
+example, describe what you expected to
+happen (but didn’t), and provide screenshots/images that illustrate the problem.
+
+## How to Contribute
+
+Contributions from anyone in the Movement Ecology/Acoustic Telemetry
+communities are welcome. Consider submitting a feature request
+[here](https://github.com/IMOS-AnimalTracking/remora/issues/new/choose) to start
+a discussion. Alternatively, if your idea is well-developed then you can
+submit a pull request for evaluation
+[here](https://github.com/IMOS-AnimalTracking/remora/pulls).
+
+
 ## Acknowledgements
 <p align="left">
   <img src="vignettes/images/logos_banner.png" width="500"> 
@@ -97,13 +125,14 @@ Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW
 
 - Environmental and oceanographic datasets are available from the [IMOS Australian Ocean Data Network](https://portal.aodn.org.au/).
 
+
 ## Licence
 
 ![](vignettes/images/gplv3-127x51.png) GNU General Public License (GPL>=3) https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
 **Citation:**  
-Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers and Rob Harcourt. **remora**: A R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
+Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoenner, X., Huveneers, C and Harcourt, R. **remora**: An R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
 
 **Contributors:**  
 **Ian Jonsen** @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)  
@@ -114,4 +143,3 @@ Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Ma
 **Xavier Hoenner** @xhoenner (Commonwealth Scientific and Industrial Research Organisation)  
 **Charlie Huveneers** @huve0001 (Flinders University)  
 **Fabrice Jaine** @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
-
