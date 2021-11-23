@@ -1,48 +1,48 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.7.1.9575
-Date: 2021-11-16
+Version: 0.7.1.9576
+Date: 2021-11-23
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
-           role = c("aut", "cre"),
+           role = c("aut", "ctb" ,"cre"),
            email = "fabrice.jaine@sims.org.au",
-           comment = c(ORCID = "YOUR-ORCID-ID")),
+           comment = c(ORCID = "0000-0002-9304-5034")),
            person(given = "Ian",
            family = "Jonsen",
-           role = c("aut", "ctb"),
+           role = c("aut", "ctb","cre"),
            email = "ian.jonsen@mq.edu.au",
-           comment = c(ORCID = "YOUR-ORCID-ID")),
+           comment = c(ORCID = "0000-0001-5423-6076")),
            person(given = "Vinay",
            family = "Udyawer",
            role = c("aut", "ctb"),
            email = "v.udyawer@aims.gov.au",
-           comment = c(ORCID = "YOUR-ORCID-ID")),
+           comment = c(ORCID = "0000-0001-5812-0740")),
            person(given = "Ross",
            family = "Dwyer",
            role = c("aut", "ctb"),
            email = "rdwyer2@usc.edu.au",
-           comment = c(ORCID = "YOUR-ORCID-ID")),
+           comment = c(ORCID = "0000-0003-1136-5489")),
            person(given = "Kylie",
            family = "Scales",
            role = c("aut", "ctb"),
            email = "kscales@usc.edu.au",
-           comment = c(ORCID = "YOUR-ORCID-ID")),
+           comment = c(ORCID = "0000-0003-0843-0956")),
            person(given = "Francisca",
            family = "Maron",
-           role = c("aut", "ctb"),
+           role = c("aut", "ctb", "cre"),
            email = "francisca.maron@sims.org.au",
-           comment = c(ORCID = "YOUR-ORCID-ID")),
+           comment = c(ORCID = "0000-0001-7633-7003")),
            person(given = "Xavier",
            family = "Hoenner",
            role = c("aut", "ctb"),
            email = "Xavier.Hoenner@csiro.au",
-           comment = c(ORCID = "YOUR-ORCID-ID")),
+           comment = c(ORCID = "0000-0001-5811-1166")),
            person(given = "Charlie",
            family = "Huveneers",
            role = c("aut", "ctb"),
            email = "charlie.huveneers@flinders.edu.au",
-           comment = c(ORCID = "YOUR-ORCID-ID")))
+           comment = c(ORCID = "0000-0001-8937-1358")))
 Maintainer: Ian Jonsen <ian.jonsen@mq.edu.au>
 Description: R Package to access and integrate animal tracking data from the IMOS Animal Tracking Facility database and web-app, and environmental data from the AODN database.
 URL: https://github.com/IMOS-AnimalTracking/remora/
