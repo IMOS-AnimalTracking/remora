@@ -39,6 +39,21 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - name: "[Stage] [Linux] Install required system libs"
+        if: runner.os == 'Linux'
+        run: sudo apt install libcurl4-openssl-dev libgit2-dev
+      
+      - name: "[Custom block] [Linux] Install spatial libraries"
+        if: runner.os == 'Linux'
+        run: sudo apt-get install libgdal-dev libproj-dev libgeos-dev libudunits2-dev
+        
+      - name: "[Custom block] [macOS] Install spatial libraries"
+        if: runner.os == 'macOS'
+        run: |
+          # conflicts with gfortran from r-lib/actions when linking gcc
+          rm '/usr/local/bin/gfortran'
+          brew install pkg-config gdal proj geos 
+
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
           extra-packages: rcmdcheck
