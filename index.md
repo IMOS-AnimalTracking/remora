@@ -6,7 +6,7 @@
 [![R-CMD-check](https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/IMOS-AnimalTracking/remora/actions)
 
 <p align="center">
-  <img src="vignettes/images/remora_hex_logo.png" width="200">
+  <img src="vignettes/images/remora_hex_logo.png" width="200" />
 </p>
 
 
@@ -25,9 +25,7 @@
 </p>
 
 <p align="center">
-
-<img src="vignettes/images/overview-images.png">
-
+  <img src="vignettes/images/overview-images.png" />
 </p>
 
 <br>
@@ -123,6 +121,7 @@ Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW
 ## Licence
 
 ![](vignettes/images/gplv3-127x51.png) GNU General Public License (GPL>=3) https://www.gnu.org/licenses/gpl-3.0.en.html
+
 
 
 **Citation:**  
