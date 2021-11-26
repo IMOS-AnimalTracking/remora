@@ -4,17 +4,21 @@
 \alias{get_expert_distribution_shp_CAAB}
 \title{match species CAAB code with CSIRO expert distribution shapefiles}
 \usage{
-get_expert_distribution_shp_CAAB(CAAB_species_id)
+get_expert_distribution_shp_CAAB(CAAB_species_id, spe)
 }
 \arguments{
-\item{CAAB_species_id}{CAAB id of species for which a distribution shapefile is required}
+\item{CAAB_species_id}{CAAB id of species for which a distribution shapefile
+is required}
+
+\item{spe}{species scientific name}
 }
 \value{
 shp is a SpatialPolygons object of the species' distribution
 }
 \description{
 Get expert distribution shapefile, if available, from CSIRO's
-Geoserver. Full CAAB code list: http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx
+Geoserver. Full CAAB code list:
+http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx
 }
 \details{
 For a few species acoustically tagged no shapefile exists.
