@@ -60,9 +60,9 @@ plotQC <- function(x, path = getwd()) {
 
 	for (i in 1:nrow(species)){
 		expert_shp <-
-		  try(get_expert_distribution_shp_CAAB(CAAB_species_id = species$CAAB_species_id[i]), 
+		  try(get_expert_distribution_shp_CAAB(CAAB_species_id = species$CAAB_species_id[i], spe = species$species_scientific_name[i]), 
 		      silent = TRUE)
-		
+
 		if(is.null(class(expert_shp))) {
 			print(paste('No expert distribution shapefile available for species ',
 			            caab_dump$COMMON_NAME[which(caab_dump$SPCODE == CAAB_id)],
