@@ -135,6 +135,7 @@ Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW
 Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoenner, X., Huveneers, C and Harcourt, R. **remora**: An R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
 
 **Contributors:**  
+
 **Fabrice Jaine** @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
 **Ian Jonsen** @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)  
 **Vinay Udyawer** @vinayudyawer (Australian Institute of Marine Science)  
@@ -143,4 +144,4 @@ Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoen
 **Francisca Maron** @fmaron (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
 **Xavier Hoenner** @xhoenner (Commonwealth Scientific and Industrial Research Organisation)  
 **Charlie Huveneers** @huve0001 (Flinders University)  
-
+**Fabrice Jaine** @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
