@@ -1,16 +1,16 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.7.1.9576
+Version: 0.7.1.9580
 Date: 2021-11-23
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
-           role = c("aut", "ctb" ,"cre"),
+           role = c("aut", "ctb"),
            email = "fabrice.jaine@sims.org.au",
            comment = c(ORCID = "0000-0002-9304-5034")),
            person(given = "Ian",
            family = "Jonsen",
-           role = c("aut", "ctb","cre"),
+           role = c("aut", "ctb", "cre"),
            email = "ian.jonsen@mq.edu.au",
            comment = c(ORCID = "0000-0001-5423-6076")),
            person(given = "Vinay",
@@ -30,7 +30,7 @@ Authors@R:
            comment = c(ORCID = "0000-0003-0843-0956")),
            person(given = "Francisca",
            family = "Maron",
-           role = c("aut", "ctb", "cre"),
+           role = c("aut", "ctb"),
            email = "francisca.maron@sims.org.au",
            comment = c(ORCID = "0000-0001-7633-7003")),
            person(given = "Xavier",
