@@ -47,7 +47,7 @@ Maintainer: Ian Jonsen <ian.jonsen@mq.edu.au>
 Description: R Package to access and integrate animal tracking data from the IMOS Animal Tracking Facility database and web-app, and environmental data from the AODN database.
 URL: https://imos-animaltracking.github.io/remora/, https://github.com/IMOS-AnimalTracking/remora/
 BugReports: https://github.com/IMOS-AnimalTracking/remora/issues
-License: AGPL (>= 3)
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports: 
