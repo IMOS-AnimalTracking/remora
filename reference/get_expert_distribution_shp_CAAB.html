@@ -41,7 +41,8 @@
 
 <meta property="og:title" content="match species CAAB code with CSIRO expert distribution shapefiles — get_expert_distribution_shp_CAAB" />
 <meta property="og:description" content="Get expert distribution shapefile, if available, from CSIRO's
-Geoserver. Full CAAB code list: http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx" />
+Geoserver. Full CAAB code list:
+http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx" />
 
 
 
@@ -140,17 +141,23 @@ Geoserver. Full CAAB code list: http://www.marine.csiro.au/datacentre/caab/caab_
 
     <div class="ref-description">
     <p>Get expert distribution shapefile, if available, from CSIRO's
-Geoserver. Full CAAB code list: http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx</p>
+Geoserver. Full CAAB code list:
+http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_expert_distribution_shp_CAAB</span><span class='op'>(</span><span class='va'>CAAB_species_id</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_expert_distribution_shp_CAAB</span><span class='op'>(</span><span class='va'>CAAB_species_id</span>, <span class='va'>spe</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>CAAB_species_id</th>
-      <td><p>CAAB id of species for which a distribution shapefile is required</p></td>
+      <td><p>CAAB id of species for which a distribution shapefile
+is required</p></td>
+    </tr>
+    <tr>
+      <th>spe</th>
+      <td><p>species scientific name</p></td>
     </tr>
     </table>
 
