@@ -3,16 +3,12 @@
 [![stars - remora](https://img.shields.io/github/stars/IMOS-AnimalTracking/remora?style=social)](https://github.com/IMOS-AnimalTracking/remora)
 [![forks - remora](https://img.shields.io/github/forks/IMOS-AnimalTracking/remora?style=social)](https://github.com/IMOS-AnimalTracking/remora)
 [![watchers - remora](https://img.shields.io/github/watchers/IMOS-AnimalTracking/remora?style=social)](https://github.com/IMOS-AnimalTracking/remora)
-
-
-master branch:
 [![R-CMD-check](https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/IMOS-AnimalTracking/remora/actions)
 
-staging branch:
-[![R-CMD-check](https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg?branch=staging)](https://github.com/IMOS-AnimalTracking/remora/actions)
+
 
 <p align="center">
-  <img src="vignettes/images/remora_hex_logo.png" width="200">
+  <img src="vignettes/images/remora_hex_logo.png" width="200" />
 </p>
 
 
@@ -31,9 +27,7 @@ staging branch:
 </p>
 
 <p align="center">
-
-<img src="vignettes/images/overview-images.png">
-
+  <img src="vignettes/images/overview-images.png" />
 </p>
 
 <br>
@@ -131,12 +125,11 @@ Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW
 ![](vignettes/images/gplv3-127x51.png) GNU General Public License (GPL>=3) https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
+
 **Citation:**  
 Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoenner, X., Huveneers, C and Harcourt, R. **remora**: An R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
 
 **Contributors:**  
-
-**Fabrice Jaine** @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
 **Ian Jonsen** @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)  
 **Vinay Udyawer** @vinayudyawer (Australian Institute of Marine Science)  
 **Ross Dwyer** @RossDwyer (University of the Sunshine Coast)  
