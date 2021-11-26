@@ -45,7 +45,8 @@ Authors@R:
            comment = c(ORCID = "0000-0001-8937-1358")))
 Maintainer: Ian Jonsen <ian.jonsen@mq.edu.au>
 Description: R Package to access and integrate animal tracking data from the IMOS Animal Tracking Facility database and web-app, and environmental data from the AODN database.
-URL: https://github.com/IMOS-AnimalTracking/remora/, https://imos-animaltracking.github.io/remora
+URL: https://github.com/IMOS-AnimalTracking/remora/,
+    https://imos-animaltracking.github.io/remora
 BugReports: https://github.com/IMOS-AnimalTracking/remora/issues
 License: GPL (>= 3)
 Encoding: UTF-8
