@@ -144,4 +144,3 @@ Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoen
 **Francisca Maron** @fmaron (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
 **Xavier Hoenner** @xhoenner (Commonwealth Scientific and Industrial Research Organisation)  
 **Charlie Huveneers** @huve0001 (Flinders University)  
-**Fabrice Jaine** @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)  
