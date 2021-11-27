@@ -30,3 +30,8 @@ navbar:
       text: GitHub
       icon: fa-github fa-lg
       href: https://github.com/IMOS-AnimalTracking/remora
+
+development:
+  destination: dev
+  version_label: danger
+  version_tooltip: "remora is released but not available on CRAN"
