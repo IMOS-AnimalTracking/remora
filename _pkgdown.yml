@@ -1,2 +1,5 @@
-url: https://imos-animaltracking.github.io/remora
-
+title: remora
+url: https://imos-animaltracking.github.io/remora/
+template:
+  params:
+    bootswatch: cerulean
