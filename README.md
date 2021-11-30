@@ -15,7 +15,6 @@ staging branch:
   <img src="vignettes/images/remora_hex_logo.png" width="200">
 </p>
 
-
 <h1 align="center"><span style="color:#BEBEBE">re</span><span style="color:#808080"><b>mo</b></span><span style="color:#BEBEBE">ra</span></h1>
 <h4 align="center">An R package to facilitate the Rapid Extraction of Marine Observations for Roving Animals</h4>
 
