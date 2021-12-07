@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,19 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="remora is released but not available on CRAN">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
+      <ul class="nav navbar-nav"></ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="../reference/index.html">Functions</a>
@@ -73,7 +68,7 @@
   </ul>
 </li>
 <li>
-  <a href="https://github.com/IMOS-AnimalTracking/remora">
+  <a href="https://github.com/IMOS-AnimalTracking/remora" class="external-link">
     <span class="fa fa-github fa-lg"></span>
      
     GitHub
@@ -94,10 +89,10 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>extractEnv</h1>
-            <h3 class="subtitle">Integrating remotely sensed environmental data with QC’d animal detections</h3>
+            <h3 data-toc-skip class="subtitle">Integrating remotely sensed environmental data with QC’d animal detections</h3>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/IMOS-AnimalTracking/remora/blob/master/vignettes/extractEnv.Rmd"><code>vignettes/extractEnv.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/IMOS-AnimalTracking/remora/blob/HEAD/vignettes/extractEnv.Rmd" class="external-link"><code>vignettes/extractEnv.Rmd</code></a></small>
       <div class="hidden name"><code>extractEnv.Rmd</code></div>
 
     </div>
@@ -106,21 +101,21 @@
     
 <hr>
 <p>Another key functionality of the <code>remora</code> package allows users to integrate acoustic telemetry data and environmental and habitat information. This package allows the user to match a range of environmental variables to each detection. Associating environmental data to detections provides a means to analyse environmental or habitat drivers of occurrence, presence and movement of animal monitored using acoustic telemetry. We advocate for users to first undertake a quality control step using the <code><a href="../reference/runQC.html">runQC()</a></code> function and workflow before further analysis (see <code><a href="../articles/runQC.html">vignette('runQC')</a></code>), however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event.</p>
-<p>Currently, the focus of this package is to integrate animal telemetry data and environmental data collated by Australia’s <a href="https://imos.org.au">Integrated Marine Observing System</a>. Therefore, the geographical scope of available datasets is currently restricted to the Australiasia region. As this package develops, more sources of environmental data will be added to enable users to access more datasets across Australia and globally.</p>
+<p>Currently, the focus of this package is to integrate animal telemetry data and environmental data collated by Australia’s <a href="https://imos.org.au" class="external-link">Integrated Marine Observing System</a>. Therefore, the geographical scope of available datasets is currently restricted to the Australiasia region. As this package develops, more sources of environmental data will be added to enable users to access more datasets across Australia and globally.</p>
 <p><br></p>
-<div id="types-of-environmental-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#types-of-environmental-data" class="anchor"></a>Types of environmental data</h1>
-<p>This package allows users to access a range of ocean observing datasets that have undergone a quality control process and housed within the <a href="https://imos.org.au">Integrated Marine Observing System</a>. These datasets can also be explored through the <a href="https://portal.aodn.org.au">Australian Ocean Data Network portal</a>. There are primarily two types of environmental data that users can currently access:</p>
+<div class="section level1">
+<h1 id="types-of-environmental-data">Types of environmental data<a class="anchor" aria-label="anchor" href="#types-of-environmental-data"></a>
+</h1>
+<p>This package allows users to access a range of ocean observing datasets that have undergone a quality control process and housed within the <a href="https://imos.org.au" class="external-link">Integrated Marine Observing System</a>. These datasets can also be explored through the <a href="https://portal.aodn.org.au" class="external-link">Australian Ocean Data Network portal</a>. There are primarily two types of environmental data that users can currently access:</p>
 <p><em>1. Remotely-sensed or gridded environmental data</em></p>
 <p><em>2. In situ sub-surface environmental data from moorings at fixed locations</em></p>
 <p><br></p>
 <p>The <code><a href="../reference/imos_variables.html">imos_variables()</a></code> function will help the user identify currently available environmental layers that can be accessed and associated. Variables include spatial layers including <code>bathy</code> and <code>dist_to_land</code>, which provide distance measures of bathymetry (in meters) and proximity to land (in kilometers). Variable names that start with <code>rs_</code> are remotely-sensed or gridded environmental layers, and variables starting with <code>moor_</code> include <em>in situ</em> sub-surface mooring environmental layers.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/IMOS-AnimalTracking/remora/">remora</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/IMOS-AnimalTracking/remora/" class="external-link">remora</a></span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/imos_variables.html">imos_variables</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<table class="table  lightable-paper">
+<table class="table  lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'>
 <thead><tr>
 <th style="text-align:left;">
 Variable
@@ -450,58 +445,58 @@ IMOS
 <p>In this vignette we will explore accessing and integrating gridded data. A suite of additional functions can be used to access and extract <em>in situ</em> sub-surface data from moorings (see <code><a href="../articles/extractMoor.html">vignette('extractMoor')</a></code>).</p>
 <p><br></p>
 </div>
-<div id="usage-of-the-extractenv-function" class="section level1">
-<h1 class="hasAnchor">
-<a href="#usage-of-the-extractenv-function" class="anchor"></a>Usage of the <code>extractEnv()</code> function</h1>
-<div id="load-example-dataset" class="section level2">
-<h2 class="hasAnchor">
-<a href="#load-example-dataset" class="anchor"></a>Load example dataset</h2>
+<div class="section level1">
+<h1 id="usage-of-the-extractenv-function">Usage of the <code>extractEnv()</code> function<a class="anchor" aria-label="anchor" href="#usage-of-the-extractenv-function"></a>
+</h1>
+<div class="section level2">
+<h2 id="load-example-dataset">Load example dataset<a class="anchor" aria-label="anchor" href="#load-example-dataset"></a>
+</h2>
 <p>The primary function to extract and append remote sensing data to acoustic detection data is the <code><a href="../reference/extractEnv.html">extractEnv()</a></code> function. Lets start with a dataset that has undergone quality control (see <code><a href="../articles/runQC.html">vignette('runQC')</a></code>).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://paleolimbot.github.io/ggspatial/">ggspatial</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://paleolimbot.github.io/ggspatial/" class="external-link">ggspatial</a></span><span class="op">)</span>
 
 <span class="co">## Example dataset that has undergone quality control using the `runQC()` function</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"TownsvilleReefQC"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"TownsvilleReefQC"</span><span class="op">)</span>
 
 <span class="co">## Only retain detections flagged as 'valid' and 'likely valid' (Detection_QC 1 and 2)</span>
 <span class="va">qc_data</span> <span class="op">&lt;-</span> 
-  <span class="va">TownsvilleReefQC</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">QC</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Detection_QC</span> <span class="op"><a href="https://rdrr.io/pkg/raster/man/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="va">TownsvilleReefQC</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">QC</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Detection_QC</span> <span class="op"><a href="https://rdrr.io/pkg/raster/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <p>Lets have a quick look at the spatial patterns in detection data:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">qc_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">transmitter_id</span>, <span class="va">station_name</span>, <span class="va">installation_name</span>, <span class="va">receiver_deployment_longitude</span>, <span class="va">receiver_deployment_latitude</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>num_det <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<code class="sourceCode R"><span class="va">qc_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">transmitter_id</span>, <span class="va">station_name</span>, <span class="va">installation_name</span>, <span class="va">receiver_deployment_longitude</span>, <span class="va">receiver_deployment_latitude</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>num_det <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">annotation_map_tile</span><span class="op">(</span><span class="st">'cartolight'</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_spatial_point</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, y <span class="op">=</span> <span class="va">receiver_deployment_latitude</span>, 
+  <span class="fu">geom_spatial_point</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, y <span class="op">=</span> <span class="va">receiver_deployment_latitude</span>, 
                          size <span class="op">=</span> <span class="va">num_det</span>, color <span class="op">=</span> <span class="va">installation_name</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">transmitter_id</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span>, color <span class="op">=</span> <span class="st">"Installation Name"</span> , size <span class="op">=</span> <span class="st">"Number of\nDetections"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">transmitter_id</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span>, color <span class="op">=</span> <span class="st">"Installation Name"</span> , size <span class="op">=</span> <span class="st">"Number of\nDetections"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="images/env_extract/env_extract_plot1.png"></p>
 <p><br></p>
 <p>We can also have a look at the temporal pattern in detections:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">qc_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">detection_datetime</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">transmitter_id</span>, <span class="va">date</span>, <span class="va">installation_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>num_det <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">transmitter_id</span>, color <span class="op">=</span> <span class="va">installation_name</span>, size <span class="op">=</span> <span class="va">num_det</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Date"</span>, y <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"Installation Name"</span>, size <span class="op">=</span> <span class="st">"Number of\nDetections"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">qc_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">detection_datetime</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">transmitter_id</span>, <span class="va">date</span>, <span class="va">installation_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>num_det <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">transmitter_id</span>, color <span class="op">=</span> <span class="va">installation_name</span>, size <span class="op">=</span> <span class="va">num_det</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Date"</span>, y <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"Installation Name"</span>, size <span class="op">=</span> <span class="st">"Number of\nDetections"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="images/env_extract/env_extract_plot2.png"></p>
 <p><br></p>
 </div>
-<div id="environmental-data-extraction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#environmental-data-extraction" class="anchor"></a>Environmental data extraction</h2>
+<div class="section level2">
+<h2 id="environmental-data-extraction">Environmental data extraction<a class="anchor" aria-label="anchor" href="#environmental-data-extraction"></a>
+</h2>
 <p>In this example, we will extract two variables; <em>Interpolated sea surface temperature</em> and <em>modeled ocean surface currents</em>.</p>
 <p>Each variable will need to be accessed one at a time using the <code><a href="../reference/extractEnv.html">extractEnv()</a></code> function. There are a few parameters within the function that can help the user identify the variable required, and to manage the downloaded environmental layers:</p>
 <ul>
@@ -527,18 +522,18 @@ IMOS
 <strong>.parallel</strong>: should the function be run in parallel? speeds up environmental extraction for large datasets</li>
 </ul>
 <p><br></p>
-<div id="gap-filling-functionality" class="section level4">
-<h4 class="hasAnchor">
-<a href="#gap-filling-functionality" class="anchor"></a><em>Gap filling functionality</em>
+<div class="section level4">
+<h4 id="gap-filling-functionality">
+<em>Gap filling functionality</em><a class="anchor" aria-label="anchor" href="#gap-filling-functionality"></a>
 </h4>
 <p>Remote sensed environmental data within coastal areas (where acoustic arrays are often deployed) are often unreliable due to shallow habitats and close proximity to turbid nearshore waters. The quality control process for Ocean colour variables within the IMOS dataset often remove pixels in close proximity to coastlines due to the low quality of environmental variables in these regions. Here is an example where coastal remote sensing data may not match up with positions of deployed acoustic arrays.</p>
 <p><img src="images/env_extract/env_extract_plot7.png"></p>
 <p>In these cases, a simple extraction will result in <code>NA</code>s where no overlap occurs (e.g., black points in the figure above). To maximise the understanding of environmental variables in the region of coastal arrays, <code><a href="../reference/extractEnv.html">extractEnv()</a></code> provides the functionality to fill gaps in the extraction data using the <code>fill_gaps</code> parameter. If <code>fill_gaps = TRUE</code>, the function will extract the median variable values within a buffer around points that do not overlap data pixels (broken buffers around black points in the figure above). The radius of the buffer around the points that do not overlap data can be user defined (in meters) using the additional <code>buffer</code> parameter. If no <code>buffer</code> value is provided by the user, the function will automatically choose a buffer radius based on the resolution of environmental layer [5 km for <code>rs_sst</code>, <code>rs_chl</code>, <code>rs_npp</code>, <code>rs_turbidity</code>; 15 km for <code>rs_sst_interpolated</code>; 20 km for <code>rs_current</code> and <code>rs_salinity</code>].</p>
 <p><br></p>
 </div>
-<div id="interpolated-sea-surface-temperature" class="section level4">
-<h4 class="hasAnchor">
-<a href="#interpolated-sea-surface-temperature" class="anchor"></a><em>Interpolated sea surface temperature</em>
+<div class="section level4">
+<h4 id="interpolated-sea-surface-temperature">
+<em>Interpolated sea surface temperature</em><a class="anchor" aria-label="anchor" href="#interpolated-sea-surface-temperature"></a>
 </h4>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data_with_sst</span> <span class="op">&lt;-</span> 
@@ -555,14 +550,14 @@ IMOS
              .parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 </div>
-<div id="modeled-ocean-surface-currents" class="section level4">
-<h4 class="hasAnchor">
-<a href="#modeled-ocean-surface-currents" class="anchor"></a><em>Modeled ocean surface currents</em>
+<div class="section level4">
+<h4 id="modeled-ocean-surface-currents">
+<em>Modeled ocean surface currents</em><a class="anchor" aria-label="anchor" href="#modeled-ocean-surface-currents"></a>
 </h4>
 <p>We can now also append current data to this dataset:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data_with_sst_and_current</span> <span class="op">&lt;-</span> 
-  <span class="va">data_with_sst</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="va">data_with_sst</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/extractEnv.html">extractEnv</a></span><span class="op">(</span>X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, 
              Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, 
              datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, 
@@ -579,122 +574,122 @@ IMOS
 <p><br></p>
 </div>
 </div>
-<div id="examining-the-appended-environmental-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#examining-the-appended-environmental-data" class="anchor"></a>Examining the appended environmental data</h2>
+<div class="section level2">
+<h2 id="examining-the-appended-environmental-data">Examining the appended environmental data<a class="anchor" aria-label="anchor" href="#examining-the-appended-environmental-data"></a>
+</h2>
 <p>We can now see the extracted environmental variables are appended as new columns to the input dataset</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data_with_sst_and_current</span></code></pre></div>
-<pre><code>## # A tibble: 597 × 61
-##    filename         transmitter_id  tag_id transmitter_deploy… tagging_project_…
-##    &lt;chr&gt;            &lt;chr&gt;            &lt;int&gt;               &lt;int&gt; &lt;chr&gt;            
-##  1 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-##  2 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-##  3 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-##  4 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-##  5 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-##  6 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-##  7 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-##  8 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-##  9 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-## 10 A69-9002-13807_… A69-9002-13807  6.99e7            69918684 Townsville Reefs 
-## # … with 587 more rows, and 56 more variables: species_common_name &lt;chr&gt;,
-## #   species_scientific_name &lt;chr&gt;, CAAB_species_id &lt;int&gt;,
-## #   WORMS_species_aphia_id &lt;int&gt;, animal_sex &lt;chr&gt;, detection_datetime &lt;dttm&gt;,
-## #   receiver_deployment_longitude &lt;dbl&gt;, receiver_deployment_latitude &lt;dbl&gt;,
-## #   receiver_project_name &lt;chr&gt;, installation_name &lt;chr&gt;, station_name &lt;chr&gt;,
-## #   receiver_name &lt;chr&gt;, receiver_id &lt;int&gt;, receiver_deployment_id &lt;dbl&gt;,
-## #   receiver_depth &lt;dbl&gt;, purchasing_organisation &lt;chr&gt;, …</code></pre>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 597 × 61</span></span>
+<span class="co">##    filename         transmitter_id  tag_id transmitter_deploy… tagging_project_…</span>
+<span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            </span>
+<span class="co">## <span style="color: #BCBCBC;"> 1</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #BCBCBC;"> 2</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #BCBCBC;"> 3</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #BCBCBC;"> 4</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #BCBCBC;"> 5</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #BCBCBC;"> 6</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #BCBCBC;"> 7</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #BCBCBC;"> 8</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #BCBCBC;"> 9</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #BCBCBC;">10</span> A69-9002-13807_… A69-9002-13807  6.99<span style="color: #949494;">e</span>7            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs </span>
+<span class="co">## <span style="color: #949494;"># … with 587 more rows, and 56 more variables: species_common_name &lt;chr&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   species_scientific_name &lt;chr&gt;, CAAB_species_id &lt;int&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   WORMS_species_aphia_id &lt;int&gt;, animal_sex &lt;chr&gt;, detection_datetime &lt;dttm&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   receiver_deployment_longitude &lt;dbl&gt;, receiver_deployment_latitude &lt;dbl&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   receiver_project_name &lt;chr&gt;, installation_name &lt;chr&gt;, station_name &lt;chr&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   receiver_name &lt;chr&gt;, receiver_id &lt;int&gt;, receiver_deployment_id &lt;dbl&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   receiver_depth &lt;dbl&gt;, purchasing_organisation &lt;chr&gt;, …</span></span></code></pre>
 <p>We can also now add the variables to the detection plots:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">summarised_data</span> <span class="op">&lt;-</span>
-  <span class="va">data_with_sst_and_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">detection_datetime</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">transmitter_id</span>, <span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>num_det <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>,
-            mean_sst <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">rs_sst_interpolated</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,
-            mean_current_velocity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">rs_current_velocity</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,
-            mean_current_bearing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">rs_current_bearing</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">data_with_sst_and_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">detection_datetime</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">transmitter_id</span>, <span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>num_det <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,
+            mean_sst <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">rs_sst_interpolated</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,
+            mean_current_velocity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">rs_current_velocity</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,
+            mean_current_bearing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">rs_current_bearing</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">summarised_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">transmitter_id</span>, size <span class="op">=</span> <span class="va">num_det</span>, color <span class="op">=</span> <span class="va">mean_sst</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_color_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Interpolated sea surface temperature"</span>, x <span class="op">=</span> <span class="st">"Date"</span>, 
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">summarised_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">transmitter_id</span>, size <span class="op">=</span> <span class="va">num_det</span>, color <span class="op">=</span> <span class="va">mean_sst</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Interpolated sea surface temperature"</span>, x <span class="op">=</span> <span class="st">"Date"</span>, 
        y <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"SST (˚C)"</span>, size <span class="op">=</span> <span class="st">"Number of\nDetections"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="images/env_extract/env_extract_plot3.png"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">summarised_data</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">transmitter_id</span>, color <span class="op">=</span> <span class="va">mean_current_velocity</span>,
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">summarised_data</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">transmitter_id</span>, color <span class="op">=</span> <span class="va">mean_current_velocity</span>,
                  size <span class="op">=</span> <span class="va">num_det</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_spoke.html">geom_spoke</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">transmitter_id</span>, angle <span class="op">=</span> <span class="va">mean_current_bearing</span>, radius <span class="op">=</span> <span class="va">mean_current_velocity</span><span class="op">)</span>,
-             arrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/arrow.html">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="st">'inches'</span><span class="op">)</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"grey"</span>, lwd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Direction and velocity of modeled surface currents"</span>, x <span class="op">=</span> <span class="st">"Date"</span>, 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_spoke.html" class="external-link">geom_spoke</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">transmitter_id</span>, angle <span class="op">=</span> <span class="va">mean_current_bearing</span>, radius <span class="op">=</span> <span class="va">mean_current_velocity</span><span class="op">)</span>,
+             arrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="st">'inches'</span><span class="op">)</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"grey"</span>, lwd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Direction and velocity of modeled surface currents"</span>, x <span class="op">=</span> <span class="st">"Date"</span>, 
        y <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"Current\nVelocity (ms-1)"</span>, size <span class="op">=</span> <span class="st">"Number of\nDetections"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_color_viridis_c</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"B"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_viridis_c</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"B"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="images/env_extract/env_extract_plot4.png"></p>
 <p><br><br></p>
 <p>If the environmental layers were cached, we can also look at how the variables altered spatially:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Detection data summary</span>
 <span class="va">det_summary</span> <span class="op">&lt;-</span>
-  <span class="va">qc_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">station_name</span>, lon <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, lat <span class="op">=</span> <span class="va">receiver_deployment_latitude</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="va">qc_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">station_name</span>, lon <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, lat <span class="op">=</span> <span class="va">receiver_deployment_latitude</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co">## Sea surface temperature</span>
-<span class="va">sst_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span><span class="op">(</span><span class="st">"imos.cache/rs variables/test/rs_sst_interpolated.grd"</span><span class="op">)</span>
+<span class="va">sst_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="st">"imos.cache/rs variables/test/rs_sst_interpolated.grd"</span><span class="op">)</span>
 
 <span class="va">sst_df</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">sst_raster</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">]</span><span class="op">]</span>, xy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">sst_raster</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">]</span><span class="op">]</span>, xy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">sst_df</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, fill <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">det_summary</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">lon</span>, y <span class="op">=</span> <span class="va">lat</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span>, color <span class="op">=</span> <span class="st">"red"</span>, inherit.aes <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Interpolated\nSST (˚C)"</span>, x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html">coord_equal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span>, nrow <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">sst_df</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_tile</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, fill <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">det_summary</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">lon</span>, y <span class="op">=</span> <span class="va">lat</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span>, color <span class="op">=</span> <span class="st">"red"</span>, inherit.aes <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Interpolated\nSST (˚C)"</span>, x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span>, nrow <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="images/env_extract/env_extract_plot5.png"></p>
 <p><br></p>
-<p>Current data can be plotted using other very useful libraries like the <a href="https://github.com/eliocamp/metR"><code>metR</code></a> package.</p>
+<p>Current data can be plotted using other very useful libraries like the <a href="https://github.com/eliocamp/metR" class="external-link"><code>metR</code></a> package.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Current</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eliocamp/metR">metR</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eliocamp/metR" class="external-link">metR</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
 
 <span class="co">## read in vcur and ucur spatial data</span>
-<span class="va">vcur_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span><span class="op">(</span><span class="st">"imos.cache/rs variables/test/rs_vcur.grd"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>
-<span class="va">vcur_raster</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html">values</a></span><span class="op">(</span><span class="va">vcur_raster</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
-<span class="va">ucur_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span><span class="op">(</span><span class="st">"imos.cache/rs variables/test/rs_ucur.grd"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>
-<span class="va">ucur_raster</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html">values</a></span><span class="op">(</span><span class="va">ucur_raster</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
+<span class="va">vcur_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="st">"imos.cache/rs variables/test/rs_vcur.grd"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>
+<span class="va">vcur_raster</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html" class="external-link">values</a></span><span class="op">(</span><span class="va">vcur_raster</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
+<span class="va">ucur_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="st">"imos.cache/rs variables/test/rs_ucur.grd"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>
+<span class="va">ucur_raster</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html" class="external-link">values</a></span><span class="op">(</span><span class="va">ucur_raster</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
 
 <span class="co">## calculate velocity (ms-1)</span>
-<span class="va">vel_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">vcur_raster</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">ucur_raster</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>
+<span class="va">vel_raster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">vcur_raster</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="va">ucur_raster</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>
 
 <span class="co">## extract values from raster stacks</span>
 <span class="va">uv</span> <span class="op">&lt;-</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">vcur_raster</span>, xy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"date"</span>, values_to <span class="op">=</span> <span class="st">"v"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ucur_raster</span>, xy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-              <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"date"</span>, values_to <span class="op">=</span> <span class="st">"u"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">vel_raster</span>, xy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-              <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"date"</span>, values_to <span class="op">=</span> <span class="st">"vel"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace_all</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html">str_sub</a></span><span class="op">(</span><span class="va">date</span>, start <span class="op">=</span> <span class="fl">2</span>, end <span class="op">=</span> <span class="fl">11</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="st">"[.]"</span>, replacement <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">vcur_raster</span>, xy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"date"</span>, values_to <span class="op">=</span> <span class="st">"v"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">ucur_raster</span>, xy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+              <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"date"</span>, values_to <span class="op">=</span> <span class="st">"u"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">vel_raster</span>, xy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+              <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"date"</span>, values_to <span class="op">=</span> <span class="st">"vel"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace_all</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_sub.html" class="external-link">str_sub</a></span><span class="op">(</span><span class="va">date</span>, start <span class="op">=</span> <span class="fl">2</span>, end <span class="op">=</span> <span class="fl">11</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="st">"[.]"</span>, replacement <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_contour_fill</span><span class="op">(</span>data <span class="op">=</span> <span class="va">uv</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, z <span class="op">=</span> <span class="va">vel</span>, fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">stat</a></span><span class="op">(</span><span class="va">level</span><span class="op">)</span><span class="op">)</span>,
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_contour_fill</span><span class="op">(</span>data <span class="op">=</span> <span class="va">uv</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, z <span class="op">=</span> <span class="va">vel</span>, fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html" class="external-link">stat</a></span><span class="op">(</span><span class="va">level</span><span class="op">)</span><span class="op">)</span>,
                     binwidth <span class="op">=</span> <span class="fl">0.05</span>, alpha <span class="op">=</span> <span class="fl">0.7</span>, inherit.aes <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_streamline</span><span class="op">(</span>data <span class="op">=</span> <span class="va">uv</span>, skip <span class="op">=</span> <span class="fl">0</span>, size <span class="op">=</span> <span class="fl">0.05</span>, L <span class="op">=</span> <span class="fl">1</span>, res <span class="op">=</span> <span class="fl">5</span>, jitter <span class="op">=</span> <span class="fl">5</span>, lineend <span class="op">=</span> <span class="st">"round"</span>,
-                  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, dx <span class="op">=</span> <span class="va">u</span>, dy <span class="op">=</span> <span class="va">v</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_d</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"B"</span>, name <span class="op">=</span> <span class="st">"Current Velocity (m/s)"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">det_summary</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">lon</span>, y <span class="op">=</span> <span class="va">lat</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span>, color <span class="op">=</span> <span class="st">"red"</span>, inherit.aes <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">date</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Modeled surface currents"</span>, x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+                  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, dx <span class="op">=</span> <span class="va">u</span>, dy <span class="op">=</span> <span class="va">v</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_d</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"B"</span>, name <span class="op">=</span> <span class="st">"Current Velocity (m/s)"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">det_summary</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">lon</span>, y <span class="op">=</span> <span class="va">lat</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span>, color <span class="op">=</span> <span class="st">"red"</span>, inherit.aes <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">date</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Modeled surface currents"</span>, x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="images/env_extract/env_extract_plot6.png"></p>
 <p><br></p>
 <hr>
@@ -717,11 +712,13 @@ IMOS
 
 
       <footer><div class="copyright">
-  <p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+  <p></p>
+<p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -729,6 +726,8 @@ IMOS
 
   
 
+
+  
 
   </body>
 </html>

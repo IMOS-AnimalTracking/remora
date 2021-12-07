@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,19 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="remora is released but not available on CRAN">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
+      <ul class="nav navbar-nav"></ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="reference/index.html">Functions</a>
@@ -73,7 +68,7 @@
   </ul>
 </li>
 <li>
-  <a href="https://github.com/IMOS-AnimalTracking/remora">
+  <a href="https://github.com/IMOS-AnimalTracking/remora" class="external-link">
     <span class="fa fa-github fa-lg"></span>
      
     GitHub
@@ -107,13 +102,13 @@ An R package to facilitate the Rapid Extraction of Marine Observations for Rovin
 <p align="center">
 <img src="articles/images/overview-images.png"></p>
 <p><br></p>
-<div id="overview" class="section level2">
-<h2 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h2>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
 <p><strong>remora</strong> is an R package enabling the integration of animal acoustic telemetry data with oceanographic observations collected by ocean observing programs. It includes functions for:</p>
 <ul>
 <li>Interactively exploring animal movements in space and time from acoustic telemetry data</li>
-<li>Performing robust quality-control of acoustic telemetry data as described in <a href="https://doi.org/10.1038/sdata.2017.206">Hoenner et al. 2018</a>
+<li>Performing robust quality-control of acoustic telemetry data as described in <a href="https://doi.org/10.1038/sdata.2017.206" class="external-link">Hoenner et al. 2018</a>
 </li>
 <li>Identifying available satellite-derived and sub-surface <em>in situ</em> oceanographic datasets coincident and collocated with the animal movement data, based on regional Ocean Observing Systems<br>
 </li>
@@ -121,21 +116,21 @@ An R package to facilitate the Rapid Extraction of Marine Observations for Rovin
 </ul>
 <p>Whilst the functions in <strong>remora</strong> were primarily developed to work with acoustic telemetry data, the environmental data extraction and integration functionalities will work with other spatio-temporal ecological datasets (eg. satellite telemetry, species sightings records, fisheries catch records).</p>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p><strong>remora</strong> requires R version &gt;= 3.6.0</p>
 <p>You will need the remotes package to install <strong>remora</strong>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org">"remotes"</a></span><span class="op">)</span>     </code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span><span class="op">)</span>     </code></pre></div>
 <p>The latest stable version of <strong>remora</strong> can be installed from GitHub:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">'IMOS-AnimalTracking/remora'</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="key-functionalities" class="section level2">
-<h2 class="hasAnchor">
-<a href="#key-functionalities" class="anchor"></a>Key functionalities</h2>
+<div class="section level2">
+<h2 id="key-functionalities">Key functionalities<a class="anchor" aria-label="anchor" href="#key-functionalities"></a>
+</h2>
 <p align="center">
 <img src="articles/images/workflow_diagram.png"></p>
 <p>A set of functions within the <strong>remora</strong> workflow allow users to run each of the below functionalities independently, as required.</p>
@@ -149,41 +144,41 @@ An R package to facilitate the Rapid Extraction of Marine Observations for Rovin
 </ul>
 <p>The vignettes for each functionality can be accessed in R using the following code:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html">browseVignettes</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="what-to-do-if-you-encounter-a-problem" class="section level2">
-<h2 class="hasAnchor">
-<a href="#what-to-do-if-you-encounter-a-problem" class="anchor"></a>What to do if you encounter a problem</h2>
-<p>If you are convinced you have encountered a bug or unexpected/inconsistent behaviour when using remora, you can post an issue <a href="https://github.com/IMOS-AnimalTracking/remora/issues">here</a>. First, have a read through the posted issues to see if others have encountered the same problem and whether a solution has been offered. You can reply to an existing issue if you have the same problem and have more details to share or you can submit a new issue.</p>
+<div class="section level2">
+<h2 id="what-to-do-if-you-encounter-a-problem">What to do if you encounter a problem<a class="anchor" aria-label="anchor" href="#what-to-do-if-you-encounter-a-problem"></a>
+</h2>
+<p>If you are convinced you have encountered a bug or unexpected/inconsistent behaviour when using remora, you can post an issue <a href="https://github.com/IMOS-AnimalTracking/remora/issues" class="external-link">here</a>. First, have a read through the posted issues to see if others have encountered the same problem and whether a solution has been offered. You can reply to an existing issue if you have the same problem and have more details to share or you can submit a new issue.</p>
 <p>To submit an issue, you will need to <em>clearly</em> describe the issue, include a reproducible example, describe what you expected to happen (but didn’t), and provide screenshots/images that illustrate the problem.</p>
 </div>
-<div id="how-to-contribute" class="section level2">
-<h2 class="hasAnchor">
-<a href="#how-to-contribute" class="anchor"></a>How to Contribute</h2>
-<p>Contributions from anyone in the Movement Ecology/Acoustic Telemetry communities are welcome. Consider submitting a feature request <a href="https://github.com/IMOS-AnimalTracking/remora/issues/new/choose">here</a> to start a discussion. Alternatively, if your idea is well-developed then you can submit a pull request for evaluation <a href="https://github.com/IMOS-AnimalTracking/remora/pulls">here</a>.</p>
+<div class="section level2">
+<h2 id="how-to-contribute">How to Contribute<a class="anchor" aria-label="anchor" href="#how-to-contribute"></a>
+</h2>
+<p>Contributions from anyone in the Movement Ecology/Acoustic Telemetry communities are welcome. Consider submitting a feature request <a href="https://github.com/IMOS-AnimalTracking/remora/issues/new/choose" class="external-link">here</a> to start a discussion. Alternatively, if your idea is well-developed then you can submit a pull request for evaluation <a href="https://github.com/IMOS-AnimalTracking/remora/pulls" class="external-link">here</a>.</p>
 </div>
-<div id="acknowledgements" class="section level2">
-<h2 class="hasAnchor">
-<a href="#acknowledgements" class="anchor"></a>Acknowledgements</h2>
+<div class="section level2">
+<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h2>
 <p align="left">
 <img src="articles/images/logos_banner.png" width="500"></p>
 <p>This work was funded by Australia’s Integrated Marine Observing System (IMOS, www.imos.org.au) and a Research Attraction and Acceleration Program grant from the Office of the New South Wales Chief Scientist &amp; Engineer awarded to Sydney Institute of Marine Science. IMOS is enabled by the National Collaborative Research Infrastructure Strategy (NCRIS). It is operated by a consortium of institutions as an unincorporated joint venture, with the University of Tasmania as Lead Agent.</p>
 <p>We thank Michelle Heupel, Colin Simpfendorfer and Paul Butcher for allowing us access to the following sample datasets to aid code development.</p>
-<p>Heupel, M., Simpfendorfer, C. <em>et al.</em> (2021) Townsville Reefs (Available: Integrated Marine Observing System. Animal Tracking Database. <a href="https://animaltracking.aodn.org.au" class="uri">https://animaltracking.aodn.org.au</a>. Accessed: 2021-10-11).</p>
-<p>Butcher, P. <em>et al.</em> (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW Department of Primary Industries. (Available: Integrated Marine Observing System. Animal Tracking Database. <a href="https://animaltracking.aodn.org.au" class="uri">https://animaltracking.aodn.org.au</a>. Accessed: 2021-10-11).</p>
+<p>Heupel, M., Simpfendorfer, C. <em>et al.</em> (2021) Townsville Reefs (Available: Integrated Marine Observing System. Animal Tracking Database. <a href="https://animaltracking.aodn.org.au" class="external-link uri">https://animaltracking.aodn.org.au</a>. Accessed: 2021-10-11).</p>
+<p>Butcher, P. <em>et al.</em> (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW Department of Primary Industries. (Available: Integrated Marine Observing System. Animal Tracking Database. <a href="https://animaltracking.aodn.org.au" class="external-link uri">https://animaltracking.aodn.org.au</a>. Accessed: 2021-10-11).</p>
 </div>
-<div id="data-accessibility" class="section level2">
-<h2 class="hasAnchor">
-<a href="#data-accessibility" class="anchor"></a>Data accessibility</h2>
+<div class="section level2">
+<h2 id="data-accessibility">Data accessibility<a class="anchor" aria-label="anchor" href="#data-accessibility"></a>
+</h2>
 <ul>
-<li><p>Continental-scale acoustic telemetry data collated as part of Australia’s Integrated Marine Observing System (IMOS) are available via the <a href="https://animaltracking.aodn.org.au">IMOS Australian Animal Acoustic Telemetry Database</a>.</p></li>
-<li><p>Environmental and oceanographic datasets are available from the <a href="https://portal.aodn.org.au/">IMOS Australian Ocean Data Network</a>.</p></li>
+<li><p>Continental-scale acoustic telemetry data collated as part of Australia’s Integrated Marine Observing System (IMOS) are available via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal Acoustic Telemetry Database</a>.</p></li>
+<li><p>Environmental and oceanographic datasets are available from the <a href="https://portal.aodn.org.au/" class="external-link">IMOS Australian Ocean Data Network</a>.</p></li>
 </ul>
 </div>
-<div id="licence" class="section level2">
-<h2 class="hasAnchor">
-<a href="#licence" class="anchor"></a>Licence</h2>
-<p><img src="articles/images/gplv3-127x51.png"> GNU General Public License (GPL&gt;=3) <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="uri">https://www.gnu.org/licenses/gpl-3.0.en.html</a></p>
+<div class="section level2">
+<h2 id="licence">Licence<a class="anchor" aria-label="anchor" href="#licence"></a>
+</h2>
+<p><img src="articles/images/gplv3-127x51.png"> GNU General Public License (GPL&gt;=3) <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="external-link uri">https://www.gnu.org/licenses/gpl-3.0.en.html</a></p>
 <p><strong>Citation:</strong><br>
 Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoenner, X., Huveneers, C and Harcourt, R. <strong>remora</strong>: An R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. <em>In preparation</em> for publication in Methods in Ecology and Evolution.</p>
 <p><strong>Contributors:</strong><br><strong>Fabrice Jaine</strong> @fjaine (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)<br><strong>Ian Jonsen</strong> @ianjonsen (IMOS Animal Tracking Facility, Macquarie University)<br><strong>Vinay Udyawer</strong> @vinayudyawer (Australian Institute of Marine Science)<br><strong>Ross Dwyer</strong> @RossDwyer (University of the Sunshine Coast)<br><strong>Kylie Scales</strong> @KScales (University of the Sunshine Coast)<br><strong>Francisca Maron</strong> @fmaron (IMOS Animal Tracking Facility, Sydney Institute of Marine Science)<br><strong>Xavier Hoenner</strong> @xhoenner (Commonwealth Scientific and Industrial Research Organisation)<br><strong>Charlie Huveneers</strong> @huve0001 (Flinders University)</p>
@@ -193,56 +188,67 @@ Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoen
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/IMOS-AnimalTracking/remora/">https://​github.com/​IMOS-AnimalTracking/​remora/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/IMOS-AnimalTracking/remora/issues">https://​github.com/​IMOS-AnimalTracking/​remora/​issues</a>
-</li>
+<li><a href="https://github.com/IMOS-AnimalTracking/remora/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/IMOS-AnimalTracking/remora/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
 <li><small>GPL (&gt;= 3)</small></li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>Fabrice Jaine <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0002-9304-5034" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Ian Jonsen <br><small class="roles"> Author, contributor, maintainer </small> <a href="https://orcid.org/0000-0001-5423-6076" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Vinay Udyawer <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0001-5812-0740" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Ross Dwyer <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0003-1136-5489" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Kylie Scales <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0003-0843-0956" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Francisca Maron <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0001-7633-7003" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Xavier Hoenner <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0001-5811-1166" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Charlie Huveneers <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0001-8937-1358" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html#citation">Citing remora</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/IMOS-AnimalTracking/remora"><img src="https://img.shields.io/static/v1?label=IMOS-AnimalTracking&amp;message=remora&amp;color=blue&amp;logo=github" alt="IMOS-AnimalTracking - remora"></a></li>
-<li><a href="https://github.com/IMOS-AnimalTracking/remora/issues"><img src="https://img.shields.io/github/issues/IMOS-AnimalTracking/remora" alt="issues - remora"></a></li>
-<li><a href="https://github.com/IMOS-AnimalTracking/remora"><img src="https://img.shields.io/github/stars/IMOS-AnimalTracking/remora?style=social" alt="stars - remora"></a></li>
-<li><a href="https://github.com/IMOS-AnimalTracking/remora"><img src="https://img.shields.io/github/forks/IMOS-AnimalTracking/remora?style=social" alt="forks - remora"></a></li>
-<li><a href="https://github.com/IMOS-AnimalTracking/remora"><img src="https://img.shields.io/github/watchers/IMOS-AnimalTracking/remora?style=social" alt="watchers - remora"></a></li>
-<li><a href="https://github.com/IMOS-AnimalTracking/remora/actions"><img src="https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg?branch=master" alt="R-CMD-check"></a></li>
+<li>Fabrice Jaine <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0002-9304-5034" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Ian Jonsen <br><small class="roles"> Author, contributor, maintainer </small> <a href="https://orcid.org/0000-0001-5423-6076" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Vinay Udyawer <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0001-5812-0740" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Ross Dwyer <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0003-1136-5489" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Kylie Scales <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0003-0843-0956" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Francisca Maron <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0001-7633-7003" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Xavier Hoenner <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0001-5811-1166" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Charlie Huveneers <br><small class="roles"> Author, contributor </small> <a href="https://orcid.org/0000-0001-8937-1358" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/IMOS-AnimalTracking/remora" class="external-link"><img src="https://img.shields.io/static/v1?label=IMOS-AnimalTracking&amp;message=remora&amp;color=blue&amp;logo=github" alt="IMOS-AnimalTracking - remora"></a></li>
+<li><a href="https://github.com/IMOS-AnimalTracking/remora/issues" class="external-link"><img src="https://img.shields.io/github/issues/IMOS-AnimalTracking/remora" alt="issues - remora"></a></li>
+<li><a href="https://github.com/IMOS-AnimalTracking/remora" class="external-link"><img src="https://img.shields.io/github/stars/IMOS-AnimalTracking/remora?style=social" alt="stars - remora"></a></li>
+<li><a href="https://github.com/IMOS-AnimalTracking/remora" class="external-link"><img src="https://img.shields.io/github/forks/IMOS-AnimalTracking/remora?style=social" alt="forks - remora"></a></li>
+<li><a href="https://github.com/IMOS-AnimalTracking/remora" class="external-link"><img src="https://img.shields.io/github/watchers/IMOS-AnimalTracking/remora?style=social" alt="watchers - remora"></a></li>
+<li><a href="https://github.com/IMOS-AnimalTracking/remora/actions" class="external-link"><img src="https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg?branch=master" alt="R-CMD-check"></a></li>
+</ul>
 </div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+  <p></p>
+<p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -250,6 +256,8 @@ Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoen
 
   
 
+
+  
 
   </body>
 </html>
