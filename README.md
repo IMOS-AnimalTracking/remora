@@ -1,4 +1,5 @@
 [![IMOS-AnimalTracking - remora](https://img.shields.io/static/v1?label=IMOS-AnimalTracking&message=remora&color=blue&logo=github)](https://github.com/IMOS-AnimalTracking/remora)
+[![DOI](https://zenodo.org/badge/411668033.svg)](https://zenodo.org/badge/latestdoi/411668033)
 [![issues - remora](https://img.shields.io/github/issues/IMOS-AnimalTracking/remora)](https://github.com/IMOS-AnimalTracking/remora/issues)
 [![stars - remora](https://img.shields.io/github/stars/IMOS-AnimalTracking/remora?style=social)](https://github.com/IMOS-AnimalTracking/remora)
 [![forks - remora](https://img.shields.io/github/forks/IMOS-AnimalTracking/remora?style=social)](https://github.com/IMOS-AnimalTracking/remora)
@@ -131,7 +132,7 @@ Butcher, P. *et al.* (2021) NSW DPI (Whaler, White and Tiger Shark Program). NSW
 
 
 **Citation:**  
-Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoenner, X., Huveneers, C and Harcourt, R. **remora**: An R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution.
+Jaine, F., Jonsen, I., Udyawer, V., Dwyer, R., Scales, K., Maron-Perez, F., Hoenner, X., Huveneers, C and Harcourt, R. **remora**: An R package to facilitate Rapid Extraction of Marine Observations for Roving Animals. *In preparation* for publication in Methods in Ecology and Evolution. DOI:10.5281/zenodo.5763976. https://imos-animaltracking.github.io/remora/
 
 **Contributors:**  
 

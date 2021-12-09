@@ -32,6 +32,6 @@ navbar:
       href: https://github.com/IMOS-AnimalTracking/remora
 
 development:
-  destination: dev
+  destination: docs
   version_label: danger
   version_tooltip: "remora is released but not available on CRAN"
