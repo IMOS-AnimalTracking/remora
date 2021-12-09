@@ -1,0 +1,22 @@
+citHeader("To cite remora in publications use:")
+
+citEntry(
+  entry    = "Misc",
+  title    = "remora: Rapid Extraction of Marine Observations for
+  Roving Animals",
+  author   = personList(as.person("Fabrice Jaine"),
+                                   as.person("Ian D. Jonsen"),
+                                   as.person("Vinay Udyawer"),
+                                   as.person("Ross Dwyer"),
+                                   as.person("Kylie Scales"),
+                                   as.person("Francisca Maron"),
+                                   as.person("Xavier Hoenner"),
+                                   as.person("Charlie Huveneers")),
+  year     = "2021",
+  doi      = "10.5281/zenodo.5763976",
+  url      = "https://imos-animaltracking.github.io/remora",
+  textVersion = paste("Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner and Charlie Huveneers (2021).",
+  "remora: Rapid Extraction of Marine Observations for Roving Animals.",
+  "DOI:10.5281/zenodo.5763976",
+  "https://imos-animaltracking.github.io/remora")
+)
