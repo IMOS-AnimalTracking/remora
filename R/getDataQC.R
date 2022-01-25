@@ -175,6 +175,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     ## check for & report any receiver_deployment_id's in detections data but not in receiver metadata
     missing_ids <-
       unique(det_data$receiver_deployment_id)[!unique(det_data$receiver_deployment_id) %in% rec_meta$receiver_deployment_id]
+    
     ## create filenames
     fns <-
       with(

@@ -3,6 +3,8 @@
 ##' @description Subjects tag detections to 8 quality control tests and appends results to each detection record
 ##'
 ##' @param x a list of un-QC'd data for each tag deployment
+##' @param Lcheck (logical; default TRUE) test for receiver_deployment_latitudes
+##' in N hemisphere at correct to S hemisphere. Set to FALSE for QC on N hemisphere data
 ##' @param logfile path to logfile; default is the working directory
 ##'
 ##' @details ...
@@ -17,12 +19,38 @@
 ##'
 
 
-qc <- function(x, logfile) {
+qc <- function(x, Lcheck = TRUE, logfile) {
   if(!is.data.frame(x)) stop("x must be a data.frame")
   
   ## Initial tests to identify & correct obvious errors in data
+  ## first check for NA's in detection_datetime & remove and flag in logfile
+  rn <- which(is.na(x$detection_datetime))
+  if(length(rn) > 0) {
+    lapply(1:length(rn), function(i) {
+      write(paste0(x$filename[1],
+                   ":  ", length(rn), " NA's found in detection_datetime; records removed from QC'd output"),
+            file = logfile,
+            append = TRUE)
+    })
+    ## remove records with NA's in the above variables so QC can proceed
+    x <- x[-rn,]
+  }
+  
+  ## check for NA's in (receiver_deployment) longitude/latitude & remove and flag in logfile
+  rn <- which(is.na(x$longitude) | is.na(x$latitude))
+  if(length(rn) > 0) {
+    lapply(1:length(rn), function(i) {
+      write(paste0(x$filename[1],
+                   ":  ", length(rn), " NA's found in receiver_deployment_longitude &/or latitude; records removed from QC'd output"),
+            file = logfile,
+            append = TRUE)
+    })
+    ## remove records with NA's in the above variables so QC can proceed
+    x <- x[-rn,]
+  }
+  
   ## check for & correct any lat's incorrectly in N hemisphere
-  if(any(x$latitude > 0)) {
+  if(any(x$latitude > 0) & Lcheck) {
     ## how many incorrect records
     n <- sum(x$latitude > 0)
     ## write to logfile

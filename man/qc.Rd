@@ -4,10 +4,13 @@
 \alias{qc}
 \title{test the validity of individual detections for tags detected more than once}
 \usage{
-qc(x, logfile)
+qc(x, Lcheck = TRUE, logfile)
 }
 \arguments{
 \item{x}{a list of un-QC'd data for each tag deployment}
+
+\item{Lcheck}{(logical; default TRUE) test for receiver_deployment_latitudes
+in N hemisphere at correct to S hemisphere. Set to FALSE for QC on N hemisphere data}
 
 \item{logfile}{path to logfile; default is the working directory}
 }
