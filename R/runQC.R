@@ -6,6 +6,8 @@
 ##' deployment metadata, and animal measurements data files. These data must be
 ##' downloaded from the IMOS-ATF Web App (URL), or have exactly the same
 ##' structure and variable names as the Web App data.
+##' @param lat.check (logical; default TRUE) test for receiver_deployment_latitudes
+##' in N hemisphere at correct to S hemisphere. Set to FALSE if QC'ing N hemisphere data
 ##' @param .parallel logical; run QC tests in parallel across multiple processors
 ##' (default is FALSE)
 ##' @param .ncores integer; number of cores to run in parallel. If NULL and
@@ -81,6 +83,7 @@
 ##' @export
 
 runQC <- function(x,
+                  lat.check = TRUE,
                    .parallel = FALSE,
                    .ncores = detectCores() - 2,
                    .progress = TRUE) {
@@ -108,7 +111,12 @@ runQC <- function(x,
     message("Starting parallel QC...")
     plan("multisession", workers = .ncores)
 
-    QC_result <- future_map(all_data, try(qc, silent = TRUE), logfile, .progress = .progress, .options = furrr_options(seed = TRUE))
+    QC_result <- future_map(all_data, 
+                            try(qc, silent = TRUE), 
+                            Lcheck = lat.check, 
+                            logfile, 
+                            .progress = .progress, 
+                            .options = furrr_options(seed = TRUE))
 
     plan("sequential")
   } else {
@@ -118,7 +126,9 @@ runQC <- function(x,
         cat("\r", "file: ", all_data[[i]]$filename[1], ", ", i, " of ", length(all_data), "    ", sep = "")
         flush.console()
       }
-      try(qc(all_data[[i]], logfile), silent = TRUE)
+      try(qc(all_data[[i]], 
+             Lcheck = lat.check, 
+             logfile), silent = TRUE)
       })
 
     cat("\n")

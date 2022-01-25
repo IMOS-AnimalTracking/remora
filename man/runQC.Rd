@@ -4,13 +4,22 @@
 \alias{runQC}
 \title{run IMOS-ATF acoustic detections quality control process}
 \usage{
-runQC(x, .parallel = FALSE, .ncores = detectCores() - 2, .progress = TRUE)
+runQC(
+  x,
+  lat.check = TRUE,
+  .parallel = FALSE,
+  .ncores = detectCores() - 2,
+  .progress = TRUE
+)
 }
 \arguments{
 \item{x}{a 4-element list of paths to detections, receiver and transmitter
 deployment metadata, and animal measurements data files. These data must be
 downloaded from the IMOS-ATF Web App (URL), or have exactly the same
 structure and variable names as the Web App data.}
+
+\item{lat.check}{(logical; default TRUE) test for receiver_deployment_latitudes
+in N hemisphere at correct to S hemisphere. Set to FALSE if QC'ing N hemisphere data}
 
 \item{.parallel}{logical; run QC tests in parallel across multiple processors
 (default is FALSE)}
