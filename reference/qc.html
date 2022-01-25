@@ -73,13 +73,16 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">qc</span><span class="op">(</span><span class="va">x</span>, <span class="va">logfile</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">qc</span><span class="op">(</span><span class="va">x</span>, Lcheck <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">logfile</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>a list of un-QC'd data for each tag deployment</p></dd>
+<dt>Lcheck</dt>
+<dd><p>(logical; default TRUE) test for receiver_deployment_latitudes
+in N hemisphere at correct to S hemisphere. Set to FALSE for QC on N hemisphere data</p></dd>
 <dt>logfile</dt>
 <dd><p>path to logfile; default is the working directory</p></dd>
 </dl></div>

@@ -73,7 +73,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">runQC</span><span class="op">(</span><span class="va">x</span>, .parallel <span class="op">=</span> <span class="cn">FALSE</span>, .ncores <span class="op">=</span> <span class="fu">detectCores</span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2</span>, .progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">runQC</span><span class="op">(</span>
+  <span class="va">x</span>,
+  lat.check <span class="op">=</span> <span class="cn">TRUE</span>,
+  .parallel <span class="op">=</span> <span class="cn">FALSE</span>,
+  .ncores <span class="op">=</span> <span class="fu">detectCores</span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2</span>,
+  .progress <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -83,6 +89,9 @@
 deployment metadata, and animal measurements data files. These data must be
 downloaded from the IMOS-ATF Web App (URL), or have exactly the same
 structure and variable names as the Web App data.</p></dd>
+<dt>lat.check</dt>
+<dd><p>(logical; default TRUE) test for receiver_deployment_latitudes
+in N hemisphere at correct to S hemisphere. Set to FALSE if QC'ing N hemisphere data</p></dd>
 <dt>.parallel</dt>
 <dd><p>logical; run QC tests in parallel across multiple processors
 (default is FALSE)</p></dd>
