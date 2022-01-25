@@ -19,7 +19,7 @@
 
 qc <- function(x, logfile) {
   if(!is.data.frame(x)) stop("x must be a data.frame")
-
+  
   ## Initial tests to identify & correct obvious errors in data
   ## check for & correct any lat's incorrectly in N hemisphere
   if(any(x$latitude > 0)) {
@@ -69,7 +69,9 @@ qc <- function(x, logfile) {
                  ":  transmitter_deployment_longitude &/or latitude are missing; file not QC'd"),
           file = logfile,
           append = TRUE)
-
+    x <- x %>%
+      rename(receiver_deployment_longitude = longitude,
+             receiver_deployment_latitude = latitude)
     return(bind_cols(x, temporal_outcome))
     stop("NA's found in transmitter deployment locations - check logfile for details")
   }
@@ -238,6 +240,7 @@ qc <- function(x, logfile) {
 	x <- x %>%
 	  rename(receiver_deployment_longitude = longitude,
 	         receiver_deployment_latitude = latitude)
+	
 	return(bind_cols(x, temporal_outcome))
 
 }
