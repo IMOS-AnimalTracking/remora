@@ -55,7 +55,8 @@ shortest_dist <- function(position, inst, rast, tr){
 		  ##   two distinct installations
 		  if (u == 1 & sum(is.na(extract(rast, pts))) >= 1) {
 		    Aust_sub <-
-		      crop(rast, extent(min(pts[, 1]) - 2, max(pts[, 1]) + 2, min(pts[, 2]) - 2, max(pts[, 2]) + 2))
+		      try(crop(rast, extent(min(pts[, 1]) - 2, max(pts[, 1]) + 2, min(pts[, 2]) - 2, max(pts[, 2]) + 2)))
+		    if(inherits(Aust_sub, "try-error")) stop("detection locations outside extent of land raster")
 		    Aust_sub <- cbind(coordinates(Aust_sub), Aust_sub@data@values)
 		    Aust_sub <- Aust_sub[Aust_sub[, 3] == 1,]
 

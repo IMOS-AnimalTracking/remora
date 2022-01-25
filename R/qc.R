@@ -74,7 +74,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
                                   "ReleaseLocation_QC",
                                   "Detection_QC")
 
-
+  ## FIXME: these 2 sections now redundant - IDJ 25/01/2022
   ## check for missing detection coordinates
   if(any(is.na(x$longitude)) | any(is.na(x$latitude))) {
     ## how many NA lon and/or lat records
@@ -84,7 +84,10 @@ qc <- function(x, Lcheck = TRUE, logfile) {
                  ":  ", n, " receiver_deployment_longitudes &/or latitudes are missing; file not QC'd"),
           file = logfile,
           append = TRUE)
-
+    
+    x <- x %>%
+      rename(receiver_deployment_longitude = longitude,
+             receiver_deployment_latitude = latitude)
     return(bind_cols(x, temporal_outcome))
     stop("NA's found in detection locations - check logfile for details")
   }
@@ -97,6 +100,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
                  ":  transmitter_deployment_longitude &/or latitude are missing; file not QC'd"),
           file = logfile,
           append = TRUE)
+    
     x <- x %>%
       rename(receiver_deployment_longitude = longitude,
              receiver_deployment_latitude = latitude)
