@@ -72,7 +72,7 @@
 ##' @importFrom stringr str_split
 ##' @importFrom readr read_csv cols col_character col_double col_integer col_datetime
 ##' @importFrom lubridate ymd_hms dmy_hm
-##' @importFrom dplyr '%>%' rename mutate nest_by
+##' @importFrom dplyr '%>%' rename mutate nest_by bind_rows
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options
@@ -135,11 +135,8 @@ runQC <- function(x,
     message("\n Please see ", logfile, " for potential data and/or metadata issues\n")
   }
 
-
-
-  out <- QC_result %>%
-    do.call(rbind, .) %>%
-    nest_by(., filename, .key = "QC")
+  tmp <- bind_rows(QC_result)
+  out <- nest_by(tmp, filename, .key = "QC")
   class(out) <- append("remora_QC", class(out))
 
   ## warn if any NA's in detection_datetime (caused by impossible dates,
