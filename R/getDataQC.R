@@ -15,7 +15,7 @@
 ##' @importFrom readr col_logical col_datetime col_double
 ##' @importFrom dplyr '%>%' mutate left_join select group_by ungroup distinct
 ##' @importFrom dplyr transmute any_of everything
-##' @importFrom lubridate dmy_hm dmy
+##' @importFrom lubridate dmy_hms dmy
 ##'
 ##' @keywords internal
 ##'
@@ -110,8 +110,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                                             transmitter_recovery_latitude = col_double(),
                                             transmitter_recovery_longitude = col_double()
                                             ),
-                                          na = c("","null","NA"),
-                                          quoted_na = FALSE
+                                          na = c("","null","NA")
                                           ))
     ## drop any unnamed columns, up to a possible 20 of them...
     if(any(paste0("X",1:20) %in% names(tag_meta))) {
@@ -340,9 +339,27 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         transmitter_deployment_latitude = transmitter_deployment_latitude.x,
         transmitter_deployment_datetime = transmitter_deployment_datetime.x,
         embargo_date = embargo_date.y
-      )
+      ) 
+    
+    if (!inherits(dd$transmitter_deployment_datetime, "POSIXt")) {
+      if (inherits(dd$transmitter_deployment_datetime, "numeric")) {
+        dd <- dd %>% mutate(
+          transmitter_deployment_datetime =
+            as.POSIXct(
+              transmitter_deployment_datetime,
+              origin = "1970-01-01",
+              tz = "UTC"
+            )
+        )
+      } 
+      if (inherits(dd$transmitter_deployment_datetime, "character")) {
+        dd <- dd %>% mutate(transmitter_deployment_datetime =
+                              ymd_hms(transmitter_deployment_datetime,
+                                      tz = "UTC"))
+      }
+    }
   }
-
+  
   if(!is.null(anim_meas)) {
     ## concatenate all measurements into single record by unique id
     anim_meas <- anim_meas %>%
