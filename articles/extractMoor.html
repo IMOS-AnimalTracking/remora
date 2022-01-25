@@ -103,9 +103,9 @@
 <p>Another key functionality of the <code>remora</code> package allows users to integrate acoustic telemetry data with physical and biological parameters collected on the <a href="https://imos.org.au/facilities/nationalmooringnetwork" class="external-link">IMOS National Mooring Network</a>. The National Mooring Network is a collection of mooring arrays strategically positioned in Australian coastal waters that includes regional arrays of shelf moorings, acidification moorings, acoustic observatories and a network of National Reference Stations. This package allows the user to match environmental data collected from these mooring stations to each tag detection. Associating environmental data to detections provides a means to analyse environmental or habitat drivers of occurrence, presence and movement of animal monitored using acoustic telemetry.</p>
 <p>We advocate for users to first undertake a quality control step using the <code><a href="../reference/runQC.html">runQC()</a></code> function and workflow before further analysis (see <code><a href="../articles/runQC.html">vignette('runQC')</a></code>), however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. Currently, the focus of this package is to integrate animal telemetry data and environmental data housed within the <a href="https://imos.org.au" class="external-link">Integrated Marine Observing System</a>, and therefore primarily focuses within Australia. As this package develops, more sources of environmental data will be added to allow for users to access more datasets across Australia and globally.</p>
 <p><br></p>
-<div class="section level1">
-<h1 id="types-of-environmental-data">Types of environmental data<a class="anchor" aria-label="anchor" href="#types-of-environmental-data"></a>
-</h1>
+<div class="section level2">
+<h2 id="types-of-environmental-data">Types of environmental data<a class="anchor" aria-label="anchor" href="#types-of-environmental-data"></a>
+</h2>
 <p>This package allows users to access a range of ocean datasets that have undergone a quality control process and housed within the <a href="https://imos.org.au" class="external-link">Integrated Marine Observing System</a> database and can also be explored through the <a href="https://portal.aodn.org.au" class="external-link">Australian Ocean Data Network portal</a>. There are primarily two types of environmental data that users can currently access:</p>
 <p><em>1. Remote sensed environmental data</em></p>
 <p><em>2. In-situ environmental data from moorings at fixed locations</em></p>
@@ -446,12 +446,12 @@ IMOS
 <p>In this vignette we will explore accessing and extracting in-situ data from the <a href="https://imos.org.au/facilities/nationalmooringnetwork" class="external-link">IMOS National Mooring Network</a>. A suite of additional functions is also available to access enbvironmental data gatehred via remote sensing (see <code><a href="../articles/extractEnv.html">vignette('extractEnv')</a></code>).</p>
 <p><br></p>
 </div>
-<div class="section level1">
-<h1 id="usage-of-the-extractmoor-function">Usage of the <code>extractMoor()</code> function<a class="anchor" aria-label="anchor" href="#usage-of-the-extractmoor-function"></a>
-</h1>
 <div class="section level2">
-<h2 id="load-example-dataset">Load example dataset<a class="anchor" aria-label="anchor" href="#load-example-dataset"></a>
+<h2 id="usage-of-the-extractmoor-function">Usage of the <code>extractMoor()</code> function<a class="anchor" aria-label="anchor" href="#usage-of-the-extractmoor-function"></a>
 </h2>
+<div class="section level3">
+<h3 id="load-example-dataset">Load example dataset<a class="anchor" aria-label="anchor" href="#load-example-dataset"></a>
+</h3>
 <p>The primary function to extract and append in-situ data collected by the <a href="https://imos.org.au/facilities/nationalmooringnetwork" class="external-link">IMOS National Mooring Network</a> to acoustic detection data is the <code><a href="../reference/extractMoor.html">extractMoor()</a></code> function. Lets start with a dataset that has undergone quality control (see <code><a href="../articles/runQC.html">vignette('runQC')</a></code>).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Example dataset that has undergone quality control using the `runQC()` function</span>
@@ -492,9 +492,9 @@ IMOS
 <p><img src="images/env_extract/env_extract_plot2.png"></p>
 <p><br></p>
 </div>
-<div class="section level2">
-<h2 id="moorings-data-source">Moorings data source<a class="anchor" aria-label="anchor" href="#moorings-data-source"></a>
-</h2>
+<div class="section level3">
+<h3 id="moorings-data-source">Moorings data source<a class="anchor" aria-label="anchor" href="#moorings-data-source"></a>
+</h3>
 <p>Lets have a quick look at the spatial arrangement of the IMOS National Mooring Network.</p>
 <p>In this example, we will identify and plot the location of moorings in Australian coastal waters which have records of <em>sea water temperature</em></p>
 <p>Each variable will need to be accessed one at a time using the <code><a href="../reference/mooringDownload.html">mooringDownload()</a></code> function. There is only one parameter within the function that can help the user identify the variable required:</p>
@@ -519,9 +519,9 @@ IMOS
                            <span class="st">"Coverage end:"</span>, <span class="va">moorT</span><span class="op">$</span><span class="va">time_coverage_end</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="images/moor_extract/moor_extract_plot3.png"><br></p>
 </div>
-<div class="section level2">
-<h2 id="find-closest-mooring-to-our-animal-detections">Find closest mooring to our animal detections<a class="anchor" aria-label="anchor" href="#find-closest-mooring-to-our-animal-detections"></a>
-</h2>
+<div class="section level3">
+<h3 id="find-closest-mooring-to-our-animal-detections">Find closest mooring to our animal detections<a class="anchor" aria-label="anchor" href="#find-closest-mooring-to-our-animal-detections"></a>
+</h3>
 <p>To identify which is the appropriate mooring with which to append to our acoustic detections, we’ll run the <code><a href="../reference/getDistance.html">getDistance()</a></code> function. This function will assign the <code>moor_site_code</code> of the closest mooring to each tag detection, the straight line distance of the mooring to the receiver station location (<code>closest_moor_km</code>), along with the mooring’s temporal coverage (<code>moor_coverage_start</code> and <code>moor_coverage_end</code>), and whether or not the <code>detection_datetime</code> stamp falls within this coverage period (<code>is.coverage</code> = TRUE/FALSE).</p>
 <p>In this function, the user specifies which detection dataset with which they which to merge with the available moorings data.</p>
 <ul>
@@ -539,8 +539,8 @@ IMOS
                         Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>,
                         datetime <span class="op">=</span> <span class="st">"detection_datetime"</span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="section"></h2>
+<div class="section level3">
+<h3 id="section"></h3>
 <p>In order to identify which moorings do not have temporal coverage during the period when tag detections were obtained, we have provided the <code><a href="../reference/getOverlap.html">getOverlap()</a></code> function. In this function, we simply enter the detection dataset (<code>det_dist</code>) which also contains the nearest moorings data generated using the above <code><a href="../reference/getDistance.html">getDistance()</a></code> function. What is returned is a table containing the proportion of tag detections that fell within the coverage period of the mooring deployment at which it was assigned: <code>moor_site_code</code>, <code>moor_coverage_start</code> and <code>moor_coverage_end</code>.</p>
 <p><br></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -591,9 +591,9 @@ IMOS
                                  <span class="st">"Last tag detection:"</span>,<span class="va">qs_stat</span><span class="op">$</span><span class="va">last_detection</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="images/moor_extract/moor_extract_plot4.png"><br></p>
 </div>
-<div class="section level2">
-<h2 id="moorings-data-download">Moorings data download<a class="anchor" aria-label="anchor" href="#moorings-data-download"></a>
-</h2>
+<div class="section level3">
+<h3 id="moorings-data-download">Moorings data download<a class="anchor" aria-label="anchor" href="#moorings-data-download"></a>
+</h3>
 <p>Now that we have matched each animal detection with an appropriate <code>moor_site_code</code>, we will download the data time series for <em>moorings derived water temperature</em> for each mooring site code from the AODN Thredds file sever.</p>
 <p>Although this function provides the capacity to download various sensor types (i.e. <code>temperature</code>, <code>velocity</code>, <code>salinity</code> or <code>oxygen</code>), each variable can only be accessed one at a time using the <code><a href="../reference/mooringDownload.html">mooringDownload()</a></code> function. The netCDF files should then be saved locally within the working directory (e.g. within the folder <code>imos.cache/moor/temperature</code>).</p>
 <p>There are a few parameters within the function that can help the user identify the variable required, and to manage the downloaded environmental layers:</p>
@@ -631,9 +631,9 @@ IMOS
 <p>When downloading <code>salinity</code> data, two variables are downloaded: sensor depth (<code>moor_depth</code>), and sea water practical salinity (<code>moor_psal</code>).</p>
 <p>When downloading dissolved <code>oxygen</code> data, four variables are downloaded: sensor depth (<code>moor_depth</code>), <code>moor_mole_concentration_of_dissolved_molecular_oxygen_in_sea_water</code>, <code>moor_moles_of_oxygen_per_unit_mass_in_sea_water</code> and <code>moor_volume_concentration_of_dissolved_molecular_oxygen_in_sea_water</code>. <br></p>
 </div>
-<div class="section level2">
-<h2 id="creating-a-depth-time-plot-using-moorings-data-and-adding-detections">Creating a depth-time plot using moorings data, and adding detections<a class="anchor" aria-label="anchor" href="#creating-a-depth-time-plot-using-moorings-data-and-adding-detections"></a>
-</h2>
+<div class="section level3">
+<h3 id="creating-a-depth-time-plot-using-moorings-data-and-adding-detections">Creating a depth-time plot using moorings data, and adding detections<a class="anchor" aria-label="anchor" href="#creating-a-depth-time-plot-using-moorings-data-and-adding-detections"></a>
+</h3>
 <p>We can use the moorings data we’ve extracted to plot an interactive depth-time plot showing three-dimensional variability in the physical parameter of interest over a specified time period, and then plot the animal tracking detections which are close to this mooring. When hovering on the plot, a vertical line will appear so that it is easier to find the environmental variable associated to the detection.</p>
 <p>For example, we might want to plot temperature over depth at the GBRPPS mooring, <code>GBRPPS</code>, and then add all the bull shark detections over the same time period from the closest IMOS Animal Tracking Facility installation.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -670,9 +670,9 @@ IMOS
        detEnd<span class="op">=</span><span class="st">"2014-02-01"</span><span class="op">)</span></code></pre></div>
 <p><img src="images/moor_extract/moor_extract_plot6.png"></p>
 </div>
-<div class="section level2">
-<h2 id="moorings-data-extraction">Moorings data extraction<a class="anchor" aria-label="anchor" href="#moorings-data-extraction"></a>
-</h2>
+<div class="section level3">
+<h3 id="moorings-data-extraction">Moorings data extraction<a class="anchor" aria-label="anchor" href="#moorings-data-extraction"></a>
+</h3>
 <p>Say we wanted to match each animal tag detection to the nearest mooring sensor value. How would we achieve this?</p>
 <p>In this example, we will extract <em>moorings derived water temperature</em> collected from the nearest sensor in the <a href="https://imos.org.au/facilities/nationalmooringnetwork" class="external-link">IMOS National Mooring Network</a> to a tag detection at an acoustic receiver.</p>
 <p>Sea water <code>temperature</code>, current <code>velocity</code>, or <code>salinity</code> data can be accessed one at a time using the <code><a href="../reference/extractMoor.html">extractMoor()</a></code> function. There are a few parameters within the function that can help the user identify the variable required, and to manage the downloaded environmental layers:</p>
@@ -728,9 +728,9 @@ IMOS
 <p>Notice that this new merged dataset <code>data_with_mooring_sst_shallow</code> is now much smaller than the original one <code>data_with_mooring_sst_all</code>? This is because we have extracted only selected a single sensor value for each detection timestamp. We have also dropped those rows from the dataset which not did meet the time and distance thresholds.</p>
 <p><br></p>
 </div>
-<div class="section level2">
-<h2 id="examining-the-appended-environmental-data">Examining the appended environmental data<a class="anchor" aria-label="anchor" href="#examining-the-appended-environmental-data"></a>
-</h2>
+<div class="section level3">
+<h3 id="examining-the-appended-environmental-data">Examining the appended environmental data<a class="anchor" aria-label="anchor" href="#examining-the-appended-environmental-data"></a>
+</h3>
 <p>Now let’s see how the detections of our tagged animals corresponded with variations in sea water temperature. First let’s add the in-situ temperature values to the detection plots grouped by <code>transmitter_id</code>:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">summarised_data_id</span> <span class="op">&lt;-</span>
@@ -820,7 +820,7 @@ IMOS
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>

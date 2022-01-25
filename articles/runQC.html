@@ -100,9 +100,9 @@
     
 <hr>
 <p>The typical entry point to the <code>remora</code> package will be to apply quality control (QC) processes to acoustic telemetry detections data downloaded via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal Acoustic Telemetry Database</a>. The <code>remora</code> package uses the QC process described in <a href="https://www.nature.com/articles/sdata2017206" class="external-link">Hoenner et al. (2018)</a>, with necessary modifications to accommodate the IMOS database’s data and metadata formats. The QC workflow has been made as simple as possible, given the constraint of manually downloading the data and metadata prior to interaction with <code>remora</code>. This vignette describes the QC workflow.</p>
-<div class="section level1">
-<h1 id="required-data">Required data<a class="anchor" aria-label="anchor" href="#required-data"></a>
-</h1>
+<div class="section level2">
+<h2 id="required-data">Required data<a class="anchor" aria-label="anchor" href="#required-data"></a>
+</h2>
 <p>Typically, users will download four <code>.csv</code> files via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal Acoustic Telemetry Database</a>:</p>
 <p><em>1. Transmitter detections data</em>, accessible via the <a href="https://animaltracking.aodn.org.au/detection" class="external-link">detections page</a></p>
 <p><em>2. Transmitter deployment metadata</em>, accessible via the <a href="https://animaltracking.aodn.org.au/transmitters/transmitter" class="external-link">transmitters page</a></p>
@@ -116,15 +116,15 @@
               tmeta <span class="op">=</span> <span class="st">"path_to/IMOS_transmitter_deployment_metadata.csv"</span>,
               meas <span class="op">=</span> <span class="st">"path_to/IMOS_animal_measurements.csv"</span><span class="op">)</span></code></pre></div>
 <p>The detections data, receiver and transmitter metadata files are required to enable the full QC process, however because of some redundancy in variables among the detections data and metadata files, a partial QC can be conducted when one or both metadata files are missing. In these latter cases, the path for a missing metadata file is set to <code>rmeta = NULL</code> and/or <code>tmeta = NULL</code>; a warning will be issued when the QC is run. Similarly, if no animal measurements data are present the path is set to <code>meas = NULL</code>. The presence or absence of this latter file does not affect the QC process.</p>
-<div class="section level3">
-<h3 id="what-if-my-tags-are-detected-across-many-reciever-array-projects">What if my tags are detected across many reciever array projects?<a class="anchor" aria-label="anchor" href="#what-if-my-tags-are-detected-across-many-reciever-array-projects"></a>
-</h3>
+<div class="section level4">
+<h4 id="what-if-my-tags-are-detected-across-many-reciever-array-projects">What if my tags are detected across many reciever array projects?<a class="anchor" aria-label="anchor" href="#what-if-my-tags-are-detected-across-many-reciever-array-projects"></a>
+</h4>
 <p>In situations where tagged animals may be detected across several receiver projects, we recommend downloading the entire IMOS receiver metadata file via the Web App. This file is relatively compact and the single download will save users time by not having to manually determine and download receiver metadata from many individual projects.</p>
 </div>
 </div>
-<div class="section level1">
-<h1 id="usage-of-the-runqc-function">Usage of the <code>runQC()</code> function<a class="anchor" aria-label="anchor" href="#usage-of-the-runqc-function"></a>
-</h1>
+<div class="section level2">
+<h2 id="usage-of-the-runqc-function">Usage of the <code>runQC()</code> function<a class="anchor" aria-label="anchor" href="#usage-of-the-runqc-function"></a>
+</h2>
 <p>The primary function for conducting the QC is the <code><a href="../reference/runQC.html">runQC()</a></code> function. Let’s start with an example tagging project included in the <code>remora</code> package by first creating a <code>files</code> list:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>det <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_detections.csv"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,
@@ -141,9 +141,9 @@
 <p>where the argument <code>.parallel = TRUE</code> runs the QC in parallel across the available number of processor cores - 2. This can be modified using the <code>.ncores</code> argument. If <code>.parallel = FALSE</code> then the QC is run sequentially, which can take considerable time but may be more efficient for projects with a small number of transmitters. The <code>.progress = FALSE</code> argument turns off the QC progress indicator, it is set to <code>TRUE</code> (turned on) by default but set to <code>FALSE</code> here to keep the vignette tidy.</p>
 <p>As part of the QC process, a logfile is generated by <code>runQC</code> to record common issues found in the data and/or metadata during the QC process. This logfile is saved to the working directory as <code>QC_logfile.txt</code>. Entries in the logfile provide some indication of a problem that the user may wish to explore and follow up as appropriate. An empty logfile indicates the QC process detected no common data issues, but this is not a guarantee that your data are problem-free! Simple issues, such as detection or receiver deployment latitudes in the northern hemisphere, are resolved automatically and corrected in the QC’d data output.</p>
 <p><br></p>
-<div class="section level2">
-<h2 id="accessing-the-qcd-data-and-metadata">Accessing the QC’d data and metadata<a class="anchor" aria-label="anchor" href="#accessing-the-qcd-data-and-metadata"></a>
-</h2>
+<div class="section level3">
+<h3 id="accessing-the-qcd-data-and-metadata">Accessing the QC’d data and metadata<a class="anchor" aria-label="anchor" href="#accessing-the-qcd-data-and-metadata"></a>
+</h3>
 <p>The QC output object <code>tag_qc</code> is a nested tibble with each row corresponding to an individual animal using the <code>transmitter_id</code>, <code>tag_id</code> and <code>tag_deployment_id</code> as a unique identifier:</p>
 <pre><code><span class="co">## <span style="color: #949494;"># A tibble: 5 × 2</span></span>
 <span class="co">## <span style="color: #949494;"># Rowwise:  filename</span></span>
@@ -238,9 +238,9 @@
 <span class="co">## <span style="color: #949494;">#   receiver_depth &lt;dbl&gt;, purchasing_organisation &lt;chr&gt;, …</span></span></code></pre>
 <p><br></p>
 </div>
-<div class="section level2">
-<h2 id="visualising-the-qcd-detections">Visualising the QC’d detections<a class="anchor" aria-label="anchor" href="#visualising-the-qcd-detections"></a>
-</h2>
+<div class="section level3">
+<h3 id="visualising-the-qcd-detections">Visualising the QC’d detections<a class="anchor" aria-label="anchor" href="#visualising-the-qcd-detections"></a>
+</h3>
 <p>The QC’d detections can be visualised as a map using the <code><a href="../reference/plotQC.html">plotQC()</a></code> function. By default, <code><a href="../reference/plotQC.html">plotQC()</a></code> produces a <code>.png</code> file for each species present in the data. The file(s) is/are named with the species’ common name(s) and are written to the working directory. The file(s) can be saved elsewhere by supplying the <code>path</code> argument with a directory path (no filename). An error will be returned if the path does not exist. Alternatively, the maps can be sent to the graphics window by using <code>path = NULL</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotQC.html">plotQC</a></span><span class="op">(</span><span class="va">tag_qc</span><span class="op">)</span></code></pre></div>
@@ -272,7 +272,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>

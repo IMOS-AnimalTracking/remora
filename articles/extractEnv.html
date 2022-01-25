@@ -103,9 +103,9 @@
 <p>Another key functionality of the <code>remora</code> package allows users to integrate acoustic telemetry data and environmental and habitat information. This package allows the user to match a range of environmental variables to each detection. Associating environmental data to detections provides a means to analyse environmental or habitat drivers of occurrence, presence and movement of animal monitored using acoustic telemetry. We advocate for users to first undertake a quality control step using the <code><a href="../reference/runQC.html">runQC()</a></code> function and workflow before further analysis (see <code><a href="../articles/runQC.html">vignette('runQC')</a></code>), however the functionality to append environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event.</p>
 <p>Currently, the focus of this package is to integrate animal telemetry data and environmental data collated by Australia’s <a href="https://imos.org.au" class="external-link">Integrated Marine Observing System</a>. Therefore, the geographical scope of available datasets is currently restricted to the Australiasia region. As this package develops, more sources of environmental data will be added to enable users to access more datasets across Australia and globally.</p>
 <p><br></p>
-<div class="section level1">
-<h1 id="types-of-environmental-data">Types of environmental data<a class="anchor" aria-label="anchor" href="#types-of-environmental-data"></a>
-</h1>
+<div class="section level2">
+<h2 id="types-of-environmental-data">Types of environmental data<a class="anchor" aria-label="anchor" href="#types-of-environmental-data"></a>
+</h2>
 <p>This package allows users to access a range of ocean observing datasets that have undergone a quality control process and housed within the <a href="https://imos.org.au" class="external-link">Integrated Marine Observing System</a>. These datasets can also be explored through the <a href="https://portal.aodn.org.au" class="external-link">Australian Ocean Data Network portal</a>. There are primarily two types of environmental data that users can currently access:</p>
 <p><em>1. Remotely-sensed or gridded environmental data</em></p>
 <p><em>2. In situ sub-surface environmental data from moorings at fixed locations</em></p>
@@ -445,12 +445,12 @@ IMOS
 <p>In this vignette we will explore accessing and integrating gridded data. A suite of additional functions can be used to access and extract <em>in situ</em> sub-surface data from moorings (see <code><a href="../articles/extractMoor.html">vignette('extractMoor')</a></code>).</p>
 <p><br></p>
 </div>
-<div class="section level1">
-<h1 id="usage-of-the-extractenv-function">Usage of the <code>extractEnv()</code> function<a class="anchor" aria-label="anchor" href="#usage-of-the-extractenv-function"></a>
-</h1>
 <div class="section level2">
-<h2 id="load-example-dataset">Load example dataset<a class="anchor" aria-label="anchor" href="#load-example-dataset"></a>
+<h2 id="usage-of-the-extractenv-function">Usage of the <code>extractEnv()</code> function<a class="anchor" aria-label="anchor" href="#usage-of-the-extractenv-function"></a>
 </h2>
+<div class="section level3">
+<h3 id="load-example-dataset">Load example dataset<a class="anchor" aria-label="anchor" href="#load-example-dataset"></a>
+</h3>
 <p>The primary function to extract and append remote sensing data to acoustic detection data is the <code><a href="../reference/extractEnv.html">extractEnv()</a></code> function. Lets start with a dataset that has undergone quality control (see <code><a href="../articles/runQC.html">vignette('runQC')</a></code>).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
@@ -494,9 +494,9 @@ IMOS
 <p><img src="images/env_extract/env_extract_plot2.png"></p>
 <p><br></p>
 </div>
-<div class="section level2">
-<h2 id="environmental-data-extraction">Environmental data extraction<a class="anchor" aria-label="anchor" href="#environmental-data-extraction"></a>
-</h2>
+<div class="section level3">
+<h3 id="environmental-data-extraction">Environmental data extraction<a class="anchor" aria-label="anchor" href="#environmental-data-extraction"></a>
+</h3>
 <p>In this example, we will extract two variables; <em>Interpolated sea surface temperature</em> and <em>modeled ocean surface currents</em>.</p>
 <p>Each variable will need to be accessed one at a time using the <code><a href="../reference/extractEnv.html">extractEnv()</a></code> function. There are a few parameters within the function that can help the user identify the variable required, and to manage the downloaded environmental layers:</p>
 <ul>
@@ -522,19 +522,19 @@ IMOS
 <strong>.parallel</strong>: should the function be run in parallel? speeds up environmental extraction for large datasets</li>
 </ul>
 <p><br></p>
-<div class="section level4">
-<h4 id="gap-filling-functionality">
+<div class="section level5">
+<h5 id="gap-filling-functionality">
 <em>Gap filling functionality</em><a class="anchor" aria-label="anchor" href="#gap-filling-functionality"></a>
-</h4>
+</h5>
 <p>Remote sensed environmental data within coastal areas (where acoustic arrays are often deployed) are often unreliable due to shallow habitats and close proximity to turbid nearshore waters. The quality control process for Ocean colour variables within the IMOS dataset often remove pixels in close proximity to coastlines due to the low quality of environmental variables in these regions. Here is an example where coastal remote sensing data may not match up with positions of deployed acoustic arrays.</p>
 <p><img src="images/env_extract/env_extract_plot7.png"></p>
 <p>In these cases, a simple extraction will result in <code>NA</code>s where no overlap occurs (e.g., black points in the figure above). To maximise the understanding of environmental variables in the region of coastal arrays, <code><a href="../reference/extractEnv.html">extractEnv()</a></code> provides the functionality to fill gaps in the extraction data using the <code>fill_gaps</code> parameter. If <code>fill_gaps = TRUE</code>, the function will extract the median variable values within a buffer around points that do not overlap data pixels (broken buffers around black points in the figure above). The radius of the buffer around the points that do not overlap data can be user defined (in meters) using the additional <code>buffer</code> parameter. If no <code>buffer</code> value is provided by the user, the function will automatically choose a buffer radius based on the resolution of environmental layer [5 km for <code>rs_sst</code>, <code>rs_chl</code>, <code>rs_npp</code>, <code>rs_turbidity</code>; 15 km for <code>rs_sst_interpolated</code>; 20 km for <code>rs_current</code> and <code>rs_salinity</code>].</p>
 <p><br></p>
 </div>
-<div class="section level4">
-<h4 id="interpolated-sea-surface-temperature">
+<div class="section level5">
+<h5 id="interpolated-sea-surface-temperature">
 <em>Interpolated sea surface temperature</em><a class="anchor" aria-label="anchor" href="#interpolated-sea-surface-temperature"></a>
-</h4>
+</h5>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data_with_sst</span> <span class="op">&lt;-</span> 
   <span class="fu"><a href="../reference/extractEnv.html">extractEnv</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,
@@ -550,10 +550,10 @@ IMOS
              .parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 </div>
-<div class="section level4">
-<h4 id="modeled-ocean-surface-currents">
+<div class="section level5">
+<h5 id="modeled-ocean-surface-currents">
 <em>Modeled ocean surface currents</em><a class="anchor" aria-label="anchor" href="#modeled-ocean-surface-currents"></a>
-</h4>
+</h5>
 <p>We can now also append current data to this dataset:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data_with_sst_and_current</span> <span class="op">&lt;-</span> 
@@ -574,9 +574,9 @@ IMOS
 <p><br></p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="examining-the-appended-environmental-data">Examining the appended environmental data<a class="anchor" aria-label="anchor" href="#examining-the-appended-environmental-data"></a>
-</h2>
+<div class="section level3">
+<h3 id="examining-the-appended-environmental-data">Examining the appended environmental data<a class="anchor" aria-label="anchor" href="#examining-the-appended-environmental-data"></a>
+</h3>
 <p>We can now see the extracted environmental variables are appended as new columns to the input dataset</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data_with_sst_and_current</span></code></pre></div>
@@ -718,7 +718,7 @@ IMOS
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
