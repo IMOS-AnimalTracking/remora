@@ -4,13 +4,15 @@
 \alias{plotQC}
 \title{produce maps showing the occurrence of QC'd detections per species}
 \usage{
-plotQC(x, path = getwd())
+plotQC(x, path = getwd(), suffix = NULL)
 }
 \arguments{
 \item{x}{a remora output object with \code{class(remora_QC)}}
 
 \item{path}{string; path where maps will be saved. Default is to write plot
 to the working directory as a \code{.png} file.}
+
+\item{suffix}{text to be added to plot filename (default is NULL)}
 }
 \value{
 produces maps showing species expert distribution and

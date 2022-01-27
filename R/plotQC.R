@@ -6,7 +6,7 @@
 ##' @param x a remora output object with \code{class(remora_QC)}
 ##' @param path string; path where maps will be saved. Default is to write plot
 ##' to the working directory as a \code{.png} file. 
-##'
+##' @param suffix text to be added to plot filename (default is NULL)
 ##' @return produces maps showing species expert distribution and
 ##' location of QC'd detections
 ##'
@@ -34,7 +34,7 @@
 ##'
 ##' @export
 
-plotQC <- function(x, path = getwd()) {
+plotQC <- function(x, path = getwd(), suffix = NULL) {
 
   if(!inherits(x, "remora_QC")) 
     stop("\033[31;1mx must be a nested tibble with class `remora_QC`\033[0m")
@@ -105,6 +105,7 @@ plotQC <- function(x, path = getwd()) {
 		        path,
 		        gsub(' ', '_', species$species_common_name[i])
 		        ),
+		      ifelse(!is.null(suffix), paste0("_", suffix), ""),
 		      ".png"),
 		    width = 1920,
 		    height = 800,
