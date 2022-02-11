@@ -100,7 +100,7 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
 		options(warn = -1)
 		if (!is.null(path)) {
 		  png(
-		    filename = paste0(
+		    filename = paste0( 
 		      file.path(
 		        path,
 		        gsub(' ', '_', species$species_common_name[i])
