@@ -22,8 +22,10 @@
 ##'
 ##' @keywords internal
 
-build_thredds_url <- function(url = "", path = "", file = ""){
+build_thredds_url <- function(dates = "", url = "", path = "", file = "", var = ""){
   url = paste(url, path, file, sep="")
   
-  return(url)
+  url_df <- tibble(date = dates, url, var) 
+  
+  return(url_df)
 }
