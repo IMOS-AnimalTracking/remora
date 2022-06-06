@@ -91,14 +91,17 @@ Lets have a quick look at the spatial patterns in detection data:
 
 ```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 
+qc_data <- read_csv("/Users/bruce/Downloads/nsbs_matched_detections_2021/nsbs_matched_detections_2021.csv")
+
 qc_data %>% 
-  group_by(transmitter_id, station_name, installation_name, receiver_deployment_longitude, receiver_deployment_latitude) %>% 
+  #Changed the column names throughout, will need to have some sort of way to set these more dynamically. 
+  group_by(catalognumber, station, detectedby, longitude, latitude) %>% 
   summarise(num_det = n()) %>% 
   ggplot() +
   annotation_map_tile('cartolight') +
-  geom_spatial_point(aes(x = receiver_deployment_longitude, y = receiver_deployment_latitude, 
-                         size = num_det, color = installation_name), crs = 4326) +
-  facet_wrap(~transmitter_id, ncol = 2) +
+  geom_spatial_point(aes(x = longitude, y = latitude, 
+                         size = num_det, color = detectedby)) +
+  #commented out to make the code run. facet_wrap(~catalognumber, ncol = 2) +
   labs(x = "Longitude", y = "Latitude", color = "Installation Name" , size = "Number of\nDetections") +
   theme_bw()
 
@@ -113,10 +116,10 @@ We can also have a look at the temporal pattern in detections:
 ```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 
 qc_data %>% 
-  mutate(date = as.Date(detection_datetime)) %>% 
-  group_by(transmitter_id, date, installation_name) %>% 
+  mutate(date = as.Date(datecollected)) %>% 
+  group_by(catalognumber, date, detectedby) %>% 
   summarise(num_det = n()) %>% 
-  ggplot(aes(x = date, y = transmitter_id, color = installation_name, size = num_det)) +
+  ggplot(aes(x = date, y = catalognumber, color = detectedby, size = num_det)) +
   labs(x = "Date", y = NULL, color = "Installation Name", size = "Number of\nDetections") +
   geom_point() +
   theme_bw()
@@ -162,19 +165,22 @@ In these cases, a simple extraction will result in `NA`s where no overlap occurs
 #### *Interpolated sea surface temperature*
 
 ```{r, eval=FALSE, message=TRUE, warning=FALSE}
+library(progressr)
+library(sf)
 
 data_with_sst <- 
-  extractEnv(df = qc_data,
-             X = "receiver_deployment_longitude", 
-             Y = "receiver_deployment_latitude", 
-             datetime = "detection_datetime", 
-             env_var = "rs_sst_interpolated",  ## Currently only a single variable can be called at a time
+  extractEnvArbitrary(df = qc_data,
+             X = "longitude", 
+             Y = "latitude", 
+             datetime = "datecollected", 
+             env_var = "bathy",  ## Currently only a single variable can be called at a time
              cache_layers = TRUE,
-             crop_layers = TRUE,
+             crop_layers = FALSE,
              fill_gaps = TRUE,
              full_timeperiod = FALSE,
              folder_name = "test",
-             .parallel = TRUE)
+             .parallel = TRUE,
+             verbose = TRUE)
 
 ```
 
@@ -188,12 +194,12 @@ We can now also append current data to this dataset:
 
 data_with_sst_and_current <- 
   data_with_sst %>% 
-  extractEnv(X = "receiver_deployment_longitude", 
-             Y = "receiver_deployment_latitude", 
+  extractEnvArbitrary(X = "longitude", 
+             Y = "latitude", 
              datetime = "detection_datetime", 
-             env_var = "rs_current", 
+             env_var = "bathy", 
              cache_layers = TRUE,
-             crop_layers = TRUE,
+             crop_layers = FALSE,
              fill_gaps = TRUE,
              full_timeperiod = FALSE,
              folder_name = "test",

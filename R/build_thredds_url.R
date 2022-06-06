@@ -25,7 +25,7 @@
 build_thredds_url <- function(dates = "", url = "", path = "", file = "", var = ""){
   url = paste(url, path, file, sep="")
   
-  url_df <- tibble(date = dates, url, var) 
+  url_df <- tibble(date=dates, url_name=url, layer=var) 
   
   return(url_df)
 }

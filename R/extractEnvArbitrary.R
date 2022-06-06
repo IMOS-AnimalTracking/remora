@@ -92,7 +92,7 @@
 ##' @export
 ##'
 
-extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detection_timestamp", env_var, folder_name = NULL, 
+extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime = "detection_timestamp", env_var, folder_name = NULL, 
                        verbose = TRUE, cache_layers = TRUE, crop_layers = TRUE, full_timeperiod = FALSE, 
                        fill_gaps = FALSE, buffer = NULL, output_format = "raster", .parallel = TRUE, .ncores = NULL){
   
@@ -100,7 +100,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
   if(!Y %in% colnames(df)){stop("Cannot find Y coordinate in dataset, provide column name where variable can be found")}
   if(!datetime %in% colnames(df)){stop("Cannot find date timestamp column in dataset, provide column name where variable can be found")}
-  if(!env_var %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land')){
+  if(!env_var %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land', 'hs')){
     stop("Environmental variable not recognised, options include:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
   if(length(env_var) > 1){stop("This function currently only supports extracting a single variable at a time. Please only select one of:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
   
@@ -114,7 +114,9 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   ## define date range
   unique_dates <- 
     df %>%
-    mutate(date = date(!!as.name(datetime))) %>%
+    #Had to change a bunch of these from date() to as.Date() -- BD
+    #mutate(date = date(!!as.name(datetime))) %>%
+    mutate(date = as.Date(!!as.name(datetime))) %>%
     distinct(date) %>%
     pull(date) 
   
@@ -126,7 +128,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   ## define unique positions (for quicker environmental variable extraction)
   unique_positions <-
     ungroup(df) %>% 
-    mutate(date = date(!!as.name(datetime))) %>%
+    mutate(date = as.Date(!!as.name(datetime))) %>%
     distinct(!!as.name(X), !!as.name(Y), date) %>% 
     dplyr::select(!!as.name(X), !!as.name(Y), date)
   
@@ -151,7 +153,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   
   # Pull environmental netcdf from THREDDS server
   if(verbose){
-    message("Accessing and downloading IMOS environmental variable: ", env_var)
+    message("Accessing and downloading environmental variable: ", env_var)
   }
   
   #These were changed from pull_env to pull_env_arbitrary while I was working on this -- BD
@@ -160,21 +162,23 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
       try(
         suppressWarnings(
           env_stack <- pull_env_arbitrary(dates = dates, study_extent = study_extent,
-                                 var_name = env_var, .cache = cache_layers,
-                                 folder_name = folder_name, .crop = crop_layers,
-                                 .output_format = output_format, verbose = verbose,
-                                 .parallel = .parallel, .ncores = .ncores)), 
+                                          var_name = env_var, .cache = cache_layers,
+                                          folder_name = folder_name, .crop = crop_layers,
+                                          .output_format = output_format, verbose = verbose,
+                                          .parallel = .parallel, .ncores = .ncores)), 
         silent = FALSE), cleanup = FALSE)
   } else {
     try(
       suppressWarnings(
         env_stack <- pull_env_arbitrary(dates = dates, study_extent = study_extent, 
-                               var_name = env_var, .cache = cache_layers, 
-                               folder_name = folder_name, .crop = crop_layers,
-                               .output_format = output_format, verbose = verbose,
-                               .parallel = .parallel, .ncores = .ncores)),
+                                        var_name = env_var, .cache = cache_layers, 
+                                        folder_name = folder_name, .crop = crop_layers,
+                                        .output_format = output_format, verbose = verbose,
+                                        .parallel = .parallel, .ncores = .ncores)),
       silent = FALSE) 
   }
+  
+  image(env_stack)
   
   if(cache_layers & verbose){
     message("\nDownloaded layers are cached in the `imos.cache` folder in your working directory")
@@ -184,12 +188,15 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   if(verbose){
     message("Extracting and appending environmental data")
   }
+  #view(env_stack)
   env_data <- .extract_var(unique_positions, env_stack, env_var, .fill_gaps = fill_gaps, .buffer = buffer, verbose = verbose)
+  
+  view(env_data)
   
   ## Combine environmental data with input detection data
   output <- 
     df %>% 
-    mutate(date = date(!!as.name(datetime))) %>%
+    mutate(date = as.Date(!!as.name(datetime))) %>%
     left_join(env_data, by = c(X, Y, "date"))
   
   
@@ -212,6 +219,3 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   
   return(output)
 }
-
-
-
