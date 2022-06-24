@@ -130,23 +130,32 @@ qc_updated <- function(x, Lcheck = TRUE, datecolumn = 'datecollected', speciesco
   sta_rec <- unique(x[installationcolumn])
   #sta_rec <- sta_rec[order(sta_rec),]
   
-  j <- 1
   for (j in 1:length(sta_rec)){
-    View(sta_rec[j,])
+    #View(sta_rec[j,])
     #sel <- which(x[installationcolumn] == sta_rec[j])
     #sub <- x[sel, ]
     
     #Gotta do this bit of R jiggery-pokery to make filter recognize installationcolumn as a variable
     #containing a column name and not a column name in and of itself.
     sub <- filter(x, !!as.name(installationcolumn) %in% !!sta_rec[j,])
-    View(sub)
+    #View(sub)
 
+    #View(sub[datecolumn])
+    
+    message("Calculating time diff.")
     # Calculate time differences between detections (in minutes)
-    time_diff <- as.numeric(difftime(sub[datecolumn][2:nrow(sub)],
-                                     sub[datecolumn][1:(nrow(sub)-1)],
-                                     tz = "UTC", units = "mins"))
+    #difftime checks the difference between time intervals (base function)
+    #Had to add the commas to the second index so it would explicitly default to rows instead of cols. 
+    start_times = sub[datecolumn][2:nrow(sub),]
+    View(start_times)
+    end_times = sub[datecolumn][1:nrow(sub)-1,]
+    View(end_times)
+    time_diff <- as.numeric(difftime(start_times, end_times, tz = "UTC", units = "mins"))
+    
+    message("Time diff calculated")
     temporal_outcome[sel, 1] <-
       ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
+    message("Loading into temporal outcome")
   }
   
   return(temporal_outcome)
