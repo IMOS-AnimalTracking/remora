@@ -105,7 +105,7 @@ runQC <- function(x,
     meas = x$meas,
     logfile = logfile
   )
-
+  
   ## Apply QC tests on detections
   if(.parallel) {
     message("Starting parallel QC...")
@@ -126,9 +126,17 @@ runQC <- function(x,
         cat("\r", "file: ", all_data[[i]]$filename[1], ", ", i, " of ", length(all_data), "    ", sep = "")
         flush.console()
       }
-      try(qc(all_data[[i]], 
-             Lcheck = lat.check, 
-             logfile), silent = TRUE)
+      # Changed by Bruce Delo from qc to qc_updated
+      #try(qc(all_data[[i]], 
+      #       Lcheck = lat.check, 
+      #       logfile), silent = TRUE)
+      
+      message("StartingQC")
+      try(qc_updated(all_data[[i]], 
+             Lcheck = lat.check,
+             datecolumn = 'detection_datetime',
+             installationcolumn = 'installation_name', 
+             logfile = logfile), silent = TRUE)
       })
 
     cat("\n")
@@ -145,6 +153,7 @@ runQC <- function(x,
     message("\n Please see ", logfile, " for potential data and/or metadata issues\n")
   }
 
+  message(QC_result[[1]])
   tmp <- bind_rows(QC_result)
   out <- nest_by(tmp, filename, .key = "QC")
   class(out) <- append("remora_QC", class(out))

@@ -128,13 +128,18 @@ qc_updated <- function(x, Lcheck = TRUE, datecolumn = 'datecollected', speciesco
   # # Commenting this out as I try to get other checks working. 
   ## False Detection Algorithm test
   sta_rec <- unique(x[installationcolumn])
-  sta_rec <- sta_rec[order(sta_rec),]
-
+  #sta_rec <- sta_rec[order(sta_rec),]
+  
+  j <- 1
   for (j in 1:length(sta_rec)){
-    View(x[installationcolumn])
-    View(sta_rec[j])
-    sel <- which(x[installationcolumn] == sta_rec[j])
-    sub <- x[sel, ]
+    View(sta_rec[j,])
+    #sel <- which(x[installationcolumn] == sta_rec[j])
+    #sub <- x[sel, ]
+    
+    #Gotta do this bit of R jiggery-pokery to make filter recognize installationcolumn as a variable
+    #containing a column name and not a column name in and of itself.
+    sub <- filter(x, !!as.name(installationcolumn) %in% !!sta_rec[j,])
+    View(sub)
 
     # Calculate time differences between detections (in minutes)
     time_diff <- as.numeric(difftime(sub[datecolumn][2:nrow(sub)],
