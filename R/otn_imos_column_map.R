@@ -186,13 +186,37 @@ derive_rcvr_from_det <- function(det_dataframe) {
 derive_tag_from_det <- function(det_dataframe) {
   tag <- det_dataframe %>%
     select(
-      
+      tagname,
+      commonname,
+      scientificname
     ) %>%
     rename (
-      
+      transmitter_id = tagname,
+      species_common_name = commonname,
+      species_scientific_name = scientificname
     ) %>%
     mutate (
-      
+      transmitter_serial_number = NA,
+      tagging_project_name = NA,
+      transmitter_type = NA,
+      transmitter_sensor_type = NA,
+      transmitter_sensor_slope = NA,
+      transmitter_sensor_intercept = NA,
+      transmitter_sensor_unit = NA,
+      transmitter_estimated_battery_life = NA,
+      transmitter_status = NA,
+      transmitter_deployment_id = NA,
+      animal_sex = NA,
+      placement = NA,
+      transmitter_deployment_locality = NA,
+      transmitter_deployment_latitude = NA,
+      transmitter_deployment_longitude = NA,
+      transmitter_deployment_datetime = NA,
+      transmitter_deployment_comments = NA,
+      embargo_date = NA,
+      transmitter_recovery_datetime = NA,
+      transmitter_recovery_latitude = NA,
+      transmitter_recovery_longitude = NA,
     )
   
   return(tag)
