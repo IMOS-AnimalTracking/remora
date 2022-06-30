@@ -36,13 +36,14 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   }
   
   #If we have receiver_meta, we start working with that to convert.
-  if(!is.null(rec_meta)) {
+  if(!is.null(rcvr_dataframe)) {
     #Build this out once basic case is handled.
   } else {
     #If we don't have receiver metadata, we derive our imos-friendly detection dataframe from our otn detection dataframe.
     det_return <- det_dataframe %>%
       select(
         datecollected,
+        catalognumber,
         tagname,
         collectioncode,
         commonname,
@@ -64,30 +65,26 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
         tagging_project_name = collectioncode, 
         species_common_name = commonname,
         species_scientific_name = scientificname,
-        #CAAB_species_id = I think we're just going to have to set this as null since most of what we're gonna be working with doesn't have one.
-        #WORMS_species_aphia_id = might have to actually call out to WORMS for this? 
-        #animal_sex = derive from tag sheet, null if can't
         detection_datetime = datecollected,
         installation_name = receiver_group,
         station_name = station,
         receiver_id = receiver,
-        receiver_name = ,
-        receiver_deployment_id = ,
+        #receiver_name = receiver, #Could be not the right thing to do to have both this and receiver_id be receiver?
+        receiver_deployment_longitude = longitude,
+        receiver_deployment_latitude = latitude #counterintuitively, we rename these here even though they get renamed BACK to their originals
+        #back outside this function. The code outside still has to work for IMOS formatted data so we can't change it too much, so when we massage
+        #the column names like so, we have to introduce a step that maybe we'd rather skip. 
       ) %>%
       mutate(
         CAAB_species_id = NA,
         WORMS_species_aphia_id = NA,
-        animal_sex = NA
+        animal_sex = NA,
+        transmitter_deployment_id = NA, #This could be a problem one, since this is part of the join against the tag dataframe
+        receiver_deployment_id = NA,
+        receiver_name = NA
       )
   }
   
-  if(is.null(rcvr_dataframe)) {
-    rcvr_dataframe <- derive_rcvr_from_det(det_dataframe)
-  }
-  
-  if(is.null(tag_dataframe)) {
-    tag_dataframe <- derive_tag_from_det(det_dataframe)
-  }
   #Write in functions for deriving minimal tag/receiver dataframes from the detection extract
   
   #Old version commented so I don't have to do all the mapping again. 
@@ -141,7 +138,7 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   #     )
   # }
   
-  #If we have ONLY detections, we need to scuff together dataframes for receivers and tags that Remora will like.
+  return(list("detections" = det_return, "receivers" = rcvr_dataframe, "tags" = tag_dataframe)) #Don't forget to change these when you have stuff for the other two dataframes
 }
 
 #Hack together a piecemeal receiver metadata dataframe for instances where we get detection data, no receiver/tag metadata, but still want to act
