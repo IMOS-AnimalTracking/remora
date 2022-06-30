@@ -24,6 +24,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
   
   ## Initial tests to identify & correct obvious errors in data
   ## first check for NA's in detection_datetime & remove and flag in logfile
+  message("Starting NA check")
   rn <- which(is.na(x$detection_datetime))
   if(length(rn) > 0) {
     lapply(1:length(rn), function(i) {
@@ -33,9 +34,11 @@ qc <- function(x, Lcheck = TRUE, logfile) {
             append = TRUE)
     })
     ## remove records with NA's in the above variables so QC can proceed
+    message(" Removing NA Time records")
     x <- x[-rn,]
   }
-  
+  message("Time NA check done.")
+  message("Lat/long NA check starting")
   ## check for NA's in (receiver_deployment) longitude/latitude & remove and flag in logfile
   rn <- which(is.na(x$longitude) | is.na(x$latitude))
   if(length(rn) > 0) {
@@ -48,6 +51,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
     ## remove records with NA's in the above variables so QC can proceed
     x <- x[-rn,]
   }
+  message("Lat/Long NA check done")
   
   ## check for & correct any lat's incorrectly in N hemisphere
   if(any(x$latitude > 0) & Lcheck) {
@@ -63,6 +67,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
   }
 
 
+  message("Configuring temporal outcome vector")
   ## Configure output processed data file
   temporal_outcome <- data.frame(matrix(ncol = 8, nrow = nrow(x)))
   colnames(temporal_outcome) <- c("FDA_QC",
@@ -73,42 +78,11 @@ qc <- function(x, Lcheck = TRUE, logfile) {
                                   "ReleaseDate_QC",
                                   "ReleaseLocation_QC",
                                   "Detection_QC")
+  message("Temporal outcome vector configured")
 
-  ## FIXME: these 2 sections now redundant - IDJ 25/01/2022
-  ## check for missing detection coordinates
-  if(any(is.na(x$longitude)) | any(is.na(x$latitude))) {
-    ## how many NA lon and/or lat records
-    n <- sum(is.na(x$longitude) | is.na(x$latitude))
-    ## write to logfile
-    write(paste0(x$filename[1],
-                 ":  ", n, " receiver_deployment_longitudes &/or latitudes are missing; file not QC'd"),
-          file = logfile,
-          append = TRUE)
-    
-    x <- x %>%
-      rename(receiver_deployment_longitude = longitude,
-             receiver_deployment_latitude = latitude)
-    return(bind_cols(x, temporal_outcome))
-    stop("NA's found in detection locations - check logfile for details")
-  }
+  #Removed sections flagged as redundant. - BD 30/06/2022
 
-  ## check for missing transmitter deployment coordinates
-  if(any(is.na(x$transmitter_deployment_longitude),
-         is.na(x$transmitter_deployment_latitude))) {
-    ## write to logfile
-    write(paste0(x$filename[1],
-                 ":  transmitter_deployment_longitude &/or latitude are missing; file not QC'd"),
-          file = logfile,
-          append = TRUE)
-    
-    x <- x %>%
-      rename(receiver_deployment_longitude = longitude,
-             receiver_deployment_latitude = latitude)
-    return(bind_cols(x, temporal_outcome))
-    stop("NA's found in transmitter deployment locations - check logfile for details")
-  }
-
-
+  message("Starting species shapefile grab")
   spe <- unique(x$species_scientific_name)
   CAAB_species_id <- unique(x$CAAB_species_id)
 
@@ -132,7 +106,9 @@ qc <- function(x, Lcheck = TRUE, logfile) {
           append = TRUE)
     shp_b <- NULL
   }
-
+  message("Species shapefile grabbing done.")
+  
+  
   ## Converts unique sets of lat/lon detection coordinates and release lat/lon 
   ##  coordinates to SpatialPoints to test subsequently whether or not detections 
   ##  are in distribution range
@@ -150,6 +126,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
     }
   }
 
+  message("Starting false detections test")
 		## False Detection Algorithm test
 		sta_rec <- unique(x$installation_name)
 		sta_rec <- sta_rec[order(sta_rec)]
@@ -165,70 +142,80 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 			temporal_outcome[sel, 1] <-
 			  ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
 		}
+  message("False detection test done.")
+  message("Starting dist/velocity tests")
+  #Commented out to test if I can get the rest of this running
+# 		## Distance and Velocity tests
+# 		position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
+# 		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
+#   message("position set")
+# 		dist <-
+# 		  shortest_dist(position,
+# 		                x$installation_name,
+# 		                rast = Aust_raster,
+# 		                tr = tr)
+# 
+# 		message("shortest dist calculated")
+# 		if (length(dist) == 1) {
+# 		  timediff <- as.numeric(
+# 		    difftime(
+# 		      x$transmitter_deployment_datetime,
+# 		      x$detection_datetime,
+# 		      tz = "UTC",
+# 		      units = "secs"
+# 		    )
+# 		  )
+# 		  
+# 		  message("determining velocity")
+# 		  velocity <- (dist * 1000) / timediff
+# 
+# 		  message("Setting temporal outcome...")
+# 		  message(temporal_outcome[2])
+# 		  message(temporal_outcome[3])
+# 		  temporal_outcome[2] <- ifelse(velocity <= 10, 1, 2)
+# 		  temporal_outcome[3] <- ifelse(dist <= 1000, 1, 2)
+#       message("...Done")
+#       
+# 		} else if (length(dist) > 1) {
+# 		  dist_next <- c(dist[2:nrow(dist)], NA)
+# 
+# 		  time <-
+# 		    c(x$transmitter_deployment_datetime[1],
+# 		      x$detection_datetime)
+# 		  timediff <-
+# 		    abs(as.numeric(difftime(
+# 		      time[1:(length(time) - 1)], time[2:length(time)],
+# 		      tz = "UTC", units = "secs"
+# 		    )))
+# 		  timediff_next <- c(timediff[2:length(timediff)], NA)
+# 
+# 		  ## Exception to overcome the fact that a same tag may be detected by
+# 		  ##  two neighbouring stations at the exact same time, thus creating
+# 		  ##  infinite velocity values
+# 		  timediff[which(timediff == 0)] <- 1
+# 		  timediff_next[which(timediff_next == 0)] <- 1
+# 		  velocity <- (dist * 1000) / timediff
+# 		  velocity_next <- (dist_next * 1000) / timediff_next
+# 
+# 		  ## Velocity test
+# 		  temporal_outcome[, 2] <-
+# 		    ifelse(velocity > 10 & velocity_next > 10, 2, 1)
+# 		  temporal_outcome[1, 2] <- ifelse(velocity[1] > 10, 2, 1)
+# 		  temporal_outcome[nrow(x), 2] <-
+# 		    ifelse(velocity[nrow(x)] > 10, 2, 1)
+# 
+# 		  ## Distance test
+# 		  temporal_outcome[, 3] <-
+# 		    ifelse(dist > 1000 & dist_next > 1000, 2, 1)
+# 		  temporal_outcome[1, 3] <- ifelse(dist[1] > 1000, 2, 1)
+# 		  temporal_outcome[nrow(x), 3] <-
+# 		    ifelse(dist[nrow(x)] > 1000, 2, 1)
+# 
+# 		}
 
-
-		## Distance and Velocity tests
-		position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
-		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
-
-		dist <-
-		  shortest_dist(position,
-		                x$installation_name,
-		                rast = Aust_raster,
-		                tr = tr)
-
-		if (length(dist) == 1) {
-		  timediff <- as.numeric(
-		    difftime(
-		      x$transmitter_deployment_datetime,
-		      x$detection_datetime,
-		      tz = "UTC",
-		      units = "secs"
-		    )
-		  )
-		  velocity <- (dist * 1000) / timediff
-
-		  temporal_outcome[2] <- ifelse(velocity <= 10, 1, 2)
-		  temporal_outcome[3] <- ifelse(dist <= 1000, 1, 2)
-
-		} else if (length(dist) > 1) {
-		  dist_next <- c(dist[2:nrow(dist)], NA)
-
-		  time <-
-		    c(x$transmitter_deployment_datetime[1],
-		      x$detection_datetime)
-		  timediff <-
-		    abs(as.numeric(difftime(
-		      time[1:(length(time) - 1)], time[2:length(time)],
-		      tz = "UTC", units = "secs"
-		    )))
-		  timediff_next <- c(timediff[2:length(timediff)], NA)
-
-		  ## Exception to overcome the fact that a same tag may be detected by
-		  ##  two neighbouring stations at the exact same time, thus creating
-		  ##  infinite velocity values
-		  timediff[which(timediff == 0)] <- 1
-		  timediff_next[which(timediff_next == 0)] <- 1
-		  velocity <- (dist * 1000) / timediff
-		  velocity_next <- (dist_next * 1000) / timediff_next
-
-		  ## Velocity test
-		  temporal_outcome[, 2] <-
-		    ifelse(velocity > 10 & velocity_next > 10, 2, 1)
-		  temporal_outcome[1, 2] <- ifelse(velocity[1] > 10, 2, 1)
-		  temporal_outcome[nrow(x), 2] <-
-		    ifelse(velocity[nrow(x)] > 10, 2, 1)
-
-		  ## Distance test
-		  temporal_outcome[, 3] <-
-		    ifelse(dist > 1000 & dist_next > 1000, 2, 1)
-		  temporal_outcome[1, 3] <- ifelse(dist[1] > 1000, 2, 1)
-		  temporal_outcome[nrow(x), 3] <-
-		    ifelse(dist[nrow(x)] > 1000, 2, 1)
-
-		}
-
+		message("Dist/velocity tests done.")
 		## Detection distribution test
+		message("Starting detection distribution test")
 		temporal_outcome[, 4] <- ifelse(is.null(shp_b), 3, 1)
 		if(!is.null(shp_b)) {
 			out <- which(is.na(over(ll, shp_b)))
@@ -237,29 +224,50 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 			                     x$latitude %in% ll@coords[out, 2], 4] <- 2
 			}
 		}
+		message("Detection distribution test done.")
 
+		message("Starting distance from release check")
 		## Distance from release
-		dist_r <- distGeo(cbind(x$transmitter_deployment_longitude[rep(1, nrow(x))],
-		                        x$transmitter_deployment_latitude[rep(1, nrow(x))]),
-		                  cbind(x$longitude, x$latitude)) / 1000 ## return in km
-		temporal_outcome[, 5] <- ifelse(dist_r > 500, 2, 1)
-
-		## Release date before detection date
-		release_timediff <- as.numeric(difftime(x$detection_datetime,
-		                                        x$transmitter_deployment_datetime, tz = "UTC",
-		                                        units = "mins"))
-		## -720 minutes (12 h) to take into account potential time zone differences
-		temporal_outcome[which(release_timediff >= (-720)), 6] <- 1
-		temporal_outcome[which(release_timediff < (-720)), 6] <- 2
-
-		## Release location test
-		if(!is.null(shp_b)) {
-			temporal_outcome[, 7] <- ifelse(dist[1] > 500 &
-			                                   sum(is.na(over(ll_r, shp_b))) > 0, 2, 1)
+		if("transmitter_deployment_longitude" %in% colnames(x) &&
+		   "transmitter_deployment_latitude" %in% colnames(x)) {
+		  dist_r <- distGeo(cbind(x$transmitter_deployment_longitude[rep(1, nrow(x))],
+		                          x$transmitter_deployment_latitude[rep(1, nrow(x))]),
+		                    cbind(x$longitude, x$latitude)) / 1000 ## return in km
+		  temporal_outcome[, 5] <- ifelse(dist_r > 500, 2, 1)
 		} else {
-			temporal_outcome[, 7] <- ifelse(dist[1] > 500, 2, 1)
+		  message("No transmitter lat/long in dataframe, skipping distance-from-release check.")
 		}
+		
+    message("Distance from release check done")
+		
+		## Release date before detection date
+    message("Starting release time diff check")
+    if("transmitter_deployment_datetime" %in% colnames(x)) {
+      release_timediff <- as.numeric(difftime(x$detection_datetime,
+                                              x$transmitter_deployment_datetime, tz = "UTC",
+                                              units = "mins"))
+      ## -720 minutes (12 h) to take into account potential time zone differences
+      temporal_outcome[which(release_timediff >= (-720)), 6] <- 1
+      temporal_outcome[which(release_timediff < (-720)), 6] <- 2
+    } else {
+      message("No transmitter deployment time in dataframe, skipping release time diff check.")
+    }
+		message("Release time diff check done")
 
+		message("Starting release location test.")
+		## Release location test
+		#Commenting while I test something else.
+		# if(!is.null(shp_b)) {
+		#   message("We have a shapefile")
+		# 	temporal_outcome[, 7] <- ifelse(dist[1] > 500 &
+		# 	                                   sum(is.na(over(ll_r, shp_b))) > 0, 2, 1)
+		# } else {
+		#   message("We have no shapefile.")
+		# 	temporal_outcome[, 7] <- ifelse(dist[1] > 500, 2, 1)
+		# }
+    message("release location test done")
+		
+    message("Final QC add")
 		## Detection QC
 		ones <- as.numeric(rowSums(temporal_outcome[, c(1:5)] == 1))
 		temporal_outcome[which(ones <= 2), 8] <- 4
@@ -273,6 +281,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 	  rename(receiver_deployment_longitude = longitude,
 	         receiver_deployment_latitude = latitude)
 	
+	message("Done and returning")
 	return(bind_cols(x, temporal_outcome))
 
 }

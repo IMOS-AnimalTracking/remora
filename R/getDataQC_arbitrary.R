@@ -34,8 +34,11 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
   #some version of this should be made visible to the user. Also this exact code gets used multiple times, should probably be hived off into a function. 
   det_data <- remove_unnamed_columns(det_data)
   
-  #OG code has a bit here about adding embargo_date column, don't think we'll include that since it's just to make the code later work and we're here
-  #To make sure that the hard-coding is ripped out. So we won't be including explicit column names.
+  ## add embargo_date variable if not present so downstream code works
+  if(!"embargo_date" %in% names(det_data)) {
+    det_data <- det_data %>% 
+      mutate(embargo_date = NA)
+  }
   
   ## receiver deployment metadata - required for receiver depth
   if(!is.null(rmeta)) {

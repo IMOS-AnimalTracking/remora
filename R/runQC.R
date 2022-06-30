@@ -84,6 +84,7 @@
 
 runQC <- function(x,
                   lat.check = TRUE,
+                  data_format = "imos", #Added by Bruce Delo for pass-through to get_data_arbitrary- since we can now have imos OR otn data!
                    .parallel = FALSE,
                    .ncores = detectCores() - 2,
                    .progress = TRUE) {
@@ -98,12 +99,14 @@ runQC <- function(x,
   write("", file = logfile)
 
   message("Reading data...")
-  all_data <- get_data(
+  #Swapped from get_data to get_data_arbitrary for testing purposes - BD
+  all_data <- get_data_arbitrary(
     det = x$det,
     rmeta = x$rmeta,
     tmeta = x$tmeta,
     meas = x$meas,
-    logfile = logfile
+    logfile = logfile,
+    data_format = data_format
   )
   
   ## Apply QC tests on detections
@@ -126,18 +129,21 @@ runQC <- function(x,
         cat("\r", "file: ", all_data[[i]]$filename[1], ", ", i, " of ", length(all_data), "    ", sep = "")
         flush.console()
       }
-      # Changed by Bruce Delo from qc to qc_updated
-      #try(qc(all_data[[i]], 
-      #       Lcheck = lat.check, 
-      #       logfile), silent = TRUE)
       
       message("StartingQC")
-      try(qc_updated(all_data[[i]], 
-             Lcheck = lat.check,
-             datecolumn = 'detection_datetime',
-             installationcolumn = 'installation_name', 
-             logfile = logfile), silent = TRUE)
-      })
+      # Changed by Bruce Delo from qc to qc_updated
+      #Changed back to this.
+      try(qc(all_data[[i]], 
+             Lcheck = lat.check, 
+             logfile), silent = TRUE)
+      
+      
+      # try(qc_updated(all_data[[i]], 
+      #        Lcheck = lat.check,
+      #        datecolumn = 'detection_datetime',
+      #        installationcolumn = 'installation_name', 
+      #        logfile = logfile), silent = TRUE)
+     })
 
     cat("\n")
   }
