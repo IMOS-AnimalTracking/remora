@@ -28,60 +28,183 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   #If we don't get passed a receiver or tag dataframe, we derive them from det. This will give us hopefully enough info that we can create the final
   #detection dataframe to be returned, which will be valid for Remora. Ideally. 
   if(is.null(rcvr_dataframe) && derive) {
-    rcvr_dataframe <- derive_rcvr_from_det(det_dataframe)
+    rcvr_return <- derive_rcvr_from_det(det_dataframe)
   }
   
   if(is.null(tag_dataframe) && derive) {
     tag_dataframe <- derive_tag_from_det(det_dataframe)
   }
   
-  #If we have receiver_meta, we start working with that to convert.
+  #Start by mapping the Detections dataframe.
+  det_return <- det_dataframe %>%
+    select(
+      datecollected,
+      catalognumber,
+      tagname,
+      collectioncode,
+      commonname,
+      scientificname,
+      detectedby,
+      receiver_group,
+      station,
+      receiver,
+      sensortype,
+      sensorvalue,
+      sensorunit,
+      longitude,
+      latitude
+    ) %>%
+    rename(
+      transmitter_id = tagname,
+      tag_id = catalognumber,
+      #transmitter_deployment_id = catalognumber,
+      tagging_project_name = collectioncode, 
+      species_common_name = commonname,
+      species_scientific_name = scientificname,
+      detection_datetime = datecollected,
+      installation_name = receiver_group,
+      station_name = station,
+      receiver_id = receiver,
+      #receiver_name = receiver, #Could be not the right thing to do to have both this and receiver_id be receiver?
+      receiver_deployment_longitude = longitude,
+      receiver_deployment_latitude = latitude #counterintuitively, we rename these here even though they get renamed BACK to their originals
+      #back outside this function. The code outside still has to work for IMOS formatted data so we can't change it too much, so when we massage
+      #the column names like so, we have to introduce a step that maybe we'd rather skip. 
+    ) %>%
+    mutate(
+      CAAB_species_id = NA,
+      WORMS_species_aphia_id = NA,
+      animal_sex = NA,
+      transmitter_deployment_id = NA, #This could be a problem one, since this is part of the join against the tag dataframe
+      receiver_deployment_id = NA,
+      receiver_name = NA
+    )
+  
+  #If we have receiver_meta, convert that to an IMOS friendly version. 
   if(!is.null(rcvr_dataframe)) {
     #Build this out once basic case is handled.
-  } else {
-    #If we don't have receiver metadata, we derive our imos-friendly detection dataframe from our otn detection dataframe.
-    det_return <- det_dataframe %>%
+    rcvr_return <- rcvr_dataframe %>%
       select(
-        datecollected,
-        catalognumber,
-        tagname,
-        collectioncode,
-        commonname,
-        scientificname,
-        detectedby,
-        receiver_group,
-        station,
-        receiver,
-        sensortype,
-        sensorvalue,
-        sensorunit,
-        longitude,
-        latitude
+        OTN_ARRAY,
+        STATION_NO,
+        DEPLOY_DATE_TIME,
+        DEPLOY_LAT,
+        DEPLOY_LONG,
+        BOTTOM_DEPTH,
+        RISER_LENGTH,
+        INSTRUMENT_DEPTH,
+        INS_MODEL_NUMBER,
+        INS_SERIAL_NUMBER,
+        CODE_SET,
+        TRANSMITTER,
+        TRANSMIT_MODEL,
+        AR_MODEL_NUMBER,
+        AR_SERIAL_NUMBER,
+        DEPLOYED_BY,
+        RECOVERED,
+        RECOVER_DATE_TIME,
+        RECOVER_LAT,
+        RECOVER_LONG,
+        DATA_DOWNLOADED,
+        DOWNLOAD_DATE_TIME,
+        FILENAME
+      ) %>%
+      #We're going to merge INS_MODEL_NUMBER and INS_SERIAL_NUMBER to make receiver_name
+      unite(
+        receiver_name, c("INS_MODEL_NUMBER", "INS_SERIAL_NUMBER")
       ) %>%
       rename(
-        transmitter_id = tagname,
-        tag_id = catalognumber,
-        #transmitter_deployment_id = catalognumber,
-        tagging_project_name = collectioncode, 
-        species_common_name = commonname,
-        species_scientific_name = scientificname,
-        detection_datetime = datecollected,
-        installation_name = receiver_group,
-        station_name = station,
-        receiver_id = receiver,
-        #receiver_name = receiver, #Could be not the right thing to do to have both this and receiver_id be receiver?
-        receiver_deployment_longitude = longitude,
-        receiver_deployment_latitude = latitude #counterintuitively, we rename these here even though they get renamed BACK to their originals
-        #back outside this function. The code outside still has to work for IMOS formatted data so we can't change it too much, so when we massage
-        #the column names like so, we have to introduce a step that maybe we'd rather skip. 
+        receiver_deployment_id = ,
+        #purchasing organization = ????.
+        receiver_project_name = OTN_ARRAY,
+        receiver_status = RECOVERED,
+        receiver_deployment_datetime = DEPLOY_DATE_TIME,
+        #installation_name = ???? also OTN_ARRAY?????
+        station_name = STATION_NO,
+        receiver_deployment_latitude = DEPLOY_LAT,
+        receiver_deployment_longitude = DEPLOY_LONG,
+        depth_below_surface = INSTRUMENT_DEPTH, 
+        receiever_recovery_datetime = RECOVER_DATE_TIME,
+        receiver_recovery_latitude = RECOVER_LAT,
+        receiver_recovery_longitude = RECOVER_LONG,
+        
       ) %>%
       mutate(
-        CAAB_species_id = NA,
-        WORMS_species_aphia_id = NA,
-        animal_sex = NA,
-        transmitter_deployment_id = NA, #This could be a problem one, since this is part of the join against the tag dataframe
-        receiver_deployment_id = NA,
-        receiver_name = NA
+        
+      )
+  }
+  
+  #And if we have tag metadata, convert that too.
+  if(!is.null(tag_meta)) {
+    tag_return <- tag_meta %>%
+      select(
+        ANIMAL_ID,
+        TAG_TYPE,
+        TAG_MANUFACTURER,
+        TAG_MODEL,
+        TAG_SERIAL_NUMBER,
+        TAG_ID_CODE,
+        TAG_CODE_SPACE,
+        TAG_IMPLANT_TYPE,
+        TAG_IMPLANT_METHOD,
+        TAG_ACTIVATION_DATE,
+        EST_TAG_LIFE,
+        TAGGER,
+        TAG_OWNER_PI,
+        TAG_OWNER_ORGANIZATION,
+        COMMON_NAME_E,
+        SCIENTIFIC_NAME,
+        CAPTURE_LOCATION,
+        CAPTURE_LATITUDE,
+        CAPTURE_LONGITUDE,
+        WILD_OR_HATCHERY,
+        STOCK,
+        `LENGTH (m)`,
+        `WEIGHT (kg)`,
+        LENGTH_TYPE,
+        `LENGTH2 (m)`,
+        LENGTH2_TYPE,
+        LIFE_STAGE,
+        AGE,
+        AGE_UNITS,
+        SEX,
+        DNA_SAMPLE_TAKEN,
+        TREATMENT_TYPE,
+        RELEASE_GROUP,
+        
+      ) %>%
+      unite(
+        "transmitter_id", TAG_CODE_SPACE:TAG_ID_CODE, sep="-"
+      ) %>%
+      rename(
+        transmitter_serial_number = TAG_SERIAL_NUMBER,
+        #tagging_project_name??
+        transmitter_type = TAG_MODEL,
+        transmitter_sensor_type = TAG_TYPE,
+        transmitter_estimated_battery_life = EST_TAG_LIFE,
+        species_common_name = COMMON_NAME_E,
+        species_scientific_name = SCIENTIFICNAME,
+        animal_sex = SEX,
+        placement = TAG_IMPLANT_TYPE,
+        transmitter_deployment_locality = RELEASE_LOCATION,
+        transmitter_deployment_latitude = RELEASE_LATITUDE,
+        transmitter_deployment_longitude = RELEASE_LONGITUDE,
+        transmitter_deployment_datetime = UTC_RELEASE_DATE_TIME,
+        transmitter_deployment_comments = COMMENTS,
+        transmitter_recovery_datetime = HARVEST_DATE,
+        
+        
+        
+      ) %>%
+      mutate(
+        transmitter_sensor_slope = NA,
+        transmitter_sensor_intercept = NA,
+        transmitter_sensor_unit = NA,
+        transmitter_status = NA,
+        transmitter_deployment_id = NA,
+        embargo_date = NA,
+        transmitter_recovery_latitude = NA,
+        transmitter_recovery_longitude = NA
       )
   }
   
@@ -138,7 +261,7 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   #     )
   # }
   
-  return(list("detections" = det_return, "receivers" = rcvr_dataframe, "tags" = tag_dataframe)) #Don't forget to change these when you have stuff for the other two dataframes
+  return(list("detections" = det_return, "receivers" = rcvr_return, "tags" = tag_dataframe)) #Don't forget to change these when you have stuff for the other two dataframes
 }
 
 #Hack together a piecemeal receiver metadata dataframe for instances where we get detection data, no receiver/tag metadata, but still want to act
