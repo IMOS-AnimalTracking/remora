@@ -1,6 +1,7 @@
 get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile, checks = c("all"),
                                det_id_column = "transmitter_deployment_id", tag_id_column = "transmitter_deployment_id",
                                det_rcvr_column = "receiver_deployment_id", rcvr_id_column = "receiver_deployment_id", data_format = "imos") {
+  library(tools)
   
   #Remember to formalize all of the new variables as comments up above:
   # - checks: vector containing all of the specific chekcs you want to turn on or off while pulling in the data.
@@ -49,7 +50,13 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
   
   #tag deployment metadata
   if(!is.null(tmeta)) {
-    tag_meta <- read_csv(tmeta, na = c("", "null", "NA"))
+    extension <- file_ext(tmeta)
+    if(extension == "csv"){
+      tag_meta <- read_csv(tmeta, na = c("", "null", "NA"))
+    }
+    if(extension == "xlsx"){
+      tag_meta <- read_excel(tmeta, sheet="Tag Metadata", skip = 4, col_names = TRUE)
+    }
     
     tag_meta <- remove_unnamed_columns(tag_meta)
   }
@@ -59,6 +66,16 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
     anim_meas <- read_csv(meas)
     
     anim_meas <- remove_unnamed_columns(anim_meas)
+  }
+  
+  #In the original column here follows some initial QC and a big merge of the four data files, complete with hardcoded column names.
+  #We're gonna do the same merge but first we're going to take OTN formatted data and massage the columns into an IMOS-friendly setup.
+  
+  if(tolower(data_format) == "otn") {
+    processed_data <- otn_imos_column_map(det_data, rec_meta, tag_meta, derive=FALSE)
+    det_data <- processed_data$detections
+    rec_meta <- processed_data$receivers
+    tag_meta <- processed_data$tags
   }
   
   #Check for and report any tags in detections but not in the tag metadata.
@@ -84,7 +101,9 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
     )
   }
   
-  else {
+  else if(!is.null(tag_meta)){
+    warning("No missing IDs found in tag metadata.", call. = FALSE, immediate. = TRUE)
+  } else {
     warning("transmitter metadata not supplied, skipping tests for missing metadata records",
             call. = FALSE, immediate. = TRUE)
   }
@@ -116,19 +135,10 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
             call. = FALSE, immediate. = TRUE)
   }
   
-  #In the original column here follows a big merge of the four data files, complete with hardcoded column names.
-  #We're gonna do the same merge but first we're going to take OTN formatted data and massage the columns into an IMOS-friendly setup.
-  
-  if(tolower(data_format) == "otn") {
-    processed_data <- otn_imos_column_map(det_data, derive=FALSE)
-    det_data <- processed_data$detections
-    rec_meta <- processed_data$receivers
-    tag_meta <- processed_data$tags
-  }
-  
   #View(det_data)
   
   if(!is.null(rec_meta)) {
+    message("rec_meta is not null")
     ## merge detections with receiver metadata - to get receiver_depth,
     ##    but merge everything & keep detections data version of common variables
     dd <-
@@ -203,6 +213,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
   }
   
   if(!is.null(tag_meta)) {
+    message("tag_meta is not null")
     dd <- left_join(dd,
                     tag_meta,
                     by = c("transmitter_id", "transmitter_deployment_id")) %>%
@@ -347,5 +358,5 @@ remove_unnamed_columns <- function(dataframe) {
     drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(dataframe)]
     dataframe <- dataframe %>% select(-any_of(drops))
   }
-  return(dataframe)
+  return(as.data.frame(dataframe))
 }

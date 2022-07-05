@@ -152,7 +152,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 # 		dist <-
 # 		  shortest_dist(position,
 # 		                x$installation_name,
-# 		                rast = Aust_raster,
+# 		                 rast = Aust_raster,
 # 		                tr = tr)
 # 
 # 		message("shortest dist calculated")
@@ -165,7 +165,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 # 		      units = "secs"
 # 		    )
 # 		  )
-# 		  
+# 
 # 		  message("determining velocity")
 # 		  velocity <- (dist * 1000) / timediff
 # 
@@ -175,7 +175,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 # 		  temporal_outcome[2] <- ifelse(velocity <= 10, 1, 2)
 # 		  temporal_outcome[3] <- ifelse(dist <= 1000, 1, 2)
 #       message("...Done")
-#       
+# 
 # 		} else if (length(dist) > 1) {
 # 		  dist_next <- c(dist[2:nrow(dist)], NA)
 # 
