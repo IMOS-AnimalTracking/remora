@@ -82,7 +82,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 
   #Removed sections flagged as redundant. - BD 30/06/2022
 
-  message("Starting species shapefile grab")
+  #message("Starting species shapefile grab")
   spe <- unique(x$species_scientific_name)
   CAAB_species_id <- unique(x$CAAB_species_id)
 
@@ -106,7 +106,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
           append = TRUE)
     shp_b <- NULL
   }
-  message("Species shapefile grabbing done.")
+  #message("Species shapefile grabbing done.")
   
   
   ## Converts unique sets of lat/lon detection coordinates and release lat/lon 
@@ -126,7 +126,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
     }
   }
 
-  message("Starting false detections test")
+  #message("Starting false detections test")
 		## False Detection Algorithm test
 		sta_rec <- unique(x$installation_name)
 		sta_rec <- sta_rec[order(sta_rec)]
@@ -142,8 +142,8 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 			temporal_outcome[sel, 1] <-
 			  ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
 		}
-  message("False detection test done.")
-  message("Starting dist/velocity tests")
+  #message("False detection test done.")
+  #message("Starting dist/velocity tests")
   #Commented out to test if I can get the rest of this running
 # 		## Distance and Velocity tests
 # 		position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
@@ -213,9 +213,9 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 # 
 # 		}
 
-		message("Dist/velocity tests done.")
+		#message("Dist/velocity tests done.")
 		## Detection distribution test
-		message("Starting detection distribution test")
+		#message("Starting detection distribution test")
 		temporal_outcome[, 4] <- ifelse(is.null(shp_b), 3, 1)
 		if(!is.null(shp_b)) {
 			out <- which(is.na(over(ll, shp_b)))
@@ -226,7 +226,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		}
 		message("Detection distribution test done.")
 
-		message("Starting distance from release check")
+		#message("Starting distance from release check")
 		## Distance from release
 		if("transmitter_deployment_longitude" %in% colnames(x) &&
 		   "transmitter_deployment_latitude" %in% colnames(x)) {
@@ -237,15 +237,17 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		} else {
 		  message("No transmitter lat/long in dataframe, skipping distance-from-release check.")
 		}
-		
+
     message("Distance from release check done")
 		
 		## Release date before detection date
     message("Starting release time diff check")
     if("transmitter_deployment_datetime" %in% colnames(x)) {
+      message("transmitter_deployment_datetime column exists.")
       release_timediff <- as.numeric(difftime(x$detection_datetime,
                                               x$transmitter_deployment_datetime, tz = "UTC",
                                               units = "mins"))
+      message("release_timediff: ", release_timediff)
       ## -720 minutes (12 h) to take into account potential time zone differences
       temporal_outcome[which(release_timediff >= (-720)), 6] <- 1
       temporal_outcome[which(release_timediff < (-720)), 6] <- 2
@@ -254,7 +256,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
     }
 		message("Release time diff check done")
 
-		message("Starting release location test.")
+		#message("Starting release location test.")
 		## Release location test
 		#Commenting while I test something else.
 		# if(!is.null(shp_b)) {
@@ -265,7 +267,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		#   message("We have no shapefile.")
 		# 	temporal_outcome[, 7] <- ifelse(dist[1] > 500, 2, 1)
 		# }
-    message("release location test done")
+    #message("release location test done")
 		
     message("Final QC add")
 		## Detection QC

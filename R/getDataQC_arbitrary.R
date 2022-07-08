@@ -57,7 +57,6 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
     if(extension == "xlsx"){
       tag_meta <- read_excel(tmeta, sheet="Tag Metadata", skip = 4, col_names = TRUE)
     }
-    
     tag_meta <- remove_unnamed_columns(tag_meta)
   }
   
@@ -210,10 +209,10 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
         receiver_deployment_id,
         everything()
       )
+    View(select(dd, c('transmitter_id', 'transmitter_deployment_id')))
   }
-  
   if(!is.null(tag_meta)) {
-    message("tag_meta is not null")
+    View(select(tag_meta, c('transmitter_id', 'transmitter_deployment_id')))
     dd <- left_join(dd,
                     tag_meta,
                     by = c("transmitter_id", "transmitter_deployment_id")) %>%
@@ -231,6 +230,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
         -species_scientific_name.y,
         -animal_sex.y,
         -embargo_date.x)
+    View(dd)
     ## deal with any cases where deploy lon/lat is missing in detections but not metadata
     if(any(is.na(dd$transmitter_deployment_longitude.x)) |
        any(is.na(dd$transmitter_deployment_latitude.x))) {
@@ -272,7 +272,6 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
         transmitter_deployment_datetime = transmitter_deployment_datetime.x,
         embargo_date = embargo_date.y
       ) 
-    
     if (!inherits(dd$transmitter_deployment_datetime, "POSIXt")) {
       if (inherits(dd$transmitter_deployment_datetime, "numeric")) {
         dd <- dd %>% mutate(

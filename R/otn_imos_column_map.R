@@ -62,31 +62,8 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
       monthcollected,
       daycollected
     ) %>%
-    #We need to make these transmitter and receiver deployment ID columns so that we have something to join on. These do not necessarily correspond to our
-    #own catalognumber fields. 
-    unite(
-      receiver_deployment_id, c("receiver_group", "station", "receiver"), sep = "-", remove = FALSE
-    ) %>%
-    unite(
-      transmitter_deployment_id, c("tagname", "yearcollected", "monthcollected", "daycollected", "longitude", "latitude"), sep = "-",  remove = FALSE
-    ) %>%
-    rename(
-      transmitter_id = tagname,
-      tag_id = catalognumber,
-      tagging_project_name = collectioncode, 
-      species_common_name = commonname,
-      species_scientific_name = scientificname,
-      detection_datetime = datecollected,
-      installation_name = receiver_group,
-      station_name = station,
-      receiver_id = receiver,
-      #receiver_name = receiver, #Could be not the right thing to do to have both this and receiver_id be receiver?
-      receiver_deployment_longitude = longitude,
-      receiver_deployment_latitude = latitude #counterintuitively, we rename these here even though they get renamed BACK to their originals
-      #back outside this function. The code outside still has to work for IMOS formatted data so we can't change it too much, so when we massage
-      #the column names like so, we have to introduce a step that maybe we'd rather skip. 
-    ) %>%
     mutate(
+      cleandate = ymd(as_date(datecollected)),
       CAAB_species_id = NA,
       WORMS_species_aphia_id = NA,
       animal_sex = NA,
@@ -105,6 +82,30 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
       transmitter_deployment_longitude = NA,
       transmitter_deployment_datetime = NA,
       
+    )%>%
+    #We need to make these transmitter and receiver deployment ID columns so that we have something to join on. These do not necessarily correspond to our
+    #own catalognumber fields. 
+    unite(
+      receiver_deployment_id, c("receiver_group", "station", "receiver"), sep = "-", remove = FALSE
+    ) %>%
+    unite(
+      transmitter_deployment_id, c("tagname", "cleandate", "latitude", "longitude"), sep = "-",  remove = FALSE
+    ) %>%
+    rename(
+      transmitter_id = tagname,
+      tag_id = catalognumber,
+      tagging_project_name = collectioncode, 
+      species_common_name = commonname,
+      species_scientific_name = scientificname,
+      detection_datetime = datecollected,
+      installation_name = receiver_group,
+      station_name = station,
+      receiver_id = receiver,
+      #receiver_name = receiver, #Could be not the right thing to do to have both this and receiver_id be receiver?
+      receiver_deployment_longitude = longitude,
+      receiver_deployment_latitude = latitude #counterintuitively, we rename these here even though they get renamed BACK to their originals
+      #back outside this function. The code outside still has to work for IMOS formatted data so we can't change it too much, so when we massage
+      #the column names like so, we have to introduce a step that maybe we'd rather skip. 
     )
   
   #If we have receiver_meta, convert that to an IMOS friendly version. 
