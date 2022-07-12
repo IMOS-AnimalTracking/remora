@@ -143,75 +143,81 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 			  ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
 		}
   #message("False detection test done.")
+		
+	#bathyUrl = "https://upwell.pfeg.noaa.gov/erddap/griddap/etopo5.geotif?ROSE%5B(40):1:(50)%5D%5B(280):1:(320)%5D"
   #message("Starting dist/velocity tests")
   #Commented out to test if I can get the rest of this running
-# 		## Distance and Velocity tests
-# 		position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
-# 		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
-#   message("position set")
-# 		dist <-
-# 		  shortest_dist(position,
-# 		                x$installation_name,
-# 		                 rast = Aust_raster,
-# 		                tr = tr)
-# 
-# 		message("shortest dist calculated")
-# 		if (length(dist) == 1) {
-# 		  timediff <- as.numeric(
-# 		    difftime(
-# 		      x$transmitter_deployment_datetime,
-# 		      x$detection_datetime,
-# 		      tz = "UTC",
-# 		      units = "secs"
-# 		    )
-# 		  )
-# 
-# 		  message("determining velocity")
-# 		  velocity <- (dist * 1000) / timediff
-# 
-# 		  message("Setting temporal outcome...")
-# 		  message(temporal_outcome[2])
-# 		  message(temporal_outcome[3])
-# 		  temporal_outcome[2] <- ifelse(velocity <= 10, 1, 2)
-# 		  temporal_outcome[3] <- ifelse(dist <= 1000, 1, 2)
-#       message("...Done")
-# 
-# 		} else if (length(dist) > 1) {
-# 		  dist_next <- c(dist[2:nrow(dist)], NA)
-# 
-# 		  time <-
-# 		    c(x$transmitter_deployment_datetime[1],
-# 		      x$detection_datetime)
-# 		  timediff <-
-# 		    abs(as.numeric(difftime(
-# 		      time[1:(length(time) - 1)], time[2:length(time)],
-# 		      tz = "UTC", units = "secs"
-# 		    )))
-# 		  timediff_next <- c(timediff[2:length(timediff)], NA)
-# 
-# 		  ## Exception to overcome the fact that a same tag may be detected by
-# 		  ##  two neighbouring stations at the exact same time, thus creating
-# 		  ##  infinite velocity values
-# 		  timediff[which(timediff == 0)] <- 1
-# 		  timediff_next[which(timediff_next == 0)] <- 1
-# 		  velocity <- (dist * 1000) / timediff
-# 		  velocity_next <- (dist_next * 1000) / timediff_next
-# 
-# 		  ## Velocity test
-# 		  temporal_outcome[, 2] <-
-# 		    ifelse(velocity > 10 & velocity_next > 10, 2, 1)
-# 		  temporal_outcome[1, 2] <- ifelse(velocity[1] > 10, 2, 1)
-# 		  temporal_outcome[nrow(x), 2] <-
-# 		    ifelse(velocity[nrow(x)] > 10, 2, 1)
-# 
-# 		  ## Distance test
-# 		  temporal_outcome[, 3] <-
-# 		    ifelse(dist > 1000 & dist_next > 1000, 2, 1)
-# 		  temporal_outcome[1, 3] <- ifelse(dist[1] > 1000, 2, 1)
-# 		  temporal_outcome[nrow(x), 3] <-
-# 		    ifelse(dist[nrow(x)] > 1000, 2, 1)
-# 
-# 		}
+	## Distance and Velocity tests
+	position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
+		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
+	#world_raster <- try(raster(bathyUrl, verbose = FALSE) %>%
+	#                  {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
+	
+  message("position set")
+		dist <-
+		  shortest_dist(position,
+		                x$installation_name,
+		                 rast = world_raster,
+		                tr = tr)
+
+		
+		message("shortest dist calculated")
+		if (length(dist) == 1) {
+		  timediff <- as.numeric(
+		    difftime(
+		      x$transmitter_deployment_datetime,
+		      x$detection_datetime,
+		      tz = "UTC",
+		      units = "secs"
+		    )
+		  )
+
+		  message("determining velocity")
+		  velocity <- (dist * 1000) / timediff
+
+		  message("Setting temporal outcome...")
+		  message(temporal_outcome[2])
+		  message(temporal_outcome[3])
+		  temporal_outcome[2] <- ifelse(velocity <= 10, 1, 2)
+		  temporal_outcome[3] <- ifelse(dist <= 1000, 1, 2)
+      message("...Done")
+
+		} else if (length(dist) > 1) {
+		  dist_next <- c(dist[2:nrow(dist)], NA)
+
+		  time <-
+		    c(x$transmitter_deployment_datetime[1],
+		      x$detection_datetime)
+		  timediff <-
+		    abs(as.numeric(difftime(
+		      time[1:(length(time) - 1)], time[2:length(time)],
+		      tz = "UTC", units = "secs"
+		    )))
+		  timediff_next <- c(timediff[2:length(timediff)], NA)
+
+		  ## Exception to overcome the fact that a same tag may be detected by
+		  ##  two neighbouring stations at the exact same time, thus creating
+		  ##  infinite velocity values
+		  timediff[which(timediff == 0)] <- 1
+		  timediff_next[which(timediff_next == 0)] <- 1
+		  velocity <- (dist * 1000) / timediff
+		  velocity_next <- (dist_next * 1000) / timediff_next
+
+		  ## Velocity test
+		  temporal_outcome[, 2] <-
+		    ifelse(velocity > 10 & velocity_next > 10, 2, 1)
+		  temporal_outcome[1, 2] <- ifelse(velocity[1] > 10, 2, 1)
+		  temporal_outcome[nrow(x), 2] <-
+		    ifelse(velocity[nrow(x)] > 10, 2, 1)
+
+		  ## Distance test
+		  temporal_outcome[, 3] <-
+		    ifelse(dist > 1000 & dist_next > 1000, 2, 1)
+		  temporal_outcome[1, 3] <- ifelse(dist[1] > 1000, 2, 1)
+		  temporal_outcome[nrow(x), 3] <-
+		    ifelse(dist[nrow(x)] > 1000, 2, 1)
+
+		}
 
 		#message("Dist/velocity tests done.")
 		## Detection distribution test
