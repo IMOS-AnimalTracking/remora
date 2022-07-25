@@ -239,7 +239,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		  dist_r <- distGeo(cbind(x$transmitter_deployment_longitude[rep(1, nrow(x))],
 		                          x$transmitter_deployment_latitude[rep(1, nrow(x))]),
 		                    cbind(x$longitude, x$latitude)) / 1000 ## return in km
-		  temporal_outcome[, 5] <- ifelse(dist_r > 500, 2, 1)
+		  temporal_outcome[, 5] <- ifelse(dist_r > 500, 2, 1)()
 		} else {
 		  message("No transmitter lat/long in dataframe, skipping distance-from-release check.")
 		}
@@ -250,7 +250,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
     message("Starting release time diff check")
     if("transmitter_deployment_datetime" %in% colnames(x)) {
       message("transmitter_deployment_datetime column exists.")
-      release_timediff <- as.numeric(difftime(x$detection_datetime,
+      release_timediff <- as.numeric(difftime(x$detection_dattetime,
                                               x$transmitter_deployment_datetime, tz = "UTC",
                                               units = "mins"))
       message("release_timediff: ", release_timediff)
