@@ -173,13 +173,13 @@ data_with_sst <-
              X = "longitude", 
              Y = "latitude", 
              datetime = "datecollected", 
-             env_var = "bathy",  ## Currently only a single variable can be called at a time
+             env_var = "hs",  ## Currently only a single variable can be called at a time
              cache_layers = TRUE,
              crop_layers = FALSE,
              fill_gaps = TRUE,
              full_timeperiod = FALSE,
              folder_name = "test",
-             .parallel = TRUE,
+             .parallel = FALSE,
              verbose = TRUE)
 
 ```
@@ -197,7 +197,7 @@ data_with_sst_and_current <-
   extractEnvArbitrary(X = "longitude", 
              Y = "latitude", 
              datetime = "detection_datetime", 
-             env_var = "bathy", 
+             env_var = "hs", 
              cache_layers = TRUE,
              crop_layers = FALSE,
              fill_gaps = TRUE,
@@ -221,7 +221,7 @@ When downloading current data, three variables are downloaded: Gridded Sea Level
 We can now see the extracted environmental variables are appended as new columns to the input dataset
 
 ```{r, warning=FALSE, message=FALSE}
-data_with_sst_and_current
+data_with_sst
 ```
 
 
@@ -230,19 +230,21 @@ We can also now add the variables to the detection plots:
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
 
 summarised_data <-
-  data_with_sst_and_current %>% 
-  mutate(date = as.Date(detection_datetime)) %>% 
-  group_by(transmitter_id, date) %>% 
+  data_with_sst %>% 
+  mutate(date = as.Date(datecollected)) %>% 
+  group_by(catalognumber, date) %>% 
   summarise(num_det = n(),
-            mean_sst = mean(rs_sst_interpolated, na.rm = T),
-            mean_current_velocity = mean(rs_current_velocity, na.rm = T),
-            mean_current_bearing = mean(rs_current_bearing, na.rm = T))
+            #mean_sst = mean(rs_sst_interpolated, na.rm = T),
+            #mean_current_velocity = mean(rs_current_velocity, na.rm = T),
+            #mean_current_bearing = mean(rs_current_bearing, na.rm = T)
+            mean_bathy = mean(bathy, na.rm = T)
+            )
 
-ggplot(summarised_data, aes(x = date, y = transmitter_id, size = num_det, color = mean_sst)) +
+ggplot(summarised_data, aes(x = date, y = catalognumber, size = num_det, color = mean_bathy)) +
   geom_point() +
   scale_color_viridis_c() +
   labs(subtitle = "Interpolated sea surface temperature", x = "Date", 
-       y = NULL, color = "SST (˚C)", size = "Number of\nDetections") +
+       y = NULL, color = "bathy", size = "Number of\nDetections") +
   theme_bw()
 
 ``` 
@@ -274,23 +276,39 @@ If the environmental layers were cached, we can also look at how the variables a
 ```{r, eval=FALSE, message=FALSE, warning=FALSE}
 
 ## Detection data summary
+#det_summary <-
+#  qc_data %>% 
+#  group_by(station_name, lon = receiver_deployment_longitude, lat = receiver_deployment_latitude) %>% 
+#  summarise()
+
 det_summary <-
-  qc_data %>% 
-  group_by(station_name, lon = receiver_deployment_longitude, lat = receiver_deployment_latitude) %>% 
+  data_with_sst %>%
+  group_by(catalognumber, lon = longitude, lat = latitude) %>%
   summarise()
 
 ## Sea surface temperature
 sst_raster <- stack("imos.cache/rs variables/test/rs_sst_interpolated.grd")
+bathy_raster <- stack("imos.cache/rs variables/test/bathy.grd")
+hs_raster <- stack("imos.cache/rs variables/test/hs.grd")
 
-sst_df <- 
-  as.data.frame(sst_raster[[1:12]], xy = T) %>% 
+#sst_df <- 
+#  as.data.frame(sst_raster[[1:12]], xy = T) %>% 
+#  pivot_longer(-c(1,2))
+
+bathy_df <- 
+  as.data.frame(bathy_raster, xy=T) %>%
   pivot_longer(-c(1,2))
 
-ggplot(sst_df) +
+hs_df <-
+  as.data.frame(hs_raster, xy=T) %>%
+  pivot_longer(-c(1,2))
+
+
+ggplot(hs_df) +
   geom_tile(aes(x, y, fill = value)) +
   scale_fill_viridis_c() +
-  geom_point(data = det_summary, aes(x = lon, y = lat), size = 0.5, color = "red", inherit.aes = F) +
-  labs(fill = "Interpolated\nSST (˚C)", x = "Longitude", y = "Latitude") +
+  geom_point(data = det_summary_clean, aes(x = lon, y = lat), size = 0.5, color = "red", inherit.aes = F) +
+  labs(fill = "Wave Height (m)", x = "Longitude", y = "Latitude") +
   coord_equal() +
   facet_wrap(~name, nrow = 4) +
   theme_bw()

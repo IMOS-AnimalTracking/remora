@@ -111,7 +111,8 @@
   
   if(env_var %in% c("bathy", "dist_to_land")) {
     ## extraction for single/fixed layer ('bathy', 'dist_to_land')
-    ext_matrix <- extract(env_stack, pos_sf)
+    #Ran into some occasional problems; there's an extract function in tidyr as well as raster. Specifying this seems to have resolved it -- BD
+    ext_matrix <- raster::extract(env_stack, pos_sf)
     view(ext_matrix)
     variable <- ext_matrix
     

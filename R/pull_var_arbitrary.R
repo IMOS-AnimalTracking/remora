@@ -68,6 +68,7 @@ pull_env_arbitrary <- function(dates, study_extent, var_name, folder_name = NULL
         try(raster(bathyUrl, verbose = FALSE) %>%
               {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
       names(out_brick) <- "bathy"
+      message("Bathy added to out_brick")
     }
     
     # Distance to land
@@ -89,6 +90,8 @@ pull_env_arbitrary <- function(dates, study_extent, var_name, folder_name = NULL
     urls <- build_thredds_url(dates, url="http://www.neracoos.org/thredds/", path="dodsC/WW3/", 
                               file="EastCoast.nc", var=var_name)
     
+    View(urls)
+    
     ## download raster files from built urls
     if(.parallel){
       message("Downloading environmental data in parallel across ", .ncores, " cores...")
@@ -101,6 +104,8 @@ pull_env_arbitrary <- function(dates, study_extent, var_name, folder_name = NULL
           out_ras <- 
             try(raster(url$url_name, varname = url$layer, verbose = FALSE) %>%
                   {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
+          
+          View(out_ras)
           
           if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
             names(out_ras) <- substr(out_ras@z[[1]], start = 1, stop = 10)
@@ -193,6 +198,7 @@ pull_env_arbitrary <- function(dates, study_extent, var_name, folder_name = NULL
         write_csv(error_log %>% mutate(variable = var_name), paste0(var_name, "_errorlog.txt"))}
     }
     
+    message("assigning zvalues to raster stack output")
     ## Assign a zvalues to raster stack output
     zval <-
       names(out_brick) %>%
@@ -200,10 +206,15 @@ pull_env_arbitrary <- function(dates, study_extent, var_name, folder_name = NULL
       gsub("\\.", "-", .) %>% 
       as.Date()
     
+    message("printing zvals")
+    
     if(is.na(projection(out_brick))){
+      message("projection out_brick is null")
       projection(out_brick) <- CRS("EPSG:4326")
     }
+    message("settingZ on out_brick")
     out_brick <- setZ(x = out_brick, z = zval, name = "date")
+    message("out_brick altered")
   }
   
   ## Current layers

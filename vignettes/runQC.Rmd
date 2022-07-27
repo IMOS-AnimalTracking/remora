@@ -77,10 +77,12 @@ files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"), pa
 We invoke the QC using `runQC()`:
 
 ```{r runQC, eval = FALSE, message=FALSE}
-tag_qc <- runQC(files, .parallel = TRUE, .progress = FALSE)
+tag_qc <- runQC(files, .parallel = FALSE, .progress = FALSE)
 ```
 
 ```{r save QC, eval=FALSE, echo=FALSE, message=FALSE}
+
+
 tag_qc <- runQC(files, .parallel = TRUE, .progress = FALSE)
 save(tag_qc, file = "R/tag_qc.rda")
 ```

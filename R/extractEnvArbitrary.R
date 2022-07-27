@@ -178,6 +178,7 @@ extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime = 
       silent = FALSE) 
   }
   
+  View(env_stack)
   image(env_stack)
   
   if(cache_layers & verbose){
