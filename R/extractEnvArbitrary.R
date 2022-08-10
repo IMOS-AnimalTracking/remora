@@ -92,38 +92,36 @@
 ##' @export
 ##'
 
-extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime = "detection_timestamp", env_var, folder_name = NULL, 
+extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime="datecollected", env_request = NULL, request_type = 'single', folder_name = NULL, 
                        verbose = TRUE, cache_layers = TRUE, crop_layers = TRUE, full_timeperiod = FALSE, 
                        fill_gaps = FALSE, buffer = NULL, output_format = "raster", .parallel = TRUE, .ncores = NULL){
   
   ## Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
   if(!Y %in% colnames(df)){stop("Cannot find Y coordinate in dataset, provide column name where variable can be found")}
-  if(!datetime %in% colnames(df)){stop("Cannot find date timestamp column in dataset, provide column name where variable can be found")}
-  if(!env_var %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land', 'hs')){
-    stop("Environmental variable not recognised, options include:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
-  if(length(env_var) > 1){stop("This function currently only supports extracting a single variable at a time. Please only select one of:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
   
-  ## Turn of un-needed parallelising or gap filling if extracting 'bathy', 'dist_to_land'
+  #Temporary solution (I hope) while I figure out how best to rebuild parts of the code now that the URL generation part is user-dictated,
+  #so as to facilitate arbitrary data sources.
+  if(request_type == 'bathy') {
+    env_var <- 'bathy'
+  }
+  else {
+    env_var <- env_request$layer[1]
+  }
+  
+  ## Turn off un-needed parallelising or gap filling if extracting 'bathy', 'dist_to_land'
   if(env_var %in% c("bathy", "dist_to_land")){
     .parallel = FALSE
     fill_gaps = FALSE}
   
   if(env_var %in% "rs_current"){.parallel = FALSE}
   
-  ## define date range
-  unique_dates <- 
-    df %>%
-    #Had to change a bunch of these from date() to as.Date() -- BD
-    #mutate(date = date(!!as.name(datetime))) %>%
-    mutate(date = as.Date(!!as.name(datetime))) %>%
-    distinct(date) %>%
-    pull(date) 
-  
-  date_range <- range(unique_dates)
-  
   ## define spatial extent and extend by 40%
-  study_extent <- extent(c(min(df[[X]]), max(df[[X]]), min(df[[Y]]), max(df[[Y]]))) * 1.4
+  #I'm making this as both a vector and an extent so as to maintain functionality while I work on this
+  #The vector is necessary for my code. But the original code uses the extent, and we'll probably still
+  #need it. - BD
+  spatial_extent <- c(minLon = min(df[[X]]), maxLon = max(df[[X]]), minLat = min(df[[Y]]), maxLat = max(df[[Y]]))
+  study_extent <- extent(spatial_extent) * 1.4
   
   ## define unique positions (for quicker environmental variable extraction)
   unique_positions <-
@@ -131,25 +129,6 @@ extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime = 
     mutate(date = as.Date(!!as.name(datetime))) %>%
     distinct(!!as.name(X), !!as.name(Y), date) %>% 
     dplyr::select(!!as.name(X), !!as.name(Y), date)
-  
-  ## define dates of detection and date range and catalog all dates between start and end if .full_timeperiod = TRUE
-  if(full_timeperiod){
-    if(verbose){
-      message("Extracting environmental data for each day between ", 
-              date_range[1], " and ", date_range[2], " (", 
-              difftime(date_range[2], date_range[1], units = "days"), " days)",
-              "\nThis may take a little while...") 
-    }
-    dates <- seq(date_range[1], date_range[2], by = 1)
-  } else {
-    if(verbose){
-      message("Extracting environmental data only on days detections were present; between ", 
-              date_range[1], " and ", date_range[2], " (", 
-              length(unique_dates), " days)",
-              "\nThis may take a little while...")
-    }
-    dates <- unique_dates
-  }
   
   # Pull environmental netcdf from THREDDS server
   if(verbose){
@@ -161,7 +140,7 @@ extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime = 
     with_progress(
       try(
         suppressWarnings(
-          env_stack <- pull_env_arbitrary(dates = dates, study_extent = study_extent,
+          env_stack <- pull_env_arbitrary(urls = env_request, request_type = request_type, study_extent = study_extent,
                                           var_name = env_var, .cache = cache_layers,
                                           folder_name = folder_name, .crop = crop_layers,
                                           .output_format = output_format, verbose = verbose,
@@ -170,7 +149,7 @@ extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime = 
   } else {
     try(
       suppressWarnings(
-        env_stack <- pull_env_arbitrary(dates = dates, study_extent = study_extent, 
+        env_stack <- pull_env_arbitrary(urls = env_request, study_extent = study_extent, 
                                         var_name = env_var, .cache = cache_layers, 
                                         folder_name = folder_name, .crop = crop_layers,
                                         .output_format = output_format, verbose = verbose,
@@ -178,21 +157,20 @@ extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime = 
       silent = FALSE) 
   }
   
-  View(env_stack)
-  image(env_stack)
-  
   if(cache_layers & verbose){
     message("\nDownloaded layers are cached in the `imos.cache` folder in your working directory")
   }
+  
+  View(env_stack)
+  image(env_stack)
   
   ## Extract environmental variable from env_stack
   if(verbose){
     message("Extracting and appending environmental data")
   }
-  #view(env_stack)
   env_data <- .extract_var(unique_positions, env_stack, env_var, .fill_gaps = fill_gaps, .buffer = buffer, verbose = verbose)
   
-  view(env_data)
+  #view(env_data)
   
   ## Combine environmental data with input detection data
   output <- 

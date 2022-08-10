@@ -109,6 +109,11 @@ runQC <- function(x,
     data_format = data_format
   )
   
+  #Set up a raster for the world (temporary while I test the QC functions that require shapefiles to work)
+  world_raster <- readOGR(dsn = 
+                            file.path("/Users/bruce/Downloads/Land_Masses_and_Ocean_Islands/Land_Masses_and_Ocean_Islands.shp"),
+                          verbose = F)
+  
   ## Apply QC tests on detections
   if(.parallel) {
     message("Starting parallel QC...")
@@ -135,7 +140,7 @@ runQC <- function(x,
       #Changed back to this.
       try(qc(all_data[[i]], 
              Lcheck = lat.check, 
-             logfile), silent = TRUE)
+             logfile, world_raster=world_raster), silent = TRUE)
       
       
       # try(qc_updated(all_data[[i]], 

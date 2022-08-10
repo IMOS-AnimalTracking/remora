@@ -19,7 +19,7 @@
 ##'
 
 
-qc <- function(x, Lcheck = TRUE, logfile) {
+qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
   if(!is.data.frame(x)) stop("x must be a data.frame")
   
   ## Initial tests to identify & correct obvious errors in data
@@ -150,14 +150,16 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 	## Distance and Velocity tests
 	position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
 		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
-	#world_raster <- try(raster(bathyUrl, verbose = FALSE) %>%
+	#world_raster <- try(
+	#  raster("/Users/bruce/Downloads/Land_Masses_and_Ocean_Islands/Land_Masses_and_Ocean_Islands.shp", 
+	#         verbose = FALSE) %>%
 	#                  {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
 	
   message("position set")
 		dist <-
 		  shortest_dist(position,
 		                x$installation_name,
-		                 rast = world_raster,
+		                rast = world_raster,
 		                tr = tr)
 
 		

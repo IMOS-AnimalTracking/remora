@@ -35,7 +35,7 @@
 ##'
 ##' @keywords internal
 
-pull_env_arbitrary <- function(dates, study_extent, var_name, folder_name = NULL, .cache, .crop, .output_format = "raster", .parallel = TRUE, .ncores = NULL, verbose = TRUE,
+pull_env_arbitrary <- function(urls = NULL, request_type = 'single', study_extent, var_name, folder_name = NULL, .cache, .crop, .output_format = "raster", .parallel = TRUE, .ncores = NULL, verbose = TRUE,
                                bathyUrl = "https://upwell.pfeg.noaa.gov/erddap/griddap/etopo5.geotif?ROSE%5B(40):1:(50)%5D%5B(280):1:(320)%5D"){
   
   ## Check arguments
@@ -83,14 +83,13 @@ pull_env_arbitrary <- function(dates, study_extent, var_name, folder_name = NULL
   } 
   
   ## Ocean Color layers
-  if(var_name %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'hs')){
-    
+  #if(var_name %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'hs', 'zeta', 'ohc')){
+  if(request_type == 'single'){
     ## build urls based on dates and variable names
     #urls <- .build_urls(dates, var_name, verbose = verbose)
-    urls <- build_thredds_url(dates, url="http://www.neracoos.org/thredds/", path="dodsC/WW3/", 
-                              file="EastCoast.nc", var=var_name)
-    
-    View(urls)
+    #urls <- build_thredds_url(dates, url="http://www.neracoos.org/thredds/", path="dodsC/WW3/", 
+                              #file="EastCoast.nc", var=var_name)
+    #urls <- build_thredds_url(dates, url="http://www.smast.umassd.edu:8080/thredds/", path="dodsC/FVCOM/NECOFS/Forecasts/", file="NECOFS_WAVE_FORECAST.nc", var=var_name)
     
     ## download raster files from built urls
     if(.parallel){
@@ -199,6 +198,9 @@ pull_env_arbitrary <- function(dates, study_extent, var_name, folder_name = NULL
     }
     
     message("assigning zvalues to raster stack output")
+    
+    View(out_brick)
+    
     ## Assign a zvalues to raster stack output
     zval <-
       names(out_brick) %>%
@@ -221,8 +223,8 @@ pull_env_arbitrary <- function(dates, study_extent, var_name, folder_name = NULL
   if(var_name %in% "rs_current"){
     ## build urls based on dates and variable names
     #built_urls <- .build_urls(dates, var_name, verbose = verbose)
-    built_urls <- urls <- build_thredds_url(dates, url="http://www.neracoos.org/thredds/", path="dodsC/WW3/", 
-                                            file="EastCoast.nc", var=var_name)
+    #built_urls <- urls <- build_thredds_url(dates, url="http://www.neracoos.org/thredds/", path="dodsC/WW3/", 
+                                            #file="EastCoast.nc", var=var_name)
     
     ## error log
     error_log <- built_urls %>% filter(is.na(layer))
