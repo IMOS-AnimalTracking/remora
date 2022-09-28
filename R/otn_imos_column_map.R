@@ -42,7 +42,7 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   
   #Start by mapping the Detections dataframe.
   det_return <- det_dataframe %>%
-    select(
+    dplyr::select(
       datecollected,
       catalognumber,
       tagname,
@@ -112,7 +112,7 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   if(!is.null(rcvr_dataframe) && !derive) {
     #Build this out once basic case is handled.
     rcvr_return <- rcvr_dataframe %>%
-      select(
+      dplyr::select(
         OTN_ARRAY,
         STATION_NO,
         DEPLOY_DATE_TIME,
@@ -165,7 +165,7 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   #And if we have tag metadata, convert that too.
   if(!is.null(tag_dataframe) && !derive) {
     tag_return <- tag_dataframe %>%
-      select(
+      dplyr::select(
         `ANIMAL_ID   (floy tag ID, pit tag code, etc.)`,
         TAG_TYPE,
         TAG_MANUFACTURER,
@@ -247,7 +247,7 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
 #as though we DID get receiver/tag metadata.
 derive_rcvr_from_det <- function(det_dataframe) {
   rcvr <- det_dataframe %>%
-    select(
+    dplyr::select(
       #Select the columns from the detection extract that we have access to.
       detectedby,
       station,
@@ -287,7 +287,7 @@ derive_rcvr_from_det <- function(det_dataframe) {
 
 derive_tag_from_det <- function(det_dataframe) {
   tag <- det_dataframe %>%
-    select(
+    dplyr::select(
       tagname,
       commonname,
       scientificname,

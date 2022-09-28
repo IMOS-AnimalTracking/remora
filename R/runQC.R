@@ -86,7 +86,6 @@ runQC <- function(x,
                   lat.check = TRUE,
                   data_format = "imos", #Added by Bruce Delo for pass-through to get_data_arbitrary- since we can now have imos OR otn data!
                    .parallel = FALSE,
-                   .ncores = detectCores() - 2,
                    .progress = TRUE) {
 
   ## check if n_cores <= detectCores else return warning

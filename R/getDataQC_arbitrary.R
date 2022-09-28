@@ -2,6 +2,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
                                det_id_column = "transmitter_deployment_id", tag_id_column = "transmitter_deployment_id",
                                det_rcvr_column = "receiver_deployment_id", rcvr_id_column = "receiver_deployment_id", data_format = "imos") {
   library(tools)
+  library(dplyr)
   
   #Remember to formalize all of the new variables as comments up above:
   # - checks: vector containing all of the specific chekcs you want to turn on or off while pulling in the data.
@@ -183,7 +184,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
       )
   } else {
     dd <- det_data %>%
-      select(
+      dplyr::select(
         transmitter_id,
         tag_id,
         transmitter_deployment_id,
@@ -209,10 +210,10 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
         receiver_deployment_id,
         everything()
       )
-    View(select(dd, c('transmitter_id', 'transmitter_deployment_id')))
+    View(dplyr::select(dd, c('transmitter_id', 'transmitter_deployment_id')))
   }
   if(!is.null(tag_meta)) {
-    View(select(tag_meta, c('transmitter_id', 'transmitter_deployment_id')))
+    View(dplyr::select(tag_meta, c('transmitter_id', 'transmitter_deployment_id')))
     dd <- left_join(dd,
                     tag_meta,
                     by = c("transmitter_id", "transmitter_deployment_id")) %>%

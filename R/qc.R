@@ -151,16 +151,20 @@ qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
 	position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
 		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
 	#world_raster <- try(
-	#  raster("/Users/bruce/Downloads/Land_Masses_and_Ocean_Islands/Land_Masses_and_Ocean_Islands.shp", 
-	#         verbose = FALSE) %>%
-	#                  {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
+	 # raster("/Users/bruce/Downloads/Land_Masses_and_Ocean_Islands/Land_Masses_and_Ocean_Islands.shp", 
+	  #       verbose = FALSE) %>%
+	   #               {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
 	
   message("position set")
-		dist <-
-		  shortest_dist(position,
-		                x$installation_name,
-		                rast = world_raster,
-		                tr = tr)
+  #Distance temporarily commented out. We're going to reimplement a lot of this and that includes the shortest_dist calculation, which
+  #right now chokes out the rest of the code. So this blows away most of the checks, but it lets the code run so that we can see what
+  #happens when the OTN data goes thru it. 
+  dist <- NULL
+		#dist <-
+		  #shortest_dist(position,
+		                #x$installation_name,
+		                #rast = world_raster,
+		                #tr = tr)
 
 		
 		message("shortest dist calculated")
@@ -175,7 +179,7 @@ qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
 		  )
 
 		  message("determining velocity")
-		  velocity <- (dist * 1000) / timediff
+		  #velocity <- (dist * 1000) / timediff
 
 		  message("Setting temporal outcome...")
 		  message(temporal_outcome[2])
@@ -241,7 +245,7 @@ qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
 		  dist_r <- distGeo(cbind(x$transmitter_deployment_longitude[rep(1, nrow(x))],
 		                          x$transmitter_deployment_latitude[rep(1, nrow(x))]),
 		                    cbind(x$longitude, x$latitude)) / 1000 ## return in km
-		  temporal_outcome[, 5] <- ifelse(dist_r > 500, 2, 1)()
+		  temporal_outcome[, 5] <- ifelse(dist_r > 500, 2, 1)
 		} else {
 		  message("No transmitter lat/long in dataframe, skipping distance-from-release check.")
 		}
