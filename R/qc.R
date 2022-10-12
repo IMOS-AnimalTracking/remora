@@ -22,49 +22,24 @@
 qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
   if(!is.data.frame(x)) stop("x must be a data.frame")
   
-  ## Initial tests to identify & correct obvious errors in data
-  ## first check for NA's in detection_datetime & remove and flag in logfile
-  message("Starting NA check")
-  rn <- which(is.na(x$detection_datetime))
-  if(length(rn) > 0) {
-    lapply(1:length(rn), function(i) {
-      write(paste0(x$filename[1],
-                   ":  ", length(rn), " NA's found in detection_datetime; records removed from QC'd output"),
-            file = logfile,
-            append = TRUE)
-    })
-    ## remove records with NA's in the above variables so QC can proceed
-    message(" Removing NA Time records")
-    x <- x[-rn,]
-  }
-  message("Time NA check done.")
-  message("Lat/long NA check starting")
-  ## check for NA's in (receiver_deployment) longitude/latitude & remove and flag in logfile
-  rn <- which(is.na(x$longitude) | is.na(x$latitude))
-  if(length(rn) > 0) {
-    lapply(1:length(rn), function(i) {
-      write(paste0(x$filename[1],
-                   ":  ", length(rn), " NA's found in receiver_deployment_longitude &/or latitude; records removed from QC'd output"),
-            file = logfile,
-            append = TRUE)
-    })
-    ## remove records with NA's in the above variables so QC can proceed
-    x <- x[-rn,]
-  }
-  message("Lat/Long NA check done")
+  #Start by removing any rows that have NAs in the datetime, lat, or long columns. I'd like to return to this function and make something
+  #a little more comprehensive but for now I've just sliced out the code and hived it off into its own function for cleanliness' sake.
+  x <- qc_remove_nas(x)
   
+  
+  #I've commented out this check for now, I think we're not going to want this what with our intended global scope. 
   ## check for & correct any lat's incorrectly in N hemisphere
-  if(any(x$latitude > 0) & Lcheck) {
-    ## how many incorrect records
-    n <- sum(x$latitude > 0)
-    ## write to logfile
-    write(paste0(x$filename[1],
-                ":  ", n, " receiver_deployment_latitude(s) incorrectly entered in N hemisphere; corrected in QC output"),
-          file = logfile,
-          append = TRUE)
-
-      x <- x %>% mutate(latitude = ifelse(latitude > 0, -1 * latitude, latitude))
-  }
+  #if(any(x$latitude > 0) & Lcheck) {
+  #  ## how many incorrect records
+  #  n <- sum(x$latitude > 0)
+  #  ## write to logfile
+  #  write(paste0(x$filename[1],
+  #              ":  ", n, " receiver_deployment_latitude(s) incorrectly entered in N hemisphere; corrected in QC output"),
+  #        file = logfile,
+  #        append = TRUE)
+  #
+  #    x <- x %>% mutate(latitude = ifelse(latitude > 0, -1 * latitude, latitude))
+  #}
 
 
   message("Configuring temporal outcome vector")
@@ -126,23 +101,10 @@ qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
     }
   }
 
-  #message("Starting false detections test")
-		## False Detection Algorithm test
-		sta_rec <- unique(x$installation_name)
-		sta_rec <- sta_rec[order(sta_rec)]
-
-		for (j in 1:length(sta_rec)){
-			sel <- which(x$installation_name == sta_rec[j])
-			sub <- x[sel, ]
-
-			## Calculate time differences between detections (in minutes)
-			time_diff <- as.numeric(difftime(sub$detection_datetime[2:nrow(sub)],
-			                                 sub$detection_datetime[1:(nrow(sub)-1)],
-			                                 tz = "UTC", units = "mins"))
-			temporal_outcome[sel, 1] <-
-			  ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
-		}
-  #message("False detection test done.")
+  message("Starting false detections test")
+	## False Detection Algorithm test
+	qc_false_detection_test(x, temporal_outcome)
+  message("False detection test done.")
 		
 	#bathyUrl = "https://upwell.pfeg.noaa.gov/erddap/griddap/etopo5.geotif?ROSE%5B(40):1:(50)%5D%5B(280):1:(320)%5D"
   #message("Starting dist/velocity tests")
