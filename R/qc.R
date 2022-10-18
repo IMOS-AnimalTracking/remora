@@ -19,7 +19,7 @@
 ##'
 
 
-qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
+qc <- function(x, Lcheck = TRUE, logfile, tests_vector) {
   if(!is.data.frame(x)) stop("x must be a data.frame")
   
   #Start by removing any rows that have NAs in the datetime, lat, or long columns. I'd like to return to this function and make something
@@ -44,20 +44,21 @@ qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
 
   message("Configuring temporal outcome vector")
   ## Configure output processed data file
-  temporal_outcome <- data.frame(matrix(ncol = 8, nrow = nrow(x)))
-  colnames(temporal_outcome) <- c("FDA_QC",
-                                  "Velocity_QC",
-                                  "Distance_QC",
-                                  "DetectionDistribution_QC",
-                                  "DistanceRelease_QC",
-                                  "ReleaseDate_QC",
-                                  "ReleaseLocation_QC",
-                                  "Detection_QC")
+  temporal_outcome <- data.frame(matrix(ncol = length(tests_vector), nrow = nrow(x)))
+  #colnames(temporal_outcome) <- c("FDA_QC",
+  #                                "Velocity_QC",
+  #                                "Distance_QC",
+  #                                "DetectionDistribution_QC",
+  #                                "DistanceRelease_QC",
+  #                                "ReleaseDate_QC",
+  #                                "ReleaseLocation_QC",
+  #                                "Detection_QC")
+  colnames(temporal_outcome) <- tests_vector
   message("Temporal outcome vector configured")
-
+  
   #Removed sections flagged as redundant. - BD 30/06/2022
 
-  #message("Starting species shapefile grab")
+  message("Starting species shapefile grab")
   spe <- unique(x$species_scientific_name)
   CAAB_species_id <- unique(x$CAAB_species_id)
 
@@ -81,13 +82,14 @@ qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
           append = TRUE)
     shp_b <- NULL
   }
-  #message("Species shapefile grabbing done.")
+  message("Species shapefile grabbing done.")
   
   
   ## Converts unique sets of lat/lon detection coordinates and release lat/lon 
   ##  coordinates to SpatialPoints to test subsequently whether or not detections 
   ##  are in distribution range
   if (!is.null(shp_b)) {
+    message("shapefile not null, starting lat/lon conversion to SpatialPoints")
     ll <- unique(data.frame(x$longitude, x$latitude))
     coordinates(ll) <- ~ x.longitude + x.latitude
     proj4string(ll) <- suppressWarnings(proj4string(shp_b))
@@ -103,7 +105,7 @@ qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
 
   message("Starting false detections test")
 	## False Detection Algorithm test
-	qc_false_detection_test(x, temporal_outcome)
+	temporal_outcome <- qc_false_detection_test(x, temporal_outcome)
   message("False detection test done.")
 		
 	#bathyUrl = "https://upwell.pfeg.noaa.gov/erddap/griddap/etopo5.geotif?ROSE%5B(40):1:(50)%5D%5B(280):1:(320)%5D"
@@ -112,21 +114,16 @@ qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
 	## Distance and Velocity tests
 	position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
 		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
-	#world_raster <- try(
-	 # raster("/Users/bruce/Downloads/Land_Masses_and_Ocean_Islands/Land_Masses_and_Ocean_Islands.shp", 
-	  #       verbose = FALSE) %>%
-	   #               {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
 	
   message("position set")
   #Distance temporarily commented out. We're going to reimplement a lot of this and that includes the shortest_dist calculation, which
   #right now chokes out the rest of the code. So this blows away most of the checks, but it lets the code run so that we can see what
   #happens when the OTN data goes thru it. 
-  dist <- NULL
-		#dist <-
-		  #shortest_dist(position,
-		                #x$installation_name,
-		                #rast = world_raster,
-		                #tr = tr)
+  #dist <- NULL
+	dist <- shortest_dist(position,
+		                x$installation_name,
+		                rast = shp_b,
+		                tr = tr)
 
 		
 		message("shortest dist calculated")
@@ -230,18 +227,18 @@ qc <- function(x, Lcheck = TRUE, logfile, world_raster = NULL) {
     }
 		message("Release time diff check done")
 
-		#message("Starting release location test.")
+		message("Starting release location test.")
 		## Release location test
 		#Commenting while I test something else.
-		# if(!is.null(shp_b)) {
-		#   message("We have a shapefile")
-		# 	temporal_outcome[, 7] <- ifelse(dist[1] > 500 &
-		# 	                                   sum(is.na(over(ll_r, shp_b))) > 0, 2, 1)
-		# } else {
-		#   message("We have no shapefile.")
-		# 	temporal_outcome[, 7] <- ifelse(dist[1] > 500, 2, 1)
-		# }
-    #message("release location test done")
+		if(!is.null(shp_b)) {
+	    message("We have a shapefile")
+		 	temporal_outcome[, 7] <- ifelse(dist[1] > 500 &
+		 	                                   sum(is.na(over(ll_r, shp_b))) > 0, 2, 1)
+	  } else {
+  		message("We have no shapefile.")
+  		temporal_outcome[, 7] <- ifelse(dist[1] > 500, 2, 1)
+		}
+    message("release location test done")
 		
     message("Final QC add")
 		## Detection QC

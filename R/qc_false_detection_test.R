@@ -1,6 +1,6 @@
 #False detection algorithm function. 
 
-qc_false_detection_test <- function(data, temporal_outcome) {
+qc_false_detection_test <- function(data, qc_result) {
   sta_rec <- unique(data$installation_name)
   sta_rec <- sta_rec[order(sta_rec)]
   
@@ -12,7 +12,8 @@ qc_false_detection_test <- function(data, temporal_outcome) {
     time_diff <- as.numeric(difftime(sub$detection_datetime[2:nrow(sub)],
                                      sub$detection_datetime[1:(nrow(sub)-1)],
                                      tz = "UTC", units = "mins"))
-    temporal_outcome[sel, 1] <-
+    qc_result[sel, 'FDA_QC'] <-
       ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
   }
+  return(qc_result)
 }

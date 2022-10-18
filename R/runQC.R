@@ -86,6 +86,7 @@ runQC <- function(x,
                   lat.check = TRUE,
                   data_format = "imos", #Added by Bruce Delo for pass-through to get_data_arbitrary- since we can now have imos OR otn data!
                    .parallel = FALSE,
+                   .ncores = detectCores() - 2,
                    .progress = TRUE) {
 
   ## check if n_cores <= detectCores else return warning
@@ -99,19 +100,27 @@ runQC <- function(x,
 
   message("Reading data...")
   #Swapped from get_data to get_data_arbitrary for testing purposes - BD
-  all_data <- get_data_arbitrary(
+  #all_data <- get_data_arbitrary(
+  #  det = x$det,
+  #  rmeta = x$rmeta,
+  #  tmeta = x$tmeta,
+  #  meas = x$meas,
+  #  logfile = logfile,
+  #  data_format = data_format
+  #)
+  
+  all_data <- get_data(
     det = x$det,
     rmeta = x$rmeta,
     tmeta = x$tmeta,
     meas = x$meas,
-    logfile = logfile,
-    data_format = data_format
+    logfile = logfile
   )
   
   #Set up a raster for the world (temporary while I test the QC functions that require shapefiles to work)
-  world_raster <- readOGR(dsn = 
-                            file.path("/Users/bruce/Downloads/Land_Masses_and_Ocean_Islands/Land_Masses_and_Ocean_Islands.shp"),
-                          verbose = F)
+  #world_raster <- readOGR(dsn = 
+                           # file.path("/Users/bruce/Downloads/Land_Masses_and_Ocean_Islands/Land_Masses_and_Ocean_Islands.shp"),
+                         # verbose = F)
   
   ## Apply QC tests on detections
   if(.parallel) {
@@ -134,12 +143,25 @@ runQC <- function(x,
         flush.console()
       }
       
+      #Adding this out here. The idea is that we'll eventually percolate this up to the user level to
+      #switch QC tests on and off as they like, but for now it's gonna be here to keep it close to where
+      #it needs to be. 
+      tests_vector <-  c("FDA_QC",
+                        "Velocity_QC",
+                        "Distance_QC",
+                        "DetectionDistribution_QC",
+                        "DistanceRelease_QC",
+                        "ReleaseDate_QC",
+                        "ReleaseLocation_QC",
+                        "Detection_QC")
+        
       message("StartingQC")
       # Changed by Bruce Delo from qc to qc_updated
       #Changed back to this.
       try(qc(all_data[[i]], 
              Lcheck = lat.check, 
-             logfile, world_raster=world_raster), silent = TRUE)
+             logfile,
+             tests_vector), silent = TRUE)
       
       
       # try(qc_updated(all_data[[i]], 
