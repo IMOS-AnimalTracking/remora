@@ -25,6 +25,9 @@
 
 shortest_dist <- function(position, inst, rast, tr){
 
+  library(raster)
+  library(sp)
+  
   pts2_o <- pts2 <- cbind(x = position$longitude[2:nrow(position)],
                           y = position$latitude[2:nrow(position)])
   pts1_o <- pts1 <- cbind(x = position$longitude[1:(nrow(position)-1)],
@@ -57,7 +60,7 @@ shortest_dist <- function(position, inst, rast, tr){
 		    Aust_sub <-
 		      try(crop(rast, extent(min(pts[, 1]) - 2, max(pts[, 1]) + 2, min(pts[, 2]) - 2, max(pts[, 2]) + 2)))
 		    if(inherits(Aust_sub, "try-error")) stop("detection locations outside extent of land raster")
-		    Aust_sub <- cbind(coordinates(Aust_sub), Aust_sub@data@values)
+		    Aust_sub <- cbind(raster::coordinates(Aust_sub), Aust_sub@data@values)
 		    Aust_sub <- Aust_sub[Aust_sub[, 3] == 1,]
 
 		    if (sum(is.na(raster::extract(rast, pts))) == 1) {
@@ -93,7 +96,7 @@ shortest_dist <- function(position, inst, rast, tr){
 			      (sum(is.na(raster::extract(rast, pts))) == 2 & inst1[u] != inst2[u])) {
 			    Aust_sub <-
 			      crop(rast, extent(min(pts[, 1]) - 2, max(pts[, 1]) + 2, min(pts[, 2]) - 2, max(pts[, 2]) + 2))
-			    Aust_sub <- cbind(coordinates(Aust_sub), Aust_sub@data@values)
+			    Aust_sub <- cbind(raster::coordinates(Aust_sub), Aust_sub@data@values)
 			    Aust_sub <- Aust_sub[Aust_sub[, 3] == 1,]
 			    if (sum(is.na(raster::extract(rast, pts))) == 1) {
 			      dist_sub <-

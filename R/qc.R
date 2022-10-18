@@ -65,7 +65,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector) {
   ## Find corresponding ALA shapefile based on species name
   shp_b <- NULL
   if (!is.na(spe) & !is.na(CAAB_species_id))
-    shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe), silent = TRUE)
+    shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe))
 
   ## if no shape file or spe or CAAB_species_id is missing then append to logfile & continue
   if(is.null(shp_b)) {
@@ -122,7 +122,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector) {
   #dist <- NULL
 	dist <- shortest_dist(position,
 		                x$installation_name,
-		                rast = shp_b,
+		                rast = Aust_raster,
 		                tr = tr)
 
 		

@@ -61,7 +61,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   ## drop any unnamed columns, up to a possible 20 of them...
   if(any(paste0("X",1:20) %in% names(det_data))) {
     drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(det_data)]
-    det_data <- det_data %>% select(-any_of(drops))
+    det_data <- det_data %>% dplyr::select(-any_of(drops))
   }
 
   ## add embargo_date variable if not present so downstream code works
@@ -77,7 +77,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     ## drop any unnamed columns, up to a possible 20 of them...
     if(any(paste0("X",1:20) %in% names(rec_meta))) {
       drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(rec_meta)]
-      rec_meta <- rec_meta %>% select(-any_of(drops))
+      rec_meta <- rec_meta %>% dplyr::select(-any_of(drops))
     }
   }
 
@@ -115,7 +115,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     ## drop any unnamed columns, up to a possible 20 of them...
     if(any(paste0("X",1:20) %in% names(tag_meta))) {
       drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(tag_meta)]
-      tag_meta <- tag_meta %>% select(-any_of(drops))
+      tag_meta <- tag_meta %>% dplyr::select(-any_of(drops))
     }
   }
 
@@ -133,7 +133,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     ## drop any unnamed columns, up to a possible 20 of them...
     if(any(paste0("X",1:20) %in% names(meas))) {
       drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(meas)]
-      meas <- meas %>% select(-any_of(drops))
+      meas <- meas %>% dplyr::select(-any_of(drops))
     }
 
   }
@@ -213,7 +213,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   ##    but merge everything & keep detections data version of common variables
   dd <-
     left_join(det_data, rec_meta, by = "receiver_deployment_id") %>%
-    select(
+    dplyr::select(
       transmitter_id,
       tag_id,
       transmitter_deployment_id,
@@ -249,12 +249,12 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
       receiver_recovery_latitude,
       everything()
     ) %>%
-    select(
+    dplyr::select(
       -receiver_name.y,-receiver_project_name.y,-installation_name.y,-station_name.y,-receiver_deployment_longitude.y,-receiver_deployment_latitude.y
     )
   } else {
     dd <- det_data %>%
-      select(
+      dplyr::select(
         transmitter_id,
         tag_id,
         transmitter_deployment_id,
@@ -286,7 +286,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     dd <- left_join(dd,
                     tag_meta,
                     by = c("transmitter_id", "transmitter_deployment_id")) %>%
-      select(
+      dplyr::select(
         -transmitter_serial_number.y,
         -tagging_project_name.y,
         -transmitter_type.y,
@@ -318,7 +318,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                         transmitter_deployment_datetime.x))
     }
     dd <- dd %>%
-      select(
+      dplyr::select(
         -transmitter_deployment_latitude.y,
         -transmitter_deployment_longitude.y,
         -transmitter_deployment_datetime.y
@@ -366,7 +366,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     anim_meas <- anim_meas %>%
       mutate(meas =
                paste(measurement_type, "=", measurement_value, measurement_unit)) %>%
-      select(transmitter_deployment_id, meas) %>%
+      dplyr::select(transmitter_deployment_id, meas) %>%
       group_by(transmitter_deployment_id) %>%
       dplyr::transmute(measurement = paste0(meas, collapse = "; ")) %>%
       distinct() %>%

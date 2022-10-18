@@ -92,6 +92,7 @@ Lets have a quick look at the spatial patterns in detection data:
 ```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 
 qc_data <- read_csv("/Users/bruce/Downloads/nsbs_matched_detections_2021/nsbs_matched_detections_2021.csv")
+v2lcelase <- read_csv("/Users/bruce/Downloads/v2lcelase_matched_detections_2021/v2lcelase_matched_detections_2021.csv")
 
 qc_data %>% 
   #Changed the column names throughout, will need to have some sort of way to set these more dynamically. 
@@ -168,12 +169,48 @@ In these cases, a simple extraction will result in `NA`s where no overlap occurs
 library(progressr)
 library(sf)
 
+datecolumn = "datecollected" #If you're not using OTN formatted data, change this to the date column in your dataset.
+
+#Start by building URL. This is where people can specify the URL they want to grab environmental data from, 
+env_urls <- build_thredds_url(
+  df= qc_data,
+  datetime = datecolumn, 
+  # For the purposes of demonstration we're going to use wave height from NERACOOS 
+  url="http://www.neracoos.org/thredds/", 
+  path="dodsC/WW3/", 
+  file="EastCoast.nc", 
+  var="hs"
+)
+
+env_urls <- build_thredds_url(
+  df = qc_data,
+  datetime = datecolumn, 
+  url = "https://coastwatch.pfeg.noaa.gov/erddap/",
+  path = "griddap/", 
+  file = "nceiPH53sstd1day.nc",
+  var = "sea_surface_temperature"
+)
+
+env_urls <- build_thredds_url(
+  df = qc_data,
+  datetime = datecolumn,
+  url = "https://ncei.noaa.gov/thredds-ocean/",
+  path = "pathfinder/Version5.3/L3C/2022/data/",
+  file = "20220101014938-NCEI-L3C_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.3_NOAA19_G_2022001_night-v02.0-fv01.0.nc",
+  var = "ohc"
+)
+
+https://www.ncei.noaa.gov/thredds-ocean/dodsC/woa/heat_content/seasonal_ocean_heat_content.nc.html
+
+#https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiPH53sstd1day.nc?sea_surface_temperature%5B(2021-12-31T12:00:00Z):1:(2021-12-31T12:00:00Z)%5D%5B(89.979):1:(-89.979)%5D%5B(-179.979):1:(179.979)%5D
+
 data_with_sst <- 
   extractEnvArbitrary(df = qc_data,
              X = "longitude", 
              Y = "latitude", 
-             datetime = "datecollected", 
-             env_var = "hs",  ## Currently only a single variable can be called at a time
+             datetime = datecolumn,
+             env_request = env_urls,
+             request_type = 'single', #single, vector, or bathy
              cache_layers = TRUE,
              crop_layers = FALSE,
              fill_gaps = TRUE,
@@ -290,10 +327,11 @@ det_summary <-
 sst_raster <- stack("imos.cache/rs variables/test/rs_sst_interpolated.grd")
 bathy_raster <- stack("imos.cache/rs variables/test/bathy.grd")
 hs_raster <- stack("imos.cache/rs variables/test/hs.grd")
+sst_raster <- stack("imos.cache/rs variables/test/sea_surface_temperature.grd")
 
-#sst_df <- 
-#  as.data.frame(sst_raster[[1:12]], xy = T) %>% 
-#  pivot_longer(-c(1,2))
+sst_df <- 
+  as.data.frame(rast_test, xy = T) %>% 
+  pivot_longer(-c(1,2))
 
 bathy_df <- 
   as.data.frame(bathy_raster, xy=T) %>%
@@ -304,14 +342,21 @@ hs_df <-
   pivot_longer(-c(1,2))
 
 
-ggplot(hs_df) +
+ggplot(sst_df) +
   geom_tile(aes(x, y, fill = value)) +
   scale_fill_viridis_c() +
   geom_point(data = det_summary_clean, aes(x = lon, y = lat), size = 0.5, color = "red", inherit.aes = F) +
-  labs(fill = "Wave Height (m)", x = "Longitude", y = "Latitude") +
+  labs(fill = "SST (deg C)", x = "Longitude", y = "Latitude") +
   coord_equal() +
   facet_wrap(~name, nrow = 4) +
   theme_bw()
+
+anim <- hs_plot +
+  transition_states(name,
+                    transition_length = 2,
+                    state_length = 1)
+
+anim
 
 ```
 ![ ](images/env_extract/env_extract_plot5.png)
