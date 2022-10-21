@@ -221,18 +221,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     }
 
     if("ReleaseLocation_QC" %in% colnames(temporal_outcome)) {
-      message("Starting release location test.")
-      ## Release location test
-      #Commenting while I test something else.
-      if(!is.null(shp_b)) {
-        message("We have a shapefile")
-        temporal_outcome[, "ReleaseLocation_QC"] <- ifelse(dist[1] > 500 &
-                                                             sum(is.na(over(ll_r, shp_b))) > 0, 2, 1)
-      } else {
-        message("We have no shapefile.")
-        temporal_outcome[, "ReleaseLocation_QC"] <- ifelse(dist[1] > 500, 2, 1)
-      }
-      message("release location test done")
+      temporal_outcome <- qc_release_location_test(x, temporal_outcome, shp_b, dist, ll_r)
     }
 		
     message("Final QC add")
