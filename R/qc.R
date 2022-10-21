@@ -19,7 +19,14 @@
 ##'
 
 
-qc <- function(x, Lcheck = TRUE, logfile, tests_vector) {
+qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
+                                                           "Velocity_QC",
+                                                           "Distance_QC",
+                                                           "DetectionDistribution_QC",
+                                                           "DistanceRelease_QC",
+                                                           "ReleaseDate_QC",
+                                                           "ReleaseLocation_QC",
+                                                           "Detection_QC")) {
   if(!is.data.frame(x)) stop("x must be a data.frame")
   
   #Start by removing any rows that have NAs in the datetime, lat, or long columns. I'd like to return to this function and make something
