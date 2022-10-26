@@ -29,6 +29,18 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                                                            "Detection_QC")) {
   if(!is.data.frame(x)) stop("x must be a data.frame")
   
+  message("Configuring temporal outcome vector")
+  ## Configure output processed data file
+  temporal_outcome <- data.frame(matrix(ncol = length(tests_vector), nrow = nrow(x)))
+  colnames(temporal_outcome) <- tests_vector
+  message("Temporal outcome vector configured")
+  
+  #If our dataframe is only one entry long, quit.
+  if(nrow(x) == 1) {
+    message("Dataframe must have more than one row for QC.")
+    return(bind_cols(x, temporal_outcome))
+  }
+  
   #Start by removing any rows that have NAs in the datetime, lat, or long columns. I'd like to return to this function and make something
   #a little more comprehensive but for now I've just sliced out the code and hived it off into its own function for cleanliness' sake.
   x <- qc_remove_nas(x)
@@ -47,50 +59,36 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   #
   #    x <- x %>% mutate(latitude = ifelse(latitude > 0, -1 * latitude, latitude))
   #}
-
-
-  message("Configuring temporal outcome vector")
-  ## Configure output processed data file
-  temporal_outcome <- data.frame(matrix(ncol = length(tests_vector), nrow = nrow(x)))
-  #colnames(temporal_outcome) <- c("FDA_QC",
-  #                                "Velocity_QC",
-  #                                "Distance_QC",
-  #                                "DetectionDistribution_QC",
-  #                                "DistanceRelease_QC",
-  #                                "ReleaseDate_QC",
-  #                                "ReleaseLocation_QC",
-  #                                "Detection_QC")
-  colnames(temporal_outcome) <- tests_vector
-  message("Temporal outcome vector configured")
   
   #Removed sections flagged as redundant. - BD 30/06/2022
 
-  message("Starting species shapefile grab")
-  spe <- unique(x$species_scientific_name)
-  CAAB_species_id <- unique(x$CAAB_species_id)
-
-  ## Find corresponding ALA shapefile based on species name
-  shp_b <- NULL
-  if (!is.na(spe) & !is.na(CAAB_species_id))
-    shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe))
-
-  ## if no shape file or spe or CAAB_species_id is missing then append to logfile & continue
-  if(is.null(shp_b)) {
-    ## write to logfile
-    write(paste0(x$filename[1],
-                ": shapefile not available for ", spe, "; Dectection distribution not tested"),
-          file = logfile,
-          append = TRUE)
-  } else if(inherits(shp_b, "try-error")) {
-    ## write to logfile
-    write(paste0(x$filename[1],
-                 ": shapefile could not be downloaded for ", spe, "; Dectection distribution not tested"),
-          file = logfile,
-          append = TRUE)
-    shp_b <- NULL
-  }
-  message("Species shapefile grabbing done.")
+  # message("Starting species shapefile grab")
+  # spe <- unique(x$species_scientific_name)
+  # CAAB_species_id <- unique(x$CAAB_species_id)
+  # 
+  # ## Find corresponding ALA shapefile based on species name
+  # shp_b <- NULL
+  # if (!is.na(spe) & !is.na(CAAB_species_id))
+  #   shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe))
+  # 
+  # ## if no shape file or spe or CAAB_species_id is missing then append to logfile & continue
+  # if(is.null(shp_b)) {
+  #   ## write to logfile
+  #   write(paste0(x$filename[1],
+  #               ": shapefile not available for ", spe, "; Dectection distribution not tested"),
+  #         file = logfile,
+  #         append = TRUE)
+  # } else if(inherits(shp_b, "try-error")) {
+  #   ## write to logfile
+  #   write(paste0(x$filename[1],
+  #                ": shapefile could not be downloaded for ", spe, "; Dectection distribution not tested"),
+  #         file = logfile,
+  #         append = TRUE)
+  #   shp_b <- NULL
+  # }
+  # message("Species shapefile grabbing done.")
   
+  shp_b <- blue_shark_spatial
   
   ## Converts unique sets of lat/lon detection coordinates and release lat/lon 
   ##  coordinates to SpatialPoints to test subsequently whether or not detections 
@@ -100,15 +98,20 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     ll <- unique(data.frame(x$longitude, x$latitude))
     coordinates(ll) <- ~ x.longitude + x.latitude
     proj4string(ll) <- suppressWarnings(proj4string(shp_b))
-
+    
+    message("Step one")
+    ll_r <- NULL
     if (!is.na(x$transmitter_deployment_longitude[1])) {
       ll_r <-
         data.frame(x$transmitter_deployment_longitude[1], x$transmitter_deployment_latitude[1])
+      message("Step two")
       coordinates(ll_r) <-
         ~ x.transmitter_deployment_longitude.1. + x.transmitter_deployment_latitude.1.
+      message("Step three")
       proj4string(ll_r) <- suppressWarnings(proj4string(shp_b))
     }
   }
+  message("Conversion done.")
 
   
 	## False Detection Algorithm test
@@ -123,33 +126,41 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   #message("Starting dist/velocity tests")
   #Commented out to test if I can get the rest of this running
 	## Distance and Velocity tests
-	position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
-		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
-	
-  message("position set")
-  #Distance temporarily commented out. We're going to reimplement a lot of this and that includes the shortest_dist calculation, which
-  #right now chokes out the rest of the code. So this blows away most of the checks, but it lets the code run so that we can see what
-  #happens when the OTN data goes thru it. 
-  #dist <- NULL
-  dist <- shortest_dist(position,
-                        x$installation_name,
-                        rast = Aust_raster,
-                        tr = tr)
-  message("shortest dist calculated")
-  
-    if("Velocity_QC" %in% colnames(temporal_outcome)) {
-    	temporal_outcome <- qc_test_velocity(x, temporal_outcome, dist)
+  dist <- NULL
+  if(any(is.na(x$transmitter_deployment_longitude)) | any(is.na(x$transmitter_deployment_longitude))) {
+    message("Not enough data for some QC checks.")
+  }
+  else
+  {
+  	position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
+  		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
+  	
+    message("position set")
+    #Distance temporarily commented out. We're going to reimplement a lot of this and that includes the shortest_dist calculation, which
+    #right now chokes out the rest of the code. So this blows away most of the checks, but it lets the code run so that we can see what
+    #happens when the OTN data goes thru it. 
+    #dist <- NULL
+    # tr is included in the sysdata, but if someone brings their own shapefile then we have to create our own. 
+    dist <- shortest_dist(position,
+                          x$installation_name,
+                          #rast = Aust_raster,
+                          rast = world_raster_sub,
+                          tr = shark_tr)
+    message("shortest dist calculated")
+  }
+    if("Velocity_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
+    	#temporal_outcome <- qc_test_velocity(x, temporal_outcome, dist)
     }
   
-    if("Distance_QC" %in% colnames(temporal_outcome)) {
+    if("Distance_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
       temporal_outcome <- qc_test_distance(x, temporal_outcome, dist)
     }
 
-		#message("Dist/velocity tests done.")
+		message("Dist/velocity tests done.")
 		## Detection distribution test
-    if("DetectionDistribution_QC" %in% colnames(temporal_outcome)) {
+    if("DetectionDistribution_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
       message("Starting detection distribution test")
-      temporal_outcome <- qc_test_det_distro(x, ll, temporal_outcome, shp_b)
+      #temporal_outcome <- qc_test_det_distro(x, ll, temporal_outcome, shp_b)
       message("Detection distribution test done.")
     }
 
@@ -167,7 +178,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
       message("Release time diff check done")
     }
 
-    if("ReleaseLocation_QC" %in% colnames(temporal_outcome)) {
+    if("ReleaseLocation_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
       temporal_outcome <- qc_release_location_test(x, temporal_outcome, shp_b, dist, ll_r)
     }
 		

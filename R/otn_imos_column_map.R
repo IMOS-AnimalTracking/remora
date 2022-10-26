@@ -33,11 +33,13 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   #If we don't get passed a receiver or tag dataframe, we derive them from det. This will give us hopefully enough info that we can create the final
   #detection dataframe to be returned, which will be valid for Remora. Ideally. 
   if(is.null(rcvr_dataframe) && derive) {
+    message("Deriving receiver dataframe...")
     rcvr_return <- derive_rcvr_from_det(det_dataframe)
   }
   
   if(is.null(tag_dataframe) && derive) {
-    tag_dataframe <- derive_tag_from_det(det_dataframe)
+    message("Deriving tag dataframe...")
+    tag_return <- derive_tag_from_det(det_dataframe)
   }
   
   #Start by mapping the Detections dataframe.
@@ -88,9 +90,9 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
     unite(
       receiver_deployment_id, c("receiver_group", "station", "receiver"), sep = "-", remove = FALSE
     ) %>%
-    unite(
-      transmitter_deployment_id, c("tagname", "cleandate", "latitude", "longitude"), sep = "-",  remove = FALSE
-    ) %>%
+    #unite(
+    #  transmitter_deployment_id, c("tagname", "cleandate", "latitude", "longitude"), sep = "-",  remove = FALSE
+    #) %>%
     rename(
       transmitter_id = tagname,
       tag_id = catalognumber,
@@ -107,6 +109,7 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
       #back outside this function. The code outside still has to work for IMOS formatted data so we can't change it too much, so when we massage
       #the column names like so, we have to introduce a step that maybe we'd rather skip. 
     )
+  det_return$transmitter_deployment_id = det_return$tag_id
   
   #If we have receiver_meta, convert that to an IMOS friendly version. 
   if(!is.null(rcvr_dataframe) && !derive) {
@@ -246,7 +249,16 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
 #Hack together a piecemeal receiver metadata dataframe for instances where we get detection data, no receiver/tag metadata, but still want to act
 #as though we DID get receiver/tag metadata.
 derive_rcvr_from_det <- function(det_dataframe) {
-  rcvr <- det_dataframe %>%
+  #Group by receiver name and station ID. 
+  rcvr_grouped <- det_dataframe %>%
+    group_by(receiver, station) %>%
+    mutate(
+      minDetectionDate = min(datecollected),
+      maxDetectionDate = max(datecollected)
+    ) %>%
+    distinct(receiver, station, .keep_all = TRUE)
+  
+  rcvr <- rcvr_grouped %>%
     dplyr::select(
       #Select the columns from the detection extract that we have access to.
       detectedby,
@@ -256,6 +268,8 @@ derive_rcvr_from_det <- function(det_dataframe) {
       longitude,
       latitude,
       receiver_group,
+      minDetectionDate,
+      maxDetectionDate
     ) %>%
     unite(
       receiver_deployment_id, c("receiver_group", "station", "receiver"), sep = "-", remove = FALSE
@@ -286,7 +300,23 @@ derive_rcvr_from_det <- function(det_dataframe) {
 }
 
 derive_tag_from_det <- function(det_dataframe) {
-  tag <- det_dataframe %>%
+  #Group by tagname. We may need to add the option to use alternative columns in the future, but that's doable, I think. 
+  distinctTag <- det_dataframe %>%
+    group_by(tagname) %>%
+    distinct(tagname, .keep_all=TRUE)
+  
+  #To get the correct transmitter lat/lon, we need to get the releases.
+  releases <- det_dataframe %>%
+    filter(receiver == "release") %>%
+    group_by(catalognumber) %>%
+    distinct(catalognumber, .keep_all = TRUE) %>%
+    rename(
+      transmitter_deployment_id = catalognumber,
+      transmitter_deployment_latitude = latitude,
+      transmitter_deployment_longitude = longitude
+    )
+  
+  tag <- distinctTag %>%
     dplyr::select(
       tagname,
       commonname,
@@ -295,15 +325,14 @@ derive_tag_from_det <- function(det_dataframe) {
       monthcollected,
       daycollected,
       longitude,
-      latitude
-    ) %>%
-    unite(
-      transmitter_deployment_id, c("tagname", "yearcollected", "monthcollected", "daycollected", "longitude", "latitude"), sep = "-",  remove = FALSE
+      latitude,
+      catalognumber
     ) %>%
     rename (
       transmitter_id = tagname,
       species_common_name = commonname,
-      species_scientific_name = scientificname
+      species_scientific_name = scientificname,
+      transmitter_deployment_id = catalognumber
     ) %>%
     mutate (
       transmitter_serial_number = NA,
@@ -315,12 +344,10 @@ derive_tag_from_det <- function(det_dataframe) {
       transmitter_sensor_unit = NA,
       transmitter_estimated_battery_life = NA,
       transmitter_status = NA,
-      transmitter_deployment_id = NA,
+      #transmitter_deployment_id = NA,
       animal_sex = NA,
       placement = NA,
       transmitter_deployment_locality = NA,
-      transmitter_deployment_latitude = NA,
-      transmitter_deployment_longitude = NA,
       transmitter_deployment_datetime = NA,
       transmitter_deployment_comments = NA,
       embargo_date = NA,
@@ -328,6 +355,12 @@ derive_tag_from_det <- function(det_dataframe) {
       transmitter_recovery_latitude = NA,
       transmitter_recovery_longitude = NA,
     )
+  
+  
+  #Now we can join the releases to get the appropriate transmitter_deployment_lat/lon
+  tag <- left_join(tag,
+                   releases %>% dplyr::select(transmitter_deployment_id, transmitter_deployment_latitude, transmitter_deployment_longitude),
+                   by = "transmitter_deployment_id")
   
   return(as.data.frame(tag))
 }

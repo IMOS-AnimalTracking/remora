@@ -72,7 +72,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
   #We're gonna do the same merge but first we're going to take OTN formatted data and massage the columns into an IMOS-friendly setup.
   
   if(tolower(data_format) == "otn") {
-    processed_data <- otn_imos_column_map(det_data, rec_meta, tag_meta, derive=FALSE)
+    processed_data <- otn_imos_column_map(det_data, rec_meta, tag_meta, derive=TRUE)
     det_data <- processed_data$detections
     rec_meta <- processed_data$receivers
     tag_meta <- processed_data$tags
@@ -143,7 +143,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
     ##    but merge everything & keep detections data version of common variables
     dd <-
       left_join(det_data, rec_meta, by = "receiver_deployment_id") %>%
-      select(
+      dplyr::select(
         transmitter_id,
         tag_id,
         transmitter_deployment_id,
@@ -179,7 +179,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
         receiver_recovery_latitude,
         everything()
       ) %>%
-      select(
+      dplyr::select(
         -receiver_name.y,-receiver_project_name.y,-installation_name.y,-station_name.y,-receiver_deployment_longitude.y,-receiver_deployment_latitude.y
       )
   } else {
@@ -210,14 +210,12 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
         receiver_deployment_id,
         everything()
       )
-    View(dplyr::select(dd, c('transmitter_id', 'transmitter_deployment_id')))
   }
   if(!is.null(tag_meta)) {
-    View(dplyr::select(tag_meta, c('transmitter_id', 'transmitter_deployment_id')))
     dd <- left_join(dd,
                     tag_meta,
                     by = c("transmitter_id", "transmitter_deployment_id")) %>%
-      select(
+      dplyr::select(
         -transmitter_serial_number.y,
         -tagging_project_name.y,
         -transmitter_type.y,
@@ -231,10 +229,9 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
         -species_scientific_name.y,
         -animal_sex.y,
         -embargo_date.x)
-    View(dd)
     ## deal with any cases where deploy lon/lat is missing in detections but not metadata
     if(any(is.na(dd$transmitter_deployment_longitude.x)) |
-       any(is.na(dd$transmitter_deployment_latitude.x))) {
+       any(is.na(dd$transmitter_deployment_latitude.x))) { 
       dd <- dd %>%
         mutate(transmitter_deployment_longitude.x =
                  ifelse(is.na(transmitter_deployment_longitude.x),
@@ -250,7 +247,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
                         transmitter_deployment_datetime.x))
     }
     dd <- dd %>%
-      select(
+      dplyr::select(
         -transmitter_deployment_latitude.y,
         -transmitter_deployment_longitude.y,
         -transmitter_deployment_datetime.y
@@ -271,7 +268,9 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
         transmitter_deployment_longitude = transmitter_deployment_longitude.x,
         transmitter_deployment_latitude = transmitter_deployment_latitude.x,
         transmitter_deployment_datetime = transmitter_deployment_datetime.x,
-        embargo_date = embargo_date.y
+        embargo_date = embargo_date.y,
+        latitude = latitude.x,
+        longitude = longitude.x,
       ) 
     if (!inherits(dd$transmitter_deployment_datetime, "POSIXt")) {
       if (inherits(dd$transmitter_deployment_datetime, "numeric")) {
@@ -297,7 +296,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
     anim_meas <- anim_meas %>%
       mutate(meas =
                paste(measurement_type, "=", measurement_value, measurement_unit)) %>%
-      select(transmitter_deployment_id, meas) %>%
+      dplyr::select(transmitter_deployment_id, meas) %>%
       group_by(transmitter_deployment_id) %>%
       dplyr::transmute(measurement = paste0(meas, collapse = "; ")) %>%
       distinct() %>%
@@ -356,7 +355,7 @@ get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logf
 remove_unnamed_columns <- function(dataframe) {
   if(any(paste0("X",1:20) %in% names(dataframe))) {
     drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(dataframe)]
-    dataframe <- dataframe %>% select(-any_of(drops))
+    dataframe <- dataframe %>% dplyr::select(-any_of(drops))
   }
   return(as.data.frame(dataframe))
 }
