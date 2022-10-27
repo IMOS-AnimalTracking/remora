@@ -4,6 +4,9 @@
 ##' assessed validity status, overlaid on species expert distribution extent
 ##'
 ##' @param x a remora output object with \code{class(remora_QC)}
+##' @param path path to save map(s) as an .html file. Options are: `NULL` (default);
+##' `wb` (render map in default web browser); or a valid file path (map saved as a
+##' self-contained .html file)
 ##' @return produces interactive leaflet maps of species expert distribution and
 ##' location of QC'd detections
 ##'
@@ -15,21 +18,17 @@
 ##' plotQCint(TownsvilleReefQC)
 ##' 
 ##' 
-##' @importFrom tools file_ext
 ##' @importFrom data.table fread rbindlist
 ##' @importFrom leaflet leaflet addMarkers addCircleMarkers fitBounds addLegend 
 ##' @importFrom leaflet addProviderTiles addLayersControl addPolygons layersControlOptions
+##' @importFrom htmlwidgets saveWidget
 ##' @importFrom dplyr '%>%' summarise left_join group_by
 ##' @importFrom plyr ldply '.' ddply count
-##' @importFrom scales alpha
-##' @importFrom maps map.axes map
-##' @importFrom sp plot
-##' @importFrom grDevices png dev.off extendrange
-##' @importFrom graphics par points legend mtext 
+##' @importFrom grDevices extendrange
 ##'
 ##' @export
 
-plotQCint <- function(x) {
+plotQCint <- function(x, path = NULL) {
 
   if(!inherits(x, "remora_QC")) 
     stop("\033[31;1mx must be a nested tibble with class `remora_QC`\033[0m")
@@ -233,18 +232,33 @@ plotQCint <- function(x) {
 		                                 releases$transmitter_deployment_id, 
 		                                 sep = "_"))
 		             ) %>%
-		  addLegend(position = "topright",
+		  addLegend(position = "bottomleft",
 		            values = dataC$Detection_QC,
 		            colors = hcl.colors(n=4, palette = "Green-Brown"),
 		              #c("#1A9641", "#A6D96A", "#FDAE61", "#D7191C"),
 		            opacity = 0.75,
-		            labels = c("<b>Valid</b>", "<b>Likely valid</b>", "<b>Likely invalid</b>", "<b>Invalid</b>")) %>%
+		            labels = c("Valid", "Likely valid", "Likely invalid", "Invalid")) %>%
 		  addLayersControl(
 		    baseGroups = c("Default", "ESRI Bathymetry"),
 		    overlayGroups = c("Species distribution", "Valid", "Likely valid", "Likely invalid", "Invalid", "Deployment locations"),
 		    options = layersControlOptions(collapsed = FALSE)
 		  )
 
-print(map)
+		fs <- tempfile(pattern = paste0(gsub(' ', '_', species$species_common_name[i]),
+		                                "_QCmap"),
+		               fileext = ".html")
+		saveWidget(map, file = fs, selfcontained = TRUE)
+		
+		if (all(!is.null(path), path != "wb")) {
+		  fs2 <- file.path(path, paste0(gsub(' ', '_', species$species_common_name[i]),
+		                                "_QCmap.html"))
+		  system2("cp", args = c(fs, fs2))
+		    
+		} else if (all(!is.null(path), path == "wb")) {
+		  browseURL(fs)
+		  
+		} else if (is.null(path)) {
+		  print(map)
+		}
 	}
 }

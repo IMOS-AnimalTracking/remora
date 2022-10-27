@@ -4,10 +4,14 @@
 \alias{plotQCint}
 \title{produce interactive leaflet maps showing the occurrence of QC'd detections per species}
 \usage{
-plotQCint(x)
+plotQCint(x, path = NULL)
 }
 \arguments{
 \item{x}{a remora output object with \code{class(remora_QC)}}
+
+\item{path}{path to save map(s) as an .html file. Options are: \code{NULL} (default);
+\code{wb} (render map in default web browser); or a valid file path (map saved as a
+self-contained .html file)}
 }
 \value{
 produces interactive leaflet maps of species expert distribution and
