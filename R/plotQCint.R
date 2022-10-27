@@ -118,46 +118,27 @@ plotQCint <- function(x) {
 		if (!is.null(class(expert_shp))) {
 		  map <- leaflet(expert_shp) %>%
 		    fitBounds(lng1 = bb[1], lat1 = bb[3], lng2 = bb[2], lat2 = bb[4]) %>%
-		    addPolygons(weight = 0.25) %>%
-		    addProviderTiles("CartoDB.Positron")
+		    addPolygons(weight = 0.25, group = "Species distribution") %>%
+		    addProviderTiles("CartoDB.Positron", group = "Default") %>%
+		    addProviderTiles("Esri.OceanBasemap", group = "ESRI Bathymetry")
+		  
 		} else {
 		  map <- leaflet() %>%
 		    fitBounds(lng1 = bb[1], lat1 = bb[3], lng2 = bb[2], lat2 = bb[4]) %>%
-		    addProviderTiles("CartoDB.Positron")
+		    addProviderTiles("CartoDB.Positron", group = "CartoDB")
 		}
 
-		## Plot valid detections
-		if (sum(data$Detection_QC == 1, na.rm = TRUE) > 0) {
-		  dsub <- subset(dataC, Detection_QC == 1)
-		  map <- map %>% 
-		    addCircleMarkers(lng = dsub$receiver_deployment_longitude, 
-		               lat = dsub$receiver_deployment_latitude,
-		               radius = dsub$binned_detections * 5,
-		               weight = 0.25,
-		               color = "#1A9641",
-		               fillColor = "#1A9641",
-		               fillOpacity = 0.5,
-		               popup = paste("<b>Quality Controlled Detections</b>", "<br>",
-		                             "Receiver name:", dsub$receiver_name,"<br>",
-		                             "Station name:", dsub$station_name, "<br>",
-		                             "Installation name:", dsub$installation_name, "<br>",
-		                             "Longitude:", dsub$receiver_deployment_longitude, "<br>",
-		                             "Latitude:", dsub$receiver_deployment_latitude, "<br>",
-		                             "Number of detections:", dsub$freq, "<br>",
-		                             "Number of tags detected:", dsub$nT, "<br>",
-		                             "QC flag:", "<b>Valid</b>"))
-		}
-
-			## Plot invalid detections
+		## Plot invalid detections - render first so valid overlay these
 		if (sum(data$Detection_QC == 2, na.rm = TRUE) > 0) {
 		  dsub <- subset(dataC, Detection_QC == 2)
 		  map <- map %>% 
 		    addCircleMarkers(lng = dsub$receiver_deployment_longitude, 
 		                     lat = dsub$receiver_deployment_latitude,
+		                     group  = "Likely valid",
 		                     radius = dsub$binned_detections * 5,
 		                     weight = 0.25,
-		                     color = "#A6D96A",
-		                     fillColor = "#A6D96A",
+		                     color = "#89D9CF",
+		                     fillColor = "#89D9CF",
 		                     fillOpacity = 0.5,
 		                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 		                                   "Receiver name:", dsub$receiver_name,"<br>",
@@ -170,16 +151,41 @@ plotQCint <- function(x) {
 		                                   "QC flag:", "<b>Likely valid</b>"))
 		  
 		}
+		
+		## Plot valid detections
+		if (sum(data$Detection_QC == 1, na.rm = TRUE) > 0) {
+		  dsub <- subset(dataC, Detection_QC == 1)
+		  map <- map %>% 
+		    addCircleMarkers(lng = dsub$receiver_deployment_longitude, 
+		               lat = dsub$receiver_deployment_latitude,
+		               group = "Valid",
+		               radius = dsub$binned_detections * 5,
+		               weight = 0.25,
+		               color = "#004B40",
+		               fillColor = "#004B40",
+		               fillOpacity = 0.5,
+		               popup = paste("<b>Quality Controlled Detections</b>", "<br>",
+		                             "Receiver name:", dsub$receiver_name,"<br>",
+		                             "Station name:", dsub$station_name, "<br>",
+		                             "Installation name:", dsub$installation_name, "<br>",
+		                             "Longitude:", dsub$receiver_deployment_longitude, "<br>",
+		                             "Latitude:", dsub$receiver_deployment_latitude, "<br>",
+		                             "Number of detections:", dsub$freq, "<br>",
+		                             "Number of tags detected:", dsub$nT, "<br>",
+		                             "QC flag:", "<b>Valid</b>"))
+		}
+
 			## Plot valid detections
 			if (sum(data$Detection_QC == 3, na.rm = TRUE) > 0) {
 			  dsub <- subset(dataC, Detection_QC == 3)
 			  map <- map %>% 
 			    addCircleMarkers(lng = dsub$receiver_deployment_longitude, 
 			                     lat = dsub$receiver_deployment_latitude,
+			                     group = "Likely invalid",
 			                     radius = dsub$binned_detections * 5,
 			                     weight = 0.25,
-			                     color = "#FDAE61",
-			                     fillColor = "#FDAE61",
+			                     color = "#E4C6A1",
+			                     fillColor = "#E4C6A1",
 			                     fillOpacity = 0.5,
 			                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 			                                   "Receiver name:", dsub$receiver_name,"<br>",
@@ -197,10 +203,11 @@ plotQCint <- function(x) {
 			  map <- map %>% 
 			    addCircleMarkers(lng = dsub$receiver_deployment_longitude, 
 			                     lat = dsub$receiver_deployment_latitude,
+			                     group = "Invalid",
 			                     radius = dsub$binned_detections * 5,
 			                     weight = 0.25,
-			                     color = "#D7191C",
-			                     fillColor = "#D7191C",
+			                     color = "#533600",
+			                     fillColor = "#533600",
 			                     fillOpacity = 0.5,
 			                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 			                                   "Receiver name:", dsub$receiver_name,"<br>",
@@ -217,13 +224,25 @@ plotQCint <- function(x) {
 		map <- map %>%
 		  addMarkers(lng = releases$transmitter_deployment_longitude, 
 		             lat = releases$transmitter_deployment_latitude,
+		             group = "Deployment locations",
 		             popup = paste("<b>Tag Deployment</b>", "<br>", 
 		                          "Filename:", 
 		                           paste(releases$transmitter_id, 
 		                                 releases$tag_id, 
 		                                 releases$transmitter_deployment_id, 
 		                                 sep = "_"))
-		             )
+		             ) %>%
+		  addLegend(position = "topright",
+		            values = dataC$Detection_QC,
+		            colors = hcl.colors(n=4, palette = "Green-Brown"),
+		              #c("#1A9641", "#A6D96A", "#FDAE61", "#D7191C"),
+		            opacity = 0.75,
+		            labels = c("<b>Valid</b>", "<b>Likely valid</b>", "<b>Likely invalid</b>", "<b>Invalid</b>")) %>%
+		  addLayersControl(
+		    baseGroups = c("Default", "ESRI Bathymetry"),
+		    overlayGroups = c("Species distribution", "Valid", "Likely valid", "Likely invalid", "Invalid", "Deployment locations"),
+		    options = layersControlOptions(collapsed = FALSE)
+		  )
 
 print(map)
 	}
