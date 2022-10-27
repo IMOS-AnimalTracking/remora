@@ -1,11 +1,9 @@
 qc_test_velocity <- function(data, qc_results, dist) {
   
   if (length(dist) == 1) {
-    if("Velocity_QC" %in% colnames(qc_results)) {
       timediff <- as.numeric(
-        difftime(
-          data$transmitter_deployment_datetime,
-          data$detection_datetime,
+        lubridate::as.difftime(
+          data$detection_datetime -data$transmitter_deployment_datetime,
           tz = "UTC",
           units = "secs"
         )
@@ -13,7 +11,6 @@ qc_test_velocity <- function(data, qc_results, dist) {
       
       velocity <- (dist * 1000) / timediff
       qc_results["Velocity_QC"] <- ifelse(velocity <= 10, 1, 2)
-    }
   } 
   
   else if (length(dist) > 1) {
@@ -24,9 +21,12 @@ qc_test_velocity <- function(data, qc_results, dist) {
         data$detection_datetime)
     
     timediff <-
-      abs(as.numeric(difftime(
-        time[1:(length(time) - 1)], time[2:length(time)],
-        tz = "UTC", units = "secs"
+      abs(
+        as.numeric(
+        lubridate::as.difftime(
+          time[2:length(time)] - time[1:(length(time) - 1)],
+          tz = "UTC", 
+          units = "secs"
       )))
     timediff_next <- c(timediff[2:length(timediff)], NA)
     

@@ -149,7 +149,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     message("shortest dist calculated")
   }
     if("Velocity_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
-    	#temporal_outcome <- qc_test_velocity(x, temporal_outcome, dist)
+    	temporal_outcome <- qc_test_velocity(x, temporal_outcome, dist)
     }
   
     if("Distance_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {

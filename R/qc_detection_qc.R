@@ -1,8 +1,5 @@
 qc_detection_qc <- function(qc_result) {
-  ones <- as.numeric(rowSums(qc_result[, c(1:4)] == 1))
-  View(qc_result[, c(1:4)])
-  View(rowSums(qc_result[, c(1:4)]))
-  View(qc_result)
+  ones <- as.numeric(rowSums(qc_result[, c(1:length(qc_result)-1)] == 1))
   
   qc_result[which(ones <= 2), "Detection_QC"] <- 4
   qc_result[which(ones == 3), "Detection_QC"] <- 3
