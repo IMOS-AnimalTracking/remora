@@ -17,7 +17,8 @@
 ##' 
 ##' @importFrom tools file_ext
 ##' @importFrom data.table fread rbindlist
-##' @importFrom leaflet leaflet addMarkers addCircleMarkers fitBounds
+##' @importFrom leaflet leaflet addMarkers addCircleMarkers fitBounds addLegend 
+##' @importFrom leaflet addProviderTiles addLayersControl addPolygons layersControlOptions
 ##' @importFrom dplyr '%>%' summarise left_join group_by
 ##' @importFrom plyr ldply '.' ddply count
 ##' @importFrom scales alpha
