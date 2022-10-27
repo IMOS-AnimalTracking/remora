@@ -100,22 +100,22 @@ runQC <- function(x,
 
   message("Reading data...")
   #Swapped from get_data to get_data_arbitrary for testing purposes - BD
-  #all_data <- get_data_arbitrary(
-  #  det = x$det,
-  #  rmeta = x$rmeta,
-  #  tmeta = x$tmeta,
-  #  meas = x$meas,
-  #  logfile = logfile,
-  #  data_format = data_format
-  #)
-  
-  all_data <- get_data(
-    det = x$det,
-    rmeta = x$rmeta,
-    tmeta = x$tmeta,
-    meas = x$meas,
-    logfile = logfile
+  all_data <- get_data_arbitrary(
+   det = x$det,
+   rmeta = x$rmeta,
+   tmeta = x$tmeta,
+   meas = x$meas,
+   logfile = logfile,
+   data_format = data_format
   )
+  
+  # all_data <- get_data(
+  #   det = x$det,
+  #   rmeta = x$rmeta,
+  #   tmeta = x$tmeta,
+  #   meas = x$meas,
+  #   logfile = logfile
+  # )
   
   #Set up a raster for the world (temporary while I test the QC functions that require shapefiles to work)
   #world_raster <- readOGR(dsn = 
@@ -149,7 +149,7 @@ runQC <- function(x,
       tests_vector <-  c("FDA_QC",
                         "Velocity_QC",
                         "Distance_QC",
-                        "DetectionDistribution_QC",
+                        #"DetectionDistribution_QC",
                         "DistanceRelease_QC",
                         "ReleaseDate_QC",
                         "ReleaseLocation_QC",

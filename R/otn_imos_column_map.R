@@ -313,7 +313,8 @@ derive_tag_from_det <- function(det_dataframe) {
     rename(
       transmitter_deployment_id = catalognumber,
       transmitter_deployment_latitude = latitude,
-      transmitter_deployment_longitude = longitude
+      transmitter_deployment_longitude = longitude,
+      transmitter_deployment_datetime = datecollected
     )
   
   tag <- distinctTag %>%
@@ -348,7 +349,6 @@ derive_tag_from_det <- function(det_dataframe) {
       animal_sex = NA,
       placement = NA,
       transmitter_deployment_locality = NA,
-      transmitter_deployment_datetime = NA,
       transmitter_deployment_comments = NA,
       embargo_date = NA,
       transmitter_recovery_datetime = NA,
@@ -359,7 +359,10 @@ derive_tag_from_det <- function(det_dataframe) {
   
   #Now we can join the releases to get the appropriate transmitter_deployment_lat/lon
   tag <- left_join(tag,
-                   releases %>% dplyr::select(transmitter_deployment_id, transmitter_deployment_latitude, transmitter_deployment_longitude),
+                   releases %>% dplyr::select(transmitter_deployment_id, 
+                                              transmitter_deployment_latitude, 
+                                              transmitter_deployment_longitude,
+                                              transmitter_deployment_datetime),
                    by = "transmitter_deployment_id")
   
   return(as.data.frame(tag))

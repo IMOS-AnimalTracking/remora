@@ -160,7 +160,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
 		## Detection distribution test
     if("DetectionDistribution_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
       message("Starting detection distribution test")
-      #temporal_outcome <- qc_test_det_distro(x, ll, temporal_outcome, shp_b)
+      temporal_outcome <- qc_test_det_distro(x, ll, temporal_outcome, shp_b)
       message("Detection distribution test done.")
     }
 
