@@ -30,7 +30,7 @@
 ##'
 ##' @export
 
-plotQCint <- function(x, path = NULL) {
+plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 
   if(!inherits(x, "remora_QC")) 
     stop("\033[31;1mx must be a nested tibble with class `remora_QC`\033[0m")
@@ -126,6 +126,7 @@ plotQCint <- function(x, path = NULL) {
 		                fillColor = "#f7fbff",
 		                fillOpacity = 0.6) %>%
 		    addProviderTiles("CartoDB.Positron", group = "Default") %>%
+		    addProviderTiles("Esri.WorldImagery", group = "ESRI Satellite") %>%
 		    addProviderTiles("Esri.OceanBasemap", group = "ESRI Bathymetry")
 		  
 		} else {
@@ -133,7 +134,8 @@ plotQCint <- function(x, path = NULL) {
 		    fitBounds(lng1 = bb[1], lat1 = bb[3], lng2 = bb[2], lat2 = bb[4]) %>%
 		    addProviderTiles("CartoDB.Positron", group = "Default")
 		}
-    pal <- rev(brewer.pal(n=4, "PuOr"))
+    if(revpal) cpal <- rev(brewer.pal(n=4, pal))
+		else cpal <- brewer.pal(n=4, pal)
     
 		## Plot invalid detections - render first so valid overlay these
 		if (sum(data$Detection_QC == 2, na.rm = TRUE) > 0) {
@@ -144,9 +146,9 @@ plotQCint <- function(x, path = NULL) {
 		                     group  = "Likely valid",
 		                     radius = dsub$binned_detections * 5,
 		                     weight = 0.25,
-		                     color = pal[2],
+		                     color = cpal[2],
 		                     opacity = 1,
-		                     fillColor = pal[2],
+		                     fillColor = cpal[2],
 		                     fillOpacity = 0.65,
 		                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 		                                   "Receiver name:", dsub$receiver_name,"<br>",
@@ -169,9 +171,9 @@ plotQCint <- function(x, path = NULL) {
 		               group = "Valid",
 		               radius = dsub$binned_detections * 5,
 		               weight = 0.25,
-		               color = pal[1],
+		               color = cpal[1],
 		               opacity = 1,
-		               fillColor = pal[1],
+		               fillColor = cpal[1],
 		               fillOpacity = 0.65,
 		               popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 		                             "Receiver name:", dsub$receiver_name,"<br>",
@@ -193,9 +195,9 @@ plotQCint <- function(x, path = NULL) {
 			                     group = "Likely invalid",
 			                     radius = dsub$binned_detections * 5,
 			                     weight = 0.25,
-			                     color = pal[3],
+			                     color = cpal[3],
 			                     opacity = 1,
-			                     fillColor = pal[3],
+			                     fillColor = cpal[3],
 			                     fillOpacity = 0.65,
 			                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 			                                   "Receiver name:", dsub$receiver_name,"<br>",
@@ -216,9 +218,9 @@ plotQCint <- function(x, path = NULL) {
 			                     group = "Invalid",
 			                     radius = dsub$binned_detections * 5,
 			                     weight = 0.25,
-			                     color = pal[4],
+			                     color = cpal[4],
 			                     opacity = 1,
-			                     fillColor = pal[4],
+			                     fillColor = cpal[4],
 			                     fillOpacity = 0.65,
 			                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 			                                   "Receiver name:", dsub$receiver_name,"<br>",
@@ -247,13 +249,13 @@ plotQCint <- function(x, path = NULL) {
 		  addLegend(position = "topright",
 		            title = paste(species$species_common_name[i], "QC flags"),
 		            values = dataC$Detection_QC,
-		            colors = pal,
+		            colors = cpal,
 		              #c("#1A9641", "#A6D96A", "#FDAE61", "#D7191C"),
 		            opacity = 0.85,
 		            labels = c("Valid", "Likely valid", "Likely invalid", "Invalid"),
 		            layerId = "QCflags") %>%
 		  addLayersControl(
-		    baseGroups = c("Default", "ESRI Bathymetry"),
+		    baseGroups = c("Default", "ESRI Satellite", "ESRI Bathymetry"),
 		    overlayGroups = c("Species distribution", "Valid", "Likely valid", "Likely invalid", "Invalid", "Deployment locations"),
 		    options = layersControlOptions(collapsed = FALSE),
 		    position = "bottomleft"

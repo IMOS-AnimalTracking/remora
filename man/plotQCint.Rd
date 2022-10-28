@@ -4,7 +4,7 @@
 \alias{plotQCint}
 \title{produce interactive leaflet maps showing the occurrence of QC'd detections per species}
 \usage{
-plotQCint(x, path = NULL)
+plotQCint(x, path = NULL, pal = "PuOr", revpal = TRUE)
 }
 \arguments{
 \item{x}{a remora output object with \code{class(remora_QC)}}
