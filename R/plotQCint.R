@@ -21,6 +21,8 @@
 ##' @importFrom data.table fread rbindlist
 ##' @importFrom leaflet leaflet addMarkers addCircleMarkers fitBounds addLegend 
 ##' @importFrom leaflet addProviderTiles addLayersControl addPolygons layersControlOptions
+##' @importFrom leaflet markerClusterOptions
+##' @importFrom RColorBrewer brewer.pal
 ##' @importFrom htmlwidgets saveWidget
 ##' @importFrom dplyr '%>%' summarise left_join group_by
 ##' @importFrom plyr ldply '.' ddply count
@@ -110,24 +112,29 @@ plotQCint <- function(x, path = NULL) {
 		                            "receiver_deployment_longitude", 
 		                            "receiver_deployment_latitude", 
 		                            "Detection_QC"))
-
-		bb <- with(data, c(extendrange(receiver_deployment_longitude, f=0.15),
-		                   extendrange(receiver_deployment_latitude, f=0.15)
+    
+		bb <- with(data, c(extendrange(c(receiver_deployment_longitude,releases$transmitter_deployment_longitude), f=0.1),
+		                   extendrange(c(receiver_deployment_latitude, releases$transmitter_deployment_latitude), f=0.1)
 		))
 
 		if (!is.null(class(expert_shp))) {
 		  map <- leaflet(expert_shp) %>%
 		    fitBounds(lng1 = bb[1], lat1 = bb[3], lng2 = bb[2], lat2 = bb[4]) %>%
-		    addPolygons(weight = 0.25, group = "Species distribution") %>%
+		    addPolygons(weight = 0.5, 
+		                group = "Species distribution",
+		                color = "#000000",
+		                fillColor = "#f7fbff",
+		                fillOpacity = 0.6) %>%
 		    addProviderTiles("CartoDB.Positron", group = "Default") %>%
 		    addProviderTiles("Esri.OceanBasemap", group = "ESRI Bathymetry")
 		  
 		} else {
 		  map <- leaflet() %>%
 		    fitBounds(lng1 = bb[1], lat1 = bb[3], lng2 = bb[2], lat2 = bb[4]) %>%
-		    addProviderTiles("CartoDB.Positron", group = "CartoDB")
+		    addProviderTiles("CartoDB.Positron", group = "Default")
 		}
-
+    pal <- rev(brewer.pal(n=4, "PuOr"))
+    
 		## Plot invalid detections - render first so valid overlay these
 		if (sum(data$Detection_QC == 2, na.rm = TRUE) > 0) {
 		  dsub <- subset(dataC, Detection_QC == 2)
@@ -137,9 +144,10 @@ plotQCint <- function(x, path = NULL) {
 		                     group  = "Likely valid",
 		                     radius = dsub$binned_detections * 5,
 		                     weight = 0.25,
-		                     color = "#89D9CF",
-		                     fillColor = "#89D9CF",
-		                     fillOpacity = 0.5,
+		                     color = pal[2],
+		                     opacity = 1,
+		                     fillColor = pal[2],
+		                     fillOpacity = 0.65,
 		                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 		                                   "Receiver name:", dsub$receiver_name,"<br>",
 		                                   "Station name:", dsub$station_name, "<br>",
@@ -161,9 +169,10 @@ plotQCint <- function(x, path = NULL) {
 		               group = "Valid",
 		               radius = dsub$binned_detections * 5,
 		               weight = 0.25,
-		               color = "#004B40",
-		               fillColor = "#004B40",
-		               fillOpacity = 0.5,
+		               color = pal[1],
+		               opacity = 1,
+		               fillColor = pal[1],
+		               fillOpacity = 0.65,
 		               popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 		                             "Receiver name:", dsub$receiver_name,"<br>",
 		                             "Station name:", dsub$station_name, "<br>",
@@ -184,9 +193,10 @@ plotQCint <- function(x, path = NULL) {
 			                     group = "Likely invalid",
 			                     radius = dsub$binned_detections * 5,
 			                     weight = 0.25,
-			                     color = "#E4C6A1",
-			                     fillColor = "#E4C6A1",
-			                     fillOpacity = 0.5,
+			                     color = pal[3],
+			                     opacity = 1,
+			                     fillColor = pal[3],
+			                     fillOpacity = 0.65,
 			                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 			                                   "Receiver name:", dsub$receiver_name,"<br>",
 			                                   "Station name:", dsub$station_name, "<br>",
@@ -206,9 +216,10 @@ plotQCint <- function(x, path = NULL) {
 			                     group = "Invalid",
 			                     radius = dsub$binned_detections * 5,
 			                     weight = 0.25,
-			                     color = "#533600",
-			                     fillColor = "#533600",
-			                     fillOpacity = 0.5,
+			                     color = pal[4],
+			                     opacity = 1,
+			                     fillColor = pal[4],
+			                     fillOpacity = 0.65,
 			                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
 			                                   "Receiver name:", dsub$receiver_name,"<br>",
 			                                   "Station name:", dsub$station_name, "<br>",
@@ -219,7 +230,7 @@ plotQCint <- function(x, path = NULL) {
 			                                   "Number of tags detected:", dsub$nT, "<br>",
 			                                   "QC flag:", "<b>Invalid</b>"))
 			}
-		
+
 			## Plot release locations
 		map <- map %>%
 		  addMarkers(lng = releases$transmitter_deployment_longitude, 
@@ -230,18 +241,22 @@ plotQCint <- function(x, path = NULL) {
 		                           paste(releases$transmitter_id, 
 		                                 releases$tag_id, 
 		                                 releases$transmitter_deployment_id, 
-		                                 sep = "_"))
+		                                 sep = "_")),
+		             clusterOptions = markerClusterOptions()
 		             ) %>%
-		  addLegend(position = "bottomleft",
+		  addLegend(position = "topright",
+		            title = paste(species$species_common_name[i], "QC flags"),
 		            values = dataC$Detection_QC,
-		            colors = hcl.colors(n=4, palette = "Green-Brown"),
+		            colors = pal,
 		              #c("#1A9641", "#A6D96A", "#FDAE61", "#D7191C"),
-		            opacity = 0.75,
-		            labels = c("Valid", "Likely valid", "Likely invalid", "Invalid")) %>%
+		            opacity = 0.85,
+		            labels = c("Valid", "Likely valid", "Likely invalid", "Invalid"),
+		            layerId = "QCflags") %>%
 		  addLayersControl(
 		    baseGroups = c("Default", "ESRI Bathymetry"),
 		    overlayGroups = c("Species distribution", "Valid", "Likely valid", "Likely invalid", "Invalid", "Deployment locations"),
-		    options = layersControlOptions(collapsed = FALSE)
+		    options = layersControlOptions(collapsed = FALSE),
+		    position = "bottomleft"
 		  )
 
 		fs <- tempfile(pattern = paste0(gsub(' ', '_', species$species_common_name[i]),
