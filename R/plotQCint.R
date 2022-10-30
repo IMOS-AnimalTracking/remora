@@ -18,13 +18,12 @@
 ##' plotQCint(TownsvilleReefQC)
 ##' 
 ##' 
-##' @importFrom data.table fread rbindlist
 ##' @importFrom leaflet leaflet addMarkers addCircleMarkers fitBounds addLegend 
 ##' @importFrom leaflet addProviderTiles addLayersControl addPolygons layersControlOptions
 ##' @importFrom leaflet markerClusterOptions
 ##' @importFrom RColorBrewer brewer.pal
 ##' @importFrom htmlwidgets saveWidget
-##' @importFrom dplyr '%>%' summarise left_join group_by
+##' @importFrom dplyr '%>%' summarise left_join group_by bind_rows distinct
 ##' @importFrom plyr ldply '.' ddply count
 ##' @importFrom grDevices extendrange
 ##'
@@ -35,22 +34,17 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
   if(!inherits(x, "remora_QC")) 
     stop("\033[31;1mx must be a nested tibble with class `remora_QC`\033[0m")
   
-  QCdata <- rbindlist(x$QC)
+  QCdata <- bind_rows(x$QC)
 
-	species <- ddply(QCdata, '.'(QCdata$CAAB_species_id,
-	                             QCdata$species_scientific_name,
-	                             QCdata$species_common_name),
-	                 nrow)
-
-	## Retrieve species list
-	colnames(species) <- c('CAAB_species_id',
-	                       'species_scientific_name',
-	                       'species_common_name',
-	                       'freq')
+  species <- QCdata %>% select(CAAB_species_id, 
+                               species_scientific_name, 
+                               species_common_name) %>%
+    distinct(.keep_all = TRUE)
 	
 	for (i in 1:nrow(species)){
 		expert_shp <-
-		  try(get_expert_distribution_shp_CAAB(CAAB_species_id = species$CAAB_species_id[i], spe = species$species_scientific_name[i]), 
+		  try(get_expert_distribution_shp_CAAB(CAAB_species_id = species$CAAB_species_id[i], 
+		                                       spe = species$species_scientific_name[i]), 
 		      silent = TRUE)
 
 		if(is.null(class(expert_shp))) {
