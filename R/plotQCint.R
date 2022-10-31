@@ -71,23 +71,34 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		 data <- data[, c('transmitter_id',
 		                  'tag_id',
 		                  'transmitter_deployment_id',
+		                  'detection_datetime',
 		                 'receiver_name',
 		                 'station_name',
 		                 'installation_name',
 		                 'receiver_deployment_longitude',
 		                 'receiver_deployment_latitude',
 		                 'Detection_QC')]
-		 
-		nT <- data %>% group_by(receiver_name, 
-		                         station_name, 
+	 
+		nT <- data %>% group_by(station_name, 
 		                         installation_name, 
 		                         receiver_deployment_longitude, 
 		                         receiver_deployment_latitude, 
-		                         Detection_QC) %>%
-		  summarise(nT = length(unique(transmitter_id)))
-		 
-		dataC <- count(data, vars = c('receiver_name',
-		                              'station_name',
+		                         Detection_QC, 
+		                        transmitter_id) %>%
+		  summarise(start_dt = min(detection_datetime),
+		            end_dt = max(detection_datetime)) %>%
+		  ungroup() %>%
+		  group_by(station_name, 
+		           installation_name, 
+		           receiver_deployment_longitude, 
+		           receiver_deployment_latitude, 
+		           Detection_QC) %>%
+		  summarise(nT = length(unique(transmitter_id)),
+		            transmitter_ids = paste(unique(transmitter_id), collapse = ", "),
+		            start_dt = paste(start_dt, collapse = ", "),
+		            end_dt = paste(end_dt, collapse = ", "))
+		  
+		dataC <- count(data, vars = c('station_name',
 		                              'installation_name',
 		                              'receiver_deployment_longitude',
 		                              'receiver_deployment_latitude',
@@ -100,8 +111,7 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		
 		dataC$binned_detections <- as.numeric(binned_detects$bin)
 		
-		dataC <- left_join(dataC, nT, by = c("receiver_name", 
-		                            "station_name", 
+		dataC <- left_join(dataC, nT, by = c("station_name", 
 		                            "installation_name", 
 		                            "receiver_deployment_longitude", 
 		                            "receiver_deployment_latitude", 
@@ -131,7 +141,7 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
     if(revpal) cpal <- rev(brewer.pal(n=4, pal))
 		else cpal <- brewer.pal(n=4, pal)
     
-		## Plot invalid detections - render first so valid overlay these
+		## Plot likely valid detections - render first so valid overlay these
 		if (sum(data$Detection_QC == 2, na.rm = TRUE) > 0) {
 		  dsub <- subset(dataC, Detection_QC == 2)
 		  map <- map %>% 
@@ -145,13 +155,15 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		                     fillColor = cpal[2],
 		                     fillOpacity = 0.65,
 		                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
-		                                   "Receiver name:", dsub$receiver_name,"<br>",
 		                                   "Station name:", dsub$station_name, "<br>",
 		                                   "Installation name:", dsub$installation_name, "<br>",
 		                                   "Longitude:", dsub$receiver_deployment_longitude, "<br>",
 		                                   "Latitude:", dsub$receiver_deployment_latitude, "<br>",
 		                                   "Number of detections:", dsub$freq, "<br>",
 		                                   "Number of tags detected:", dsub$nT, "<br>",
+		                                   "Transmitter ID's:", dsub$transmitter_ids, "<br>",
+		                                   "First date by ID:", dsub$start_dt, "<br>",
+		                                   "Last date by ID:", dsub$end_dt, "<br>",
 		                                   "QC flag:", "<b>Likely valid</b>"))
 		  
 		}
@@ -170,13 +182,15 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		               fillColor = cpal[1],
 		               fillOpacity = 0.65,
 		               popup = paste("<b>Quality Controlled Detections</b>", "<br>",
-		                             "Receiver name:", dsub$receiver_name,"<br>",
 		                             "Station name:", dsub$station_name, "<br>",
 		                             "Installation name:", dsub$installation_name, "<br>",
 		                             "Longitude:", dsub$receiver_deployment_longitude, "<br>",
 		                             "Latitude:", dsub$receiver_deployment_latitude, "<br>",
 		                             "Number of detections:", dsub$freq, "<br>",
 		                             "Number of tags detected:", dsub$nT, "<br>",
+		                             "Transmitter ID's:", dsub$transmitter_ids, "<br>",
+		                             "First date by ID:", dsub$start_dt, "<br>",
+		                             "Last date by ID:", dsub$end_dt, "<br>",
 		                             "QC flag:", "<b>Valid</b>"))
 		}
 
@@ -194,13 +208,15 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 			                     fillColor = cpal[3],
 			                     fillOpacity = 0.65,
 			                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
-			                                   "Receiver name:", dsub$receiver_name,"<br>",
 			                                   "Station name:", dsub$station_name, "<br>",
 			                                   "Installation name:", dsub$installation_name, "<br>",
 			                                   "Longitude:", dsub$receiver_deployment_longitude, "<br>",
 			                                   "Latitude:", dsub$receiver_deployment_latitude, "<br>",
 			                                   "Number of detections:", dsub$freq, "<br>",
 			                                   "Number of tags detected:", dsub$nT, "<br>",
+			                                   "Transmitter ID's:", dsub$transmitter_ids, "<br>",
+			                                   "First date by ID:", dsub$start_dt, "<br>",
+			                                   "Last date by ID:", dsub$end_dt, "<br>",
 			                                   "QC flag:", "<b>Likely invalid</b>"))
 			  }
 			## Plot invalid detections
@@ -217,13 +233,15 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 			                     fillColor = cpal[4],
 			                     fillOpacity = 0.65,
 			                     popup = paste("<b>Quality Controlled Detections</b>", "<br>",
-			                                   "Receiver name:", dsub$receiver_name,"<br>",
 			                                   "Station name:", dsub$station_name, "<br>",
 			                                   "Installation name:", dsub$installation_name, "<br>",
 			                                   "Longitude:", dsub$receiver_deployment_longitude, "<br>",
 			                                   "Latitude:", dsub$receiver_deployment_latitude, "<br>",
 			                                   "Number of detections:", dsub$freq, "<br>",
 			                                   "Number of tags detected:", dsub$nT, "<br>",
+			                                   "Transmitter ID's:", dsub$transmitter_ids, "<br>",
+			                                   "First date by ID:", dsub$start_dt, "<br>",
+			                                   "Last date by ID:", dsub$end_dt, "<br>",
 			                                   "QC flag:", "<b>Invalid</b>"))
 			}
 
