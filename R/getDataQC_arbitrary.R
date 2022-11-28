@@ -1,9 +1,53 @@
-get_data_arbitrary <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile, checks = c("all"),
-                               det_id_column = "transmitter_deployment_id", tag_id_column = "transmitter_deployment_id",
-                               det_rcvr_column = "receiver_deployment_id", rcvr_id_column = "receiver_deployment_id", data_format = "imos") {
-  library(tools)
+##' @title read acoustic detection data and metadata from an arbitrary data source
+##'
+##' @description accesses files from an arbitrary data source using OTN-formatted 
+##' data and converts them to the format expected by the remora QC functions. 
+##' For internal use only
+##'
+##' @param det path to detections text file
+##' @param rmeta path to receiver metadata text file
+##' @param tmeta path to tag deployment metadata text file
+##' @param meas path to animal measurements text file
+##' @param logfile path to logfile; default is the working directory
+##' @param checks vector containing all of the specific checks you want to turn 
+##' on or off while pulling in the data
+##' @param det_id_column specifies the tag ID variable used for ID checks when tags
+##' are in detections data but not the tag metadata
+##' @param tag_id_column specifies the tag ID variable used for ID checks when tags
+##' are in detections data but not the tag metadata
+##' @param det_rcvr_column specifies the receiver ID variable used for ID checks
+##' when receivers are in detections data but not the receiver metadata
+##' @param data_format the type of format and therefore the type of columns we'll
+##' need to use when we join all this together. 
+##'
+##' @return a list of data.frames by individual tag deployments ready for QC
+##'
+##' @importFrom readr read_csv cols_only col_character col_integer col_guess
+##' @importFrom readr col_logical col_datetime col_double
+##' @importFrom readxl read_excel
+##' @importFrom dplyr '%>%' mutate left_join select group_by ungroup distinct
+##' @importFrom dplyr transmute any_of everything
+##' @importFrom lubridate dmy_hms dmy
+##' @importFrom tools file_ext
+##'
+##' @keywords internal
+##'
+
+get_data_arbitrary <- function(det=NULL, 
+                               rmeta=NULL, 
+                               tmeta=NULL, 
+                               meas=NULL, 
+                               logfile, 
+                               checks = c("all"),
+                               det_id_column = "transmitter_deployment_id", 
+                               tag_id_column = "transmitter_deployment_id",
+                               det_rcvr_column = "receiver_deployment_id", 
+                               rcvr_id_column = "receiver_deployment_id", 
+                               data_format = "imos") {
+  library(tools) ## IDJ: pkg loading win fn should be ok for now, will need to be removed at a later point
   library(dplyr)
   
+  ## IDJ: think below comments can be removed
   #Remember to formalize all of the new variables as comments up above:
   # - checks: vector containing all of the specific chekcs you want to turn on or off while pulling in the data.
   # - det_id_column and tag_id_column- we need to know what columns to use for ID checks in the check for tags that are in detections but not in the tag
