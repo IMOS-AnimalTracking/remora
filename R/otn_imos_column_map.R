@@ -16,10 +16,6 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   #Animal measurements is a bit weird so I'm going to ignore it for now.
   
   #This probably won't have the full range of columns that the equivalent IMOS data would. 
-  #Let's start with just the detections, since that's a possibility we have to account for- that we only get a detection extract and have to work
-  #outwards from there.
-  
-  #NOTE TO SELF: Remora can already handle if you don't have rcvr/tag metadata. Don't make this more complicated than it has to be. 
   
   #This way, if we don't end up having any way to change these throughout- i.e, no rcvr/tag sheets have been passed-
   #we just return whatever we got, unaltered. Probably null. 
@@ -113,7 +109,6 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   
   #If we have receiver_meta, convert that to an IMOS friendly version. 
   if(!is.null(rcvr_dataframe) && !derive) {
-    #Build this out once basic case is handled.
     rcvr_return <- rcvr_dataframe %>%
       dplyr::select(
         OTN_ARRAY,
@@ -249,14 +244,66 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
 #Hack together a piecemeal receiver metadata dataframe for instances where we get detection data, no receiver/tag metadata, but still want to act
 #as though we DID get receiver/tag metadata.
 derive_rcvr_from_det <- function(det_dataframe) {
-  #Group by receiver name and station ID. 
-  rcvr_grouped <- det_dataframe %>%
-    group_by(receiver, station) %>%
-    mutate(
-      minDetectionDate = min(datecollected),
-      maxDetectionDate = max(datecollected)
-    ) %>%
-    distinct(receiver, station, .keep_all = TRUE)
+
+  #The first thing we need to do is gin up some inferred min and max deployment dates. 
+  #We'll use the following code to do so. 
+  rcvr_grouped = NULL
+  
+  #Start by grouping the detections by station, and ordering them by date. 
+  rcvr_grouped_list <- det_dataframe %>%
+    group_by(station) %>%
+    arrange(datecollected, .by_group = TRUE)
+  
+  #Set min date and max date to null.
+  minDate = NULL
+  maxDate = NULL
+  
+  #Create a 'lead' dataframe for us to compare our current dataframe against. 
+  rcvr_grouped_list_next <- lead(rcvr_grouped_list)
+  
+  #For each row in the list
+  for (i in 1:nrow(rcvr_grouped_list)) {
+    row <- rcvr_grouped_list[i,]
+    
+    #If minDate is null, set it to the currently available date. minDate being null implies that
+    #we're just starting with this station (see where it's set to Null, below)
+    if (is.null(minDate)) {
+      minDate <- row$datecollected
+    }
+    
+    #Get the next row from our "lead" frame.
+    nextStation <- rcvr_grouped_list_next[i,]
+    
+    #If our next station is Null (i.e, we're at the end of the frame), or the next station is different from
+    #the current one (i.e, we've reached the end of this time chunk)...
+    if(is.na(nextStation$station) || nextStation$station != row$station) {
+      #Set Maxdate to our current date. 
+      maxDate <- row$datecollected
+        
+      #Add the min and max dates as entries in the row. 
+      row <- row %>% mutate(
+        minDetectionDate = minDate,
+        maxDetectionDate = maxDate
+      )
+        
+      #if rcvr_group hasn't been instantiated yet, use row to create it. 
+      if(is.null(rcvr_grouped)) {
+        rcvr_grouped <- row
+      }
+      #Otherwise, just add the row to the group of receivers. 
+      else {
+        rcvr_grouped <- rbind(rcvr_grouped, row)
+        message("Building rcvr_grouped")
+      }
+      
+      #reset our min and max date to null so the next group will be handled properly. 
+      minDate = NULL
+      maxDate = NULL
+    }
+  }
+  
+  #Now we have rcvr_grouped, which contains the receiver metadata with the inferred min and max dates. 
+  #We can now rename the columns and do the remainder of the manipulation work as normal. 
   
   rcvr <- rcvr_grouped %>%
     dplyr::select(
