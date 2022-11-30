@@ -276,7 +276,7 @@ derive_rcvr_from_det <- function(det_dataframe) {
     
     #If our next station is Null (i.e, we're at the end of the frame), or the next station is different from
     #the current one (i.e, we've reached the end of this time chunk)...
-    if(is.na(nextStation$station) || nextStation$station != row$station) {
+    if(is.na(nextStation$receiver) || nextStation$receiver != row$receiver) {
       #Set Maxdate to our current date. 
       maxDate <- row$datecollected
         
@@ -302,6 +302,7 @@ derive_rcvr_from_det <- function(det_dataframe) {
     }
   }
   
+  View(rcvr_grouped)
   #Now we have rcvr_grouped, which contains the receiver metadata with the inferred min and max dates. 
   #We can now rename the columns and do the remainder of the manipulation work as normal. 
   
