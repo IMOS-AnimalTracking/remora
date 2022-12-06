@@ -1,4 +1,5 @@
 imos_to_otn_tags <- function(tag_dataframe) {
+  #First do the manipulation on the Tag dataframe. 
     tag_return <- tag_dataframe %>%
       dplyr::select(
         #Columns we can get from the file.
@@ -9,16 +10,12 @@ imos_to_otn_tags <- function(tag_dataframe) {
         transmitter_estimated_battery_life,
         species_common_name,
         species_scientific_name,
-        #measurement_value,
-        #measurement_type,
-        #measurement_unit,
         animal_sex,
         transmitter_deployment_locality,
         transmitter_deployment_latitude,
         transmitter_deployment_longitude,
         transmitter_deployment_datetime,
         transmitter_recovery_datetime,
-        #comments,
         transmitter_deployment_comments
       ) %>%
       mutate(
@@ -34,7 +31,9 @@ imos_to_otn_tags <- function(tag_dataframe) {
         LIFE_STAGE = NA,
         AGE = NA,
         AGE_UNITS = NA,
-        
+        #Columns that will ultimately come out of the Animal Measurements file.
+        `LENGTH (m)` = NA,
+        LENGTH_TYPE = NA
       ) %>%
       rename(
         #Columns we now have that need to be renamed. 
@@ -50,7 +49,7 @@ imos_to_otn_tags <- function(tag_dataframe) {
         RELEASE_LONGITUDE = transmitter_deployment_longitude,
         UTC_RELEASE_DATE_TIME = transmitter_deployment_datetime,
         HARVEST_DATE = transmitter_recovery_datetime,
-        COMMENTS = transmitter_deployment_comments
+        COMMENTS = transmitter_deployment_comments #Will ultimately merge with comments from animal_measurements.
       ) %>%
       separate(
         col = transmitter_id,
@@ -66,6 +65,16 @@ imos_to_otn_tags <- function(tag_dataframe) {
       #  comments, transmitter_deployment_comments,
       #  sep = ";"
       #)
+    
+    #Now do the manipulation on the animal measurements dataframe. 
+    #animal_return <- animal_measurements_dataframe %>%
+    #  dplyr::select(
+    #    measurement_value,
+    #    measurement_type,
+    #    measurement_unit,
+    #    comments
+    #  ) %>%
+      
     
     return(tag_return)
 }
