@@ -78,7 +78,7 @@ imos_to_otn_tags <- function(tag_dataframe, animal_measurements_dataframe) {
       animal_return$measurement_value/39.37
     
     #Convert anything in ft to m
-    animal_return$measurement_value[animal_return$measurement_unit == 'in'] <- 
+    animal_return$measurement_value[animal_return$measurement_unit == 'ft'] <- 
       animal_return$measurement_value/3.281
     
     #Wherever the measurement type contains 'length', put the measurement type
