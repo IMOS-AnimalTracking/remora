@@ -69,6 +69,18 @@ imos_to_otn_tags <- function(tag_dataframe, animal_measurements_dataframe) {
     animal_return$measurement_value[animal_return$measurement_unit == 'cm'] <- 
       animal_return$measurement_value/100
     
+    #Convert anything in mm to m
+    animal_return$measurement_value[animal_return$measurement_unit == 'mm'] <- 
+      animal_return$measurement_value/1000
+    
+    #Convert anything in in to m
+    animal_return$measurement_value[animal_return$measurement_unit == 'in'] <- 
+      animal_return$measurement_value/39.37
+    
+    #Convert anything in ft to m
+    animal_return$measurement_value[animal_return$measurement_unit == 'in'] <- 
+      animal_return$measurement_value/3.281
+    
     #Wherever the measurement type contains 'length', put the measurement type
     #directly into LENGTH_TYPE... 
     animal_return$LENGTH_TYPE[grepl("LENGTH", toupper(animal_return$measurement_type))] <-
