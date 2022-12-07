@@ -1,4 +1,6 @@
-imos_to_otn_tags <- function(tag_dataframe) {
+library(stringr)
+
+imos_to_otn_tags <- function(tag_dataframe, animal_measurements_dataframe) {
   #First do the manipulation on the Tag dataframe. 
     tag_return <- tag_dataframe %>%
       dplyr::select(
@@ -27,13 +29,9 @@ imos_to_otn_tags <- function(tag_dataframe) {
         TAG_OWNER_ORGANIZATION = NA,
         WILD_OR_HATCHERY = NA,
         STOCK = NA,
-        `WEIGHT (kg)` = NA,
         LIFE_STAGE = NA,
         AGE = NA,
         AGE_UNITS = NA,
-        #Columns that will ultimately come out of the Animal Measurements file.
-        `LENGTH (m)` = NA,
-        LENGTH_TYPE = NA
       ) %>%
       rename(
         #Columns we now have that need to be renamed. 
@@ -49,8 +47,47 @@ imos_to_otn_tags <- function(tag_dataframe) {
         RELEASE_LONGITUDE = transmitter_deployment_longitude,
         UTC_RELEASE_DATE_TIME = transmitter_deployment_datetime,
         HARVEST_DATE = transmitter_recovery_datetime,
-        COMMENTS = transmitter_deployment_comments #Will ultimately merge with comments from animal_measurements.
+        ) 
+    
+    #Now do the manipulation on the animal measurements dataframe. 
+    animal_return <- animal_measurements_dataframe %>%
+      dplyr::select(
+        transmitter_id,
+        measurement_value,
+        measurement_type,
+        measurement_unit,
+        comments
       ) %>%
+      mutate(
+        #Set up Null columns since the above aren't 1:1 maps of the needed columns
+        LENGTH = NA,
+        WEIGHT = NA,
+        LENGTH_TYPE = NA,
+      )
+    
+    #Convert anything in cm to m
+    animal_return$measurement_value[animal_return$measurement_unit == 'cm'] <- 
+      animal_return$measurement_value/100
+    
+    #Wherever the measurement type contains 'length', put the measurement type
+    #directly into LENGTH_TYPE... 
+    animal_return$LENGTH_TYPE[grepl("LENGTH", toupper(animal_return$measurement_type))] <-
+      animal_return$measurement_type
+    
+    #and the value directly into LENGTH (m).
+    animal_return$LENGTH[grepl("LENGTH", toupper(animal_return$measurement_type))] <-
+      animal_return$measurement_value
+    
+    #Whereas if it contains WEIGHT, put that into the weight column.
+    animal_return$WEIGHT[grepl("WEIGHT", toupper(animal_return$measurement_type))] <-
+      animal_return$measurement_value
+    
+    #We'll drop the columns we no longer need
+    keeps <- c("transmitter_id", "LENGTH", "WEIGHT", "LENGTH_TYPE", "comments")
+    
+    #Now we join the data on transmitter ID...
+    tag_return <- left_join(tag_return, animal_return[keeps], by="transmitter_id") %>%
+      #We'll also split up transmitter_id now that we no longer need it in one column. 
       separate(
         col = transmitter_id,
         into = c("code_space_1", "code_space_2", "TAG_ID_CODE")
@@ -59,22 +96,20 @@ imos_to_otn_tags <- function(tag_dataframe) {
         "TAG_CODE_SPACE",
         code_space_1, code_space_2,
         sep = "-"
-      ) #%>%
-      #unite(
-      #  "COMMENTS",
-      #  comments, transmitter_deployment_comments,
-      #  sep = ";"
-      #)
-    
-    #Now do the manipulation on the animal measurements dataframe. 
-    #animal_return <- animal_measurements_dataframe %>%
-    #  dplyr::select(
-    #    measurement_value,
-    #    measurement_type,
-    #    measurement_unit,
-    #    comments
-    #  ) %>%
-      
+      ) %>%
+      unite(
+      #We'll also unite the cooments fields. 
+      "COMMENTS",
+      comments, transmitter_deployment_comments,
+      sep = ";"
+    ) %>% 
+      rename(
+        #Finally we'll rename length and weight to have the units. They were annoying
+        #to index before so I just figured I'd leave them without the units then add those
+        #in.
+        `LENGTH (m)` = LENGTH,
+        `WEIGHT (kg)` = WEIGHT
+      )
     
     return(tag_return)
 }
