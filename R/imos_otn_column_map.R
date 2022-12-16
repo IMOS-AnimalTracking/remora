@@ -1,5 +1,7 @@
 imos_otn_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_dataframe = NULL, derive = TRUE) {
   
+  library(lubridate)
+  
   #This way, if we don't end up having any way to change these throughout- i.e, no rcvr/tag sheets have been passed-
   #we just return whatever we got, unaltered. Probably null. 
   tag_return <- tag_dataframe
@@ -32,7 +34,7 @@ imos_otn_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
       station_name
     ) %>%
     mutate(
-      cleandate = ymd(as_date(detection_datetime)),
+      #cleandate = ymd(as_date(detection_datetime)),
       transmitter_name = NA,
       transmitter_serial = NA,
       latitude = NA,
@@ -152,21 +154,22 @@ imos_otn_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
         RELEASE_LONGITUDE = transmitter_deployment_longitude,
         UTC_RELEASE_DATE_TIME = transmitter_deployment_datetime,
         HARVEST_DATE = transmitter_recovery_datetime
-      ) %>%
-      separate(
-        col = transmitter_id,
-        into = c("code_space_1", "code_space_2", "TAG_ID_CODE")
-      ) %>%
-      unite(
-        "TAG_CODE_SPACE",
-        code_space_1, code_space_2,
-        sep = "-"
-      ) %>%
-      unite(
-        "COMMENTS",
-        comments, transmitter_deployment_comments,
-        sep = ";"
       )
+      # ) %>%
+      # separate(
+      #   col = transmitter_id,
+      #   into = c("code_space_1", "code_space_2", "TAG_ID_CODE")
+      # ) %>%
+      # unite(
+      #   "TAG_CODE_SPACE",
+      #   code_space_1, code_space_2,
+      #   sep = "-"
+      # ) %>%
+      # unite(
+      #   "COMMENTS",
+      #   comments, transmitter_deployment_comments,
+      #   sep = ";"
+      # )
       
   }
 }
