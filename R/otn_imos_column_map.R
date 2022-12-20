@@ -8,6 +8,7 @@
 otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_dataframe = NULL, derive = TRUE) {
   
   library(tidyverse)
+  library(lubridate)
   #We need to ultimately produce the following:
   # - A detections dataframe with columns appropriate to the IMOS spec. 
   # - A receiver dataframe with appropriate columns, if necessary with data derived from the detections dataframe.
