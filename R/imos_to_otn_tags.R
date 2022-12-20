@@ -1,6 +1,7 @@
-library(stringr)
-
 imos_to_otn_tags <- function(tag_dataframe, animal_measurements_dataframe) {
+  library(stringr)
+  library(tidyverse)
+  
   #First do the manipulation on the Tag dataframe. 
     tag_return <- tag_dataframe %>%
       dplyr::select(
