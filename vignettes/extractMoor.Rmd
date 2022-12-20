@@ -20,7 +20,8 @@ vignette: >
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # Set workspace
-library(data.table); library(dplyr); library(sf); library(leaflet); library(RColorBrewer); library(classInt); library(ncdf4); library(lubridate)
+#library(data.table);  library(sf); library(classInt);
+library(dplyr); library(leaflet); library(RColorBrewer); library(ncdf4); library(lubridate)
 
 ```
 

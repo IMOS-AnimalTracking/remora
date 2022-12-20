@@ -21,7 +21,7 @@ vignette: >
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 ## working when developing vignette
 require(tidyverse, quietly = TRUE)
-require(remora, quietly = TRUE)
+#require(remora, quietly = TRUE)
 
 ## load extracted dataset for faster running of vignette
 data("data_with_sst_and_current", envir = environment())
@@ -92,7 +92,7 @@ Lets have a quick look at the spatial patterns in detection data:
 ```{r, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 
 qc_data <- read_csv("/Users/bruce/Downloads/nsbs_matched_detections_2021/nsbs_matched_detections_2021.csv")
-v2lcelase <- read_csv("/Users/bruce/Downloads/v2lcelase_matched_detections_2021/v2lcelase_matched_detections_2021.csv")
+#v2lcelase <- read_csv("/Users/bruce/Downloads/v2lcelase_matched_detections_2021/v2lcelase_matched_detections_2021.csv")
 
 qc_data %>% 
   #Changed the column names throughout, will need to have some sort of way to set these more dynamically. 
@@ -182,42 +182,38 @@ env_urls <- build_thredds_url(
   var="hs"
 )
 
-env_urls <- build_thredds_url(
-  df = qc_data,
-  datetime = datecolumn, 
-  url = "https://coastwatch.pfeg.noaa.gov/erddap/",
-  path = "griddap/", 
-  file = "nceiPH53sstd1day.nc",
-  var = "sea_surface_temperature"
-)
+# env_urls <- build_thredds_url(
+#   df = qc_data,
+#   datetime = datecolumn, 
+#   url = "https://coastwatch.pfeg.noaa.gov/erddap/",
+#   path = "griddap/", 
+#   file = "nceiPH53sstd1day.nc",
+#   var = "sea_surface_temperature"
+# )
+# 
+# env_urls <- build_thredds_url(
+#   df = qc_data,
+#   datetime = datecolumn,
+#   url = "https://ncei.noaa.gov/thredds-ocean/",
+#   path = "pathfinder/Version5.3/L3C/2022/data/",
+#   file = "20220101014938-NCEI-L3C_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.3_NOAA19_G_2022001_night-v02.0-fv01.0.nc",
+#   var = "ohc"
+# )
 
-env_urls <- build_thredds_url(
-  df = qc_data,
-  datetime = datecolumn,
-  url = "https://ncei.noaa.gov/thredds-ocean/",
-  path = "pathfinder/Version5.3/L3C/2022/data/",
-  file = "20220101014938-NCEI-L3C_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.3_NOAA19_G_2022001_night-v02.0-fv01.0.nc",
-  var = "ohc"
-)
-
-https://www.ncei.noaa.gov/thredds-ocean/dodsC/woa/heat_content/seasonal_ocean_heat_content.nc.html
-
-#https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiPH53sstd1day.nc?sea_surface_temperature%5B(2021-12-31T12:00:00Z):1:(2021-12-31T12:00:00Z)%5D%5B(89.979):1:(-89.979)%5D%5B(-179.979):1:(179.979)%5D
-
-data_with_sst <- 
-  extractEnvArbitrary(df = qc_data,
-             X = "longitude", 
-             Y = "latitude", 
-             datetime = datecolumn,
-             env_request = env_urls,
-             request_type = 'single', #single, vector, or bathy
-             cache_layers = TRUE,
-             crop_layers = FALSE,
-             fill_gaps = TRUE,
-             full_timeperiod = FALSE,
-             folder_name = "test",
-             .parallel = FALSE,
-             verbose = TRUE)
+# data_with_sst <- 
+#   extractEnvArbitrary(df = qc_data,
+#              X = "longitude", 
+#              Y = "latitude", 
+#              datetime = datecolumn,
+#              env_request = env_urls,
+#              request_type = 'single', #single, vector, or bathy
+#              cache_layers = TRUE,
+#              crop_layers = FALSE,
+#              fill_gaps = TRUE,
+#              full_timeperiod = FALSE,
+#              folder_name = "test",
+#              .parallel = FALSE,
+#              verbose = TRUE)
 
 ```
 
@@ -229,18 +225,18 @@ We can now also append current data to this dataset:
 
 ```{r, eval=FALSE, message=TRUE, warning=FALSE}
 
-data_with_sst_and_current <- 
-  data_with_sst %>% 
-  extractEnvArbitrary(X = "longitude", 
-             Y = "latitude", 
-             datetime = "detection_datetime", 
-             env_var = "hs", 
-             cache_layers = TRUE,
-             crop_layers = FALSE,
-             fill_gaps = TRUE,
-             full_timeperiod = FALSE,
-             folder_name = "test",
-             .parallel = TRUE)
+# data_with_sst_and_current <- 
+#   data_with_sst %>% 
+#   extractEnvArbitrary(X = "longitude", 
+#              Y = "latitude", 
+#              datetime = "detection_datetime", 
+#              env_var = "hs", 
+#              cache_layers = TRUE,
+#              crop_layers = FALSE,
+#              fill_gaps = TRUE,
+#              full_timeperiod = FALSE,
+#              folder_name = "test",
+#              .parallel = TRUE)
 
 ```
 
@@ -258,7 +254,7 @@ When downloading current data, three variables are downloaded: Gridded Sea Level
 We can now see the extracted environmental variables are appended as new columns to the input dataset
 
 ```{r, warning=FALSE, message=FALSE}
-data_with_sst
+#data_with_sst
 ```
 
 
@@ -266,39 +262,39 @@ We can also now add the variables to the detection plots:
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
 
-summarised_data <-
-  data_with_sst %>% 
-  mutate(date = as.Date(datecollected)) %>% 
-  group_by(catalognumber, date) %>% 
-  summarise(num_det = n(),
-            #mean_sst = mean(rs_sst_interpolated, na.rm = T),
-            #mean_current_velocity = mean(rs_current_velocity, na.rm = T),
-            #mean_current_bearing = mean(rs_current_bearing, na.rm = T)
-            mean_bathy = mean(bathy, na.rm = T)
-            )
-
-ggplot(summarised_data, aes(x = date, y = catalognumber, size = num_det, color = mean_bathy)) +
-  geom_point() +
-  scale_color_viridis_c() +
-  labs(subtitle = "Interpolated sea surface temperature", x = "Date", 
-       y = NULL, color = "bathy", size = "Number of\nDetections") +
-  theme_bw()
+# summarised_data <-
+#   data_with_sst %>% 
+#   mutate(date = as.Date(datecollected)) %>% 
+#   group_by(catalognumber, date) %>% 
+#   summarise(num_det = n(),
+#             #mean_sst = mean(rs_sst_interpolated, na.rm = T),
+#             #mean_current_velocity = mean(rs_current_velocity, na.rm = T),
+#             #mean_current_bearing = mean(rs_current_bearing, na.rm = T)
+#             mean_bathy = mean(bathy, na.rm = T)
+#             )
+# 
+# ggplot(summarised_data, aes(x = date, y = catalognumber, size = num_det, color = mean_bathy)) +
+#   geom_point() +
+#   scale_color_viridis_c() +
+#   labs(subtitle = "Interpolated sea surface temperature", x = "Date", 
+#        y = NULL, color = "bathy", size = "Number of\nDetections") +
+#   theme_bw()
 
 ``` 
 
 ![ ](images/env_extract/env_extract_plot3.png)
 
 ```{r, eval=FALSE, message=FALSE, warning=FALSE}
-
-ggplot(summarised_data) +
-  geom_point(aes(x = date, y = transmitter_id, color = mean_current_velocity,
-                 size = num_det)) +
-  geom_spoke(aes(x = date, y = transmitter_id, angle = mean_current_bearing, radius = mean_current_velocity),
-             arrow = arrow(length = unit(0.05, 'inches')), color = "grey", lwd = 0.1) +
-  labs(subtitle = "Direction and velocity of modeled surface currents", x = "Date", 
-       y = NULL, color = "Current\nVelocity (ms-1)", size = "Number of\nDetections") +
-  scale_color_viridis_c(option = "B") +
-  theme_bw()
+# 
+# ggplot(summarised_data) +
+#   geom_point(aes(x = date, y = transmitter_id, color = mean_current_velocity,
+#                  size = num_det)) +
+#   geom_spoke(aes(x = date, y = transmitter_id, angle = mean_current_bearing, radius = mean_current_velocity),
+#              arrow = arrow(length = unit(0.05, 'inches')), color = "grey", lwd = 0.1) +
+#   labs(subtitle = "Direction and velocity of modeled surface currents", x = "Date", 
+#        y = NULL, color = "Current\nVelocity (ms-1)", size = "Number of\nDetections") +
+#   scale_color_viridis_c(option = "B") +
+#   theme_bw()
 
 ```
 
@@ -311,52 +307,52 @@ ggplot(summarised_data) +
 If the environmental layers were cached, we can also look at how the variables altered spatially:
 
 ```{r, eval=FALSE, message=FALSE, warning=FALSE}
-
-## Detection data summary
-#det_summary <-
-#  qc_data %>% 
-#  group_by(station_name, lon = receiver_deployment_longitude, lat = receiver_deployment_latitude) %>% 
-#  summarise()
-
-det_summary <-
-  data_with_sst %>%
-  group_by(catalognumber, lon = longitude, lat = latitude) %>%
-  summarise()
-
-## Sea surface temperature
-sst_raster <- stack("imos.cache/rs variables/test/rs_sst_interpolated.grd")
-bathy_raster <- stack("imos.cache/rs variables/test/bathy.grd")
-hs_raster <- stack("imos.cache/rs variables/test/hs.grd")
-sst_raster <- stack("imos.cache/rs variables/test/sea_surface_temperature.grd")
-
-sst_df <- 
-  as.data.frame(rast_test, xy = T) %>% 
-  pivot_longer(-c(1,2))
-
-bathy_df <- 
-  as.data.frame(bathy_raster, xy=T) %>%
-  pivot_longer(-c(1,2))
-
-hs_df <-
-  as.data.frame(hs_raster, xy=T) %>%
-  pivot_longer(-c(1,2))
-
-
-ggplot(sst_df) +
-  geom_tile(aes(x, y, fill = value)) +
-  scale_fill_viridis_c() +
-  geom_point(data = det_summary_clean, aes(x = lon, y = lat), size = 0.5, color = "red", inherit.aes = F) +
-  labs(fill = "SST (deg C)", x = "Longitude", y = "Latitude") +
-  coord_equal() +
-  facet_wrap(~name, nrow = 4) +
-  theme_bw()
-
-anim <- hs_plot +
-  transition_states(name,
-                    transition_length = 2,
-                    state_length = 1)
-
-anim
+# 
+# ## Detection data summary
+# #det_summary <-
+# #  qc_data %>% 
+# #  group_by(station_name, lon = receiver_deployment_longitude, lat = receiver_deployment_latitude) %>% 
+# #  summarise()
+# 
+# det_summary <-
+#   data_with_sst %>%
+#   group_by(catalognumber, lon = longitude, lat = latitude) %>%
+#   summarise()
+# 
+# ## Sea surface temperature
+# sst_raster <- stack("imos.cache/rs variables/test/rs_sst_interpolated.grd")
+# bathy_raster <- stack("imos.cache/rs variables/test/bathy.grd")
+# hs_raster <- stack("imos.cache/rs variables/test/hs.grd")
+# sst_raster <- stack("imos.cache/rs variables/test/sea_surface_temperature.grd")
+# 
+# sst_df <- 
+#   as.data.frame(rast_test, xy = T) %>% 
+#   pivot_longer(-c(1,2))
+# 
+# bathy_df <- 
+#   as.data.frame(bathy_raster, xy=T) %>%
+#   pivot_longer(-c(1,2))
+# 
+# hs_df <-
+#   as.data.frame(hs_raster, xy=T) %>%
+#   pivot_longer(-c(1,2))
+# 
+# 
+# ggplot(sst_df) +
+#   geom_tile(aes(x, y, fill = value)) +
+#   scale_fill_viridis_c() +
+#   geom_point(data = det_summary_clean, aes(x = lon, y = lat), size = 0.5, color = "red", inherit.aes = F) +
+#   labs(fill = "SST (deg C)", x = "Longitude", y = "Latitude") +
+#   coord_equal() +
+#   facet_wrap(~name, nrow = 4) +
+#   theme_bw()
+# 
+# anim <- hs_plot +
+#   transition_states(name,
+#                     transition_length = 2,
+#                     state_length = 1)
+# 
+# anim
 
 ```
 ![ ](images/env_extract/env_extract_plot5.png)

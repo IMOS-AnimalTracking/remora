@@ -22,6 +22,8 @@
 
 get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
 
+  library(tidyverse)
+  
   rec_meta <- tag_meta <- anim_meas <- NULL
 
   ## detections

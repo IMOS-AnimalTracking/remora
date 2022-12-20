@@ -77,13 +77,18 @@ files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"), pa
 We invoke the QC using `runQC()`:
 
 ```{r runQC, eval = FALSE, message=FALSE}
-#qc_data <- read_csv("/Users/bruce/Downloads/nsbs_matched_detections_2021/nsbs_matched_detections_2021.csv")
-#otn_files <- otn_imos_column_map(qc_data)
+princess_data <- read_csv("/Users/bruce/Downloads/nsbs_matched_detections_2021/qc_princess.csv")
+otn_princess_kludge <- otn_imos_column_map(princess_data)
+
+princess_receiver_derive_test <- read_csv("/Users/bruce/Downloads/qc_princess - qc_princess.csv")
+
+princess_data <- read_csv("/Users/bruce/Downloads/nsbs_matched_detections_2021/qc_princess.csv")
 
 #otn_files <- list(det = "/Users/bruce/Downloads/nsbs_matched_detections_2021/nsbs_matched_detections_2021.csv")
+otn_files <- list(det = "/Users/bruce/Downloads/nsbs_matched_detections_2021/qc_princess.csv")
 
-tag_qc <- runQC(files, .parallel = FALSE, .progress = FALSE)
-#tag_qc <- runQC(otn_files, data_forma = "otn", .parallel = FALSE, .progress = TRUE)
+#test_tag_qc <- runQC(files, .parallel = FALSE, .progress = FALSE)
+otn_test_tag_qc <- runQC(otn_files, data_format = "otn", .parallel = FALSE, .progress = TRUE)
 ```
 
 ```{r save QC, eval=FALSE, echo=FALSE, message=FALSE}

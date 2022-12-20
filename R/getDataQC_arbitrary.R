@@ -46,6 +46,7 @@ get_data_arbitrary <- function(det=NULL,
                                data_format = "imos") {
   library(tools) ## IDJ: pkg loading win fn should be ok for now, will need to be removed at a later point
   library(dplyr)
+  library(tidyverse)
   
   ## IDJ: think below comments can be removed
   #Remember to formalize all of the new variables as comments up above:

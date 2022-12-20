@@ -6,6 +6,7 @@
 #expected format.
 
 parseMetaForLon <- function(dataframe, url) {
+  library(tidyverse)
   #Start by deriving the necessary URL.
   metaUrl <- getMetadataUrl(url)
   

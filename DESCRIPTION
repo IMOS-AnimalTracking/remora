@@ -99,6 +99,7 @@ Imports:
     stringr,
     tibble,
     tidyr,
+    tidyverse,
     tools,
     viridis,
     xml2,
@@ -109,8 +110,7 @@ Suggests:
     tcltk,
     rmarkdown,
     hrbrthemes,
-    classInt,
-    tidyverse
+    classInt
 Depends: R (>= 3.6.0)
 SystemRequirements: GDAL (>= 2.4.2), GEOS (>= 3.7.0), PROJ (>= 5.2.0)
 VignetteBuilder: knitr
