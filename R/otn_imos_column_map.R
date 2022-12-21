@@ -15,7 +15,6 @@
 #' @return Returns a list containing three approximately IMOS-formatted dataframes.
 #' @export
 #'
-#' @examples
 otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_dataframe = NULL, derive = TRUE) {
   
   library(tidyverse)
