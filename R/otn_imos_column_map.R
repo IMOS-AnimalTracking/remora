@@ -1,10 +1,21 @@
-#In order to save ourselves work going forward, this function takes a set of OTN-formatted data and mutates the columns in each dataframe to produce equivalencies
-#To the IMOS spec. This lets most of REMORA run without further argument- hopefully. 
-
-#Derive is just a flag for if we're working with OTN data, have a detection extract but no receiver metadata or tag metadata. This way, we can run it
-#both ways- if Derive is false, we'll knock together an IMOS-format detections dataframe and run it through Remora's built-in functionality for running
-#detections without receiver/tag metadata; if it's true, then we'll try to scuff rcvr and tag dataframes out of the detection extract file. 
-
+#' @title Map OTN-formatted data to IMOS-format
+#' 
+#' @description Takes three dataframes in the OTN format- one for detections, one for receiver deployment metadata, and one for tag metadata-
+#' and rearranges, renames, and creates columns until they can pass for IMOS-format dataframes. This allows us to pass the data directly
+#' into Remora without making substantial changes to how that code runs or what it looks for. 
+#'
+#' @param det_dataframe The dataframe containing detection information. Most likely a detection extract. 
+#' @param rcvr_dataframe The dataframe containing receiver information. 
+#' @param tag_dataframe The dataframe containing tag information. 
+#' @param derive An optional flag that allows the user to pass in fewer than all three files. If given, the code will use the detection
+#' extract dataframe to generate dataframes for either or both of the receiver and tag dataframes, if they are not passed in. Although
+#' this will result in missing information, it does let the user supply only a detection extract file, which is a situation some may
+#' find themselves in. 
+#'
+#' @return Returns a list containing three approximately IMOS-formatted dataframes.
+#' @export
+#'
+#' @examples
 otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_dataframe = NULL, derive = TRUE) {
   
   library(tidyverse)
