@@ -1,3 +1,15 @@
+#' @title Map IMOS tag metadata to an OTN-like format
+#' 
+#' @description In the same way that otn_imos_column_map takes OTN data and massages it into an IMOS-like format for REMORA, 
+#' this function and its ilk take IMOS data (in this case, tag metadata and animal measurements data) and massage it into an OTN-like format, for the
+#' purposes of reporting and more general applicability within the OTN suite of programs.
+#'
+#' @param tag_dataframe A dataframe containing IMOS-formatted tag metadata. 
+#' @param animal_measurements_dataframe A dataframe containing IMOS-formatted animal measurements data. 
+#'
+#' @return A single dataframe containing the tag and measurement data combined into an OTN-like format. 
+#' @export
+#'
 imos_to_otn_tags <- function(tag_dataframe, animal_measurements_dataframe) {
   library(stringr)
   library(tidyverse)

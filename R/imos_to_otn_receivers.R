@@ -1,3 +1,13 @@
+#' @title Map IMOS receiver metadata to an OTN-like format
+#' @description In the same way that otn_imos_column_map takes OTN data and massages it into an IMOS-like format for REMORA, 
+#' this function and its ilk take IMOS data (in this case, receiver metadata) and massage it into an OTN-like format, for the
+#' purposes of reporting and more general applicability within the OTN suite of programs.
+#' 
+#' @param rcvr_dataframe A dataframe containing IMOS receiver metadata. 
+#'
+#' @return A dataframe containing the above data in an OTN-like format. 
+#' @export
+#'
 imos_to_otn_receivers <- function(rcvr_dataframe) {
   
   library(tidyverse)
