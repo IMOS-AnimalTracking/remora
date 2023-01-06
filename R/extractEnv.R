@@ -159,7 +159,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
     with_progress(
       try(
         suppressWarnings(
-          env_stack <- pull_env_arbitrary(dates = dates, study_extent = study_extent,
+          env_stack <- pull_env_arbitrary(study_extent = study_extent,
                                  var_name = env_var, .cache = cache_layers,
                                  folder_name = folder_name, .crop = crop_layers,
                                  .output_format = output_format, verbose = verbose,
@@ -168,7 +168,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   } else {
     try(
       suppressWarnings(
-        env_stack <- pull_env_arbitrary(dates = dates, study_extent = study_extent, 
+        env_stack <- pull_env_arbitrary(study_extent = study_extent, 
                                var_name = env_var, .cache = cache_layers, 
                                folder_name = folder_name, .crop = crop_layers,
                                .output_format = output_format, verbose = verbose,
