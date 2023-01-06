@@ -1,6 +1,6 @@
 #' @title Map OTN-formatted data to IMOS-format
 #' 
-#' @description Takes three dataframes in the OTN format- one for detections, one for receiver deployment metadata, and one for tag metadata-
+#' @description Takes three dataframes in the OTN format- one for a detection extract, one for receiver deployment metadata, and one for tag metadata-
 #' and rearranges, renames, and creates columns until they can pass for IMOS-format dataframes. This allows us to pass the data directly
 #' into Remora without making substantial changes to how that code runs or what it looks for. 
 #'
@@ -306,7 +306,6 @@ derive_rcvr_from_det <- function(det_dataframe) {
       #Otherwise, just add the row to the group of receivers. 
       else {
         rcvr_grouped <- rbind(rcvr_grouped, row)
-        message("Building rcvr_grouped")
       }
       
       #reset our min and max date to null so the next group will be handled properly. 
@@ -315,7 +314,6 @@ derive_rcvr_from_det <- function(det_dataframe) {
     }
   }
   
-  View(rcvr_grouped)
   #Now we have rcvr_grouped, which contains the receiver metadata with the inferred min and max dates. 
   #We can now rename the columns and do the remainder of the manipulation work as normal. 
   
