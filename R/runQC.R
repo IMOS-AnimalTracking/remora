@@ -84,7 +84,15 @@
 
 runQC <- function(x,
                   lat.check = TRUE,
-                  data_format = "imos", #Added by Bruce Delo for pass-through to get_data_arbitrary- since we can now have imos OR otn data!
+                  data_format = "imos", #Added by Bruce Delo for pass-through to get_data_arbitrary- since we can now have imos OR otn data!,
+                  tests_vector = c("FDA_QC",
+                                     "Velocity_QC",
+                                     "Distance_QC",
+                                     "DetectionDistribution_QC",
+                                     "DistanceRelease_QC",
+                                     "ReleaseDate_QC",
+                                     "ReleaseLocation_QC",
+                                     "Detection_QC"), #Added by Bruce Delo for pass-through to QC, since users can now turn specific tests on and off.
                    .parallel = FALSE,
                    .ncores = detectCores() - 2,
                    .progress = TRUE) {
@@ -146,14 +154,14 @@ runQC <- function(x,
       #Adding this out here. The idea is that we'll eventually percolate this up to the user level to
       #switch QC tests on and off as they like, but for now it's gonna be here to keep it close to where
       #it needs to be. 
-      tests_vector <-  c("FDA_QC",
-                        "Velocity_QC",
-                        "Distance_QC",
-                        "DetectionDistribution_QC",
-                        "DistanceRelease_QC",
-                        "ReleaseDate_QC",
-                        "ReleaseLocation_QC",
-                        "Detection_QC")
+      # tests_vector <-  c("FDA_QC",
+      #                   "Velocity_QC",
+      #                   "Distance_QC",
+      #                   #"DetectionDistribution_QC",
+      #                   "DistanceRelease_QC",
+      #                   "ReleaseDate_QC",
+      #                   "ReleaseLocation_QC",
+      #                   "Detection_QC")
         
       message("StartingQC")
       # Changed by Bruce Delo from qc to qc_updated
