@@ -15,8 +15,12 @@ library(sp)
 library(raster)
 library(stars)
 library(glatos)
+library(utils)
 
 setwd('YOUR/PATH/TO/remora')
+
+download.file("https://members.oceantrack.org/data/share/testdataotn.zip/@@download/file/testDataOTN.zip", "./testDataOTN.zip")
+unzip("testDataOTN.zip")
 
 #IMOS test data, as something to reference against if you want it.
 imos_files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"), package = "remora"),
@@ -34,13 +38,12 @@ otn_mapped_test <- remora::otn_imos_column_map(otn_test_data)
 View(otn_mapped_test)
 
 #The above code isn't meant to be run on its own just yet, the ideal is that you can pass it to QC without having to manually map it. 
-otn_files <- list(det = "/Users/bruce/Downloads/nsbs_matched_detections_2021/nsbs_matched_detections_2021.csv") #Put your path to your files here
+otn_files <- list(det = "./testDataOTN/qc_princess.csv") #Put your path to your files here
 
 #The QC functions rely on having shapefiles for distributions and study areas to calculate distances. 
 #We've got to get a shapefile for the Blue Shark test data, one is included here for sharks but for alternative data you will need your own appropriate one.
 #We got ours from IUCN so maybe start there!
-unzip("./SHARKS_RAYS_CHIMERAS.zip")
-shark_shp <- sf::st_read("./SHARKS_RAYS_CHIMAERAS/SHARKS_RAYS_CHIMAERAS.shp")
+shark_shp <- sf::st_read("./testDataOTN/SHARKS_RAYS_CHIMAERAS/SHARKS_RAYS_CHIMAERAS.shp")
 #We're using the binomial name and bounding box that befits our species and area but feel free to sub in your own when you work with other datasets.
 blue_shark_shp <- shark_shp[shark_shp$binomial == 'Prionace glauca',]
 blue_shark_crop <- st_crop(blue_shark_shp,  xmin=-68.4, ymin=42.82, xmax=-60.53, ymax=45.0)
