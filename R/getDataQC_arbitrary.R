@@ -44,9 +44,10 @@ get_data_arbitrary <- function(det=NULL,
                                det_rcvr_column = "receiver_deployment_id", 
                                rcvr_id_column = "receiver_deployment_id", 
                                data_format = "imos") {
-  library(tools) ## IDJ: pkg loading win fn should be ok for now, will need to be removed at a later point
-  library(dplyr)
-  library(tidyverse)
+  ## IDJ: no need to load pkg's as they're imported (above)
+  #library(tools) ## IDJ: pkg loading win fn should be ok for now, will need to be removed at a later point
+  #library(dplyr)
+  #library(tidyverse)
   
   ## IDJ: think below comments can be removed
   #Remember to formalize all of the new variables as comments up above:
@@ -291,6 +292,7 @@ get_data_arbitrary <- function(det=NULL,
                         transmitter_deployment_datetime.y,
                         transmitter_deployment_datetime.x))
     }
+    
     dd <- dd %>%
       dplyr::select(
         -transmitter_deployment_latitude.y,
