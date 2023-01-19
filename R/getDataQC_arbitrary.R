@@ -182,6 +182,8 @@ get_data_arbitrary <- function(det=NULL,
   
   #View(det_data)
   
+  View(rec_meta)
+  
   if(!is.null(rec_meta)) {
     message("rec_meta is not null")
     ## merge detections with receiver metadata - to get receiver_depth,
@@ -257,6 +259,7 @@ get_data_arbitrary <- function(det=NULL,
       )
   }
   if(!is.null(tag_meta)) {
+    message("tag meta is not null")
     dd <- left_join(dd,
                     tag_meta,
                     by = c("transmitter_id", "transmitter_deployment_id")) %>%
@@ -314,8 +317,10 @@ get_data_arbitrary <- function(det=NULL,
         transmitter_deployment_latitude = transmitter_deployment_latitude.x,
         transmitter_deployment_datetime = transmitter_deployment_datetime.x,
         embargo_date = embargo_date.y,
-        latitude = latitude.x,
-        longitude = longitude.x,
+        #I think these might have been put here before I properly implemented the column mapping. Commenting out, will take
+        #out if it turns out they've been obsolesced. 
+        #latitude = latitude.x,
+        #longitude = longitude.x,
       ) 
     if (!inherits(dd$transmitter_deployment_datetime, "POSIXt")) {
       if (inherits(dd$transmitter_deployment_datetime, "numeric")) {
