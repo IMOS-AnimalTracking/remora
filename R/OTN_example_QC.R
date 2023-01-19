@@ -31,7 +31,6 @@ imos_files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"
                    meas = system.file(file.path("test_data","IMOS_animal_measurements.csv"),
                                       package = "remora"))
 
-
 otn_test_data <- read_csv("./testDataOTN/qc_princess.csv") #Put your path to your test file here. 
 otn_mapped_test <- remora::otn_imos_column_map(otn_test_data)
 #If you want to check your work. 
