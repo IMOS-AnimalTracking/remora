@@ -44,30 +44,12 @@ get_data_arbitrary <- function(det=NULL,
                                det_rcvr_column = "receiver_deployment_id", 
                                rcvr_id_column = "receiver_deployment_id", 
                                data_format = "imos") {
-  ## IDJ: no need to load pkg's as they're imported (above)
-  #library(tools) ## IDJ: pkg loading win fn should be ok for now, will need to be removed at a later point
-  #library(dplyr)
-  #library(tidyverse)
-  
-  ## IDJ: think below comments can be removed
-  #Remember to formalize all of the new variables as comments up above:
-  # - checks: vector containing all of the specific chekcs you want to turn on or off while pulling in the data.
-  # - det_id_column and tag_id_column- we need to know what columns to use for ID checks in the check for tags that are in detections but not in the tag
-  #metadata. 
-  # - data_format- the type of format and therefore the type of columns we'll need to use when we join all this together. 
-  
   #Since we may only get detection data, we set the other data chunks to NULL by default.
   rec_meta <- tag_meta <- anim_meas <- NULL
   
   #Now we need to load the column names for whatever data format we're going to be loading. If you want to add a new one, save them as RData files in the
   #'data' folder, in the format <institution name>_detections/receiver/transmitter/animal_measurement_columns, choosing whichever of the four is appropriate for
   #'the type of file these columns will be referenced in.'
-  
-  #Leaving these here for now, might need to delete later. I think my current way of doing this obsolesces them.
-  #det_columns = data(paste0(data_format, 'detections_columns'))
-  #rec_columns = data(paste0(data_format, 'receiver_columns'))
-  #tag_columns = data(paste0(data_format, 'transmitter_columns'))
-  #meas_columns = data(paste0(data_format, 'animal_measurement_columns'))
   
   ## detections
   #Can't run without a detections file, makes sense.
@@ -180,8 +162,6 @@ get_data_arbitrary <- function(det=NULL,
     warning("receiver metadata not supplied, skipping tests for missing metadata records",
             call. = FALSE, immediate. = TRUE)
   }
-  
-  #View(det_data)
   
   View(rec_meta)
   
