@@ -6,6 +6,8 @@
 ##' @param Lcheck (logical; default TRUE) test for receiver_deployment_latitudes
 ##' in N hemisphere at correct to S hemisphere. Set to FALSE for QC on N hemisphere data
 ##' @param logfile path to logfile; default is the working directory
+##' @param tests_vector ...
+##' @param data_format currently, "imos" (default) or "otn"
 ##'
 ##' @details ...
 ##'
@@ -26,7 +28,8 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                                                            "DistanceRelease_QC",
                                                            "ReleaseDate_QC",
                                                            "ReleaseLocation_QC",
-                                                           "Detection_QC")) {
+                                                           "Detection_QC"),
+               data_format = "imos") {
   if(!is.data.frame(x)) stop("x must be a data.frame")
   
   message("Configuring temporal outcome vector")
@@ -47,54 +50,61 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   
   
   #I've commented out this check for now, I think we're not going to want this what with our intended global scope. 
+  ## IDJ - uncommented as latitude check is useful for IMOS data. I've added to the conditional so this only gets 
+  ##  implemented if the data_format = "imos"
   ## check for & correct any lat's incorrectly in N hemisphere
-  #if(any(x$latitude > 0) & Lcheck) {
-  #  ## how many incorrect records
-  #  n <- sum(x$latitude > 0)
-  #  ## write to logfile
-  #  write(paste0(x$filename[1],
-  #              ":  ", n, " receiver_deployment_latitude(s) incorrectly entered in N hemisphere; corrected in QC output"),
-  #        file = logfile,
-  #        append = TRUE)
-  #
-  #    x <- x %>% mutate(latitude = ifelse(latitude > 0, -1 * latitude, latitude))
-  #}
+  if(any(x$latitude > 0) & Lcheck & data_format == "imos") {
+   ## how many incorrect records
+   n <- sum(x$latitude > 0)
+   ## write to logfile
+   write(paste0(x$filename[1],
+               ":  ", n, " receiver_deployment_latitude(s) incorrectly entered in N hemisphere; corrected in QC output"),
+         file = logfile,
+         append = TRUE)
+
+     x <- x %>% mutate(latitude = ifelse(latitude > 0, -1 * latitude, latitude))
+  }
   
   #Removed sections flagged as redundant. - BD 30/06/2022
 
-  # message("Starting species shapefile grab")
-  # spe <- unique(x$species_scientific_name)
-  # CAAB_species_id <- unique(x$CAAB_species_id)
-  # 
-  # ## Find corresponding ALA shapefile based on species name
-  # shp_b <- NULL
-  # if (!is.na(spe) & !is.na(CAAB_species_id))
-  #   shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe))
-  # 
-  # ## if no shape file or spe or CAAB_species_id is missing then append to logfile & continue
-  # if(is.null(shp_b)) {
-  #   ## write to logfile
-  #   write(paste0(x$filename[1],
-  #               ": shapefile not available for ", spe, "; Dectection distribution not tested"),
-  #         file = logfile,
-  #         append = TRUE)
-  # } else if(inherits(shp_b, "try-error")) {
-  #   ## write to logfile
-  #   write(paste0(x$filename[1],
-  #                ": shapefile could not be downloaded for ", spe, "; Dectection distribution not tested"),
-  #         file = logfile,
-  #         append = TRUE)
-  #   shp_b <- NULL
-  # }
-  # message("Species shapefile grabbing done.")
+  if(data_format == "imos") {
+  message("Starting species shapefile grab")
+  spe <- unique(x$species_scientific_name)
+  CAAB_species_id <- unique(x$CAAB_species_id)
+
+  ## Find corresponding ALA shapefile based on species name
+  shp_b <- NULL
+  if (!is.na(spe) & !is.na(CAAB_species_id))
+    shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe))
+
+  ## if no shape file or spe or CAAB_species_id is missing then append to logfile & continue
+  if(is.null(shp_b)) {
+    ## write to logfile
+    write(paste0(x$filename[1],
+                ": shapefile not available for ", spe, "; Dectection distribution not tested"),
+          file = logfile,
+          append = TRUE)
+  } else if(inherits(shp_b, "try-error")) {
+    ## write to logfile
+    write(paste0(x$filename[1],
+                 ": shapefile could not be downloaded for ", spe, "; Dectection distribution not tested"),
+          file = logfile,
+          append = TRUE)
+    shp_b <- NULL
+  }
   
-  shp_b <- blue_shark_spatial
+  } else if (data_format == "otn") {
+    ## IDJ: Obvs. needs a general solution here but I don't know where these data are going to come from...
+    shp_b <- blue_shark_spatial
+  }
+  message("Species shapefile grabbing done.")
   
   ## Converts unique sets of lat/lon detection coordinates and release lat/lon 
   ##  coordinates to SpatialPoints to test subsequently whether or not detections 
   ##  are in distribution range
   if (!is.null(shp_b)) {
     message("shapefile not null, starting lat/lon conversion to SpatialPoints")
+
     ll <- unique(data.frame(x$longitude, x$latitude))
     coordinates(ll) <- ~ x.longitude + x.latitude
     proj4string(ll) <- suppressWarnings(proj4string(shp_b))
@@ -122,6 +132,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     message("False detection test done.")
   }
 	
+  
 	#bathyUrl = "https://upwell.pfeg.noaa.gov/erddap/griddap/etopo5.geotif?ROSE%5B(40):1:(50)%5D%5B(280):1:(320)%5D"
   #message("Starting dist/velocity tests")
   #Commented out to test if I can get the rest of this running
@@ -136,16 +147,26 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
   	
     message("position set")
+
     #Distance temporarily commented out. We're going to reimplement a lot of this and that includes the shortest_dist calculation, which
     #right now chokes out the rest of the code. So this blows away most of the checks, but it lets the code run so that we can see what
     #happens when the OTN data goes thru it. 
     #dist <- NULL
     # tr is included in the sysdata, but if someone brings their own shapefile then we have to create our own. 
-    dist <- shortest_dist(position,
-                          x$installation_name,
-                          #rast = Aust_raster,
-                          rast = world_raster_sub,
-                          tr = shark_tr)
+    ## IDJ: add conditional on data_format
+    dist <- switch(data_format,
+                   imos = {
+                     shortest_dist(position,
+                                   x$installation_name,
+                                   rast = Aust_raster,
+                                   tr = tr)
+                   },
+                   otn = {
+                     shortest_dist(position,
+                                   x$installation_name,
+                                   rast = world_raster_sub,
+                                   tr = shark_tr)
+                   })
     message("shortest dist calculated")
   }
     if("Velocity_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {

@@ -45,25 +45,25 @@ otn_files <- list(det = "./testDataOTN/qc_princess.csv") #Put your path to your 
 shark_shp <- sf::st_read("./testDataOTN/SHARKS_RAYS_CHIMAERAS/SHARKS_RAYS_CHIMAERAS.shp")
 #We're using the binomial name and bounding box that befits our species and area but feel free to sub in your own when you work with other datasets.
 blue_shark_shp <- shark_shp[shark_shp$binomial == 'Prionace glauca',]
-blue_shark_crop <- st_crop(blue_shark_shp,  xmin=-68.4, ymin=42.82, xmax=-60.53, ymax=45.0)
+blue_shark_crop <- sf::st_crop(blue_shark_shp,  xmin=-68.4, ymin=42.82, xmax=-60.53, ymax=45.0)
 
 #Make a transition layer for later...
 shark_transition <- glatos::make_transition2(blue_shark_crop)
 shark_tr <- shark_transition$transition
 
 #And also a spatial polygon that we can use later. 
-blue_shark_spatial <- as_Spatial(blue_shark_crop)
+blue_shark_spatial <- sf::as_Spatial(blue_shark_crop)
 
 #We also need a raster for the ocean. We'll load this from a mid-resolution tif file, for testing purposes. 
-world_raster <- raster("./testDataOTN/NE2_50M_SR.tif")
+world_raster <- raster::raster("./testDataOTN/NE2_50M_SR.tif")
 #And crop it based on our cropped blue shark extent. 
-world_raster_sub <- crop(world_raster, blue_shark_crop)
+world_raster_sub <- raster::crop(world_raster, blue_shark_crop)
 
 #These are the available tests at time of writing. Detection Distribution isn't working yet and so we have commented it out. 
 tests_vector <-  c("FDA_QC",
                    "Velocity_QC",
                    "Distance_QC",
-                   #"DetectionDistribution_QC",
+#                   "DetectionDistribution_QC", #
                    "DistanceRelease_QC",
                    "ReleaseDate_QC",
                    "ReleaseLocation_QC",
