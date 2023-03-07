@@ -9,7 +9,7 @@ qc_test_velocity <- function(data, qc_results, dist) {
         )
       )
       
-      velocity <- (dist * 1000) / timediff
+      velocity <-(dist * 1000) / timediff 
       qc_results["Velocity_QC"] <- ifelse(velocity <= 10, 1, 2)
   } 
   
@@ -39,9 +39,9 @@ qc_test_velocity <- function(data, qc_results, dist) {
     velocity_next <- (dist_next * 1000) / timediff_next
     
     ## Velocity test
-    qc_results[, "Velocity_QC"] <- ifelse(velocity > 10 & velocity_next > 10, 2, 1)
-    qc_results[1, "Velocity_QC"] <- ifelse(velocity[1] > 10, 2, 1)
-    qc_results[nrow(data), "Velocity_QC"] <- ifelse(velocity[nrow(data)] > 10, 2, 1)
+    qc_results[, 'Velocity_QC'] <- ifelse(velocity > 10 & velocity_next > 10, 2, 1)
+    qc_results[1, 'Velocity_QC'] <- ifelse(velocity[1] > 10, 2, 1)
+    qc_results[nrow(data), 'Velocity_QC'] <- ifelse(velocity[nrow(data)] > 10, 2, 1)
   }
   return(qc_results)
 }

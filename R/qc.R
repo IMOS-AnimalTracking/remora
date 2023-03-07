@@ -202,6 +202,10 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     if("ReleaseLocation_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
       temporal_outcome <- qc_release_location_test(x, temporal_outcome, shp_b, dist, ll_r)
     }
+		## it might be better to keep all tests in temporal_outcome & just ensure
+		##  tests that are turned off return NA values, that way output QC object always
+		##  has same dims - otherwise this will cause IMOS AODN incoming server checks to
+		##  reject QC'd data.
 		
     message("Final QC add")
 		## Detection QC
