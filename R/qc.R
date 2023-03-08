@@ -165,7 +165,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                      shortest_dist(position,
                                    x$installation_name,
                                    rast = world_raster_sub,
-                                   tr = shark_tr)
+                                   tr = shark_tr) # this is hard-coded for the otn blueshark test case
                    })
     message("shortest dist calculated")
   }
