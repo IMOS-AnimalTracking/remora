@@ -27,7 +27,7 @@ find themselves in.}
 Returns a list containing three approximately IMOS-formatted dataframes.
 }
 \description{
-Takes three dataframes in the OTN format- one for detections, one for receiver deployment metadata, and one for tag metadata-
+Takes three dataframes in the OTN format- one for a detection extract, one for receiver deployment metadata, and one for tag metadata-
 and rearranges, renames, and creates columns until they can pass for IMOS-format dataframes. This allows us to pass the data directly
 into Remora without making substantial changes to how that code runs or what it looks for.
 }
