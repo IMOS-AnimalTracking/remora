@@ -70,6 +70,6 @@ tests_vector <-  c("FDA_QC",
                    "Detection_QC")
 
 #In a perfect world, when you run this code, you will get output with QC attached. 
-otn_test_tag_qc <- remora::runQC(otn_files, data_format = "otn", tests_vector = tests_vector, .parallel = FALSE, .progress = TRUE)
+otn_test_tag_qc <- runQC(otn_files, data_format = "otn", tests_vector = tests_vector, .parallel = FALSE, .progress = TRUE)
 
-qc_shapes_test <- get_qc_shapes(blue_shark_shp, otn_test_data)
+qc_shapes_test <- remora:::get_qc_shapes(blue_shark_shp, otn_test_data)
