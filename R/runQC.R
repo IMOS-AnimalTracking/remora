@@ -107,23 +107,27 @@ runQC <- function(x,
   write("", file = logfile)
 
   message("Reading data...")
-  #Swapped from get_data to get_data_arbitrary for testing purposes - BD
-  all_data <- get_data_arbitrary(
-   det = x$det,
-   rmeta = x$rmeta,
-   tmeta = x$tmeta,
-   meas = x$meas,
-   logfile = logfile,
-   data_format = data_format
-  )
-  
-  # all_data <- get_data(
-  #   det = x$det,
-  #   rmeta = x$rmeta,
-  #   tmeta = x$tmeta,
-  #   meas = x$meas,
-  #   logfile = logfile
-  # )
+  ## IDJ: add conditional to use arbitrary or canonical get_data fn
+  all_data <- switch(data_format,
+                     otn = {
+                       get_data_arbitrary(
+                         det = x$det,
+                         rmeta = x$rmeta,
+                         tmeta = x$tmeta,
+                         meas = x$meas,
+                         logfile = logfile,
+                         data_format = "otn"
+                       )
+                     },
+                     imos = {
+                       get_data(
+                         det = x$det,
+                         rmeta = x$rmeta,
+                         tmeta = x$tmeta,
+                         meas = x$meas,
+                         logfile = logfile
+                       )
+                     })
   
   #Set up a raster for the world (temporary while I test the QC functions that require shapefiles to work)
   #world_raster <- readOGR(dsn = 
@@ -162,14 +166,26 @@ runQC <- function(x,
       #                   "ReleaseDate_QC",
       #                   "ReleaseLocation_QC",
       #                   "Detection_QC")
-        
-      message("StartingQC")
+      
+#      message("StartingQC")
       # Changed by Bruce Delo from qc to qc_updated
       #Changed back to this.
-      try(qc(all_data[[i]], 
-             Lcheck = lat.check, 
-             logfile,
-             tests_vector), silent = TRUE)
+      if(data_format == "otn") {
+        try(qc(all_data[[i]],
+               Lcheck = FALSE,
+               logfile,
+               tests_vector,
+               data_format = "otn"), silent = TRUE)
+        
+      } else if (data_format == "imos") {
+        suppressMessages(try(qc(all_data[[i]],
+                                Lcheck = lat.check,
+                                logfile,
+                                tests_vector,
+                                data_format = "imos"),
+                             silent = TRUE)
+        )
+      }
       
       
       # try(qc_updated(all_data[[i]], 
@@ -193,7 +209,7 @@ runQC <- function(x,
     message("\n Please see ", logfile, " for potential data and/or metadata issues\n")
   }
 
-  message(QC_result[[1]])
+  #message(QC_result[[1]])
   tmp <- bind_rows(QC_result)
   out <- nest_by(tmp, filename, .key = "QC")
   class(out) <- append("remora_QC", class(out))

@@ -12,6 +12,7 @@ qc_false_detection_test <- function(data, qc_result) {
     time_diff <- as.numeric(difftime(sub$detection_datetime[2:nrow(sub)],
                                      sub$detection_datetime[1:(nrow(sub)-1)],
                                      tz = "UTC", units = "mins"))
+
     qc_result[sel, 'FDA_QC'] <-
       ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
   }

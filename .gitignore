@@ -52,3 +52,5 @@ QC_logfile.txt
 /Meta/
 docs
 testDataOTN/
+/*.png
+/*.zip

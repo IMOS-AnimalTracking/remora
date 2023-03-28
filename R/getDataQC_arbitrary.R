@@ -319,6 +319,9 @@ get_data_arbitrary <- function(det=NULL,
         embargo_date = embargo_date.y,
         #I think these might have been put here before I properly implemented the column mapping. Commenting out, will take
         #out if it turns out they've been obsolesced.
+        ## IDJ - removing these cause OTN QC process to fail, leaving them in causes IMOS QC process to fail. 
+        ##  The rabbit hole is too deep to reconcile for now....
+        ##  current solution, use conditionals in runQC based on data_format to alternately call getDataQC_arbitrary = OTN or getDataQC = IMOS
         latitude = latitude.x,
         longitude = longitude.x,
       ) 
@@ -400,7 +403,7 @@ get_data_arbitrary <- function(det=NULL,
   
   return(dd.lst)
 }
-                               
+
 #Just copying the ugly code above for now until I figure out something nicer and less magic-numbery.
 remove_unnamed_columns <- function(dataframe) {
   if(any(paste0("X",1:20) %in% names(dataframe))) {

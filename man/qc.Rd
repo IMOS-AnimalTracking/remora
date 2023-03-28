@@ -4,7 +4,14 @@
 \alias{qc}
 \title{test the validity of individual detections for tags detected more than once}
 \usage{
-qc(x, Lcheck = TRUE, logfile)
+qc(
+  x,
+  Lcheck = TRUE,
+  logfile,
+  tests_vector = c("FDA_QC", "Velocity_QC", "Distance_QC", "DetectionDistribution_QC",
+    "DistanceRelease_QC", "ReleaseDate_QC", "ReleaseLocation_QC", "Detection_QC"),
+  data_format = "imos"
+)
 }
 \arguments{
 \item{x}{a list of un-QC'd data for each tag deployment}
@@ -13,6 +20,10 @@ qc(x, Lcheck = TRUE, logfile)
 in N hemisphere at correct to S hemisphere. Set to FALSE for QC on N hemisphere data}
 
 \item{logfile}{path to logfile; default is the working directory}
+
+\item{tests_vector}{...}
+
+\item{data_format}{currently, "imos" (default) or "otn"}
 }
 \value{
 temporal_outcome is a list with each element corresponding to a QC'd tag detection file

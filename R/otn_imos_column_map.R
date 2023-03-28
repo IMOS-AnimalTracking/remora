@@ -1,24 +1,27 @@
-#' @title Map OTN-formatted data to IMOS-format
-#' 
-#' @description Takes three dataframes in the OTN format- one for a detection extract, one for receiver deployment metadata, and one for tag metadata-
-#' and rearranges, renames, and creates columns until they can pass for IMOS-format dataframes. This allows us to pass the data directly
-#' into Remora without making substantial changes to how that code runs or what it looks for. 
-#'
-#' @param det_dataframe The dataframe containing detection information. Most likely a detection extract. 
-#' @param rcvr_dataframe The dataframe containing receiver information. 
-#' @param tag_dataframe The dataframe containing tag information. 
-#' @param derive An optional flag that allows the user to pass in fewer than all three files. If given, the code will use the detection
-#' extract dataframe to generate dataframes for either or both of the receiver and tag dataframes, if they are not passed in. Although
-#' this will result in missing information, it does let the user supply only a detection extract file, which is a situation some may
-#' find themselves in. 
-#'
-#' @return Returns a list containing three approximately IMOS-formatted dataframes.
-#' @export
-#'
+##' @title Map OTN-formatted data to IMOS-format
+##' 
+##' @description Takes three dataframes in the OTN format- one for a detection extract, one for receiver deployment metadata, and one for tag metadata-
+##' and rearranges, renames, and creates columns until they can pass for IMOS-format dataframes. This allows us to pass the data directly
+##' into Remora without making substantial changes to how that code runs or what it looks for. 
+##'
+##' @param det_dataframe The dataframe containing detection information. Most likely a detection extract. 
+##' @param rcvr_dataframe The dataframe containing receiver information. 
+##' @param tag_dataframe The dataframe containing tag information. 
+##' @param derive An optional flag that allows the user to pass in fewer than all three files. If given, the code will use the detection
+##' extract dataframe to generate dataframes for either or both of the receiver and tag dataframes, if they are not passed in. Although
+##' this will result in missing information, it does let the user supply only a detection extract file, which is a situation some may
+##' find themselves in. 
+##' 
+##' @importFrom dplyr select '%>%' mutate rename group_by arrange distinct filter left_join
+##' @importFrom tidyr unite 
+##' @importFrom lubridate ymd as_date
+##' 
+##' @return Returns a list containing three approximately IMOS-formatted dataframes.
+##' @export
+##'
 otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_dataframe = NULL, derive = TRUE) {
   
-  library(tidyverse)
-  library(lubridate)
+
   #We need to ultimately produce the following:
   # - A detections dataframe with columns appropriate to the IMOS spec. 
   # - A receiver dataframe with appropriate columns, if necessary with data derived from the detections dataframe.
@@ -53,7 +56,7 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   
   #Start by mapping the Detections dataframe.
   det_return <- det_dataframe %>%
-    dplyr::select(
+    select(
       datecollected,
       catalognumber,
       tagname,
@@ -254,8 +257,21 @@ otn_imos_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
   return(list("detections" = det_return, "receivers" = rcvr_return, "tags" = tag_return))
 }
 
-#Hack together a piecemeal receiver metadata dataframe for instances where we get detection data, no receiver/tag metadata, but still want to act
-#as though we DID get receiver/tag metadata.
+
+##' @title Derive a receiver metadata data.frame from OTN-formatted data to IMOS-format
+##' 
+##' @description Hack together a piecemeal receiver metadata dataframe for instances 
+##' where we get detection data, no receiver/tag metadata, but still want to act
+##' as though we DID get receiver/tag metadata.
+##'
+##' @param det_dataframe The dataframe containing detection information. 
+##' Most likely a detection extract. 
+##' 
+##' @importFrom dplyr select '%>%' mutate rename group_by arrange lead
+##' @importFrom tidyr unite 
+##' 
+##' @keywords internal
+##'
 derive_rcvr_from_det <- function(det_dataframe) {
 
   #The first thing we need to do is gin up some inferred min and max deployment dates. 
@@ -318,7 +334,7 @@ derive_rcvr_from_det <- function(det_dataframe) {
   #We can now rename the columns and do the remainder of the manipulation work as normal. 
   
   rcvr <- rcvr_grouped %>%
-    dplyr::select(
+    select(
       #Select the columns from the detection extract that we have access to.
       detectedby,
       station,
@@ -358,6 +374,22 @@ derive_rcvr_from_det <- function(det_dataframe) {
   
 }
 
+
+##' @title Derive a tag metadata data.frame from OTN-formatted data to IMOS-format
+##' 
+##' @description Hack together a piecemeal tag metadata data.frame for instances 
+##' where we get detection data, no receiver/tag metadata, but still want to act
+##' as though we DID get receiver/tag metadata.
+##'
+##' @param det_dataframe The dataframe containing detection information. 
+##' Most likely a detection extract. 
+##' 
+##' @importFrom dplyr select '%>%' mutate rename group_by arrange distinct filter
+##' @importFrom dplyr left_join
+##' @importFrom tidyr unite 
+##' 
+##' @keywords internal
+##'
 derive_tag_from_det <- function(det_dataframe) {
   #Group by tagname. We may need to add the option to use alternative columns in the future, but that's doable, I think. 
   distinctTag <- det_dataframe %>%
@@ -377,7 +409,7 @@ derive_tag_from_det <- function(det_dataframe) {
     )
   
   tag <- distinctTag %>%
-    dplyr::select(
+    select(
       tagname,
       commonname,
       scientificname,

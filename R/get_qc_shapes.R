@@ -1,21 +1,42 @@
-#Function to generate shapefiles and transitionlayers for QC based on user-supplied parameters.
+##' @title generate shapefiles and transition layers
+##' 
+##' @description generate shapefiles and transition layers for QC based on user-supplied parameters
+##' 
+##' @param detection_extract ...
+##' @param shapefile ...
+##' @param worldimage ...
+##' 
+##' @return a list of cropped shapefile, transition layer, and world raster
+##' 
+##' @importFrom sf st_crop st_bbox
+##' @importFrom raster raster crop
+##' @importFrom glatos make_transition2
+##' 
+##' @keywords internal
 
 get_qc_shapes <- function(detection_extract, shapefile, worldimage = "./testDataOTN/NE2_50M_SR.tif") {
-  library(st)
-  library(raster)
-  library(glatos)
-  
-  #Get the extent
-  minLat = min(detection_extract$latitude) + 5
-  minLon = min(detection_extract$longitude) + 5
-  maxLat = max(detection_extract$latitude) + 5
-  maxLon = max(detection_extract$longitude) + 5
-  
-  #Crop the range shapefile
-  shapefile_crop <- st_crop(blue_shark_shp,  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
+
+  ## Get the extent - FIXME:: this won't work if detection_extract is an sf object
+  ##  IDJ - added conditional as work-around for now
+  if(!inherits(detection_extract, "sf")) {
+    minLat = min(detection_extract$latitude) + 5
+    minLon = min(detection_extract$longitude) + 5
+    maxLat = max(detection_extract$latitude) + 5
+    maxLon = max(detection_extract$longitude) + 5
+    #Crop the range shapefile
+    shapefile_crop <- st_crop(blue_shark_shp,  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
+  } else {
+    ext <- st_bbox(detection_extract)
+    ext[1] <- ext[1] + 5 * sign(ext[1])
+    ext[2] <- ext[2] + 5 * sign(ext[2])
+    ext[3] <- ext[3] + 5 * sign(ext[3])
+    ext[4] <- ext[4] + 5 * sign(ext[4])
+    #Crop the range shapefile
+    shapefile_crop <- st_crop(blue_shark_shp,  ext)
+  }
   
   #Generate a transition layer
-  transition_layer <- glatos::make_transition2(shapefile_crop)
+  transition_layer <- make_transition2(shapefile_crop)
   
   #Crop the world raster
   if(file.exists(worldimage)) {

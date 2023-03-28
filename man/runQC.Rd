@@ -7,6 +7,9 @@
 runQC(
   x,
   lat.check = TRUE,
+  data_format = "imos",
+  tests_vector = c("FDA_QC", "Velocity_QC", "Distance_QC", "DetectionDistribution_QC",
+    "DistanceRelease_QC", "ReleaseDate_QC", "ReleaseLocation_QC", "Detection_QC"),
   .parallel = FALSE,
   .ncores = detectCores() - 2,
   .progress = TRUE
@@ -19,7 +22,7 @@ downloaded from the IMOS-ATF Web App (URL), or have exactly the same
 structure and variable names as the Web App data.}
 
 \item{lat.check}{(logical; default TRUE) test for receiver_deployment_latitudes
-in N hemisphere at correct to S hemisphere. Set to FALSE if QC'ing N hemisphere data}
+in N hemisphere and correct to S hemisphere. Set to FALSE if QC'ing N hemisphere data}
 
 \item{.parallel}{logical; run QC tests in parallel across multiple processors
 (default is FALSE)}

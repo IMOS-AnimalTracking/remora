@@ -1,7 +1,7 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.7.1
-Date: 2021-11-26
+Version: 0.9.0.9512
+Date: 2023-03-08
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
@@ -42,9 +42,17 @@ Authors@R:
            family = "Huveneers",
            role = c("aut", "ctb"),
            email = "charlie.huveneers@flinders.edu.au",
-           comment = c(ORCID = "0000-0001-8937-1358")))
+           comment = c(ORCID = "0000-0001-8937-1358")),
+           person(given = "Bruce",
+           family = "Delo",
+           role = "ctb",
+           email = "br772481@dal.ca"),
+           person(given = "Jon",
+           family = "Pye",
+           role = "ctb",
+           email = "jon.pye@gmail.com"))
 Maintainer: Ian Jonsen <ian.jonsen@mq.edu.au>
-Description: R Package to access and integrate animal tracking data from the IMOS Animal Tracking Facility database and web-app, and environmental data from the AODN database.
+Description: R Package to access, quality-control, animal acoustic tracking data and integrate with environmental data.
 URL: https://github.com/IMOS-AnimalTracking/remora/,
     https://imos-animaltracking.github.io/remora
 BugReports: https://github.com/IMOS-AnimalTracking/remora/issues
