@@ -14,6 +14,7 @@
 ##' \code{parallel = TRUE} then process will run across all available cores,
 ##' otherwise run across user-specified cores
 ##' @param .progress logical; display QC progress (default is TRUE).
+##' @param shapefile Allows the user to supply a shapefile specifying species ranges.
 ##'
 ##' @details The QC process merges data from the supplied files downloaded via
 ##' the IMOS-ATF Web App (URL): `IMOS_detections.csv`;
@@ -93,6 +94,7 @@ runQC <- function(x,
                                      "ReleaseDate_QC",
                                      "ReleaseLocation_QC",
                                      "Detection_QC"), #Added by Bruce Delo for pass-through to QC, since users can now turn specific tests on and off.
+                  shapefile = NULL, #Added by Bruce Delo for pass-through to QC, allows user to specify a shapefile. Only gets used if data format is OTN, at the moment.
                    .parallel = FALSE,
                    .ncores = detectCores() - 2,
                    .progress = TRUE) {
@@ -175,7 +177,9 @@ runQC <- function(x,
                Lcheck = FALSE,
                logfile,
                tests_vector,
-               data_format = "otn"), silent = TRUE)
+               data_format = "otn",
+               shapefile = shapefile), 
+            silent = TRUE)
         
       } else if (data_format == "imos") {
         suppressMessages(try(qc(all_data[[i]],

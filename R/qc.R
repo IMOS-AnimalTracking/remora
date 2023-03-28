@@ -8,6 +8,7 @@
 ##' @param logfile path to logfile; default is the working directory
 ##' @param tests_vector ...
 ##' @param data_format currently, "imos" (default) or "otn"
+##' @param shapefile A shapefile for species home ranges. Can be left null but some tests may not run. 
 ##'
 ##' @details ...
 ##'
@@ -29,7 +30,8 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                                                            "ReleaseDate_QC",
                                                            "ReleaseLocation_QC",
                                                            "Detection_QC"),
-               data_format = "imos") {
+               data_format = "imos",
+               shapefile = NULL) {
   if(!is.data.frame(x)) stop("x must be a data.frame")
   
   message("Configuring temporal outcome vector")
@@ -94,8 +96,10 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   }
   
   } else if (data_format == "otn") {
-    ## IDJ: Obvs. needs a general solution here but I don't know where these data are going to come from...
-    shp_b <- blue_shark_spatial
+    if(is.null(shapefile)) {
+      message("WARNING: No shapefile supplied. Some tests may not run.")
+    }
+    shp_b <- shapefile
   }
   message("Species shapefile grabbing done.")
   
@@ -179,7 +183,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
 
 		message("Dist/velocity tests done.")
 		## Detection distribution test
-    if("DetectionDistribution_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
+    if("DetectionDistribution_QC" %in% colnames(temporal_outcome) & !is.null(dist) & !is.null(shp_b)) {
       message("Starting detection distribution test")
       temporal_outcome <- qc_test_det_distro(x, ll, temporal_outcome, shp_b)
       message("Detection distribution test done.")
@@ -199,7 +203,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
       message("Release time diff check done")
     }
 
-    if("ReleaseLocation_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
+    if("ReleaseLocation_QC" %in% colnames(temporal_outcome) & !is.null(dist) & !is.null(shp_b)) {
       temporal_outcome <- qc_release_location_test(x, temporal_outcome, shp_b, dist, ll_r)
     }
 		## it might be better to keep all tests in temporal_outcome & just ensure
