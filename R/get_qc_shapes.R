@@ -16,15 +16,13 @@
 
 get_qc_shapes <- function(detection_extract, shapefile, worldimage = "./testDataOTN/NE2_50M_SR.tif") {
 
-  ## Get the extent - FIXME:: this won't work if detection_extract is an sf object
-  ##  IDJ - added conditional as work-around for now
   if(!inherits(detection_extract, "sf")) {
-    minLat = min(detection_extract$latitude) + 5
-    minLon = min(detection_extract$longitude) + 5
+    minLat = min(detection_extract$latitude) - 5
+    minLon = min(detection_extract$longitude) - 5
     maxLat = max(detection_extract$latitude) + 5
     maxLon = max(detection_extract$longitude) + 5
     #Crop the range shapefile
-    shapefile_crop <- st_crop(blue_shark_shp,  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
+    shapefile_crop <- st_crop(shapefile,  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
   } else {
     ext <- st_bbox(detection_extract)
     ext[1] <- ext[1] + 5 * sign(ext[1])
@@ -32,11 +30,11 @@ get_qc_shapes <- function(detection_extract, shapefile, worldimage = "./testData
     ext[3] <- ext[3] + 5 * sign(ext[3])
     ext[4] <- ext[4] + 5 * sign(ext[4])
     #Crop the range shapefile
-    shapefile_crop <- st_crop(blue_shark_shp,  ext)
+    shapefile_crop <- st_crop(shapefile,  ext)
   }
-  
+
   #Generate a transition layer
-  transition_layer <- make_transition2(shapefile_crop)
+  transition_layer <- glatos::make_transition2(shapefile_crop)
   
   #Crop the world raster
   if(file.exists(worldimage)) {
