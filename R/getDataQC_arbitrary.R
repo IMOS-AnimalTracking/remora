@@ -74,6 +74,7 @@ get_data_arbitrary <- function(det=NULL,
   
   #Original version has a huge col_types specification here, we're not going to do that since it relies on column names that will not be held over in non-
   #IMOS data formats.
+  string_spec = "ccccDccccddcccccccTcddciiiidcccc"
   det_data <- read_csv(det, na = c("", "null", "NA"))
   
   ## drop any unnamed columns, up to a possible 20 of them...
@@ -121,6 +122,10 @@ get_data_arbitrary <- function(det=NULL,
     det_data <- processed_data$detections
     rec_meta <- processed_data$receivers
     tag_meta <- processed_data$tags
+    
+    #View(det_data)
+    #View(rec_meta)
+    #View(tag_meta)
   }
   
   #Check for and report any tags in detections but not in the tag metadata.
@@ -128,7 +133,7 @@ get_data_arbitrary <- function(det=NULL,
   
   if(!is.null(tag_meta)){
     missing_ids <- 
-      unique(det_data[det_id_column])[!unique(det_data[det_id_column]) %in% tag_meta[tag_id_column]]
+      unique(det_data[[det_id_column]])[!unique(det_data[[det_id_column]]) %in% tag_meta[[tag_id_column]]]
   }
   
   #The original code has a more detailed process here of creating detection names, we don't have the luxury of having all our
@@ -157,7 +162,7 @@ get_data_arbitrary <- function(det=NULL,
   missing_ids <- vector()
   if(!is.null(rec_meta)){
     missing_ids <- 
-      unique(det_data[det_rcvr_column])[!unique(det_data[det_rcvr_column]) %in% rec_meta[rcvr_id_column]]
+      unique(det_data[[det_rcvr_column]])[!unique(det_data[[det_rcvr_column]]) %in% rec_meta[[rcvr_id_column]]]
   }
   
   #The original code has a more detailed process here of creating detection names, we don't have the luxury of having all our

@@ -17,7 +17,7 @@ library(stars)
 library(glatos)
 library(utils)
 
-setwd('YOUR/PATH/TO/remora')
+setwd('/Users/bruce/Work/remora')
 
 download.file("https://members.oceantrack.org/data/share/testdataotn.zip/@@download/file/testDataOTN.zip", "./testDataOTN.zip")
 unzip("testDataOTN.zip")
@@ -31,13 +31,17 @@ imos_files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"
                    meas = system.file(file.path("test_data","IMOS_animal_measurements.csv"),
                                       package = "remora"))
 
-otn_test_data <- readr::read_csv("./testDataOTN/qc_princess.csv") #Put your path to your test file here. 
+#Hideous column type specification in compact string format (see the col_types help in the read_csv documentation for explanation)
+string_spec = "ccccDccccddcccccccTcddciiiidcccc"
+#otn_test_data <- readr::read_csv("/Users/bruce/Downloads/animal_extract_2013.csv", col_types=string_spec) #Put your path to your test file here. 
+otn_test_data <- readr::read_csv("testDataOTN/qc_princess.csv")
 otn_mapped_test <- otn_imos_column_map(otn_test_data)
 #If you want to check your work. 
 View(otn_mapped_test)
 
 #The above code isn't meant to be run on its own just yet, the ideal is that you can pass it to QC without having to manually map it. 
-otn_files <- list(det = "./testDataOTN/qc_princess.csv") #Put your path to your files here
+#otn_files <- list(det = "/Users/bruce/Downloads/animal_extract_2013.csv") #Put your path to your files here
+otn_files <- list(det = "testDataOTN/qc_princess.csv")
 
 #The QC functions rely on having shapefiles for distributions and study areas to calculate distances. 
 #We've got to get a shapefile for the Blue Shark test data, one is included here for sharks but for alternative data you will need your own appropriate one.
@@ -47,7 +51,7 @@ shark_shp <- sf::st_read("./testDataOTN/SHARKS_RAYS_CHIMAERAS/SHARKS_RAYS_CHIMAE
 blue_shark_shp <- shark_shp[shark_shp$binomial == 'Prionace glauca',]
 blue_shark_crop <- sf::st_crop(blue_shark_shp,  xmin=-68.4, ymin=42.82, xmax=-60.53, ymax=45.0)
 
-#Make a transition layer for later...
+#This is the format of the code we use to make a transition layer; you shouldn't need to run this here since it will run in 
 shark_transition <- glatos::make_transition2(blue_shark_crop)
 shark_tr <- shark_transition$transition
 
@@ -61,15 +65,16 @@ world_raster_sub <- raster::crop(world_raster, blue_shark_crop)
 
 #These are the available tests at time of writing. Detection Distribution isn't working yet and so we have commented it out. 
 tests_vector <-  c("FDA_QC",
-                   "Velocity_QC",
-                   "Distance_QC",
+#                   "Velocity_QC",
+#                   "Distance_QC",
 #                   "DetectionDistribution_QC", #
                    "DistanceRelease_QC",
-                   "ReleaseDate_QC",
-                   "ReleaseLocation_QC",
+#                   "ReleaseDate_QC",
+#                   "ReleaseLocation_QC",
                    "Detection_QC")
 
 #In a perfect world, when you run this code, you will get output with QC attached. 
-otn_test_tag_qc <- runQC(otn_files, data_format = "otn", tests_vector = tests_vector, .parallel = FALSE, .progress = TRUE)
+otn_test_tag_qc <- runQC(otn_files, data_format = "otn", tests_vector = tests_vector, shapefile = blue_shark_crop, .parallel = FALSE, .progress = TRUE)
+View(otn_test_tag_qc)
 
 qc_shapes_test <- get_qc_shapes(otn_test_data, blue_shark_shp)

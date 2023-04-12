@@ -48,8 +48,9 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   
   #Start by removing any rows that have NAs in the datetime, lat, or long columns. I'd like to return to this function and make something
   #a little more comprehensive but for now I've just sliced out the code and hived it off into its own function for cleanliness' sake.
+  message("Removing NAs")
   x <- qc_remove_nas(x)
-  
+  message("NAs removed.")
   
   #I've commented out this check for now, I think we're not going to want this what with our intended global scope. 
   ## IDJ - uncommented as latitude check is useful for IMOS data. I've added to the conditional so this only gets 
@@ -110,8 +111,13 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     message("shapefile not null, starting lat/lon conversion to SpatialPoints")
 
     ll <- unique(data.frame(x$longitude, x$latitude))
-    coordinates(ll) <- ~ x.longitude + x.latitude
-    proj4string(ll) <- suppressWarnings(proj4string(shp_b))
+    
+    SpatialPoints(ll, proj4string = CRS("EPSG:4326"))
+    #coordinates(ll) <- ~ x.longitude + x.latitude
+    #message("Coordinates set")
+    #proj4string(ll) <- proj4string(shp_b)
+    #st_crs(ll) <- CRS("EPSG:4326")
+    message("projection string set") 
     
     message("Step one")
     ll_r <- NULL
@@ -119,10 +125,12 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
       ll_r <-
         data.frame(x$transmitter_deployment_longitude[1], x$transmitter_deployment_latitude[1])
       message("Step two")
-      coordinates(ll_r) <-
-        ~ x.transmitter_deployment_longitude.1. + x.transmitter_deployment_latitude.1.
-      message("Step three")
-      proj4string(ll_r) <- suppressWarnings(proj4string(shp_b))
+      SpatialPoints(ll_r, proj4string = CRS("EPSG:4326"))
+      #coordinates(ll_r) <-
+      #  ~ x.transmitter_deployment_longitude.1. + x.transmitter_deployment_latitude.1.
+      #message("Step three")
+      #proj4string(ll_r) <- suppressWarnings(proj4string(shp_b))
+      #st_crs(ll_r) <- CRS("EPSG:4326")
     }
   }
   message("Conversion done.")
@@ -166,18 +174,23 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                                    tr = tr)
                    },
                    otn = {
-                     shortest_dist(position,
-                                   x$installation_name,
-                                   rast = world_raster_sub,
-                                   tr = shark_tr) # this is hard-coded for the otn blueshark test case
+                     transition_layer <- glatos::make_transition2(shp_b)
+                     tr <- transition_layer$transition
+                     dist <- NULL
+                     #shortest_dist(position,
+                    #               x$installation_name,
+                    #               rast = world_raster_sub,
+                    #               tr = tr) # this is hard-coded for the otn blueshark test case
                    })
     message("shortest dist calculated")
   }
     if("Velocity_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
+      message("Velocity test") 
     	temporal_outcome <- qc_test_velocity(x, temporal_outcome, dist)
     }
   
     if("Distance_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
+      message("Distance test")
       temporal_outcome <- qc_test_distance(x, temporal_outcome, dist)
     }
 
@@ -214,6 +227,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     message("Final QC add")
 		## Detection QC
     temporal_outcome <- qc_detection_qc(temporal_outcome)
+    message("QC add done.")
     
 	x <- x %>%
 	  rename(receiver_deployment_longitude = longitude,

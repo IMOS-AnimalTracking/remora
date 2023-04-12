@@ -169,7 +169,7 @@ runQC <- function(x,
       #                   "ReleaseLocation_QC",
       #                   "Detection_QC")
       
-#      message("StartingQC")
+      message("StartingQC")
       # Changed by Bruce Delo from qc to qc_updated
       #Changed back to this.
       if(data_format == "otn") {

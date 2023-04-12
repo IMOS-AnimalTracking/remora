@@ -15,7 +15,7 @@ qc_remove_nas <- function(data){
     ## remove records with NA's in the above variables so QC can proceed
     data <- data[-rn,]
   }
-  
+
   ## check for NA's in (receiver_deployment) longitude/latitude & remove and flag in logfile
   rn <- which(is.na(data$longitude) | is.na(data$latitude))
   if(length(rn) > 0) {
