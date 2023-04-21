@@ -407,7 +407,8 @@ derive_tag_from_det <- function(det_dataframe) {
       transmitter_deployment_longitude = longitude,
       transmitter_deployment_datetime = datecollected
     )
-  
+  message("Number of releases:")
+  message(nrow(releases))
   tag <- distinctTag %>%
     select(
       tagname,

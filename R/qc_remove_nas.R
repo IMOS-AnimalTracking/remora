@@ -1,4 +1,15 @@
-#Small function to remove NA values from a dataframe before the rest of the checks are run on it. 
+##' @title QC Remove NAs
+##'
+##' @description Small function to remove NA values from a dataframe before the rest of the checks are run on it. 
+##' 
+##' @param data data formatted by either `remora::get_data` or `remora::get_data_arbitrary`
+##' 
+##' @details ...
+##' 
+##' @return returns the dataframe with the NA values removed. 
+##' 
+##' @keywords internal
+##' 
 
 qc_remove_nas <- function(data){
   

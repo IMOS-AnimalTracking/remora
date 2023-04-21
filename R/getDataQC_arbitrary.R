@@ -74,8 +74,15 @@ get_data_arbitrary <- function(det=NULL,
   
   #Original version has a huge col_types specification here, we're not going to do that since it relies on column names that will not be held over in non-
   #IMOS data formats.
-  string_spec = "ccccDccccddcccccccTcddciiiidcccc"
-  det_data <- read_csv(det, na = c("", "null", "NA"))
+  #The string specification below SHOULD hold for OTN-formatted detection extracts. 
+  if(tolower(data_format) == "otn") {
+    string_spec = "ccccDccccddcccccccTcddciiiidcccc"
+    det_data <- read_csv(det, na = c("", "null", "NA"), col_types = string_spec)
+  }
+  else {
+    det_data <- read_csv(det, na = c("", "null", "NA"))
+  }
+  
   
   ## drop any unnamed columns, up to a possible 20 of them...
   # BD - There must be a nicer and more sensible way to drop unnamed columns. Also keep an eye out for whether or not this gets printed anywhere, 
@@ -122,10 +129,6 @@ get_data_arbitrary <- function(det=NULL,
     det_data <- processed_data$detections
     rec_meta <- processed_data$receivers
     tag_meta <- processed_data$tags
-    
-    #View(det_data)
-    #View(rec_meta)
-    #View(tag_meta)
   }
   
   #Check for and report any tags in detections but not in the tag metadata.
