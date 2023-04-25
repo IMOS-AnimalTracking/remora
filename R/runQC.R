@@ -157,6 +157,7 @@ runQC <- function(x,
         flush.console()
       }
       
+      
       #Adding this out here. The idea is that we'll eventually percolate this up to the user level to
       #switch QC tests on and off as they like, but for now it's gonna be here to keep it close to where
       #it needs to be. 
@@ -169,17 +170,18 @@ runQC <- function(x,
       #                   "ReleaseLocation_QC",
       #                   "Detection_QC")
       
-      message("StartingQC")
+      #message("StartingQC")
       # Changed by Bruce Delo from qc to qc_updated
       #Changed back to this.
       if(data_format == "otn") {
+        message("Starting OTN QC")
         try(qc(all_data[[i]],
                Lcheck = FALSE,
                logfile,
                tests_vector,
                data_format = "otn",
                shapefile = shapefile), 
-            silent = TRUE)
+            silent = FALSE)
         
       } else if (data_format == "imos") {
         suppressMessages(try(qc(all_data[[i]],

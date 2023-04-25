@@ -33,12 +33,9 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                data_format = "imos",
                shapefile = NULL) {
   if(!is.data.frame(x)) stop("x must be a data.frame")
-  
-  message("Configuring temporal outcome vector")
   ## Configure output processed data file
   temporal_outcome <- data.frame(matrix(ncol = length(tests_vector), nrow = nrow(x)))
   colnames(temporal_outcome) <- tests_vector
-  message("Temporal outcome vector configured")
   
   #If our dataframe is only one entry long, quit.
   if(nrow(x) == 1) {
@@ -48,9 +45,9 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   
   #Start by removing any rows that have NAs in the datetime, lat, or long columns. I'd like to return to this function and make something
   #a little more comprehensive but for now I've just sliced out the code and hived it off into its own function for cleanliness' sake.
-  message("Removing NAs")
+  #message("Removing NAs")
   x <- qc_remove_nas(x)
-  message("NAs removed.")
+  #message("NAs removed.")
   
   #I've commented out this check for now, I think we're not going to want this what with our intended global scope. 
   ## IDJ - uncommented as latitude check is useful for IMOS data. I've added to the conditional so this only gets 
@@ -70,8 +67,10 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   
   #Removed sections flagged as redundant. - BD 30/06/2022
 
-  if(data_format == "imos") {
-  message("Starting species shapefile grab")
+  write(paste0(x$filename[1],
+               ":  ", n, " Grabbing species shapefile."),
+        file = logfile,
+        append = TRUE)
   spe <- unique(x$species_scientific_name)
   CAAB_species_id <- unique(x$CAAB_species_id)
 
@@ -102,7 +101,10 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     }
     shp_b <- shapefile
   }
-  message("Species shapefile grabbing done.")
+  write(paste0(x$filename[1],
+               ":  ", n, " Shapefile Grab done."),
+        file = logfile,
+        append = TRUE)
   
   ## Converts unique sets of lat/lon detection coordinates and release lat/lon 
   ##  coordinates to SpatialPoints to test subsequently whether or not detections 
@@ -139,9 +141,15 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
 	## False Detection Algorithm test
   if("FDA_QC" %in% colnames(temporal_outcome))
   {
-    message("Starting false detections test")
+    write(paste0(x$filename[1],
+                 ":  ", n, " Starting false detection test"),
+          file = logfile,
+          append = TRUE)
     temporal_outcome <- qc_false_detection_test(x, temporal_outcome)
-    message("False detection test done.")
+    write(paste0(x$filename[1],
+                 ":  ", n, " False detection test done."),
+          file = logfile,
+          append = TRUE)
   }
 	
   
