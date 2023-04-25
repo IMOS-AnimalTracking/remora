@@ -66,34 +66,34 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   }
   
   #Removed sections flagged as redundant. - BD 30/06/2022
-
   write(paste0(x$filename[1],
                ":  ", n, " Grabbing species shapefile."),
         file = logfile,
         append = TRUE)
-  spe <- unique(x$species_scientific_name)
-  CAAB_species_id <- unique(x$CAAB_species_id)
-
-  ## Find corresponding ALA shapefile based on species name
-  shp_b <- NULL
-  if (!is.na(spe) & !is.na(CAAB_species_id))
-    shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe))
-
-  ## if no shape file or spe or CAAB_species_id is missing then append to logfile & continue
-  if(is.null(shp_b)) {
-    ## write to logfile
-    write(paste0(x$filename[1],
-                ": shapefile not available for ", spe, "; Dectection distribution not tested"),
-          file = logfile,
-          append = TRUE)
-  } else if(inherits(shp_b, "try-error")) {
-    ## write to logfile
-    write(paste0(x$filename[1],
-                 ": shapefile could not be downloaded for ", spe, "; Dectection distribution not tested"),
-          file = logfile,
-          append = TRUE)
+  if(data_format == "imos") {
+    spe <- unique(x$species_scientific_name)
+    CAAB_species_id <- unique(x$CAAB_species_id)
+  
+    ## Find corresponding ALA shapefile based on species name
     shp_b <- NULL
-  }
+    if (!is.na(spe) & !is.na(CAAB_species_id))
+      shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe))
+  
+    ## if no shape file or spe or CAAB_species_id is missing then append to logfile & continue
+    if(is.null(shp_b)) {
+      ## write to logfile
+      write(paste0(x$filename[1],
+                  ": shapefile not available for ", spe, "; Dectection distribution not tested"),
+            file = logfile,
+            append = TRUE)
+    } else if(inherits(shp_b, "try-error")) {
+      ## write to logfile
+      write(paste0(x$filename[1],
+                   ": shapefile could not be downloaded for ", spe, "; Dectection distribution not tested"),
+            file = logfile,
+            append = TRUE)
+      shp_b <- NULL
+    }
   
   } else if (data_format == "otn") {
     if(is.null(shapefile)) {
