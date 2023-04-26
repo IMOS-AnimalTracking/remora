@@ -43,7 +43,8 @@ get_data_arbitrary <- function(det=NULL,
                                tag_id_column = "transmitter_deployment_id",
                                det_rcvr_column = "receiver_deployment_id", 
                                rcvr_id_column = "receiver_deployment_id", 
-                               data_format = "imos") {
+                               data_format = "imos",
+                               col_spec = NULL) {
   library(tools) ## IDJ: pkg loading win fn should be ok for now, will need to be removed at a later point
   library(dplyr)
   library(tidyverse)
@@ -75,9 +76,8 @@ get_data_arbitrary <- function(det=NULL,
   #Original version has a huge col_types specification here, we're not going to do that since it relies on column names that will not be held over in non-
   #IMOS data formats.
   #The string specification below SHOULD hold for OTN-formatted detection extracts. 
-  if(tolower(data_format) == "otn") {
-    string_spec = "ccccDccccddcccccccTcddciiiidcccc"
-    det_data <- read_csv(det, na = c("", "null", "NA"), col_types = string_spec)
+  if(!is.null(col_spec)) {
+    det_data <- read_csv(det, na = c("", "null", "NA"), col_types = col_spec)
   }
   else {
     det_data <- read_csv(det, na = c("", "null", "NA"))

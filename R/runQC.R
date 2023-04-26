@@ -95,6 +95,7 @@ runQC <- function(x,
                                      "ReleaseLocation_QC",
                                      "Detection_QC"), #Added by Bruce Delo for pass-through to QC, since users can now turn specific tests on and off.
                   shapefile = NULL, #Added by Bruce Delo for pass-through to QC, allows user to specify a shapefile. Only gets used if data format is OTN, at the moment.
+                  col_spec = NULL, #Added by Bruce Delo for pass-through to get_data_arbitrary; we may need to specify the column types at the top level if read_csv guesses type incorrectly.
                    .parallel = FALSE,
                    .ncores = detectCores() - 2,
                    .progress = TRUE) {
@@ -118,7 +119,8 @@ runQC <- function(x,
                          tmeta = x$tmeta,
                          meas = x$meas,
                          logfile = logfile,
-                         data_format = "otn"
+                         data_format = "otn",
+                         col_spec = col_spec
                        )
                      },
                      imos = {
