@@ -174,23 +174,27 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     #dist <- NULL
     # tr is included in the sysdata, but if someone brings their own shapefile then we have to create our own. 
     ## IDJ: add conditional on data_format
-    dist <- switch(data_format,
-                   imos = {
-                     shortest_dist(position,
-                                   x$installation_name,
-                                   rast = Aust_raster,
-                                   tr = tr)
-                   },
-                   otn = {
-                     #transition_layer <- glatos::make_transition2(shp_b)
-                     #tr <- transition_layer$transition
-                     dist <- NULL
-                     #shortest_dist(position,
-                    #               x$installation_name,
-                    #               rast = world_raster_sub,
-                    #               tr = tr) # this is hard-coded for the otn blueshark test case
-                   })
-    message("shortest dist calculated")
+    ## BD: added a check to not run the OTN version of this if shp_b is null
+    if(data_format == "otn" & !is.null(shp_b))
+    {
+      dist <- switch(data_format,
+                     imos = {
+                       shortest_dist(position,
+                                     x$installation_name,
+                                     rast = Aust_raster,
+                                     tr = tr)
+                     },
+                     otn = {
+                       transition_layer <- glatos::make_transition2(shp_b)
+                       tr <- transition_layer$transition
+                       dist <- NULL
+                       #shortest_dist(position,
+                      #               x$installation_name,
+                      #               rast = world_raster_sub,
+                      #               tr = tr) # this is hard-coded for the otn blueshark test case
+                     })
+      message("shortest dist calculated")
+    }
   }
     if("Velocity_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
       message("Velocity test") 
