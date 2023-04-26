@@ -66,8 +66,8 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   }
   
   #Removed sections flagged as redundant. - BD 30/06/2022
-  write(paste0(x$filename[1],
-               ":  ", n, " Grabbing species shapefile."),
+  message(x$filename[1])
+  write(paste0(x$filename[1],":  ", " Grabbing species shapefile."),
         file = logfile,
         append = TRUE)
   if(data_format == "imos") {
@@ -102,7 +102,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     shp_b <- shapefile
   }
   write(paste0(x$filename[1],
-               ":  ", n, " Shapefile Grab done."),
+               ":  "," Shapefile Grab done."),
         file = logfile,
         append = TRUE)
   
@@ -142,12 +142,12 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   if("FDA_QC" %in% colnames(temporal_outcome))
   {
     write(paste0(x$filename[1],
-                 ":  ", n, " Starting false detection test"),
+                 ":  ", " Starting false detection test"),
           file = logfile,
           append = TRUE)
     temporal_outcome <- qc_false_detection_test(x, temporal_outcome)
     write(paste0(x$filename[1],
-                 ":  ", n, " False detection test done."),
+                 ":  ", " False detection test done."),
           file = logfile,
           append = TRUE)
   }
@@ -182,8 +182,8 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                                    tr = tr)
                    },
                    otn = {
-                     transition_layer <- glatos::make_transition2(shp_b)
-                     tr <- transition_layer$transition
+                     #transition_layer <- glatos::make_transition2(shp_b)
+                     #tr <- transition_layer$transition
                      dist <- NULL
                      #shortest_dist(position,
                     #               x$installation_name,

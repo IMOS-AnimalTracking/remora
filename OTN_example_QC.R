@@ -5,7 +5,7 @@
 #install.packages('sp')
 #install.packages('raster')
 #install.packages('stars')
-#devtools::install_github('ocean-tracking-network/remora@get_data_qc', force=TRUE)
+devtools::install_github('ocean-tracking-network/remora@get_data_qc', force=TRUE)
 
 library(readr)
 library(tidyverse)
@@ -34,7 +34,7 @@ imos_files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"
 
 #Hideous column type specification in compact string format (see the col_types help in the read_csv documentation for explanation)
 string_spec = "ccccDccccddcccccccTcddciiiidcccc"
-otn_test_data <- readr::read_csv("/Users/bruce/Downloads/animal_extract_2013.csv", col_types=string_spec) #Put your path to your test file here. 
+otn_test_data <- readr::read_csv("/Users/bruce/Downloads/animal_extract_2013_2.csv", col_types=string_spec) #Put your path to your test file here. 
 #otn_test_data <- readr::read_csv("testDataOTN/qc_princess.csv")
 otn_mapped_test <- otn_imos_column_map(otn_test_data)
 #If you want to check your work. 
@@ -75,7 +75,7 @@ tests_vector <-  c("FDA_QC",
                    "Detection_QC")
 
 #In a perfect world, when you run this code, you will get output with QC attached. 
-otn_test_tag_qc <- runQC(otn_files, data_format = "otn", tests_vector = tests_vector, shapefile = blue_shark_crop, .parallel = FALSE, .progress = TRUE)
+otn_test_tag_qc <- runQC(otn_files, data_format = "otn", tests_vector = tests_vector, shapefile = NULL, .parallel = FALSE, .progress = TRUE)
 View(otn_test_tag_qc)
 
 qc_shapes_test <- get_qc_shapes(otn_test_data, blue_shark_shp)
