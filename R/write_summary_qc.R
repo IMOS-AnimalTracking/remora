@@ -28,14 +28,29 @@ write_summary <- function(x, path = NULL) {
     tmp[3] <- unique(as.character(x$QC[[i]]$transmitter_deployment_id))
     tmp[4] <- as.character(unique(x$QC[[i]]$species_scientific_name))
     if(isdf.x) {
-    tmp[5] <- nrow(x$QC[[i]]) # Total number of detections
-    tmp[6] <- length(which(x$QC[[i]]$ReleaseDate_QC == 2)) ## Number of detections prior to release date
-    tmp[7] <- x$QC[[i]]$ReleaseLocation_QC[1] == 2 ## Is tag release outside ALA/FishMap"s expert distribution map or farther than 500 km from first detection location?
-    tmp[8] <- length(which(x$QC[[i]]$DetectionDistribution_QC == 2)) ## Number of detections outside the ALA/FishMap"s expert distribution map
-    tmp[9] <- length(which(x$QC[[i]]$Detection_QC < 3)) ## Total number of "valid" or "likely valid" detections
-    tmp[10] <- round(as.numeric(difftime(x$QC[[i]]$detection_datetime[nrow(x$QC[[i]])],
-                                        x$QC[[i]]$detection_datetime[1], units = "days")), 2) ## Time difference, in days, between 1st and last detections
-    tmp[11] <- length(which(x$QC[[i]]$Velocity_QC == 2)) ## Number of detections associated with unrealistic velocities
+      tmp[5] <- nrow(x$QC[[i]]) # Total number of detections
+      tmp[6] <- length(which(x$QC[[i]]$ReleaseDate_QC == 2)) ## Number of detections prior to release date
+      if("ReleaseLocation_QC" %in% colnames(x)) {
+        tmp[7] <- x$QC[[i]]$ReleaseLocation_QC[1] == 2 ## Is tag release outside ALA/FishMap"s expert distribution map or farther than 500 km from first detection location?
+      }
+      else {
+        tmp[7] <- NA
+      }
+      if("DetectionDistributionQC" %in% colnames(x)) {
+        tmp[8] <- length(which(x$QC[[i]]$DetectionDistribution_QC == 2)) ## Number of detections outside the ALA/FishMap"s expert distribution map
+      }
+      else {
+        tmp[8] <- NA
+      }
+      tmp[9] <- length(which(x$QC[[i]]$Detection_QC < 3)) ## Total number of "valid" or "likely valid" detections
+      tmp[10] <- round(as.numeric(difftime(x$QC[[i]]$detection_datetime[nrow(x$QC[[i]])],
+                                          x$QC[[i]]$detection_datetime[1], units = "days")), 2) ## Time difference, in days, between 1st and last detections
+      if("Velocity_QC" %in% colnames(x)) {
+        tmp[11] <- length(which(x$QC[[i]]$Velocity_QC == 2)) ## Number of detections associated with unrealistic velocities
+      }
+      else {
+        tmp[11] <- NA
+      }
     } else {
       ## need to add NA values for any cases (tags) where shortest_dist.R failed
       tmp[5:11] <- NA
@@ -69,7 +84,7 @@ write_summary <- function(x, path = NULL) {
               file = file,
               delim = ',',
               col_names = TRUE,
-              quote_escape = FALSE)
+              escape = 'none')
 
 }
 
