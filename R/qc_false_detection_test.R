@@ -31,6 +31,7 @@ qc_false_detection_test <- function(data, qc_result, pincock_threshold = 3600) {
     #Added a Pincock plugin down here, gonna bust this out on its own eventually.
     data_filtered <- glatos::false_detections(data, pincock_threshold)
 
+    message("Results of pincock:")
     message(data_filtered$passed_filter)
     
     qc_result[sel, 'FDA_QC'] <- data_filtered$passed_filter
