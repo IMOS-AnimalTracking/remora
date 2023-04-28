@@ -13,12 +13,16 @@
 ##' @keywords internal
 ##' 
 qc_false_detection_test <- function(data, qc_result, type = "time_diff", pincock_threshold = 3600) {
+  message("In false detection test")
   sta_rec <- unique(data$installation_name)
   sta_rec <- sta_rec[order(sta_rec)]
   
+  message("Entering for loop")
   for (j in 1:length(sta_rec)){
     sel <- which(data$installation_name == sta_rec[j])
     sub <- data[sel, ]
+    
+    message("Inside for loop")
     
     if(type == "time_diff"){
       ## Calculate time differences between detections (in minutes)
