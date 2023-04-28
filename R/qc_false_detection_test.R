@@ -12,7 +12,7 @@
 ##' 
 ##' @keywords internal
 ##' 
-qc_false_detection_test <- function(data, qc_result, pincock_threshold = 3600) {
+qc_false_detection_test <- function(data, qc_result, type = "time_diff", pincock_threshold = 3600) {
   sta_rec <- unique(data$installation_name)
   sta_rec <- sta_rec[order(sta_rec)]
   
@@ -20,21 +20,25 @@ qc_false_detection_test <- function(data, qc_result, pincock_threshold = 3600) {
     sel <- which(data$installation_name == sta_rec[j])
     sub <- data[sel, ]
     
-    ## Calculate time differences between detections (in minutes)
-    time_diff <- as.numeric(difftime(sub$detection_datetime[2:nrow(sub)],
-                                     sub$detection_datetime[1:(nrow(sub)-1)],
-                                     tz = "UTC", units = "mins"))
-
-    #qc_result[sel, 'FDA_QC'] <-
-    # ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
+    if(type == "time_diff"){
+      ## Calculate time differences between detections (in minutes)
+      time_diff <- as.numeric(difftime(sub$detection_datetime[2:nrow(sub)],
+                                       sub$detection_datetime[1:(nrow(sub)-1)],
+                                       tz = "UTC", units = "mins"))
+      
+      qc_result[sel, 'FDA_QC'] <-
+       ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
+    }
     
-    #Added a Pincock plugin down here, gonna bust this out on its own eventually.
-    data_filtered <- glatos::false_detections(data, pincock_threshold)
-
-    message("Results of pincock:")
-    message(data_filtered$passed_filter)
-    
-    qc_result[sel, 'FDA_QC'] <- data_filtered$passed_filter
+    else if(type == "pincock") {
+      #Added a Pincock plugin down here, gonna bust this out on its own eventually.
+      data_filtered <- glatos::false_detections(data, pincock_threshold)
+      
+      message("Results of pincock:")
+      message(data_filtered$passed_filter)
+      
+      qc_result[sel, 'FDA_QC'] <- data_filtered$passed_filter
+    }
   }
   return(qc_result)
 }
