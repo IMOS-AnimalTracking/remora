@@ -145,6 +145,17 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                  ":  ", " Starting false detection test"),
           file = logfile,
           append = TRUE)
+    
+    #Trying to force pincock into working as a stopgap.
+    x$transmitter_codespace <- x$transmitter_id
+    x$receiver_sn <- x$receiver_id
+    x$detection_timestamp_utc <- x$detection_datetime
+    
+    write(paste0(x$filename[1],
+                 ":  ", " Stopgap columns set"),
+          file = logfile,
+          append = TRUE)
+    
     temporal_outcome <- qc_false_detection_test(x, temporal_outcome, type = "pincock")
     write(paste0(x$filename[1],
                  ":  ", " False detection test done."),
