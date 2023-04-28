@@ -36,6 +36,11 @@ qc_false_detection_test <- function(data, qc_result, type = "time_diff", pincock
     
     else if(type == "pincock") {
       message("Running pincock version:")
+      
+      data$transmitter_codespace <- data$transmitter_id
+      data$receiver_sn <- data$receiver_id
+      data$detection_timestamp_utc <- data$detection_datetime
+      
       #Added a Pincock plugin down here, gonna bust this out on its own eventually.
       data_filtered <- glatos::false_detections(data, pincock_threshold)
       
