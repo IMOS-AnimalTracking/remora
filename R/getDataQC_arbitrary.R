@@ -188,10 +188,6 @@ get_data_arbitrary <- function(det=NULL,
             call. = FALSE, immediate. = TRUE)
   }
   
-  #View(det_data)
-  
-  View(rec_meta)
-  
   if(!is.null(rec_meta)) {
     message("rec_meta is not null")
     ## merge detections with receiver metadata - to get receiver_depth,
