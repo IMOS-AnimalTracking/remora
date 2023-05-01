@@ -35,14 +35,14 @@ imos_files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"
 #Hideous column type specification in compact string format (see the col_types help in the read_csv documentation for explanation)
 string_spec = "ccccDccccddcccccccTcddciiiidcccc"
 otn_test_data <- readr::read_csv("/Users/bruce/Downloads/animal_extract_2013_2.csv", col_types=string_spec) #Put your path to your test file here. 
-#otn_test_data <- readr::read_csv("testDataOTN/qc_princess.csv")
+otn_test_data <- readr::read_csv("testDataOTN/qc_princess.csv")
 otn_mapped_test <- otn_imos_column_map(otn_test_data)
 #If you want to check your work. 
 View(otn_mapped_test)
 
 #The above code isn't meant to be run on its own just yet, the ideal is that you can pass it to QC without having to manually map it. 
 otn_files <- list(det = "/Users/bruce/Downloads/animal_extract_2013_2.csv") #Put your path to your files here
-#otn_files <- list(det = "testDataOTN/qc_princess.csv")
+otn_files <- list(det = "testDataOTN/qc_princess.csv")
 
 #The QC functions rely on having shapefiles for distributions and study areas to calculate distances. 
 #We've got to get a shapefile for the Blue Shark test data, one is included here for sharks but for alternative data you will need your own appropriate one.
@@ -70,12 +70,57 @@ tests_vector <-  c("FDA_QC",
 #                   "Distance_QC",
 #                   "DetectionDistribution_QC", #
                    "DistanceRelease_QC",
-                   "ReleaseDate_QC",
+#                   "ReleaseDate_QC",
 #                   "ReleaseLocation_QC",
                    "Detection_QC")
 
 #In a perfect world, when you run this code, you will get output with QC attached. 
-otn_test_tag_qc <- runQC(otn_files, data_format = "otn", tests_vector = tests_vector, shapefile = NULL, .parallel = FALSE, .progress = TRUE)
+data$transmitter_codespace <- data$transmitter_id
+data$receiver_sn <- data$receiver_id
+data$detection_timestamp_utc <- data$detection_datetime
+
+otn_test_tag_qc <- runQC(otn_files, data_format = "otn", tests_vector = tests_vector, shapefile = NULL, col_spec = string_spec, .parallel = FALSE, .progress = TRUE)
 View(otn_test_tag_qc)
 
-qc_shapes_test <- get_qc_shapes(otn_test_data, blue_shark_shp)
+#All the below is just bits and scraps of stuff I've written here and there, no consistency or coherency to it.
+#Keeping it around for posterity but you shouldn't have to run it. 
+# rob_data_subset_glatos <- filter(otn_test_tag_qc, nrow(QC) > 10 & nrow(QC) < 500)
+# 
+# rob_data_subset_distance <- filter(otn_test_tag_qc, (QC$FDA_QC == 1 & QC$DistanceRelease_QC == 2))
+# 
+# filtered <- data.frame(matrix(ncol = 2, nrow = 1))
+# colnames(filtered) <- colnames(otn_test_tag_qc)
+# filename <- otn_test_tag_qc[1, 'filename']
+# rowQC <- otn_test_tag_qc[1, 'QC']
+# View(rowQC)
+# for(row in 1:nrow(otn_test_tag_qc)) {
+#   filename <- otn_test_tag_qc[row, 'filename']
+#   rowQC <- otn_test_tag_qc[1, 'QC'][[1]][[1]]
+#   if(nrow(rowQC) > 1) {
+#     filteredQC <- filter(rowQC, FDA_QC == 1 & DistanceRelease_QC == 2)
+#     if(nrow(filteredQC) > 0){
+#       message("Wahoo!")
+#       View(filteredQC)
+#     }
+#   }
+# }
+# 
+# test_detections$transmitter_codespace <- test_detections$transmitter_id
+# test_detections$receiver_sn <- test_detections$receiver_id
+# test_detections$detection_timestamp_utc <- test_detections$detection_datetime
+# 
+# 
+# 
+# temporal_outcome <- data.frame(matrix(ncol = length(tests_vector), nrow = nrow(x)))
+# 
+# all_data <- get_data_arbitrary(
+#   det = otn_files$det,
+#   rmeta = NULL,
+#   tmeta = NULL,
+#   meas = NULL,
+#   logfile = "QC_logfile.txt",
+#   data_format = "otn",
+#   col_spec = NULL
+# )
+# 
+# qc_shapes_test <- get_qc_shapes(otn_test_data, blue_shark_shp)
