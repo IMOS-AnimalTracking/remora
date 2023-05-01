@@ -13,16 +13,12 @@
 ##' @keywords internal
 ##' 
 qc_false_detection_test <- function(data, qc_result, type = "time_diff", pincock_threshold = 3600) {
-  message("In false detection test")
   sta_rec <- unique(data$installation_name)
   sta_rec <- sta_rec[order(sta_rec)]
   
-  message("Entering for loop")
   for (j in 1:length(sta_rec)){
     sel <- which(data$installation_name == sta_rec[j])
     sub <- data[sel, ]
-    
-    message("Inside for loop")
     
     if(type == "time_diff"){
       ## Calculate time differences between detections (in minutes)
@@ -35,13 +31,7 @@ qc_false_detection_test <- function(data, qc_result, type = "time_diff", pincock
     }
     
     else if(type == "pincock") {
-      message("Running pincock version:")
-      
-      #Added a Pincock plugin down here, gonna bust this out on its own eventually.
       data_filtered <- glatos::false_detections(sub, pincock_threshold)
-      
-      message("Results of pincock:")
-      message(data_filtered$passed_filter)
       
       qc_result[sel, 'FDA_QC'] <- data_filtered$passed_filter
     }
