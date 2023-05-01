@@ -38,7 +38,7 @@ qc_false_detection_test <- function(data, qc_result, type = "time_diff", pincock
       message("Running pincock version:")
       
       #Added a Pincock plugin down here, gonna bust this out on its own eventually.
-      data_filtered <- glatos::false_detections(data, pincock_threshold)
+      data_filtered <- glatos::false_detections(sub, pincock_threshold)
       
       message("Results of pincock:")
       message(data_filtered$passed_filter)

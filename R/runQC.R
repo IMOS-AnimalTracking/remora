@@ -96,6 +96,7 @@ runQC <- function(x,
                                      "Detection_QC"), #Added by Bruce Delo for pass-through to QC, since users can now turn specific tests on and off.
                   shapefile = NULL, #Added by Bruce Delo for pass-through to QC, allows user to specify a shapefile. Only gets used if data format is OTN, at the moment.
                   col_spec = NULL, #Added by Bruce Delo for pass-through to get_data_arbitrary; we may need to specify the column types at the top level if read_csv guesses type incorrectly.
+                  fda_type = "time_diff", #Added by Bruce Delo for pass-through to QC, then to false detections. Lets user decide whether to use remora's time diff method or pincock method.
                    .parallel = FALSE,
                    .ncores = detectCores() - 2,
                    .progress = TRUE) {
@@ -182,7 +183,8 @@ runQC <- function(x,
                logfile,
                tests_vector,
                data_format = "otn",
-               shapefile = shapefile), 
+               shapefile = shapefile,
+               fda_type = fda_type), 
             silent = FALSE)
         
       } else if (data_format == "imos") {

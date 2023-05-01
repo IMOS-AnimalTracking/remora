@@ -31,7 +31,8 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                                                            "ReleaseLocation_QC",
                                                            "Detection_QC"),
                data_format = "imos",
-               shapefile = NULL) {
+               shapefile = NULL,
+               fda_type = "time-diff") {
   if(!is.data.frame(x)) stop("x must be a data.frame")
   ## Configure output processed data file
   temporal_outcome <- data.frame(matrix(ncol = length(tests_vector), nrow = nrow(x)))
@@ -156,7 +157,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
           file = logfile,
           append = TRUE)
     
-    temporal_outcome <- qc_false_detection_test(x, temporal_outcome, type = "pincock")
+    temporal_outcome <- qc_false_detection_test(x, temporal_outcome, type = fda_type)
     write(paste0(x$filename[1],
                  ":  ", " False detection test done."),
           file = logfile,
