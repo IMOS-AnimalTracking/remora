@@ -48,6 +48,6 @@ get_qc_shapes <- function(detection_extract, shapefile, worldimage = "./testData
   
   return(
     list(shapefile_crop, transition_layer, world_raster_crop)
-    )
+  )
   
 }

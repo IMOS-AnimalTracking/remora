@@ -199,11 +199,11 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                      otn = {
                        transition_layer <- glatos::make_transition2(shp_b)
                        tr <- transition_layer$transition
-                       dist <- NULL
-                       #shortest_dist(position,
-                      #               x$installation_name,
-                      #               rast = world_raster_sub,
-                      #               tr = tr) # this is hard-coded for the otn blueshark test case
+                       #dist <- NULL
+                       shortest_dist(position,
+                                     x$installation_name,
+                                     rast = world_raster_sub,
+                                     tr = tr) # this is hard-coded for the otn blueshark test case
                      })
       message("shortest dist calculated")
     }
@@ -241,6 +241,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     }
 
     if("ReleaseLocation_QC" %in% colnames(temporal_outcome) & !is.null(dist) & !is.null(shp_b)) {
+      message("Starting release location test")
       temporal_outcome <- qc_release_location_test(x, temporal_outcome, shp_b, dist, ll_r)
     }
 		## it might be better to keep all tests in temporal_outcome & just ensure

@@ -34,7 +34,7 @@
 ##'
 ##' @export
 
-plotQC <- function(x, path = getwd(), suffix = NULL) {
+plotQC <- function(x, path = getwd(), suffix = NULL, species_range = NULL) {
 
   if(!inherits(x, "remora_QC")) 
     stop("\033[31;1mx must be a nested tibble with class `remora_QC`\033[0m")
@@ -46,9 +46,6 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
   QCdata <- rbindlist(x$QC)
   
   QCdata$ReleaseLocation_QC <- 1
-  
-  View(QCdata)
-
 
 	species <- ddply(QCdata, '.'(QCdata$CAAB_species_id,
 	                             QCdata$species_scientific_name,
@@ -81,6 +78,10 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
 		  expert_shp <- NULL
 		}
 		
+		if(!is.null(species_range)) {
+		  expert_shp <- species_range
+		}
+		
 		#data <- QCdata[which(QCdata$CAAB_species_id == species$CAAB_species_id[i]), ]
 		data <- QCdata[which(QCdata$species_common_name == species$species_common_name[i]), ]
 		
@@ -89,15 +90,16 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
   		                              data$transmitter_deployment_latitude,
   		                              data$ReleaseLocation_QC))
   		
-  		message(releases)
-  			colnames(releases) <- c('transmitter_deployment_longitude',
+  		colnames(releases) <- c('transmitter_deployment_longitude',
   			                        'transmitter_deployment_latitude',
   			                        'ReleaseLocation_QC')
+  		
   		data <- data[, c('receiver_name',
   		                 'station_name',
   		                 'installation_name',
   		                 'receiver_deployment_longitude',
   		                 'receiver_deployment_latitude',
+  		                 'FDA_QC',
   		                 'Detection_QC')]
   		data <- count(data)
   		binned_detects <- data.frame(data$freq,
@@ -131,15 +133,15 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
   		## First panel - Australia's spatial extent
   		if (!is.null(class(expert_shp))) {
   		  plot(expert_shp,
-  		       xlim = c(100, 165),
-  		       ylim = c(-45, -4),
+  		       #xlim = c(100, 165),
+  		       #ylim = c(-45, -4),
   		       col = alpha('dark blue', 0.25),
   		       border = alpha('dark blue', 0.25)
   		  )
   		  
   		  maps::map("world",
-  		            xlim = c(100, 165),
-  		            ylim = c(-45, -5),
+  		            #xlim = c(100, 165),
+  		            #ylim = c(-45, -5),
   		            fill = TRUE,
   		            col = "grey",
   		            border = "grey",
@@ -147,8 +149,8 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
   		  maps::map.axes()
   		} else {
   		  maps::map("world",
-  		            xlim = c(100, 165),
-  		            ylim = c(-45, -5),
+  		            #xlim = c(100, 165),
+  		            #ylim = c(-45, -5),
   		            fill = TRUE,
   		            col = "grey",
   		            border = "grey")
@@ -164,11 +166,13 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
   		##	cex = .5)
   
   		## Plot valid detections
-  		if (sum(data$Detection_QC == 1, na.rm = TRUE) > 0) {
-  		  points(data$receiver_deployment_longitude[which(data$Detection_QC == 1)],
-  		         data$receiver_deployment_latitude[which(data$Detection_QC == 1)],
+  		if (sum(data$FDA_QC == 1, na.rm = TRUE) > 0) {
+  		  message("Plotting FDA QC = 1")
+  		  message(sum(data$FDA_QC == 1, na.rm = TRUE))
+  		  points(data$receiver_deployment_longitude[which(data$FDA_QC == 1)],
+  		         data$receiver_deployment_latitude[which(data$FDA_QC == 1)],
   		         col = alpha('#1A9641', 0.65),
-  		         cex = data$binned_detections[which(data$Detection_QC == 1)],
+  		         cex = data$binned_detections[which(data$FDA_QC == 1)],
   		         pch = 19)
   		}
   
@@ -189,11 +193,13 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
   			         pch = 19)
   			  }
   			## Plot invalid detections
-  			if (sum(data$Detection_QC == 4, na.rm = TRUE) > 0) {
-  			  points(data$receiver_deployment_longitude[which(data$Detection_QC == 4)],
-  			         data$receiver_deployment_latitude[which(data$Detection_QC == 4)],
+  			if (sum(data$FDA_QC == 0, na.rm = TRUE) > 0) {
+  			  message("Plotting FDA QC = 0")
+  			  message(sum(data$FDA_QC == 0, na.rm = TRUE))
+  			  points(data$receiver_deployment_longitude[which(data$FDA_QC == 0)],
+  			         data$receiver_deployment_latitude[which(data$FDA_QC == 0)],
   			         col = alpha('#D7191C', 0.65),
-  			         cex = data$binned_detections[which(data$Detection_QC == 4)],
+  			         cex = data$binned_detections[which(data$FDA_QC == 0)],
   			         pch = 19)
   			}
   			## Plot release locations
@@ -302,11 +308,11 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
   			##  cex = .5)
   
   			## Plot valid detections
-  			if (sum(data$Detection_QC == 1, na.rm = TRUE) > 0) {
-  			  points(data$receiver_deployment_longitude[which(data$Detection_QC == 1)],
-  			         data$receiver_deployment_latitude[which(data$Detection_QC == 1)],
+  			if (sum(data$FDA_QC == 1, na.rm = TRUE) > 0) {
+  			  points(data$receiver_deployment_longitude[which(data$FDA_QC == 1)],
+  			         data$receiver_deployment_latitude[which(data$FDA_QC == 1)],
   			         col = alpha('#1A9641', 0.65),
-  			         cex = data$binned_detections[which(data$Detection_QC == 1)],
+  			         cex = data$binned_detections[which(data$FDA_QC == 1)],
   			         pch = 19)
   			}
   			## Plot invalid detections
@@ -326,11 +332,11 @@ plotQC <- function(x, path = getwd(), suffix = NULL) {
   			         pch = 19)
   			}
   			## Plot invalid detections
-  			if (sum(data$Detection_QC == 4, na.rm = TRUE) > 0) {
-  			  points(data$receiver_deployment_longitude[which(data$Detection_QC == 4)],
-  			         data$receiver_deployment_latitude[which(data$Detection_QC == 4)],
+  			if (sum(data$FDA_QC == 0, na.rm = TRUE) > 0) {
+  			  points(data$receiver_deployment_longitude[which(data$FDA_QC == 0)],
+  			         data$receiver_deployment_latitude[which(data$FDA_QC == 0)],
   			         col = alpha('#D7191C', 0.65),
-  			         cex = data$binned_detections[which(data$Detection_QC == 4)],
+  			         cex = data$binned_detections[which(data$FDA_QC == 0)],
   			         pch = 19)
   			}
   			## Plot release locations

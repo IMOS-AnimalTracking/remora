@@ -70,8 +70,8 @@ tests_vector <-  c("FDA_QC",
 #                   "Distance_QC",
 #                   "DetectionDistribution_QC", #
                    "DistanceRelease_QC",
-#                   "ReleaseDate_QC",
-#                   "ReleaseLocation_QC",
+                   "ReleaseDate_QC",
+                   "ReleaseLocation_QC",
                    "Detection_QC")
 
 #In a perfect world, when you run this code, you will get output with QC attached. 
@@ -79,8 +79,16 @@ data$transmitter_codespace <- data$transmitter_id
 data$receiver_sn <- data$receiver_id
 data$detection_timestamp_utc <- data$detection_datetime
 
-otn_test_tag_qc <- runQC(otn_files, data_format = "otn", tests_vector = tests_vector, shapefile = NULL, col_spec = string_spec, .parallel = FALSE, .progress = TRUE)
+otn_test_tag_qc <- runQC(otn_files, 
+                         data_format = "otn", 
+                         tests_vector = tests_vector, 
+                         shapefile = blue_shark_crop, 
+                         col_spec = NULL, 
+                         fda_type = "pincock", 
+                         .parallel = FALSE, .progress = TRUE)
 View(otn_test_tag_qc)
+
+qc_shapes_test <- get_qc_shapes(otn_test_data, blue_shark_shp)
 
 #All the below is just bits and scraps of stuff I've written here and there, no consistency or coherency to it.
 #Keeping it around for posterity but you shouldn't have to run it. 
@@ -123,4 +131,4 @@ View(otn_test_tag_qc)
 #   col_spec = NULL
 # )
 # 
-# qc_shapes_test <- get_qc_shapes(otn_test_data, blue_shark_shp)
+# 
