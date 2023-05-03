@@ -304,7 +304,7 @@ get_data_arbitrary <- function(det=NULL,
         -transmitter_deployment_longitude.y,
         -transmitter_deployment_datetime.y
       ) %>%
-      rename(
+      dplyr::rename(
         tagging_project_name = tagging_project_name.x,
         species_common_name = species_common_name.x,
         species_scientific_name = species_scientific_name.x,

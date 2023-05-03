@@ -255,7 +255,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     message("QC add done.")
     
 	x <- x %>%
-	  rename(receiver_deployment_longitude = longitude,
+	  dplyr::rename(receiver_deployment_longitude = longitude,
 	         receiver_deployment_latitude = latitude)
 	
 	message("Done and returning")
