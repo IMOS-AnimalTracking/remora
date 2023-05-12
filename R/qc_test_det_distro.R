@@ -19,7 +19,6 @@ qc_test_det_distro <- function(data, latlons, qc_results, species_range) {
   #View(latlons@coords)
   if(!is.null(species_range)) {
     out <- which(is.na(over(latlons, species_range)))
-    #View(out)
     if(length(out) > 0) {
       qc_results[data$longitude %in% latlons@coords[out, 1] &
                          data$latitude %in% latlons@coords[out, 2], "DetectionDistribution_QC"] <- 2
