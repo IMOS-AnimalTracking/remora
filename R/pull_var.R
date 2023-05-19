@@ -202,6 +202,7 @@
 
   ## Current layers
   if(var_name %in% "rs_current"){
+    
     ## build urls based on dates and variable names
     built_urls <- .build_urls(dates, var_name, verbose = verbose)
     
