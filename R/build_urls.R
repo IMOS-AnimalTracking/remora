@@ -162,7 +162,7 @@
   ## Daily Ocean Current
   ## 
   if(var_name %in% "rs_current"){
-    browser()
+  
     ## check if IMOS ocean current data covers detection data range 
     ## Ocean current: 1993-01-01 - present
     ## example : "http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/"
