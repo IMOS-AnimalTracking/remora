@@ -18,8 +18,11 @@
 ##' ## example QC'd data
 ##' data(TownsvilleReefQC)
 ##' 
-##' ## render output to viewer
-##' plotQCint(TownsvilleReefQC)
+##' ## save plot as an .html file
+##' plotQCint(TownsvilleReefQC, path = ".")
+##' 
+##' ## clean up
+##' system("rm *_QCmap.html")
 ##' 
 ##' 
 ##' @importFrom leaflet leaflet addMarkers addCircleMarkers fitBounds addLegend 
