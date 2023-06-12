@@ -3,10 +3,14 @@
 ##' @description \code{plotQCint()} QC'd detections colour-coded by their
 ##' assessed validity status, overlaid on species expert distribution extent
 ##'
-##' @param x a remora output object with \code{class(remora_QC)}
+##' @param x a remora output object with \code{class(remora_QC)}.
 ##' @param path path to save map(s) as an .html file. Options are: `NULL` (default);
 ##' `wb` (render map in default web browser); or a valid file path (map saved as a
-##' self-contained .html file)
+##' self-contained .html file).
+##' @param pal a `brewer.pal` palette name as a quoted character string. Use 
+##' `RColorBrewer::display.brewer.all()` to see choices.
+##' @param revpal reverse order of colour palette.
+##' 
 ##' @return produces interactive leaflet maps of species expert distribution and
 ##' location of QC'd detections
 ##'
@@ -26,6 +30,7 @@
 ##' @importFrom dplyr '%>%' summarise left_join group_by bind_rows distinct
 ##' @importFrom plyr ldply '.' ddply count
 ##' @importFrom grDevices extendrange
+##' @importFrom utils browseURL
 ##'
 ##' @export
 
