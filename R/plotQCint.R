@@ -130,7 +130,7 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		))
 
 		if (!is.null(class(expert_shp))) {
-		  map <- leaflet(expert_shp) %>%
+		  map <- leaflet(data = expert_shp) %>%
 		    fitBounds(lng1 = bb[1], lat1 = bb[3], lng2 = bb[2], lat2 = bb[4]) %>%
 		    addPolygons(weight = 0.5, 
 		                group = "Species distribution",
