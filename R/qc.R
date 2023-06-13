@@ -111,7 +111,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   ##  coordinates to SpatialPoints to test subsequently whether or not detections 
   ##  are in distribution range
   if (!is.null(shp_b)) {
-    message("shapefile not null, starting lat/lon conversion to SpatialPoints")
+    #message("shapefile not null, starting lat/lon conversion to SpatialPoints")
 
     ll <- unique(data.frame(x$longitude, x$latitude))
     
@@ -120,14 +120,13 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     #message("Coordinates set")
     #proj4string(ll) <- proj4string(shp_b)
     #st_crs(ll) <- CRS("EPSG:4326")
-    message("projection string set") 
+    #message("projection string set") 
     
-    message("Step one")
     ll_r <- NULL
     if (!is.na(x$transmitter_deployment_longitude[1])) {
       ll_r <-
         data.frame(x$transmitter_deployment_longitude[1], x$transmitter_deployment_latitude[1])
-      message("Step two")
+      #message("Step two")
       ll_r <- SpatialPoints(ll_r, proj4string = CRS("EPSG:4326"))
       #coordinates(ll_r) <-
       #  ~ x.transmitter_deployment_longitude.1. + x.transmitter_deployment_latitude.1.
@@ -171,14 +170,17 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
 	## Distance and Velocity tests
   dist <- NULL
   if(any(is.na(x$transmitter_deployment_longitude)) | any(is.na(x$transmitter_deployment_longitude))) {
-    message("Not enough data for some QC checks.")
+    write(paste0(x$filename[1],
+                 ":  ", " Not enough data for some QC checks."),
+          file = logfile,
+          append = TRUE)
   }
   else
   {
   	position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
   		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
   	
-    message("position set")
+    #message("position set")
 
     #Distance temporarily commented out. We're going to reimplement a lot of this and that includes the shortest_dist calculation, which
     #right now chokes out the rest of the code. So this blows away most of the checks, but it lets the code run so that we can see what
@@ -203,45 +205,60 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
                        shortest_dist(position,
                                      x$installation_name,
                                      rast = world_raster_sub,
-                                     tr = tr) # this is hard-coded for the otn blueshark test case
+                                     tr = tr) 
                      })
-      message("shortest dist calculated")
+      #message("shortest dist calculated")
     }
   }
     if("Velocity_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
-      message("Velocity test") 
+      write(paste0(x$filename[1],
+                   ":  ", " Running velocity check"),
+            file = logfile,
+            append = TRUE)
     	temporal_outcome <- qc_test_velocity(x, temporal_outcome, dist)
     }
   
     if("Distance_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
-      message("Distance test")
+      write(paste0(x$filename[1],
+                   ":  ", " Running distance check"),
+            file = logfile,
+            append = TRUE)
       temporal_outcome <- qc_test_distance(x, temporal_outcome, dist)
     }
 
 		message("Dist/velocity tests done.")
 		## Detection distribution test
     if("DetectionDistribution_QC" %in% colnames(temporal_outcome) & !is.null(dist) & !is.null(shp_b)) {
-      message("Starting detection distribution test")
+      write(paste0(x$filename[1],
+                   ":  ", " Running detection distribution check."),
+            file = logfile,
+            append = TRUE)
       temporal_outcome <- qc_test_det_distro(x, ll, temporal_outcome, shp_b)
-      message("Detection distribution test done.")
     }
 
     if("DistanceRelease_QC" %in% colnames(temporal_outcome))
     {
-      message("Starting distance from release check")
+      write(paste0(x$filename[1],
+                   ":  ", " Running distance from release check."),
+            file = logfile,
+            append = TRUE)
       temporal_outcome <- qc_test_dist_release(x, temporal_outcome)
-      message("Distance from release check done")
     }
 		
     if("ReleaseDate_QC" %in% colnames(temporal_outcome)) {
       ## Release date before detection date
-      message("Starting release time diff check")
+      write(paste0(x$filename[1],
+                   ":  ", " Running release date check."),
+            file = logfile,
+            append = TRUE)
       temporal_outcome <- qc_test_release_time_diff(x, temporal_outcome)
-      message("Release time diff check done")
     }
 
     if("ReleaseLocation_QC" %in% colnames(temporal_outcome) & !is.null(dist) & !is.null(shp_b)) {
-      message("Starting release location test")
+      write(paste0(x$filename[1],
+                   ":  ", " Running release location check."),
+            file = logfile,
+            append = TRUE)
       temporal_outcome <- qc_release_location_test(x, temporal_outcome, shp_b, dist, ll_r)
     }
 		## it might be better to keep all tests in temporal_outcome & just ensure
@@ -249,10 +266,8 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
 		##  has same dims - otherwise this will cause IMOS AODN incoming server checks to
 		##  reject QC'd data.
 		
-    message("Final QC add")
 		## Detection QC
     temporal_outcome <- qc_detection_qc(temporal_outcome)
-    message("QC add done.")
     
 	x <- x %>%
 	  dplyr::rename(receiver_deployment_longitude = longitude,

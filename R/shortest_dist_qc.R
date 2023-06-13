@@ -28,7 +28,7 @@ shortest_dist <- function(position, inst, rast, tr){
   library(raster)
   library(sp)
   
-  message("Shortest dist part 1")
+  #message("Shortest dist part 1")
   pts2_o <- pts2 <- cbind(x = position$longitude[2:nrow(position)],
                           y = position$latitude[2:nrow(position)])
   pts1_o <- pts1 <- cbind(x = position$longitude[1:(nrow(position)-1)],
@@ -36,7 +36,7 @@ shortest_dist <- function(position, inst, rast, tr){
   inst1 <- lag(inst)
   inst2 <- inst
 
-  message("Shortest dist part 2")
+  #message("Shortest dist part 2")
 	mvmts <- unique(cbind(inst1, pts1, inst2, pts2))
 	pts1 <- cbind(as.numeric(mvmts[, 2]), as.numeric(mvmts[, 3]))
 	pts2 <- cbind(as.numeric(mvmts[, 5]), as.numeric(mvmts[, 6]))
@@ -58,7 +58,7 @@ shortest_dist <- function(position, inst, rast, tr){
 		  ## If there's a point on land and the other offshore approximate river point by
 		  ##   closest point on coastline, OR if there are two points on land belonging to
 		  ##   two distinct installations
-		  message(class(rast))
+		  #message(class(rast))
 		  if (u == 1 & sum(is.na(raster::extract(rast, pts))) >= 1) {
 		    Aust_sub <-
 		      try(crop(rast, extent(min(pts[, 1]) - 2, max(pts[, 1]) + 2, min(pts[, 2]) - 2, max(pts[, 2]) + 2)))
@@ -75,6 +75,8 @@ shortest_dist <- function(position, inst, rast, tr){
 		          rep(pts[is.na(raster::extract(rast, pts)), 1], nrow(Aust_sub)),
 		          units = 'km'
 		        ))
+		      message("Closest for river system.")
+		      message(Aust_sub[dist_sub])
 		      pts[is.na(raster::extract(rast, pts)),] <-
 		        Aust_sub[dist_sub, 1:2] ## Find closest point on coast for river system
 		    }
@@ -110,6 +112,8 @@ shortest_dist <- function(position, inst, rast, tr){
 			          rep(pts[is.na(raster::extract(rast, pts)), 1], nrow(Aust_sub)),
 			          units = 'km'
 			        ))
+			      message("Closest for river system.")
+			      message(Aust_sub[dist_sub])
 			      pts[is.na(raster::extract(rast, pts)), ] <-
 			        Aust_sub[dist_sub, 1:2] ## Find closest point on coast for river system
 			    }

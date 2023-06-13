@@ -19,7 +19,9 @@ qc_detection_qc <- function(qc_result) {
                    "Velocity_QC",
                    "Distance_QC",
                    "DetectionDistribution_QC",
-                   "DistanceRelease_QC"))
+                   "DistanceRelease_QC",
+                   "ReleaseDate_QC",
+                   "ReleaseLocation_QC"))
   
   ones <- rowSums(qc_result[, idx] == 1)
   
