@@ -16,7 +16,13 @@
 ##' @importFrom utils download.file
 ##' @importFrom zip unzip
 ##'
-##' @keywords internal
+##' @examples
+##' # example code
+##' x <- TownsvilleReefQC$QC[[1]]
+##' expert_shp <- get_expert_distribution_shp_CAAB(CAAB_species_id = x$CAAB_species_id[1], 
+##' spe = x$species_scientific_name[1])
+##' 
+##' @export
 
 get_expert_distribution_shp_CAAB <- function(CAAB_species_id, spe){
 

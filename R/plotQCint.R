@@ -65,9 +65,9 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 			            sep = ''))
 		} else if (inherits(expert_shp, "try-error")) {
 		  cat("\033[0;34mCould not download shapefile, mapping without species expert distribution\033[0m")
-		  class(expert_shp) <- NULL
+		  expert_shp <- NULL
 		}
-  
+
 		data <- subset(QCdata, CAAB_species_id == species$CAAB_species_id[i])
 		releases <- with(data, unique(data.frame(transmitter_id, 
 		                                         tag_id,
@@ -141,7 +141,7 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		    addProviderTiles("Esri.WorldImagery", group = "ESRI Satellite") %>%
 		    addProviderTiles("Esri.OceanBasemap", group = "ESRI Bathymetry")
 		  
-		} else {
+		} else if (any(is.null(expert_shp), is.null(class(expert_shp)))) {
 		  map <- leaflet() %>%
 		    fitBounds(lng1 = bb[1], lat1 = bb[3], lng2 = bb[2], lat2 = bb[4]) %>%
 		    addProviderTiles("CartoDB.Positron", group = "Default")
