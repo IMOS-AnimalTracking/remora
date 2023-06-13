@@ -65,7 +65,7 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 			            sep = ''))
 		} else if (inherits(expert_shp, "try-error")) {
 		  cat("\033[0;34mCould not download shapefile, mapping without species expert distribution\033[0m")
-		  expert_shp <- NULL
+		  class(expert_shp) <- NULL
 		}
   
 		data <- subset(QCdata, CAAB_species_id == species$CAAB_species_id[i])
