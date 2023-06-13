@@ -13,8 +13,7 @@
 ##' @return shp is a SpatialPolygons object of the species' distribution
 ##'
 ##' @importFrom rgdal readOGR
-##' @importFrom utils download.file
-##' @importFrom zip unzip
+##' @importFrom utils download.file unzip
 ##'
 ##' @examples
 ##' # example code
@@ -41,7 +40,7 @@ get_expert_distribution_shp_CAAB <- function(CAAB_species_id, spe){
                                   silent = TRUE))
       if(!inherits(foo, "try-error")) {
         unzip(
-          file.path(tmp, paste0(CAAB_species_id, ".zip")),
+          zipfile = file.path(tmp, paste0(CAAB_species_id, ".zip")),
           exdir = file.path(tmp, CAAB_species_id),
           overwrite = TRUE
         )
