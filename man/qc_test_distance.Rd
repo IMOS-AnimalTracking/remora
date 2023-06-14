@@ -4,7 +4,7 @@
 \alias{qc_test_distance}
 \title{QC Distance test}
 \usage{
-qc_test_distance(data, qc_results, dist)
+qc_test_distance(data, qc_results, dist, dist_threshold = 1000)
 }
 \arguments{
 \item{data}{data formatted by either \code{remora::get_data} or \code{remora::get_data_arbitrary}}

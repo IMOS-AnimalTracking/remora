@@ -4,7 +4,7 @@
 \alias{plotQC}
 \title{produce maps showing the occurrence of QC'd detections per species}
 \usage{
-plotQC(x, path = getwd(), suffix = NULL)
+plotQC(x, path = getwd(), suffix = NULL, species_range = NULL)
 }
 \arguments{
 \item{x}{a remora output object with \code{class(remora_QC)}}

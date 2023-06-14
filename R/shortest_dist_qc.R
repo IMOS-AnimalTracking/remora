@@ -24,9 +24,6 @@
 ##'
 
 shortest_dist <- function(position, inst, rast, tr){
-
-  library(raster)
-  library(sp)
   
   #message("Shortest dist part 1")
   pts2_o <- pts2 <- cbind(x = position$longitude[2:nrow(position)],
@@ -59,28 +56,27 @@ shortest_dist <- function(position, inst, rast, tr){
 		  ##   closest point on coastline, OR if there are two points on land belonging to
 		  ##   two distinct installations
 		  #message(class(rast))
-		  if (u == 1 & sum(is.na(raster::extract(rast, pts))) >= 1) {
+		  if (u == 1 & sum(is.na(extract(rast, pts))) >= 1) {
 		    Aust_sub <-
 		      try(crop(rast, extent(min(pts[, 1]) - 2, max(pts[, 1]) + 2, min(pts[, 2]) - 2, max(pts[, 2]) + 2)))
 		    if(inherits(Aust_sub, "try-error")) stop("detection locations outside extent of land raster")
-		    Aust_sub <- cbind(raster::coordinates(Aust_sub), Aust_sub@data@values)
+		    Aust_sub <- cbind(coordinates(Aust_sub), Aust_sub@data@values)
 		    Aust_sub <- Aust_sub[Aust_sub[, 3] == 1,]
 
-		    if (sum(is.na(raster::extract(rast, pts))) == 1) {
+		    if (sum(is.na(extract(rast, pts))) == 1) {
 		      dist_sub <-
 		        which.min(geodist(
 		          Aust_sub[, 2],
 		          Aust_sub[, 1],
-		          rep(pts[is.na(raster::extract(rast, pts)) , 2], nrow(Aust_sub)),
-		          rep(pts[is.na(raster::extract(rast, pts)), 1], nrow(Aust_sub)),
+		          rep(pts[is.na(extract(rast, pts)) , 2], nrow(Aust_sub)),
+		          rep(pts[is.na(extract(rast, pts)), 1], nrow(Aust_sub)),
 		          units = 'km'
 		        ))
 		      message("Closest for river system.")
 		      message(Aust_sub[dist_sub])
-		      pts[is.na(raster::extract(rast, pts)),] <-
-		        Aust_sub[dist_sub, 1:2] ## Find closest point on coast for river system
+		      pts[is.na(extract(rast, pts)),] <- Aust_sub[dist_sub, 1:2] ## Find closest point on coast for river system
 		    }
-		    if (sum(is.na(raster::extract(rast, pts))) > 1) {
+		    if (sum(is.na(extract(rast, pts))) > 1) {
 		      for (k in 1:2) {
 		        dist_sub <-
 		          which.min(geodist(
@@ -90,34 +86,33 @@ shortest_dist <- function(position, inst, rast, tr){
 		            rep(pts[k, 1], nrow(Aust_sub)),
 		            units = 'km'
 		          ))
-		        pts[k, ] <-
-		          Aust_sub[dist_sub, 1:2] ## Find closest point on coast for river system
+		        pts[k, ] <- Aust_sub[dist_sub, 1:2] ## Find closest point on coast for river system
 		      }
 		    }
 		  } else {
 
 
-			  if (sum(is.na(raster::extract(rast, pts))) == 1 |
-			      (sum(is.na(raster::extract(rast, pts))) == 2 & inst1[u] != inst2[u])) {
+			  if (sum(is.na(extract(rast, pts))) == 1 |
+			      (sum(is.na(extract(rast, pts))) == 2 & inst1[u] != inst2[u])) {
 			    Aust_sub <-
 			      crop(rast, extent(min(pts[, 1]) - 2, max(pts[, 1]) + 2, min(pts[, 2]) - 2, max(pts[, 2]) + 2))
-			    Aust_sub <- cbind(raster::coordinates(Aust_sub), Aust_sub@data@values)
+			    Aust_sub <- cbind(coordinates(Aust_sub), Aust_sub@data@values)
 			    Aust_sub <- Aust_sub[Aust_sub[, 3] == 1,]
-			    if (sum(is.na(raster::extract(rast, pts))) == 1) {
+			    if (sum(is.na(extract(rast, pts))) == 1) {
 			      dist_sub <-
 			        which.min(geodist(
 			          Aust_sub[, 2],
 			          Aust_sub[, 1],
-			          rep(pts[is.na(raster::extract(rast, pts)), 2], nrow(Aust_sub)),
-			          rep(pts[is.na(raster::extract(rast, pts)), 1], nrow(Aust_sub)),
+			          rep(pts[is.na(extract(rast, pts)), 2], nrow(Aust_sub)),
+			          rep(pts[is.na(extract(rast, pts)), 1], nrow(Aust_sub)),
 			          units = 'km'
 			        ))
 			      message("Closest for river system.")
 			      message(Aust_sub[dist_sub])
-			      pts[is.na(raster::extract(rast, pts)), ] <-
-			        Aust_sub[dist_sub, 1:2] ## Find closest point on coast for river system
+#			      browser()
+			      pts[is.na(extract(rast, pts)), ] <- Aust_sub[dist_sub, 1:2] ## Find closest point on coast for river system
 			    }
-			    if (sum(is.na(raster::extract(rast, pts))) > 1) {
+			    if (sum(is.na(extract(rast, pts))) > 1) {
 			      for (k in 1:2) {
 			        dist_sub <-
 			          which.min(geodist(
@@ -127,8 +122,7 @@ shortest_dist <- function(position, inst, rast, tr){
 			            rep(pts[k, 1], nrow(Aust_sub)),
 			            units = 'km'
 			          ))
-			        pts[k, ] <-
-			          Aust_sub[dist_sub, 1:2]
+			        pts[k, ] <- Aust_sub[dist_sub, 1:2]
 			        ## Find closest point on coast for river system
 			      }
 			    }
@@ -136,10 +130,10 @@ shortest_dist <- function(position, inst, rast, tr){
 			}
 
 			##### Linear interpolation between positions to determine the presence of a land mass
-			if (sum(is.na(raster::extract(rast,pts))) < 2 & sum(pts[1,] == pts[2,]) == 0){
+			if (sum(is.na(extract(rast,pts))) < 2 & sum(pts[1,] == pts[2,]) == 0){
 				interp <- cbind(approx(c(pts[1,1], pts[2,1]), c(pts[1,2], pts[2,2]), n = 200)$x,
 				                approx(c(pts[1,1], pts[2,1]), c(pts[1,2], pts[2,2]), n = 200)$y)
-				int <- raster::extract(rast,interp)
+				int <- extract(rast,interp)
 			} else int <- c(NA, NA)
 
 			##### Determine how distances are calculated
@@ -148,7 +142,7 @@ shortest_dist <- function(position, inst, rast, tr){
 			  dist_mvmts[u] <- ifelse((
 			    sum(int == 1) == length(int) |
 			      sum(is.na(int)) == length(int) |
-			      sum(is.na(raster::extract(rast, pts))) > 0
+			      sum(is.na(extract(rast, pts))) > 0
 			  ),
 			  geodist(pts[1, 2], pts[1, 1], pts[2, 2], pts[2, 1], units = 'km'),
 			  costDistance(tr, pts[1, ], pts[2, ]) / 1000
@@ -161,7 +155,7 @@ shortest_dist <- function(position, inst, rast, tr){
 			    ifelse((
 			      sum(int == 1) == length(int) |
 			        sum(is.na(int)) == length(int) |
-			        sum(is.na(raster::extract(rast, pts))) > 0
+			        sum(is.na(extract(rast, pts))) > 0
 			    ),
 			    geodist(pts[1, 2], pts[1, 1], pts[2, 2], pts[2, 1], units = 'km') +
 			      geodist(pts_o[d, 2], pts_o[d, 1], pts[d, 2], pts[d, 1], units = 'km'),
@@ -176,7 +170,7 @@ shortest_dist <- function(position, inst, rast, tr){
 			    ifelse((
 			      sum(int == 1) == length(int) |
 			        sum(is.na(int)) == length(int) |
-			        sum(is.na(raster::extract(rast, pts))) > 0
+			        sum(is.na(extract(rast, pts))) > 0
 			    ),
 			    geodist(pts[1, 2], pts[1, 1], pts[2, 2], pts[2, 1], units = 'km') +
 			      geodist(pts_o[1, 2], pts_o[1, 1], pts[1, 2], pts[1, 1], units = 'km') +
