@@ -7,11 +7,16 @@
 plotQCint(x, path = NULL, pal = "PuOr", revpal = TRUE)
 }
 \arguments{
-\item{x}{a remora output object with \code{class(remora_QC)}}
+\item{x}{a remora output object with \code{class(remora_QC)}.}
 
 \item{path}{path to save map(s) as an .html file. Options are: \code{NULL} (default);
 \code{wb} (render map in default web browser); or a valid file path (map saved as a
-self-contained .html file)}
+self-contained .html file).}
+
+\item{pal}{a \code{brewer.pal} palette name as a quoted character string. Use
+\code{RColorBrewer::display.brewer.all()} to see choices.}
+
+\item{revpal}{reverse order of colour palette.}
 }
 \value{
 produces interactive leaflet maps of species expert distribution and
@@ -25,8 +30,11 @@ assessed validity status, overlaid on species expert distribution extent
 ## example QC'd data
 data(TownsvilleReefQC)
 
-## render output to viewer
-plotQCint(TownsvilleReefQC)
+## save plot as an .html file
+plotQCint(TownsvilleReefQC, path = ".")
+
+## clean up
+system("rm *_QCmap.html")
 
 
 }
