@@ -85,7 +85,7 @@
 ##'               .parallel = FALSE)
 ##'
 ##' @importFrom dplyr '%>%' mutate distinct pull left_join select
-##' @importFrom raster raster extent
+##' @importFrom raster extent
 ##' @importFrom lubridate date 
 ##' @importFrom progressr with_progress
 ##'
