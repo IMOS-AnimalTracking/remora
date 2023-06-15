@@ -20,8 +20,7 @@
 ##' @importFrom sp spTransform CRS
 ##' @importFrom rgdal readOGR
 ##' @importFrom rgeos gBuffer gSimplify gUnion
-##' @importFrom utils download.file
-##' @importFrom zip unzip
+##' @importFrom utils download.file unzip
 ##'
 ##' @keywords internal
 ##'
@@ -42,8 +41,7 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 	    foo <- suppressWarnings(try(download.file(URL, file.path(tmp, paste0(CAAB_species_id, ".zip")), quiet = TRUE),
 	        silent = TRUE))
 	    if(!inherits(foo, "try-error")) {
-	    unzip(
-	      file.path(tmp, paste0(CAAB_species_id, ".zip")),
+	    unzip(zipfile = file.path(tmp, paste0(CAAB_species_id, ".zip")),
 	      exdir = file.path(tmp, CAAB_species_id),
 	      overwrite = TRUE
 	    )

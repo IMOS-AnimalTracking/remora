@@ -3,10 +3,14 @@
 ##' @description \code{plotQCint()} QC'd detections colour-coded by their
 ##' assessed validity status, overlaid on species expert distribution extent
 ##'
-##' @param x a remora output object with \code{class(remora_QC)}
+##' @param x a remora output object with \code{class(remora_QC)}.
 ##' @param path path to save map(s) as an .html file. Options are: `NULL` (default);
 ##' `wb` (render map in default web browser); or a valid file path (map saved as a
-##' self-contained .html file)
+##' self-contained .html file).
+##' @param pal a `brewer.pal` palette name as a quoted character string. Use 
+##' `RColorBrewer::display.brewer.all()` to see choices.
+##' @param revpal reverse order of colour palette.
+##' 
 ##' @return produces interactive leaflet maps of species expert distribution and
 ##' location of QC'd detections
 ##'
@@ -14,8 +18,11 @@
 ##' ## example QC'd data
 ##' data(TownsvilleReefQC)
 ##' 
-##' ## render output to viewer
-##' plotQCint(TownsvilleReefQC)
+##' ## save plot as an .html file
+##' plotQCint(TownsvilleReefQC, path = ".")
+##' 
+##' ## clean up
+##' system("rm *_QCmap.html")
 ##' 
 ##' 
 ##' @importFrom leaflet leaflet addMarkers addCircleMarkers fitBounds addLegend 
@@ -26,6 +33,7 @@
 ##' @importFrom dplyr '%>%' summarise left_join group_by bind_rows distinct
 ##' @importFrom plyr ldply '.' ddply count
 ##' @importFrom grDevices extendrange
+##' @importFrom utils browseURL
 ##'
 ##' @export
 
@@ -59,7 +67,7 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		  cat("\033[0;34mCould not download shapefile, mapping without species expert distribution\033[0m")
 		  expert_shp <- NULL
 		}
-  
+
 		data <- subset(QCdata, CAAB_species_id == species$CAAB_species_id[i])
 		releases <- with(data, unique(data.frame(transmitter_id, 
 		                                         tag_id,
@@ -122,7 +130,7 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		))
 
 		if (!is.null(class(expert_shp))) {
-		  map <- leaflet(expert_shp) %>%
+		  map <- leaflet(data = expert_shp) %>%
 		    fitBounds(lng1 = bb[1], lat1 = bb[3], lng2 = bb[2], lat2 = bb[4]) %>%
 		    addPolygons(weight = 0.5, 
 		                group = "Species distribution",
@@ -133,7 +141,7 @@ plotQCint <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		    addProviderTiles("Esri.WorldImagery", group = "ESRI Satellite") %>%
 		    addProviderTiles("Esri.OceanBasemap", group = "ESRI Bathymetry")
 		  
-		} else {
+		} else if (any(is.null(expert_shp), is.null(class(expert_shp)))) {
 		  map <- leaflet() %>%
 		    fitBounds(lng1 = bb[1], lat1 = bb[3], lng2 = bb[2], lat2 = bb[4]) %>%
 		    addProviderTiles("CartoDB.Positron", group = "Default")
