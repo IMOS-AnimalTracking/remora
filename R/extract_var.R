@@ -21,7 +21,6 @@
 ##' @keywords internal
 
 .extract_var <- function(unique_positions, env_stack, env_var, .fill_gaps, .buffer = NULL, verbose = TRUE){
-  
   ## Check arguments
   
   ## Configure unique_positions to allow extraction
@@ -64,7 +63,7 @@
   if(env_var %in% "rs_current"){
     ## extraction current datasets run through each current dataset (gsla, vcur, ucur)
     for(j in 1:length(env_names)){
-      ext_list <- lapply(env_stack[[j]], extract, pos_sf)
+      ext_list <- lapply(env_stack[[j]], function(x) extract(x, pos_sf))
       ext_matrix <- matrix(unlist(lapply(ext_list, function(x) x[,2])), 
                            ncol = length(ext_list), 
                            byrow = TRUE, 
@@ -84,7 +83,7 @@
       
       ## gap filling
       if(.fill_gaps){
-        ext_list_fill <- lapply(env_stack[[j]], extract, pos_sf_buffer, fun = median)
+        ext_list_fill <- lapply(env_stack[[j]], function(x) extract(x, pos_sf_buffer, fun = median))
         ext_matrix_fill <- matrix(unlist(lapply(ext_list_fill, function(x) x[,2])), 
                                   ncol = length(ext_list_fill), 
                                   byrow = TRUE,
