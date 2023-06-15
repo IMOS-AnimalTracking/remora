@@ -15,8 +15,8 @@
 ##' @return a dataframe with unique position, unique dates and extracted environmental variables 
 ##'
 ##' @importFrom dplyr '%>%' mutate case_when select
-##' @importFrom sf st_as_sf st_drop_geometry
-##' @importFrom raster raster extract extent 
+##' @importFrom sf st_as_sf st_drop_geometry st_buffer
+##' @importFrom terra extract ext
 ##'
 ##' @keywords internal
 
@@ -28,7 +28,14 @@
   pos_sf <- 
     unique_positions %>% 
     st_as_sf(coords = c(1,2), crs = 4326, remove = F) %>% 
-    mutate(layer = paste0("X", gsub("\\-", ".", date)))
+    mutate(layer = as.character(date))
+
+  ## create buffer coords for terra::extract if .buffer is not NULL
+  if(!is.null(.buffer)) {
+    pos_sf_buffer <- st_buffer(pos_sf, .buffer)
+  } else {
+    pos_sf_buffer <- pos_sf
+  }
   
   ## setup output dataset
   out_data <-
@@ -53,11 +60,16 @@
   if(.fill_gaps & verbose){
     message("Filling gaps in environmental data by extracting median values from a ", .buffer/1000, "km buffer around detections that fall on 'NA' values")
   }
-  
+
   if(env_var %in% "rs_current"){
     ## extraction current datasets run through each current dataset (gsla, vcur, ucur)
-    for(c in 1:length(env_names)){
-      ext_matrix <- extract(env_stack[[c]], pos_sf)
+    for(j in 1:length(env_names)){
+      ext_list <- lapply(env_stack[[j]], extract, pos_sf)
+      ext_matrix <- matrix(unlist(lapply(ext_list, function(x) x[,2])), 
+                           ncol = length(ext_list), 
+                           byrow = TRUE, 
+                           dimnames = list(NULL, sapply(env_stack[[j]], names)))
+
       variable <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
@@ -69,9 +81,15 @@
         }
       }
       
+      
       ## gap filling
       if(.fill_gaps){
-        ext_matrix_fill <- extract(env_stack[[c]], pos_sf, buffer = .buffer, fun = median)
+        ext_list_fill <- lapply(env_stack[[j]], extract, pos_sf_buffer, fun = median)
+        ext_matrix_fill <- matrix(unlist(lapply(ext_list_fill, function(x) x[,2])), 
+                                  ncol = length(ext_list_fill), 
+                                  byrow = TRUE,
+                                  dimnames = list(NULL, sapply(env_stack[[j]], names)))
+#        ext_matrix_fill <- extract(env_stack[[c]], pos_sf_buffer, fun = median)
         variable_fill <- vector()
         for (i in 1:nrow(ext_matrix)) {
           val <-
@@ -94,7 +112,7 @@
                                         variable = case_when(is.na(variable) ~ var_fill,
                                                                     TRUE ~ variable)) %>% 
               dplyr::select(., -var_fill) else .}
-        colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[c]
+        colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[j]
       } else {
         out_data <-
           out_data %>% 
@@ -104,7 +122,7 @@
                                         variable = case_when(is.na(variable) ~ var_fill,
                                                                     TRUE ~ variable)) %>% 
               dplyr::select(., -var_fill) else .}
-        colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[c]
+        colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[j]
       }
     }
   } 
@@ -145,7 +163,7 @@
     
     ## gap filling
     if(.fill_gaps){
-      ext_matrix_fill <- extract(env_stack, pos_sf, buffer = .buffer, fun = median)
+      ext_matrix_fill <- extract(env_stack, pos_sf_buffer, fun = median)
       variable_fill <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-

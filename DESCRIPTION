@@ -103,7 +103,8 @@ Imports:
     viridis,
     xml2,
     zip,
-    htmlwidgets
+    htmlwidgets,
+    terra
 Suggests: 
     testthat (>= 3.0.0),
     rnaturalearth,

@@ -21,6 +21,7 @@
 ##' @importFrom dplyr '%>%' filter bind_rows n_distinct 
 ##' @importFrom readr write_csv 
 ##' @importFrom utils txtProgressBar setTxtProgressBar download.file
+##' @importFrom terra rast ext crop crs 'crs<-' writeRaster
 ##' @importFrom raster raster stack extent crop addLayer setZ writeRaster projection projection<-
 ##' @importFrom sp CRS
 ##' @importFrom parallel detectCores
@@ -140,7 +141,7 @@
           tryCatch({
             out_brick <-
               try(raster(urls$url_name[i], varname = urls$layer[i]) %>%
-                    {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
+                    {if (.crop) crop(., study_extent) else .} , silent=TRUE)
             
             if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
               names(out_brick) <- substr(out_brick@z[[1]], start = 1, stop = 10)
@@ -218,9 +219,9 @@
       
       plan("multisession", workers = .ncores)
       
-      gsla_stack <- stack()
-      vcur_stack <- stack()
-      ucur_stack <- stack()
+      gsla_stack <- NULL
+      vcur_stack <- NULL
+      ucur_stack <- NULL
       
       par_function2 <- function(url, .crop, study_extent){
         p()
@@ -230,22 +231,22 @@
         
         tryCatch({
           gsla <<- 
-            try(raster(nc_path, varname = "GSLA", verbose = FALSE) %>% 
+            try(rast(nc_path, subds = "GSLA") %>% 
                   {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
           names(gsla) <- url$date[1]
-          gsla_stack <<- addLayer(gsla_stack, gsla)
+          gsla_stack <<- c(gsla_stack, gsla)
           
           vcur <<- 
-            try(raster(nc_path, varname = "VCUR", verbose = FALSE) %>% 
+            try(rast(nc_path, subds = "VCUR") %>% 
                   {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
           names(vcur) <- url$date[1]
-          vcur_stack <<- addLayer(vcur_stack, vcur)
+          vcur_stack <<- c(vcur_stack, vcur)
           
           ucur <<- 
-            try(raster(nc_path, varname = "UCUR", verbose = FALSE) %>% 
+            try(rast(nc_path, subds = "UCUR") %>% 
                   {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
           names(ucur) <- url$date[1]
-          ucur_stack <<- addLayer(ucur_stack, ucur)
+          ucur_stack <<- c(ucur_stack, ucur)
           
           },
           error = function(e) {
@@ -270,9 +271,9 @@
       ## Looped version
       ## run through urls to download, crop and stack environmental variables
       
-      gsla_stack <- stack()
-      vcur_stack <- stack()
-      ucur_stack <- stack()
+      gsla_stack <- NULL
+      vcur_stack <- NULL
+      ucur_stack <- NULL
       
       pb <- txtProgressBar(max = nrow(urls), style = 3)
       
@@ -282,22 +283,22 @@
         nc_path <- gunzip(temp_nc)
         tryCatch({
           gsla <- 
-            try(raster(nc_path, varname = "GSLA") %>% 
+            try(rast(nc_path, subds = "GSLA") %>% 
                   {if (.crop) crop(.,study_extent) else .}, silent = TRUE)
           names(gsla) <- urls$date[i]
-          gsla_stack <- addLayer(gsla_stack, gsla)
+          gsla_stack <- c(gsla_stack, gsla)
           
           vcur <- 
-            try(raster(nc_path, varname = "VCUR") %>% 
+            try(rast(nc_path, subds = "VCUR") %>% 
                   {if (.crop) crop(.,study_extent) else .}, silent = TRUE)
           names(vcur) <- urls$date[i]
-          vcur_stack <- addLayer(vcur_stack, vcur)
+          vcur_stack <- c(vcur_stack, vcur)
           
           ucur <- 
-            try(raster(nc_path, varname = "UCUR") %>% 
+            try(rast(nc_path, subds = "UCUR") %>% 
                   {if (.crop) crop(.,study_extent) else .}, silent = TRUE)
           names(ucur) <- urls$date[i]
-          ucur_stack <- addLayer(ucur_stack, ucur)
+          ucur_stack <- c(ucur_stack, ucur)
           
         },
         error = function(e) {
@@ -309,7 +310,7 @@
       
       out_brick <- list(gsla = gsla_stack, vcur = vcur_stack, ucur = ucur_stack)
     }
-    
+
     ## provide log of error prone urls
     if(nrow(error_log) > 0){
       message("Ocean current data were not found for ", n_distinct(error_log$date)," dates")
@@ -347,14 +348,14 @@
     
     ## Save as requested raster output format
     if(var_name %in% "rs_current"){
-      writeRaster(out_brick$gsla, filename = paste(path, "rs_gsla", sep = "/"), overwrite = T, format = .output_format) 
-      writeRaster(out_brick$vcur, filename = paste(path, "rs_vcur", sep = "/"), overwrite = T, format = .output_format) 
-      writeRaster(out_brick$ucur, filename = paste(path, "rs_ucur", sep = "/"), overwrite = T, format = .output_format) 
+      terra::writeRaster(out_brick$gsla, filename = paste(path, "rs_gsla", sep = "/"), overwrite = T)#, format = .output_format) 
+      terra::writeRaster(out_brick$vcur, filename = paste(path, "rs_vcur", sep = "/"), overwrite = T)#, format = .output_format) 
+      terra::writeRaster(out_brick$ucur, filename = paste(path, "rs_ucur", sep = "/"), overwrite = T)#, format = .output_format) 
     } else {
-      if(is.na(projection(out_brick))){
-        projection(out_brick) <- CRS("EPSG:4326")
+      if(is.na(terra::crs(out_brick))){
+        terra::crs(out_brick) <- "epsg:4326"
         }
-      writeRaster(out_brick, filename = paste(path, var_name, sep = "/"), overwrite = T, format = .output_format) 
+      terra::writeRaster(out_brick, filename = paste(path, var_name, sep = "/"), overwrite = T) #, format = .output_format) 
     }
   } 
 
