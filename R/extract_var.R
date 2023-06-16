@@ -57,7 +57,7 @@
   if(env_var %in% "rs_current"){
     ## extraction current datasets run through each current dataset (gsla, vcur, ucur)
     for(c in 1:length(env_names)){
-      ext_matrix <- extract(env_stack[[c]], pos_sf)
+      ext_matrix <- raster::extract(env_stack[[c]], pos_sf)
       variable <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-

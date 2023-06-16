@@ -16,7 +16,7 @@ test_that("extractEnv adds rs_current data", {
                          cache_layers = FALSE,
                          crop_layers = TRUE,
                          full_timeperiod = TRUE,
-                         fill_gaps = FALSE,
+                         fill_gaps = TRUE,
                          folder_name = "test",
                          .parallel = FALSE)
   sub <- qc_data1[1, 56:60]
