@@ -1,4 +1,5 @@
-## test that expected 5 named current variables are appended to qc_data
+## test that extractEnv successfully downloads, fills any data gaps & 
+##    appends current variables to QC'd data
 test_that("extractEnv adds rs_current data", {
   ##  extract Env variable using example data
   data("TownsvilleReefQC")
@@ -8,16 +9,20 @@ test_that("extractEnv adds rs_current data", {
   qc_data <- dplyr::filter(qc_data, filename == unique(filename)[1])
   qc_data <- dplyr::slice(qc_data, 8:12)
   qc_data1 <- extractEnv(df = qc_data,
-             X = "receiver_deployment_longitude", 
-             Y = "receiver_deployment_latitude", 
-             datetime = "detection_datetime", 
-             env_var = "rs_current",
-             cache_layers = FALSE,
-             crop_layers = TRUE,
-             full_timeperiod = TRUE,
-             fill_gaps = FALSE,
-             folder_name = "test",
-             .parallel = FALSE)
+                         X = "receiver_deployment_longitude", 
+                         Y = "receiver_deployment_latitude", 
+                         datetime = "detection_datetime", 
+                         env_var = "rs_current",
+                         cache_layers = FALSE,
+                         crop_layers = TRUE,
+                         full_timeperiod = TRUE,
+                         fill_gaps = FALSE,
+                         folder_name = "test",
+                         .parallel = FALSE)
   sub <- qc_data1[1, 56:60]
-  expect_named(sub, c("rs_gsla", "rs_vcur", "rs_ucur", "rs_current_velocity", "rs_current_bearing"))
+  expect_named(sub, c("rs_gsla", 
+                      "rs_vcur", 
+                      "rs_ucur", 
+                      "rs_current_velocity", 
+                      "rs_current_bearing"))
 })
