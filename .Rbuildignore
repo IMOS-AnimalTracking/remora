@@ -8,3 +8,4 @@
 ^docs$
 ^pkgdown$
 ^index\.md$
+^data\_testing$
