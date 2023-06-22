@@ -3,7 +3,7 @@
 ##' @description Accesses and download environmental data from the IMOS THREDDS server 
 ##'
 ##' @param dates detection data source in data frame with at the minimum a X, Y and date time field
-##' @param study_extent raster Extent object defining the study area from which environmental data should be cropped
+##' @param study_extent `terra::ext` object defining the study area from which environmental data should be cropped
 ##' @param var_name variable needed options include current options ('rs_sst', 'rs_sst_interpolated', 
 ##' 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land')
 ##' @param folder_name name of folder within 'imos.cache' where downloaded rasters should be saved. 
@@ -16,14 +16,12 @@
 ##'
 ##' @details Internal function to download environmental raster layers from IMOS Thredds server (http://thredds.aodn.org.au/)
 ##'
-##' @return a raster stack object with daily spatial environmental layers associated with detection dates
+##' @return a SpatRaster object with daily spatial environmental layers associated with detection dates
 ##'
 ##' @importFrom dplyr '%>%' filter bind_rows n_distinct 
 ##' @importFrom readr write_csv 
 ##' @importFrom utils txtProgressBar setTxtProgressBar download.file
-##' @importFrom terra rast ext crop crs 'crs<-' writeRaster
-##' @importFrom raster raster stack extent crop addLayer setZ writeRaster projection projection<-
-##' @importFrom sp CRS
+##' @importFrom terra rast ext crop crs 'crs<-' writeRaster time
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options
@@ -62,8 +60,8 @@
       ## Update with IMOS github repo link
       url <- "https://github.com/IMOS-AnimalTracking/environmental_layers/blob/main/bathymetry_AustralianEEZ.tif?raw=true"
       out_brick <-
-        try(raster(url, verbose = FALSE) %>%
-              {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
+        try(rast(url) %>%
+              {if (.crop) crop(., study_extent) else .} , silent=TRUE)
       names(out_brick) <- "bathy"
     }
     
@@ -71,8 +69,8 @@
     if(var_name %in% "dist_to_land"){
       url <- "https://github.com/IMOS-AnimalTracking/environmental_layers/blob/main/dist_to_land_AustralianEEZ.tif?raw=true"
       out_brick <-
-        try(raster(url, verbose = FALSE) %>%
-              {if (.crop) crop(.,study_extent) else .} , silent=TRUE)
+        try(rast(url) %>%
+              {if (.crop) crop(., study_extent) else .} , silent=TRUE)
       names(out_brick) <- "dist_to_land"
     }
     
@@ -94,21 +92,21 @@
         p()
         tryCatch({
           out_ras <- 
-            try(raster(url$url_name, varname = url$layer, verbose = FALSE) %>%
-                  {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
+            try(rast(url$url_name, subds = url$layer, verbose = FALSE) %>%
+                  {if (.crop) crop(., study_extent) else .}, silent=TRUE)
           
           if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
-            names(out_ras) <- substr(out_ras@z[[1]], start = 1, stop = 10)
+            names(out_ras) <- substr(out_ras$z[[1]], start = 1, stop = 10)
             ## Convert to deg C
             out_ras <- out_ras - 273.15
             
           } else {
-            names(out_ras) <- as.character(out_ras@z[[1]]) 
+            names(out_ras) <- as.character(out_ras$z[[1]]) 
           }
         }, 
         error = function(e) {
           error_log <<- bind_rows(error_log, url)
-          out_ras <<- stack()
+          out_ras <<- rast()
         }
         )
         return(out_ras)
@@ -124,7 +122,7 @@
         future_map(.x = ., .f = par_function1, var_name, .crop, study_extent, 
                           .options = furrr_options(seed = TRUE))
       
-      out_brick <- stack(ras_list)
+      out_brick <- rast(ras_list)
       
       plan("sequential")
       
@@ -140,16 +138,16 @@
           pb <- txtProgressBar(max = nrow(urls), style = 3)
           tryCatch({
             out_brick <-
-              try(raster(urls$url_name[i], varname = urls$layer[i]) %>%
+              try(rast(urls$url_name[i], subdse = urls$layer[i]) %>%
                     {if (.crop) crop(., study_extent) else .} , silent=TRUE)
             
             if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
-              names(out_brick) <- substr(out_brick@z[[1]], start = 1, stop = 10)
+              names(out_brick) <- substr(out_brick$z[[1]], start = 1, stop = 10)
               ## Convert to deg C
               out_brick <- out_brick - 273.15
               
             } else {
-              names(out_brick) <- as.character(out_brick@z[[1]]) 
+              names(out_brick) <- as.character(out_brick$z[[1]]) 
             }
           }, error=function(e) {
             error_log <<- bind_rows(error_log, urls[i,])
@@ -158,19 +156,19 @@
         } else {
           tryCatch({
             out_layer <- 
-              try(raster(urls$url_name[i], varname = urls$layer[i]) %>%
-                    {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
+              try(rast(urls$url_name[i], subdse = urls$layer[i]) %>%
+                    {if (.crop) crop(., study_extent) else .}, silent=TRUE)
             
             if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
-              names(out_layer) <- substr(out_layer@z[[1]], start = 1, stop = 10)
+              names(out_layer) <- substr(out_layer$z[[1]], start = 1, stop = 10)
               ## Convert to deg C
               out_layer <- out_layer - 273.15
               
             } else {
-              names(out_layer) <- as.character(out_layer@z[[1]])
+              names(out_layer) <- as.character(out_layer$z[[1]])
             }
             
-            out_brick <- addLayer(out_brick, out_layer) 
+            out_brick <- c(out_brick, out_layer) 
             
           }, 
           error = function(e) {
@@ -195,10 +193,10 @@
       gsub("\\.", "-", .) %>% 
       as.Date()
     
-    if(is.na(projection(out_brick))){
-      projection(out_brick) <- CRS("EPSG:4326")
+    if(any(is.na(crs(out_brick)), is.null(crs(out_brick)))) {
+      crs(out_brick) <- "epsg:4326"
     }
-    out_brick <- setZ(x = out_brick, z = zval, name = "date")
+    time(out_brick) <- zval
   }
 
   ## Current layers
@@ -338,24 +336,24 @@
   ## If caching raster stack, define and set up folders to store files locally
   if(.cache){
     dir.create("imos.cache", showWarnings = FALSE)
-    dir.create("imos.cache/rs variables", showWarnings = FALSE)
+    dir.create(file.path("imos.cache", "rs variables"), showWarnings = FALSE)
     if(is.null(folder_name)){
-      path <- file.path("imos.cache/rs variables", paste("extent", paste0(round(study_extent[1:4]), collapse = "_"), sep = "_"))
+      path <- file.path("imos.cache", "rs variables", paste("extent", paste0(round(study_extent[1:4]), collapse = "_"), sep = "_"))
     } else {
-      path <- file.path("imos.cache/rs variables", folder_name) 
+      path <- file.path("imos.cache", "rs variables", folder_name) 
     }
     dir.create(path, showWarnings = FALSE)
     
     ## Save as requested raster output format
     if(var_name %in% "rs_current"){
-      terra::writeRaster(out_brick$gsla, filename = paste(path, "rs_gsla", sep = "/"), overwrite = T)#, format = .output_format) 
-      terra::writeRaster(out_brick$vcur, filename = paste(path, "rs_vcur", sep = "/"), overwrite = T)#, format = .output_format) 
-      terra::writeRaster(out_brick$ucur, filename = paste(path, "rs_ucur", sep = "/"), overwrite = T)#, format = .output_format) 
+      writeRaster(out_brick$gsla, filename = file.path(path, "rs_gsla"), overwrite = TRUE)#, format = .output_format) 
+      writeRaster(out_brick$vcur, filename = file.path(path, "rs_vcur"), overwrite = TRUE)#, format = .output_format) 
+      writeRaster(out_brick$ucur, filename = file.path(path, "rs_ucur"), overwrite = TRUE)#, format = .output_format) 
     } else {
-      if(is.na(terra::crs(out_brick))){
-        terra::crs(out_brick) <- "epsg:4326"
+      if(any(is.na(crs(out_brick)), is.null(crs(out_brick)))) {
+        crs(out_brick) <- "epsg:4326"
         }
-      terra::writeRaster(out_brick, filename = paste(path, var_name, sep = "/"), overwrite = T) #, format = .output_format) 
+      writeRaster(out_brick, filename = file.path(path, var_name), overwrite = TRUE) #, format = .output_format) 
     }
   } 
 

@@ -5,7 +5,9 @@
 #' @param moorData optional dataframe containing the sensor data from a single IMOS mooring. 
 #' @param timeMaxh optional numeric string containing the maximum time threshold in hours to merge detection and mooring sensor values. 
 #' @param distMaxkm optional numeric string containing the maximum distance threshold in km to merge detection and mooring sensor values. 
+#' 
 #' @return The \code{trackingData} dataframe with the sensor values from the nearest  \code{moor_site_code} 
+#' 
 #' @importFrom data.table setDT := setkey setcolorder setattr
 #' @importFrom lubridate parse_date_time2 interval dhours as.duration
 #' @importFrom dplyr arrange mutate case_when select

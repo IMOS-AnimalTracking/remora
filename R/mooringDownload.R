@@ -6,7 +6,9 @@
 ##' @param sensorType character string detailing which sensor value we are interested in. Can be "temperature", "velocity", "salinity or "oxygen"."
 ##' @param itimeout integer value for number of seconds we are willing to wait before timeout to download netcdf from the web. Defaults to 60
 ##' @param file_loc character string for the location of the saved files
+##' 
 ##' @return The \code{moorData} dataframe with the sensor information time series for a given \code{site_code} 
+##' 
 ##' @importFrom ncdf4 nc_open ncvar_get ncatt_get nc_close
 ##' @export
 

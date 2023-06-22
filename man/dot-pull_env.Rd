@@ -20,7 +20,7 @@
 \arguments{
 \item{dates}{detection data source in data frame with at the minimum a X, Y and date time field}
 
-\item{study_extent}{raster Extent object defining the study area from which environmental data should be cropped}
+\item{study_extent}{\code{terra::ext} object defining the study area from which environmental data should be cropped}
 
 \item{var_name}{variable needed options include current options ('rs_sst', 'rs_sst_interpolated',
 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land')}
@@ -39,7 +39,7 @@ default NULL produces automatic folder names based on study extent}
 \item{.ncores}{}
 }
 \value{
-a raster stack object with daily spatial environmental layers associated with detection dates
+a SpatRaster object with daily spatial environmental layers associated with detection dates
 }
 \description{
 Accesses and download environmental data from the IMOS THREDDS server

@@ -85,7 +85,7 @@
 ##'               .parallel = FALSE)
 ##'
 ##' @importFrom dplyr '%>%' mutate distinct pull left_join select
-##' @importFrom raster extent
+##' @importFrom terra ext
 ##' @importFrom lubridate date 
 ##' @importFrom progressr with_progress
 ##'
@@ -121,7 +121,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   date_range <- range(unique_dates)
   
   ## define spatial extent and extend by 40%
-  study_extent <- extent(c(min(df[[X]]), max(df[[X]]), min(df[[Y]]), max(df[[Y]]))) * 1.4
+  study_extent <- ext(c(min(df[[X]]), max(df[[X]]), min(df[[Y]]), max(df[[Y]]))) * 1.4
   
   ## define unique positions (for quicker environmental variable extraction)
   unique_positions <-

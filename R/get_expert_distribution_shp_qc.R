@@ -12,14 +12,12 @@
 ##' is required
 ##'
 ##' @details For a few species acoustically tagged no shapefile exists, for a
-##' few others multiple shapefiles need to be merged into a single one. gBuffer
+##' few others multiple shapefiles need to be merged into a single one. `sf::st_buffer`
 ##' extends the boundary of the original shapefile.
 ##'
-##' @return shp_b is a SpatialPolygons object of the species' distribution
+##' @return shp_b is a spatial polygon sf data.frame object of the species' distribution
 ##'
-##' @importFrom sp spTransform CRS
-##' @importFrom rgdal readOGR
-##' @importFrom rgeos gBuffer gSimplify gUnion
+##' @importFrom sf st_read st_buffer st_simplify st_union st_transform
 ##' @importFrom utils download.file unzip
 ##'
 ##' @keywords internal
@@ -51,11 +49,11 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 	}
 
 	if(file.exists(file.path(tmp, CAAB_species_id, "CAAB_FISHMAPPolygon.shp"))){
-		shp <- suppressWarnings(readOGR(dsn = file.path(tmp, CAAB_species_id, 'CAAB_FISHMAPPolygon.shp'), verbose = F))
-		shp_b <- suppressWarnings(spTransform(shp, CRSobj = CRS("+proj=merc +ellps=GRS80")))
-		shp_b <- gBuffer(shp_b, width = 500000) ## 500 km buffer area
-		shp_b <- gSimplify(shp_b, tol = 0.01, topologyPreserve = TRUE)
-		shp_b <- spTransform(shp_b, CRSobj = CRS("+proj=longlat +datum=WGS84"))
+		shp <- suppressWarnings(st_read(dsn = file.path(tmp, CAAB_species_id, 'CAAB_FISHMAPPolygon.shp'), quiet = TRUE))
+		shp_b <- suppressWarnings(st_transform(shp, crs = "+proj=merc +ellps=GRS80"))
+		shp_b <- st_buffer(shp_b, dist = 500000) ## 500 km buffer area
+		shp_b <- st_simplify(shp_b, dTolerance = 0.01, preserveTopology = TRUE)
+		shp_b <- st_transform(shp_b, crs = "+proj=longlat +datum=WGS84")
 
 		## delete file after use - leave this commented for now as tempdir should be
 		##  deleted by R at end of session
@@ -93,21 +91,21 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 		if (length(k) == 1){
 			if (!is.na(k)){
 			  shp <- suppressWarnings(
-			    readOGR(dsn = system.file(file.path("ALA_Shapefile", 
+			    st_read(dsn = system.file(file.path("ALA_Shapefile", 
 			                                        k, 
 			                                        paste0(k, ".shp")
 			                                        ),
 			                      package = "remora"),
-			    k,
-			    verbose = FALSE)
+			    layer = k,
+			    quiet = TRUE)
 			  )
 			  
 			shp_b <- suppressWarnings(
-			    spTransform(shp, CRSobj = CRS("+proj=merc +ellps=GRS80"))
+			    st_transform(shp, crs = "+proj=merc +ellps=GRS80")
 			    )
-			shp_b <- gBuffer(shp_b, width = 500000) ## 500 km buffer area
-			shp_b <- gSimplify(shp_b, tol = 0.01, topologyPreserve = TRUE)
-			shp_b <- spTransform(shp_b, CRSobj = CRS("+proj=longlat +datum=WGS84"))
+			shp_b <- st_buffer(shp_b, dist = 500000) ## 500 km buffer area
+			shp_b <- st_simplify(shp_b, dTolerance = 0.01, preserveTopology = TRUE)
+			shp_b <- st_transform(shp_b, crs = "+proj=longlat +datum=WGS84")
 			return(shp_b)
 			}
 		}
@@ -115,20 +113,20 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 	  if (length(k) > 1) {
 	    if (!is.na(k[1]))
 	      shp_1 <-suppressWarnings(
-	        readOGR(dsn = system.file(file.path("ALA_Shapefile", k[1], 
+	        st_read(dsn = system.file(file.path("ALA_Shapefile", k[1], 
 	                                            paste0(k[1], ".shp")),
 	                            package = "remora"),
-	          k[1],
-	          verbose = F)
+	          layer = k[1],
+	          quiet = TRUE)
 	        )
 	    
 	    if (!is.na(k[2]))
 	      shp_2 <- suppressWarnings(
-	        readOGR(dsn = system.file(file.path("ALA_Shapefile", k[2], 
+	        st_read(dsn = system.file(file.path("ALA_Shapefile", k[2], 
 	                                            paste0(k[2], ".shp")),
 	                            package = "remora"),
-	          k[2],
-	          verbose = F)
+	          layer = k[2],
+	          quiet = FALSE)
 	        )
 	    
 	    if (is.na(k[1]) & !is.na(k[2]))
@@ -138,22 +136,22 @@ get_expert_distribution_shp <- function(CAAB_species_id, spe){
 
 	    if (!is.na(k[1]) & !is.na(k[2])) {
 	      shp_1 <- suppressWarnings(
-	          spTransform(shp_1, CRSobj = CRS("+proj=merc +ellps=GRS80"))
+	          st_transform(shp_1, crs = "+proj=merc +ellps=GRS80")
 	          )
 	      shp_2 <- suppressWarnings(
-	        spTransform(shp_2, CRSobj = CRS("+proj=merc +ellps=GRS80"))
+	        st_transform(shp_2, crs = "+proj=merc +ellps=GRS80")
 	        )
-	      shp_1 <- gBuffer(shp_1, width = 0, byid = TRUE)
-	      shp_2 <- gBuffer(shp_2, width = 0, byid = TRUE)
-	      shp <- gUnion(shp_1, shp_2)
+	      shp_1 <- st_buffer(shp_1, dist = 0) #, byid = TRUE)
+	      shp_2 <- st_buffer(shp_2, dist = 0) #, byid = TRUE)
+	      shp <- st_union(shp_1, shp_2)
 	    }
-	    shp <- spTransform(shp, CRSobj = CRS("+proj=longlat +datum=WGS84"))
+	    shp <- st_transform(shp, crs = "+proj=longlat +datum=WGS84")
 	    shp_b <- suppressWarnings(
-	      spTransform(shp, CRSobj = CRS("+proj=merc +ellps=GRS80"))
+	      st_transform(shp, crs = "+proj=merc +ellps=GRS80")
 	      )
-	    shp_b <- gBuffer(shp_b, width = 500000) ## 500 km buffer area
-	    shp_b <- gSimplify(shp_b, tol = 0.01, topologyPreserve = TRUE)
-	    shp_b <- spTransform(shp_b, CRSobj = CRS("+proj=longlat +datum=WGS84"))
+	    shp_b <- st_buffer(shp_b, dist = 500000) ## 500 km buffer area
+	    shp_b <- st_simplify(shp_b, dTolerance = 0.01, preserveTopology = TRUE)
+	    shp_b <- st_transform(shp_b, crs = "+proj=longlat +datum=WGS84")
 	    if (exists("shp_1"))
 	      rm(shp_1)
 	    if (exists("shp_2"))

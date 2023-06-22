@@ -9,3 +9,4 @@
 ^pkgdown$
 ^index\.md$
 ^data\_testing$
+^data-raw$
