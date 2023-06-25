@@ -79,13 +79,13 @@ files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"),
               "IMOS_animal_measurements.csv"),
                     package = "remora"))
 qc.out <- runQC(files)
-plotQC(qc.out, path = NULL) # plots to default graphics device
+plotQC(qc.out, path = ".") # saves .html file to working directory
 
 ## get detections with QC flags
 d.qc <- grabQC(qc.out, what = "dQC")
 
 ## clean up
-system("rm QC_logfile.txt")
+system("rm QC_logfile.txt *_QCmap.html")
 
 }
 \references{

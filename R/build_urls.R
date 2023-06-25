@@ -45,7 +45,8 @@
     
     ## define start and mid url, and define end of THREDDS based on variable name
     ## example :"http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/SST/ghrsst/L4/RAMSSA/2006/20060612120000-ABOM-L4_GHRSST-SSTfnd-RAMSSA_09km-AUS-v02.0-fv01.0.nc"
-    start_url <- "http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/SST/ghrsst/L4/RAMSSA/"
+    #start_url <- "http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/SST/ghrsst/L4/RAMSSA/"
+    start_url <- "http://thredds.aodn.org.au/thredds/fileServer/IMOS/SRS/SST/ghrsst/L4/RAMSSA/"
     end_url <- "120000-ABOM-L4_GHRSST-SSTfnd-RAMSSA_09km-AUS-v02.0-fv01.0.nc"
     layer <- "analysed_sst"
     
@@ -63,7 +64,7 @@
     
     ## define start and mid url, and define end of THREDDS based on variable name
     ## example :"http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/SST/ghrsst/L3S-1d/dn/2013/20130501092000-ABOM-L3S_GHRSST-SSTfnd-AVHRR_D-1d_dn.nc"
-    start_url <- "http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/SST/ghrsst/L3S-1d/dn/"
+    start_url <- "http://thredds.aodn.org.au/thredds/fileServer/IMOS/SRS/SST/ghrsst/L3S-1d/dn/"
     end_url <- "092000-ABOM-L3S_GHRSST-SSTfnd-AVHRR_D-1d_dn.nc"
     layer <- "sea_surface_temperature"
   }
@@ -81,7 +82,7 @@
     
     ## define start and mid url, and define end of THREDDS based on variable name
     ## example :"http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/OC/gridded/aqua/P1D/2013/05/A.P1D.20130501T053000Z.aust.chl_oc3.nc"
-    start_url <- "http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/OC/gridded/aqua/P1D/"
+    start_url <- "http://thredds.aodn.org.au/thredds/fileServer/IMOS/SRS/OC/gridded/aqua/P1D/"
     mid_url <- "A.P1D."
     layer <- ""
     
@@ -110,7 +111,7 @@
                      fdates = format(date, "%Y%m%d"),
                      year = format(date, "%Y"),
                      base_url = paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/SRS/SSS/aquarius/L3/7day/", year, "/"),
-                     start_url =  paste0("http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/SSS/aquarius/L3/7day/", year, "/"))
+                     start_url =  paste0("http://thredds.aodn.org.au/thredds/fileServer/IMOS/SRS/SSS/aquarius/L3/7day/", year, "/"))
     
     if(verbose){
       message("Finding weekly IMOS salinity data...")

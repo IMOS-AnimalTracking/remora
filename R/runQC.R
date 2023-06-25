@@ -63,13 +63,13 @@
 ##'               "IMOS_animal_measurements.csv"),
 ##'                     package = "remora"))
 ##' qc.out <- runQC(files)
-##' plotQC(qc.out, path = NULL) # plots to default graphics device
+##' plotQC(qc.out, path = ".") # saves .html file to working directory
 ##'
 ##' ## get detections with QC flags
 ##' d.qc <- grabQC(qc.out, what = "dQC")
 ##' 
 ##' ## clean up
-##' system("rm QC_logfile.txt")
+##' system("rm QC_logfile.txt *_QCmap.html")
 ##'
 ##' @importFrom stringr str_split
 ##' @importFrom readr read_csv cols col_character col_double col_integer col_datetime

@@ -16,7 +16,7 @@
 \arguments{
 \item{unique_positions}{dataframe with unique coordinates and dates from where to extract daily environmental data}
 
-\item{env_stack}{a raster stack object with daily spatial environmental layers associated with detection dates (output from \code{.pull_var} function)}
+\item{env_stack}{a SpatRaster object with daily spatial environmental layers associated with detection dates (output from \code{.pull_var} function)}
 
 \item{env_var}{name of extracted variable (brought in from \code{extractEnv} function)}
 

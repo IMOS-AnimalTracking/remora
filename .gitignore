@@ -48,3 +48,5 @@ QC_logfile.txt
 /Meta/
 docs
 /data_testing/
+imos.cache
+*_errorlog.txt

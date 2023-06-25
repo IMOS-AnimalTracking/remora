@@ -10,3 +10,6 @@
 ^index\.md$
 ^data\_testing$
 ^data-raw$
+^imos\.cache$
+^rs\_salinity\_errorlog\.txt$
+^rs\_sst\_errorlog\.txt$

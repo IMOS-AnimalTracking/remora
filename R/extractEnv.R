@@ -60,14 +60,14 @@
 ##' library(tidyverse)
 ##' data("TownsvilleReefQC")
 ##' 
-##' ## simplify & subset data for speed
+##' ## simplify & subset data for example speed-up
 ##' qc_data <- 
 ##'   TownsvilleReefQC %>% 
 ##'   unnest(cols = c(QC)) %>% 
 ##'   ungroup() %>% 
 ##'   filter(Detection_QC %in% c(1,2)) %>%
 ##'   filter(filename == unique(filename)[1]) %>%
-##'   slice(1:20)
+##'   slice(5:8)
 ##' 
 ##' ## Extract daily interpolated sea surface temperature
 ##' ## cache_layers & fill_gaps args set to FALSE for speed
@@ -80,7 +80,7 @@
 ##'               cache_layers = FALSE,
 ##'               crop_layers = TRUE,
 ##'               full_timeperiod = FALSE,
-##'               fill_gaps = FALSE,
+##'               fill_gaps = TRUE,
 ##'               folder_name = "test",
 ##'               .parallel = FALSE)
 ##'
@@ -183,6 +183,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   if(verbose){
     message("Extracting and appending environmental data")
   }
+
   env_data <- .extract_var(unique_positions, env_stack, env_var, .fill_gaps = fill_gaps, .buffer = buffer, verbose = verbose)
   
   ## Combine environmental data with input detection data

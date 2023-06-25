@@ -21,7 +21,7 @@
 ##' @importFrom dplyr '%>%' filter bind_rows n_distinct 
 ##' @importFrom readr write_csv 
 ##' @importFrom utils txtProgressBar setTxtProgressBar download.file
-##' @importFrom terra rast ext crop crs 'crs<-' writeRaster time
+##' @importFrom terra rast ext crop crs 'crs<-' writeRaster 'time<-'
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options
@@ -91,18 +91,23 @@
       par_function1 <- function(url, var_name, .crop, study_extent){
         p()
         tryCatch({
+          temp_nc <- file_temp(ext = ".nc.gz")
+          download.file(urls$url_name, destfile = temp_nc, quiet = TRUE)
+          nc_path <- gunzip(temp_nc)
+          
           out_ras <- 
-            try(rast(url$url_name, subds = url$layer, verbose = FALSE) %>%
+            try(rast(nc_path, lyrs = url$layer, verbose = FALSE) %>%
                   {if (.crop) crop(., study_extent) else .}, silent=TRUE)
           
           if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
-            names(out_ras) <- substr(out_ras$z[[1]], start = 1, stop = 10)
+            
+#            names(out_ras) <- substr(out_ras$z[[1]], start = 1, stop = 10)
             ## Convert to deg C
             out_ras <- out_ras - 273.15
-            
-          } else {
-            names(out_ras) <- as.character(out_ras$z[[1]]) 
           }
+          # } else {
+          #   names(out_ras) <- as.character(out_ras$z[[1]]) 
+          # }
         }, 
         error = function(e) {
           error_log <<- bind_rows(error_log, url)
@@ -129,7 +134,7 @@
     } else {
       ## Looped version
       ## run through urls to download, crop and stack environmental variables
-      
+
       ## establish a log to store all erroneous urls
       error_log <- tibble(date = as.Date(NULL), url_name = NULL, layer = NULL)
       
@@ -137,36 +142,45 @@
         if(i %in% 1){
           pb <- txtProgressBar(max = nrow(urls), style = 3)
           tryCatch({
+            temp_nc <- file_temp(ext = ".nc.gz")
+            download.file(urls$url_name[i], destfile = temp_nc, quiet = TRUE)
+            nc_path <- gunzip(temp_nc)
+            
             out_brick <-
-              try(rast(urls$url_name[i], subdse = urls$layer[i]) %>%
+              try(rast(nc_path, lyrs = urls$layer[i]) %>%
                     {if (.crop) crop(., study_extent) else .} , silent=TRUE)
             
             if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
-              names(out_brick) <- substr(out_brick$z[[1]], start = 1, stop = 10)
+ #             names(out_brick) <- substr(out_brick$z[[1]], start = 1, stop = 10)
               ## Convert to deg C
               out_brick <- out_brick - 273.15
-              
-            } else {
-              names(out_brick) <- as.character(out_brick$z[[1]]) 
             }
+            
+            # } else {
+            #   names(out_brick) <- as.character(out_brick$z[[1]]) 
+            # }
           }, error=function(e) {
             error_log <<- bind_rows(error_log, urls[i,])
           })
           
         } else {
           tryCatch({
+            temp_nc <- file_temp(ext = ".nc.gz")
+            download.file(urls$url_name[i], destfile = temp_nc, quiet = TRUE)
+            nc_path <- gunzip(temp_nc)
+            
             out_layer <- 
-              try(rast(urls$url_name[i], subdse = urls$layer[i]) %>%
+              try(rast(nc_path, lyrs = urls$layer[i]) %>%
                     {if (.crop) crop(., study_extent) else .}, silent=TRUE)
             
             if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
-              names(out_layer) <- substr(out_layer$z[[1]], start = 1, stop = 10)
+#              names(out_layer) <- substr(out_layer$z[[1]], start = 1, stop = 10)
               ## Convert to deg C
               out_layer <- out_layer - 273.15
-              
-            } else {
-              names(out_layer) <- as.character(out_layer$z[[1]])
             }
+            # } else {
+            #   names(out_layer) <- as.character(out_layer$z[[1]])
+            # }
             
             out_brick <- c(out_brick, out_layer) 
             
@@ -186,17 +200,18 @@
         write_csv(error_log %>% mutate(variable = var_name), paste0(var_name, "_errorlog.txt"))}
     }
     
-    ## Assign a zvalues to raster stack output
-    zval <-
-      names(out_brick) %>%
-      substr(start = 2, stop = 11) %>% 
-      gsub("\\.", "-", .) %>% 
-      as.Date()
-    
+    ## IDJ: don't think this zval assignment is needed with terra
+    # ## Assign a zvalues to raster stack output
+    # zval <-
+    #   names(out_brick) %>%
+    #   substr(start = 2, stop = 11) %>% 
+    #   gsub("\\.", "-", .) %>% 
+    #   as.Date()
+    # 
     if(any(is.na(crs(out_brick)), is.null(crs(out_brick)))) {
       crs(out_brick) <- "epsg:4326"
     }
-    time(out_brick) <- zval
+#    time(out_brick) <- zval
   }
 
   ## Current layers
@@ -236,13 +251,13 @@
           
           vcur <<- 
             try(rast(nc_path, subds = "VCUR") %>% 
-                  {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
+                  {if (.crop) crop(., study_extent) else .}, silent=TRUE)
           names(vcur) <- url$date[1]
           vcur_stack <<- c(vcur_stack, vcur)
           
           ucur <<- 
             try(rast(nc_path, subds = "UCUR") %>% 
-                  {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
+                  {if (.crop) crop(., study_extent) else .}, silent=TRUE)
           names(ucur) <- url$date[1]
           ucur_stack <<- c(ucur_stack, ucur)
           
@@ -279,22 +294,23 @@
         temp_nc <- file_temp(ext = ".nc.gz")
         download.file(urls$url_name[i], destfile = temp_nc, quiet = TRUE)
         nc_path <- gunzip(temp_nc)
+        
         tryCatch({
           gsla <- 
             try(rast(nc_path, subds = "GSLA") %>% 
-                  {if (.crop) crop(.,study_extent) else .}, silent = TRUE)
+                  {if (.crop) crop(., study_extent) else .}, silent = TRUE)
           names(gsla) <- urls$date[i]
           gsla_stack <- c(gsla_stack, gsla)
           
           vcur <- 
             try(rast(nc_path, subds = "VCUR") %>% 
-                  {if (.crop) crop(.,study_extent) else .}, silent = TRUE)
+                  {if (.crop) crop(., study_extent) else .}, silent = TRUE)
           names(vcur) <- urls$date[i]
           vcur_stack <- c(vcur_stack, vcur)
           
           ucur <- 
             try(rast(nc_path, subds = "UCUR") %>% 
-                  {if (.crop) crop(.,study_extent) else .}, silent = TRUE)
+                  {if (.crop) crop(., study_extent) else .}, silent = TRUE)
           names(ucur) <- urls$date[i]
           ucur_stack <- c(ucur_stack, ucur)
           
@@ -346,14 +362,14 @@
     
     ## Save as requested raster output format
     if(var_name %in% "rs_current"){
-      writeRaster(out_brick$gsla, filename = file.path(path, "rs_gsla"), overwrite = TRUE)#, format = .output_format) 
-      writeRaster(out_brick$vcur, filename = file.path(path, "rs_vcur"), overwrite = TRUE)#, format = .output_format) 
-      writeRaster(out_brick$ucur, filename = file.path(path, "rs_ucur"), overwrite = TRUE)#, format = .output_format) 
+      writeRaster(out_brick$gsla, filename = paste0(file.path(path, "rs_gsla"), ".grd"), overwrite = TRUE)#, format = .output_format) 
+      writeRaster(out_brick$vcur, filename = paste0(file.path(path, "rs_vcur"), ".grd"), overwrite = TRUE)#, format = .output_format) 
+      writeRaster(out_brick$ucur, filename = paste0(file.path(path, "rs_ucur"), ".grd"), overwrite = TRUE)#, format = .output_format) 
     } else {
       if(any(is.na(crs(out_brick)), is.null(crs(out_brick)))) {
         crs(out_brick) <- "epsg:4326"
-        }
-      writeRaster(out_brick, filename = file.path(path, var_name), overwrite = TRUE) #, format = .output_format) 
+      }
+      writeRaster(out_brick, filename = paste0(file.path(path, var_name), ".grd"), overwrite = TRUE) #, format = .output_format) 
     }
   } 
 
