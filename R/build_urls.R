@@ -237,7 +237,6 @@
     
     url_df <- tibble(date = sub_dates, url_name, layer) 
   }
-  
   return(url_df)
   
 }

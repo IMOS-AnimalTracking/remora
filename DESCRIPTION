@@ -80,7 +80,6 @@ Imports:
     parallel,
     plotly,
     plyr,
-    progressr,
     purrr,
     RColorBrewer,
     R.utils,

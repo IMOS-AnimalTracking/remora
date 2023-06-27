@@ -127,9 +127,9 @@
   
   if(env_var %in% c("bathy", "dist_to_land")) {
     ## extraction for single/fixed layer ('bathy', 'dist_to_land')
-    ext_matrix <- extract(env_stack, pos_sf)
-    variable <- ext_matrix
-    
+    ext_matrix <- extract(env_stack, pos_sf, ID = FALSE)
+    variable <- ext_matrix[,1]
+
     ## Append extracted variables to pos_sf dataset
     if(length(variable) > 0){
       out_data <- 
@@ -146,10 +146,9 @@
   
   
   if(env_var %in% c("rs_sst", "rs_sst_interpolated", "rs_salinity", "rs_chl", "rs_turbidity", "rs_npp")) {
-    
     ## extraction for time-series raster stacks
     ## extract dates from env_stack for ext_matrix colnames
-    cnms <- terra::time(env_stack) %>%
+    cnms <- time(env_stack) %>%
       as.Date() %>%
       as.character()
     ext_matrix <- extract(env_stack, pos_sf)
@@ -169,7 +168,7 @@
     
     ## gap filling
     if(.fill_gaps){
-      cnms <- terra::time(env_stack) %>%
+      cnms <- time(env_stack) %>%
         as.Date() %>%
         as.character()
       ext_matrix_fill <- extract(env_stack, pos_sf_buffer, fun = median)

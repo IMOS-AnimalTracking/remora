@@ -87,7 +87,6 @@
 ##' @importFrom dplyr '%>%' mutate distinct pull left_join select
 ##' @importFrom terra ext
 ##' @importFrom lubridate date 
-##' @importFrom progressr with_progress
 ##'
 ##' @export
 ##'
@@ -155,7 +154,6 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   }
   
   if(.parallel){
-    with_progress(
       try(
         suppressWarnings(
           env_stack <- .pull_env(dates = dates, study_extent = study_extent,
@@ -163,7 +161,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
                                  folder_name = folder_name, .crop = crop_layers,
                                  .output_format = output_format, verbose = verbose,
                                  .parallel = .parallel, .ncores = .ncores)), 
-        silent = FALSE), cleanup = FALSE)
+        silent = FALSE)
   } else {
     try(
       suppressWarnings(

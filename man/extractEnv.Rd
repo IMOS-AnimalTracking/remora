@@ -99,7 +99,7 @@ available can be accessed using the \code{\link{imos_variables}} function.
 library(tidyverse)
 data("TownsvilleReefQC")
 
-## simplify & subset data for speed
+## simplify & subset data for example speed-up
 qc_data <- 
   TownsvilleReefQC \%>\% 
   unnest(cols = c(QC)) \%>\% 

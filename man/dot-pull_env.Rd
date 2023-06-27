@@ -34,7 +34,8 @@ default NULL produces automatic folder names based on study extent}
 
 \item{.output_format}{File type for cached environmental layers. See \code{\link[raster]{writeFormats}}. The default format is 'raster'.}
 
-\item{.parallel}{should the environmental data download be conducted in parallel to speed up the process?}
+\item{.parallel}{should the environmental data download be conducted in parallel to speed up the process? Currently, parallel processing
+is only supported when downloading 'rs_current' data.}
 
 \item{.ncores}{}
 }
