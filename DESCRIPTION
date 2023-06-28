@@ -1,7 +1,7 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.7.4.9450
-Date: 2023-06-23
+Version: 0.7.4.9475
+Date: 2023-06-28
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
@@ -52,29 +52,17 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    colormap,
-    crosstalk,
     data.table,
     dplyr,
-    DT,
     fasttime,
     furrr,
     future,
     gdistance,
-    geojsonio,
-    ggdist,
-    gghalves,
-    ggraph,
-    ggplot2,
-    gmt,
-    igraph,
     kableExtra,
     knitr,
     leaflet,
     lubridate,
     magrittr,
-    maps,
-    mapview,
     ncdf4,
     parallel,
     plotly,
@@ -83,28 +71,38 @@ Imports:
     RColorBrewer,
     R.utils,
     readr,
-    scales,
     sf (>= 1.0-10),
     shiny,
-    shinycssloaders,
-    shinythemes,
-    shinyWidgets,
     stringr,
     tibble,
     tidyr,
-    tools,
     viridis,
     xml2,
     htmlwidgets,
-    terra (>= 1.7-30)
+    terra (>= 1.7-30),
+    geodist (>= 0.0.8)
 Suggests: 
+    colormap,
+    crosstalk,
+    DT,
+    geojsonio,
+    ggdist,
+    gghalves,
+    ggraph,
+    igraph,
+    scales,
+    shinycssloaders,
+    shinythemes,
+    shinyWidgets,
+    tools,    
     testthat (>= 3.0.0),
     rnaturalearth,
     tcltk,
     rmarkdown,
     hrbrthemes,
     classInt,
-    tidyverse
+    tidyverse,
+    sp (>= 2.0-0)
 Depends: R (>= 3.6.0)
 SystemRequirements: GDAL (>= 3.6.2), GEOS (>= 3.11.0), PROJ (>= 9.2.0)
 VignetteBuilder: knitr
