@@ -101,7 +101,6 @@ Suggests:
     rmarkdown,
     hrbrthemes,
     classInt,
-    tidyverse,
     sp (>= 2.0-0)
 Depends: R (>= 3.6.0)
 SystemRequirements: GDAL (>= 3.6.2), GEOS (>= 3.11.0), PROJ (>= 9.2.0)
