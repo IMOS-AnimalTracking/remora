@@ -16,8 +16,11 @@ extractBlue(
   verbose = TRUE,
   cache_layers = FALSE,
   full_timeperiod = FALSE,
+  station_name,
   fill_gaps = FALSE,
-  buffer = 10000
+  buffer = 10000,
+  export_step = TRUE,
+  export_path = "Processed_data"
 )
 }
 \arguments{
@@ -58,6 +61,9 @@ across full monitoring period? This option is time and memory consuming for long
 the returned dataset will be standardized for the days with/without detections across all stations (station_name column) where animals were
 detected. For more details please see the package vignettes.}
 
+\item{station_name}{if full_timeperiod = TRUE, please provide the column that identifies the name of the
+acoustic stations}
+
 \item{fill_gaps}{should the function use a spatial buffer to estimate
 environmental variables for detections where there is missing data. Default
 is \code{FALSE} to save computational time.}
@@ -67,6 +73,12 @@ environmental variables should be extracted from. A median value of pixels
 that fall within the buffer will be used if \code{fill_gaps = TRUE}. If \code{NULL} a
 buffer will be chosen based on the resolution of environmental layer. A
 numeric value (in m) can be used here to customise buffer radius.}
+
+\item{export_step}{should the processed dataset be exported to file? This is particularly usefull for large
+datasets, to avoid function failure due to issues with internet connexion. The rows with missing data will be
+exported as NAs, and only these will be completed if the function is rerun providing the exported dataset as input (df)}
+
+\item{export_path}{path and name of to export the dataset with appended environmnetal data}
 }
 \value{
 a dataframe with the environmental variable appended as an extra
