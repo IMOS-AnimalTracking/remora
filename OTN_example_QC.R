@@ -36,7 +36,8 @@ imos_files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"
 string_spec = "ccccDccccddcccccccTcddciiiidcccc"
 otn_test_data <- readr::read_csv("/Users/bruce/Downloads/animal_extract_2013_2.csv", col_types=string_spec) #Put your path to your test file here. 
 otn_test_data <- readr::read_csv("testDataOTN/qc_princess.csv")
-otn_test_data <- readr::read_csv("/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
+#otn_test_data <- readr::read_csv("/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
+otn_test_data <- readr::read_csv("testDataOTN/cobia/cobia_subset_export.csv")
 otn_mapped_test <- otn_imos_column_map(otn_test_data)
 #If you want to check your work. 
 View(otn_mapped_test)
@@ -48,6 +49,8 @@ otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detecti
 otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2015/cobcrp_matched_detections_2015.csv")
 otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2017/cobcrp_matched_detections_2017.csv")
 otn_files <- list(det = "cobia_subset_export.csv")
+
+otn_files <- list(det = "testDataOTN/cobia/cobia_subset_export.csv")
 
 #The QC functions rely on having shapefiles for distributions and study areas to calculate distances. 
 #We've got to get a shapefile for the Blue Shark test data, one is included here for sharks but for alternative data you will need your own appropriate one.
@@ -69,6 +72,9 @@ blue_shark_spatial <- sf::as_Spatial(blue_shark_crop)
 world_raster <- raster::raster("./testDataOTN/NE2_50M_SR.tif")
 #And crop it based on our cropped blue shark extent. 
 world_raster_sub <- raster::crop(world_raster, shapefile_crop)
+## set values to either 1 (ocean) or NA (land)
+world_raster_sub[world_raster_sub < 251] <- NA
+world_raster_sub[world_raster_sub == 251] <- 1
 
 #These are the available tests at time of writing. Detection Distribution isn't working yet and so we have commented it out. 
 tests_vector <-  c("FDA_QC",

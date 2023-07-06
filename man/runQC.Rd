@@ -10,6 +10,9 @@ runQC(
   data_format = "imos",
   tests_vector = c("FDA_QC", "Velocity_QC", "Distance_QC", "DetectionDistribution_QC",
     "DistanceRelease_QC", "ReleaseDate_QC", "ReleaseLocation_QC", "Detection_QC"),
+  shapefile = NULL,
+  col_spec = NULL,
+  fda_type = "time_diff",
   .parallel = FALSE,
   .ncores = detectCores() - 2,
   .progress = TRUE
@@ -23,6 +26,8 @@ structure and variable names as the Web App data.}
 
 \item{lat.check}{(logical; default TRUE) test for receiver_deployment_latitudes
 in N hemisphere and correct to S hemisphere. Set to FALSE if QC'ing N hemisphere data}
+
+\item{shapefile}{Allows the user to supply a shapefile specifying species ranges.}
 
 \item{.parallel}{logical; run QC tests in parallel across multiple processors
 (default is FALSE)}

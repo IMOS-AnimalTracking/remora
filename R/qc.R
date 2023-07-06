@@ -15,8 +15,9 @@
 ##' @return temporal_outcome is a list with each element corresponding to a QC'd tag detection file
 ##'
 ##' @importFrom dplyr '%>%' bind_cols
-##' @importFrom sp 'coordinates<-' 'proj4string<-' 'proj4string' over
+##' @importFrom sp 'coordinates<-' 'proj4string<-' 'proj4string' over SpatialPoints
 ##' @importFrom geosphere distGeo
+##' @importFrom glatos make_transition2
 ##'
 ##' @keywords internal
 ##'
@@ -189,26 +190,26 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
     # tr is included in the sysdata, but if someone brings their own shapefile then we have to create our own. 
     ## IDJ: add conditional on data_format
     ## BD: added a check to not run the OTN version of this if shp_b is null
-    if(data_format == "otn" & !is.null(shp_b))
-    {
-      dist <- switch(data_format,
-                     imos = {
-                       shortest_dist(position,
-                                     x$installation_name,
-                                     rast = Aust_raster,
-                                     tr = tr)
-                     },
-                     otn = {
-                       transition_layer <- glatos::make_transition2(shp_b)
-                       tr <- transition_layer$transition
-                       #dist <- NULL
-                       shortest_dist(position,
-                                     x$installation_name,
-                                     rast = world_raster_sub,
-                                     tr = tr) 
-                     })
-      #message("shortest dist calculated")
-    }
+  	## IDJ: moved !is.null(shp_b) check inside data_format = otn, otherwise when data_format = imos will never run
+  	dist <- switch(data_format,
+  	               imos = {
+  	                 shortest_dist(position,
+  	                               x$installation_name,
+  	                               rast = Aust_raster,
+  	                               tr = tr)
+  	               },
+  	               otn = {
+  	                 if (!is.null(shp_b)) {
+  	                   transition_layer <- make_transition2(shp_b)
+  	                   tr <- transition_layer$transition
+  	                   #dist <- NULL
+  	                   shortest_dist(position,
+  	                                 x$installation_name,
+  	                                 rast = world_raster_sub,
+  	                                 tr = tr)
+  	                 }
+  	               })
+  	#message("shortest dist calculated")
   }
     if("Velocity_QC" %in% colnames(temporal_outcome) & !is.null(dist)) {
       write(paste0(x$filename[1],

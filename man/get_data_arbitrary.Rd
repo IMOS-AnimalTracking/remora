@@ -15,7 +15,8 @@ get_data_arbitrary(
   tag_id_column = "transmitter_deployment_id",
   det_rcvr_column = "receiver_deployment_id",
   rcvr_id_column = "receiver_deployment_id",
-  data_format = "imos"
+  data_format = "imos",
+  col_spec = NULL
 )
 }
 \arguments{

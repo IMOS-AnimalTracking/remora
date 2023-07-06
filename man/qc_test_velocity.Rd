@@ -4,7 +4,7 @@
 \alias{qc_test_velocity}
 \title{QC velocity test}
 \usage{
-qc_test_velocity(data, qc_results, dist)
+qc_test_velocity(data, qc_results, dist, velocity_threshold = 10)
 }
 \arguments{
 \item{data}{data formatted by either \code{remora::get_data} or \code{remora::get_data_arbitrary}}
