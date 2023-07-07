@@ -17,6 +17,7 @@ library(stars)
 library(glatos)
 library(utils)
 library(geosphere)
+library(rangeBuilder)
 
 setwd('/Users/bruce/Work/remora')
 
@@ -36,37 +37,42 @@ imos_files <- list(det = system.file(file.path("test_data","IMOS_detections.csv"
 string_spec = "ccccDccccddcccccccTcddciiiidcccc"
 otn_test_data <- readr::read_csv("/Users/bruce/Downloads/animal_extract_2013_2.csv", col_types=string_spec) #Put your path to your test file here. 
 otn_test_data <- readr::read_csv("testDataOTN/qc_princess.csv")
-#otn_test_data <- readr::read_csv("/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
-otn_test_data <- readr::read_csv("testDataOTN/cobia/cobia_subset_export.csv")
+otn_test_data <- readr::read_csv("/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
+otn_test_data <- readr::read_csv("cobia_subset_export.csv")
 otn_mapped_test <- otn_imos_column_map(otn_test_data)
 #If you want to check your work. 
 View(otn_mapped_test)
 
 #The above code isn't meant to be run on its own just yet, the ideal is that you can pass it to QC without having to manually map it. 
-otn_files <- list(det = "/Users/bruce/Downloads/animal_extract_2013_2.csv") #Put your path to your files here
-otn_files <- list(det = "testDataOTN/qc_princess.csv")
-otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
-otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2015/cobcrp_matched_detections_2015.csv")
-otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2017/cobcrp_matched_detections_2017.csv")
-otn_files <- list(det = "cobia_subset_export.csv")
+#otn_files <- list(det = "/Users/bruce/Downloads/animal_extract_2013_2.csv") #Put your path to your files here
+#otn_files <- list(det = "testDataOTN/qc_princess.csv")
+#otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
+#otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2015/cobcrp_matched_detections_2015.csv")
+#otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2017/cobcrp_matched_detections_2017.csv")
+otn_files <- list(det = "testDataOTN/cobia/cobia_subset_export.csv")
 
 otn_files <- list(det = "testDataOTN/cobia/cobia_subset_export.csv")
+
+#Use this code with the appropriate files to generate a usable polygon for the species range.
+cobia <- read_csv("testDataOTN/cobia/r_canadum_OBIS.csv")
+cobia2 <- cobia %>% filter(is.na(flags))
+sps1Poly <- getDynamicAlphaHull(cobia2, fraction = 0.70, buff = 1000, partCount = 20, coordHeaders = c("decimalLongitude", "decimalLatitude"), clipToCoast = "aquatic")
 
 #The QC functions rely on having shapefiles for distributions and study areas to calculate distances. 
 #We've got to get a shapefile for the Blue Shark test data, one is included here for sharks but for alternative data you will need your own appropriate one.
 #We got ours from IUCN so maybe start there!
-shark_shp <- sf::st_read("./testDataOTN/SHARKS_RAYS_CHIMAERAS/SHARKS_RAYS_CHIMAERAS.shp")
-cobia_shp <- sf::st_read(sps1Poly[[1]])
+#shark_shp <- sf::st_read("./testDataOTN/SHARKS_RAYS_CHIMAERAS/SHARKS_RAYS_CHIMAERAS.shp")
+#cobia_shp <- sf::st_read(sps1Poly[[1]])
 #We're using the binomial name and bounding box that befits our species and area but feel free to sub in your own when you work with other datasets.
-blue_shark_shp <- shark_shp[shark_shp$binomial == 'Prionace glauca',]
-blue_shark_crop <- sf::st_crop(blue_shark_shp,  xmin=-68.4, ymin=42.82, xmax=-60.53, ymax=45.0)
+#blue_shark_shp <- shark_shp[shark_shp$binomial == 'Prionace glauca',]
+#blue_shark_crop <- sf::st_crop(blue_shark_shp,  xmin=-68.4, ymin=42.82, xmax=-60.53, ymax=45.0)
 
 #This is the format of the code we use to make a transition layer; you shouldn't need to run this here since it will run in 
-shark_transition <- glatos::make_transition2(shapefile_crop)
-shark_tr <- shark_transition$transition
+#shark_transition <- glatos::make_transition2(shapefile_crop)
+#shark_tr <- shark_transition$transition
 
 #And also a spatial polygon that we can use later. 
-blue_shark_spatial <- sf::as_Spatial(blue_shark_crop)
+#blue_shark_spatial <- sf::as_Spatial(blue_shark_crop)
 
 #We also need a raster for the ocean. We'll load this from a mid-resolution tif file, for testing purposes. 
 world_raster <- raster::raster("./testDataOTN/NE2_50M_SR.tif")
@@ -78,18 +84,23 @@ world_raster_sub[world_raster_sub == 251] <- 1
 
 #These are the available tests at time of writing. Detection Distribution isn't working yet and so we have commented it out. 
 tests_vector <-  c("FDA_QC",
-#                   "Velocity_QC",
-#                   "Distance_QC",
-#                   "DetectionDistribution_QC", #
-#                   "DistanceRelease_QC",
+                   "Velocity_QC",
+                   "Distance_QC",
+                   "DetectionDistribution_QC", #
+                   "DistanceRelease_QC",
                    "ReleaseDate_QC",
                    "ReleaseLocation_QC",
                    "Detection_QC")
 
 #In a perfect world, when you run this code, you will get output with QC attached. 
-data$transmitter_codespace <- data$transmitter_id
-data$receiver_sn <- data$receiver_id
-data$detection_timestamp_utc <- data$detection_datetime
+#data$transmitter_codespace <- data$transmitter_id
+#data$receiver_sn <- data$receiver_id
+#data$detection_timestamp_utc <- data$detection_datetime
+
+minLat = min(otn_test_data$latitude) - 5
+minLon = min(otn_test_data$longitude) - 5
+maxLat = max(otn_test_data$latitude) + 5
+maxLon = max(otn_test_data$longitude) + 5
 
 shapefile_crop <- st_crop(st_sf(sps1Poly[[1]]),  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
 
@@ -102,16 +113,7 @@ otn_test_tag_qc <- runQC(otn_files,
                          .parallel = FALSE, .progress = TRUE)
 View(otn_test_tag_qc)
 
-qc_shapes_test <- get_qc_shapes(otn_test_data, sps1Poly[1])
-
-minLat = min(otn_test_data$latitude) - 5
-minLon = min(otn_test_data$longitude) - 5
-maxLat = max(otn_test_data$latitude) + 5
-maxLon = max(otn_test_data$longitude) + 5
-
-shapefile_crop <- st_crop(st_sf(sps1Poly[[1]]),  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
-
-
+#qc_shapes_test <- get_qc_shapes(otn_test_data, sps1Poly[1])
 
 #All the below is just bits and scraps of stuff I've written here and there, no consistency or coherency to it.
 #Keeping it around for posterity but you shouldn't have to run it. 
