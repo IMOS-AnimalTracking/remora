@@ -12,6 +12,7 @@
 ##' @keywords internal
 ##' 
 qc_detection_qc <- function(qc_result) {
+  print("Running detection QC")
   ## IDJ - this mimics original remora Detection QC only tests 1:5 are summed,
   ##       but accounts for tests that are turned off and not in qc_result
   idx <- which(names(qc_result) %in% 
@@ -24,11 +25,12 @@ qc_detection_qc <- function(qc_result) {
                    "ReleaseLocation_QC"))
   
   ones <- rowSums(qc_result[, idx] == 1)
+  View(ones)
   
   qc_result[which(ones <= 2), "Detection_QC"] <- 4
   qc_result[which(ones == 3), "Detection_QC"] <- 3
   qc_result[which(ones == 4), "Detection_QC"] <- 2
-  qc_result[which(ones == 5), "Detection_QC"] <- 1
+  qc_result[which(ones >= 5), "Detection_QC"] <- 1
   if("Velocity_QC" %in% idx) {
     qc_result$Velocity_QC <- as.numeric(qc_result$Velocity_QC)
   }
