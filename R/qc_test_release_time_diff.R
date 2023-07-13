@@ -20,7 +20,6 @@ qc_test_release_time_diff <- function(data, qc_results) {
                                             data$transmitter_deployment_datetime,
                                             tz = "UTC",
                                             units = "mins"))
-    #message("release_timediff: ", release_timediff)
     ## -720 minutes (12 h) to take into account potential time zone differences
     qc_results[which(release_timediff >= (-720)), "ReleaseDate_QC"] <- 1
     qc_results[which(release_timediff < (-720)), "ReleaseDate_QC"] <- 2
