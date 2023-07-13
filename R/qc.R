@@ -116,7 +116,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
 
     ll <- unique(data.frame(x$longitude, x$latitude))
     
-    SpatialPoints(ll, proj4string = CRS("EPSG:4326"))
+    ll <- SpatialPoints(ll, proj4string = CRS("EPSG:4326"))
     #coordinates(ll) <- ~ x.longitude + x.latitude
     #message("Coordinates set")
     #proj4string(ll) <- proj4string(shp_b)
@@ -200,9 +200,10 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
   	               },
   	               otn = {
   	                 if (!is.null(shp_b)) {
-  	                   transition_layer <- make_transition2(shp_b)
+  	                   transition_layer <- make_transition2(sf::as_Spatial(shp_b))
   	                   tr <- transition_layer$transition
-  	                   #dist <- NULL
+  	                   print("Made transition layer")
+  	                   dist <- NULL
   	                   shortest_dist(position,
   	                                 x$installation_name,
   	                                 rast = world_raster_sub,
@@ -229,7 +230,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
 
 		message("Dist/velocity tests done.")
 		## Detection distribution test
-    if("DetectionDistribution_QC" %in% colnames(temporal_outcome) & !is.null(dist) & !is.null(shp_b)) {
+    if("DetectionDistribution_QC" %in% colnames(temporal_outcome) & !is.null(shp_b)) {
       write(paste0(x$filename[1],
                    ":  ", " Running detection distribution check."),
             file = logfile,

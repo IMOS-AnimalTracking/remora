@@ -25,7 +25,6 @@ qc_detection_qc <- function(qc_result) {
                    "ReleaseLocation_QC"))
   
   ones <- rowSums(qc_result[, idx] == 1)
-  View(ones)
   
   qc_result[which(ones <= 2), "Detection_QC"] <- 4
   qc_result[which(ones == 3), "Detection_QC"] <- 3

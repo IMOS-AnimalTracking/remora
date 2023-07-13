@@ -39,6 +39,7 @@ otn_test_data <- readr::read_csv("/Users/bruce/Downloads/animal_extract_2013_2.c
 otn_test_data <- readr::read_csv("testDataOTN/qc_princess.csv")
 otn_test_data <- readr::read_csv("/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
 otn_test_data <- readr::read_csv("cobia_subset_export.csv")
+otn_test_data <- readr::read_csv("testDataOTN/cobia/cobia_subset_export_TT1299_withBogus.csv")
 otn_mapped_test <- otn_imos_column_map(otn_test_data)
 #If you want to check your work. 
 View(otn_mapped_test)
@@ -46,12 +47,12 @@ View(otn_mapped_test)
 #The above code isn't meant to be run on its own just yet, the ideal is that you can pass it to QC without having to manually map it. 
 #otn_files <- list(det = "/Users/bruce/Downloads/animal_extract_2013_2.csv") #Put your path to your files here
 #otn_files <- list(det = "testDataOTN/qc_princess.csv")
-#otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
+otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
 #otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2015/cobcrp_matched_detections_2015.csv")
-#otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2017/cobcrp_matched_detections_2017.csv")
+otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2017/cobcrp_matched_detections_2017.csv")
 otn_files <- list(det = "testDataOTN/cobia/cobia_subset_export.csv")
 
-otn_files <- list(det = "testDataOTN/cobia/cobia_subset_export.csv")
+otn_files <- list(det = "testDataOTN/cobia/cobia_subset_export_TT1299_withBogus.csv")
 
 #Use this code with the appropriate files to generate a usable polygon for the species range.
 cobia <- read_csv("testDataOTN/cobia/r_canadum_OBIS.csv")
@@ -77,7 +78,7 @@ sps1Poly <- getDynamicAlphaHull(cobia2, fraction = 0.70, buff = 1000, partCount 
 #We also need a raster for the ocean. We'll load this from a mid-resolution tif file, for testing purposes. 
 world_raster <- raster::raster("./testDataOTN/NE2_50M_SR.tif")
 #And crop it based on our cropped blue shark extent. 
-world_raster_sub <- raster::crop(world_raster, shapefile_crop)
+world_raster_sub <- raster::crop(world_raster, sf::as_Spatial(shapefile_crop))
 ## set values to either 1 (ocean) or NA (land)
 world_raster_sub[world_raster_sub < 251] <- NA
 world_raster_sub[world_raster_sub == 251] <- 1
@@ -86,7 +87,7 @@ world_raster_sub[world_raster_sub == 251] <- 1
 tests_vector <-  c("FDA_QC",
                    "Velocity_QC",
                    "Distance_QC",
-                   "DetectionDistribution_QC", #
+                   "DetectionDistribution_QC",
                    "DistanceRelease_QC",
                    "ReleaseDate_QC",
                    "ReleaseLocation_QC",
@@ -102,7 +103,7 @@ minLon = min(otn_test_data$longitude) - 5
 maxLat = max(otn_test_data$latitude) + 5
 maxLon = max(otn_test_data$longitude) + 5
 
-shapefile_crop <- st_crop(st_sf(sps1Poly[[1]]),  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
+shapefile_crop <- st_crop(sps1Poly[[1]],  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
 
 otn_test_tag_qc <- runQC(otn_files, 
                          data_format = "otn", 
@@ -112,6 +113,13 @@ otn_test_tag_qc <- runQC(otn_files,
                          fda_type = "pincock", 
                          .parallel = FALSE, .progress = TRUE)
 View(otn_test_tag_qc)
+
+latlon_test <- otn_test_data[c('latitude', 'longitude')]
+coordinates(latlon_test) <- c("longitude", "latitude")
+proj4string(latlon_test) <- CRS("+proj=longlat +datum=WGS84")
+world_shapefile_crop <- rasterToPolygons(world_raster_sub)
+sp::over(latlon_test, world_shapefile_crop)
+
 
 #qc_shapes_test <- get_qc_shapes(otn_test_data, sps1Poly[1])
 

@@ -19,11 +19,13 @@ qc_test_det_distro <- function(data, latlons, qc_results, species_range) {
   
   #Make a spatial object out of the lat/lon. These steps may not be necessary when running the IMOS version. Also
   #gotta find a way around that hardcoding. 
-  coordinates(latlons) <- c("x.longitude", "x.latitude")
-  proj4string(latlons) <- CRS("+proj=longlat +datum=WGS84")
-  #print(st_crs(sf::as_Spatial(species_range)))
+  #coordinates(latlons) <- c("x.longitude", "x.latitude")
+  #proj4string(latlons) <- CRS("+proj=longlat +datum=WGS84")
   if(!is.null(species_range)) {
+    print("Need to do some debug in det distro")
+    print(over(latlons, sf::as_Spatial(species_range)))
     out <- which(is.na(over(latlons, sf::as_Spatial(species_range))))
+    print(out)
     if(length(out) > 0) {
       qc_results[data$longitude %in% latlons@coords[out, 1] &
                          data$latitude %in% latlons@coords[out, 2], "DetectionDistribution_QC"] <- 2
