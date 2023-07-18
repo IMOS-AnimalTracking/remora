@@ -69,7 +69,7 @@ test_that("extractEnv adds rs_chl data", {
                          cache_layers = FALSE,
                          crop_layers = TRUE,
                          full_timeperiod = FALSE,
-                         fill_gaps = FALSE,
+                         fill_gaps = TRUE,
                          folder_name = "test",
                          .parallel = FALSE)
   sub <- qc_data1[1, ncol(qc_data1)]
