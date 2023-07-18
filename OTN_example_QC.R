@@ -39,6 +39,7 @@ otn_test_data <- readr::read_csv("/Users/bruce/Downloads/animal_extract_2013_2.c
 otn_test_data <- readr::read_csv("testDataOTN/qc_princess.csv")
 otn_test_data <- readr::read_csv("/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
 otn_test_data <- readr::read_csv("cobia_subset_export.csv")
+otn_test_data <- readr::read_csv("/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2017/cobcrp_matched_detections_2017.csv")
 otn_test_data <- readr::read_csv("testDataOTN/cobia/cobia_subset_export_TT1299_withBogus.csv")
 otn_mapped_test <- otn_imos_column_map(otn_test_data)
 #If you want to check your work. 
@@ -48,7 +49,7 @@ View(otn_mapped_test)
 #otn_files <- list(det = "/Users/bruce/Downloads/animal_extract_2013_2.csv") #Put your path to your files here
 #otn_files <- list(det = "testDataOTN/qc_princess.csv")
 otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2022/cobcrp_matched_detections_2022.csv")
-#otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2015/cobcrp_matched_detections_2015.csv")
+otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2015/cobcrp_matched_detections_2015.csv")
 otn_files <- list(det = "/Users/bruce/Downloads/cobcrp-all-years-matched-detections/cobcrp_matched_detections_2017/cobcrp_matched_detections_2017.csv")
 otn_files <- list(det = "testDataOTN/cobia/cobia_subset_export.csv")
 
@@ -83,13 +84,15 @@ world_raster_sub <- raster::crop(world_raster, sf::as_Spatial(shapefile_crop))
 world_raster_sub[world_raster_sub < 251] <- NA
 world_raster_sub[world_raster_sub == 251] <- 1
 
-#These are the available tests at time of writing. Detection Distribution isn't working yet and so we have commented it out. 
+#These are the available tests at time of writing. A note: if you are running with an OTN detection extract, your data will already have QC'd for release date and release location. 
+#At this time, however, the plotting function requires Release Location to run properly. You can run these tests if you want, but in an OTN data format
+#they will not be counted towards final QC aggregation. 
 tests_vector <-  c("FDA_QC",
                    "Velocity_QC",
                    "Distance_QC",
                    "DetectionDistribution_QC",
                    "DistanceRelease_QC",
-                   "ReleaseDate_QC",
+                   #"ReleaseDate_QC",
                    "ReleaseLocation_QC",
                    "Detection_QC")
 
@@ -103,7 +106,8 @@ minLon = min(otn_test_data$longitude) - 5
 maxLat = max(otn_test_data$latitude) + 5
 maxLon = max(otn_test_data$longitude) + 5
 
-shapefile_crop <- st_crop(sps1Poly[[1]],  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
+#Something about this doesn't work when I'm using the cobia 2017 data- shapefile_crop ends up being a list of 0. Gotta figure that out.
+shapefile_crop <- sf::st_crop(sps1Poly[[1]],  xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
 
 otn_test_tag_qc <- runQC(otn_files, 
                          data_format = "otn", 
@@ -112,6 +116,10 @@ otn_test_tag_qc <- runQC(otn_files,
                          col_spec = NULL, 
                          fda_type = "pincock", 
                          .parallel = FALSE, .progress = TRUE)
+
+plotQC(otn_test_tag_qc, path = "cobiaOutput", species_range=sps1Poly[[1]])
+writeQC(otn_test_tag_qc, path = "cobiaOutput/summary")
+
 View(otn_test_tag_qc)
 
 latlon_test <- otn_test_data[c('latitude', 'longitude')]
@@ -120,6 +128,8 @@ proj4string(latlon_test) <- CRS("+proj=longlat +datum=WGS84")
 world_shapefile_crop <- rasterToPolygons(world_raster_sub)
 sp::over(latlon_test, world_shapefile_crop)
 
+#cobia_subset_likely <- filter(otn_test_tag_qc, (QC$Detection_QC == 3))
+
 
 #qc_shapes_test <- get_qc_shapes(otn_test_data, sps1Poly[1])
 
@@ -127,24 +137,30 @@ sp::over(latlon_test, world_shapefile_crop)
 #Keeping it around for posterity but you shouldn't have to run it. 
 # rob_data_subset_glatos <- filter(otn_test_tag_qc, nrow(QC) > 10 & nrow(QC) < 500)
 # 
-# rob_data_subset_distance <- filter(otn_test_tag_qc, (QC$FDA_QC == 1 & QC$DistanceRelease_QC == 2))
+#cobia_data_subset_distance <- filter(otn_test_tag_qc, (QC$FDA_QC == 1 & QC$DistanceRelease_QC == 2))
 # 
-# filtered <- data.frame(matrix(ncol = 2, nrow = 1))
-# colnames(filtered) <- colnames(otn_test_tag_qc)
-# filename <- otn_test_tag_qc[1, 'filename']
-# rowQC <- otn_test_tag_qc[1, 'QC']
-# View(rowQC)
-# for(row in 1:nrow(otn_test_tag_qc)) {
-#   filename <- otn_test_tag_qc[row, 'filename']
-#   rowQC <- otn_test_tag_qc[1, 'QC'][[1]][[1]]
-#   if(nrow(rowQC) > 1) {
-#     filteredQC <- filter(rowQC, FDA_QC == 1 & DistanceRelease_QC == 2)
-#     if(nrow(filteredQC) > 0){
-#       message("Wahoo!")
-#       View(filteredQC)
-#     }
-#   }
-# }
+filtered <- data.frame(matrix(ncol = 2, nrow = 1))
+colnames(filtered) <- colnames(otn_test_tag_qc)
+filename <- otn_test_tag_qc[1, 'filename']
+rowQC <- otn_test_tag_qc[1, 'QC']
+View(rowQC)
+for(row in 1:nrow(otn_test_tag_qc)) {
+  filename <- otn_test_tag_qc[row, 'filename']
+  rowQC <- otn_test_tag_qc[row, 'QC'][[1]][[1]]
+  if(nrow(rowQC) > 1) {
+    filteredQC <- filter(rowQC, Detection_QC == 2)
+    if(nrow(filteredQC) > 0){
+      message("Wahoo!")
+      message(filename)
+      message(filteredQC$receiver_deployment_latitude)
+      message(filteredQC$receiver_deployment_longitude)
+      write.csv(filteredQC, paste0("cobiaOutput/summary/summary_", filename, ".csv"), append=TRUE)
+    }
+  }
+}
+nrow(filtered)
+View(filtered[,1])
+
 # 
 # test_detections$transmitter_codespace <- test_detections$transmitter_id
 # test_detections$receiver_sn <- test_detections$receiver_id

@@ -269,7 +269,7 @@ qc <- function(x, Lcheck = TRUE, logfile, tests_vector = c("FDA_QC",
 		##  reject QC'd data.
 		
 		## Detection QC
-    temporal_outcome <- qc_detection_qc(temporal_outcome)
+    temporal_outcome <- qc_detection_qc(temporal_outcome, data_format)
     
 	x <- x %>%
 	  dplyr::rename(receiver_deployment_longitude = longitude,

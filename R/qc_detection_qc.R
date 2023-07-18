@@ -11,18 +11,33 @@
 ##' 
 ##' @keywords internal
 ##' 
-qc_detection_qc <- function(qc_result) {
+qc_detection_qc <- function(qc_result, data_format = "imos") {
   print("Running detection QC")
   ## IDJ - this mimics original remora Detection QC only tests 1:5 are summed,
   ##       but accounts for tests that are turned off and not in qc_result
-  idx <- which(names(qc_result) %in% 
-                 c("FDA_QC",
-                   "Velocity_QC",
-                   "Distance_QC",
-                   "DetectionDistribution_QC",
-                   "DistanceRelease_QC",
-                   "ReleaseDate_QC",
-                   "ReleaseLocation_QC"))
+  if(data_format == "imos") {
+    idx <- which(names(qc_result) %in% 
+                   c("FDA_QC",
+                     "Velocity_QC",
+                     "Distance_QC",
+                     "DetectionDistribution_QC",
+                     "DistanceRelease_QC",
+                     "ReleaseDate_QC",
+                     "ReleaseLocation_QC"
+                   ))
+  }
+  #BD: With OTN detection extracts, we will have already QC'd for Release Date and Release Location, so we shouldn't count them towards the aggregation
+  #even if they've been run. 
+  else if(data_format == "otn") {
+    idx <- which(names(qc_result) %in% 
+                   c("FDA_QC",
+                     "Velocity_QC",
+                     "Distance_QC",
+                     "DetectionDistribution_QC",
+                     "DistanceRelease_QC"
+                   ))
+  }
+  
   
   ones <- rowSums(qc_result[, idx] == 1)
   
