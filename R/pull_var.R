@@ -85,7 +85,7 @@
       ## establish a log to store all erroneous urls
       error_log <- tibble(date = as.Date(NULL), url_name = NULL, layer = NULL)
       pb <- txtProgressBar(max = nrow(urls), style = 3)
-      
+  
       ras_lst <- lapply(1:nrow(urls), function(i) {
         tryCatch({
           temp_nc <- tempfile(fileext = ".nc.gz")
@@ -128,19 +128,21 @@
 
   ## Current layers
   if(var_name %in% "rs_current"){
-
     ## build urls based on dates and variable names
     built_urls <- .build_urls(dates, var_name, verbose = verbose)
+  
+    if(!is.null(built_urls)) {
+      ## error log
+      error_log <- built_urls %>% filter(is.na(layer))
+      
+      ## extract urls with data
+      urls <- built_urls %>% filter(!is.na(layer))
     
-    ## error log
-    error_log <- built_urls %>% filter(is.na(layer))
-    
-    ## extract urls with data
-    urls <- built_urls %>% filter(!is.na(layer))
-    
-    ## download raster files from built urls
+      ## download raster files from built urls
     if(.parallel){
-      message("Downloading IMOS Ocean Current data in parallel across ", .ncores, " cores...")
+      message("Downloading IMOS Ocean Current data in parallel across ", 
+              .ncores, 
+              " cores...")
       
       plan("multisession", workers = .ncores)
       
@@ -245,11 +247,15 @@
     }
     cat("\n")
     ## provide log of error prone urls
+
     if(nrow(error_log) > 0){
       message("Ocean current data were not found for ", n_distinct(error_log$date)," dates")
       message("Error log with missing data saved in the working directory")
-      write_csv(error_log %>% mutate(variable = var_name), paste0(var_name, "_errorlog.txt"))}
-      
+      write_csv(error_log %>% mutate(variable = var_name), paste0(var_name, "_errorlog.txt"))
+      }
+    } else {
+      out_brick <- NULL
+    }
   }
   
   ## If caching raster stack, define and set up folders to store files locally

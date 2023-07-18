@@ -31,6 +31,10 @@
 ##' that fall within the buffer will be used if `fill_gaps = TRUE`. If `NULL` a 
 ##' buffer will be chosen based on the resolution of environmental layer. A 
 ##' numeric value (in m) can be used here to customise buffer radius.
+##' @param nrt should Near Real-Time current data be used if Delayed-Mode current 
+##' data is missing. Default is `FALSE`, in which case NA's are appended to current
+##' variables for years when current data are missing. Note that Near Real-Time data
+##' are subject to less quality control than Delayed-Mode data.
 ##' @param output_format File type for cached environmental layers. See 
 ##' \code{\link[raster]{writeFormats}}. The default format is 'raster'.
 ##' @param .parallel should the function be run in parallel 
@@ -93,7 +97,7 @@
 
 extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detection_timestamp", env_var, folder_name = NULL, 
                        verbose = TRUE, cache_layers = TRUE, crop_layers = TRUE, full_timeperiod = FALSE, 
-                       fill_gaps = FALSE, buffer = NULL, output_format = "raster", .parallel = TRUE, .ncores = NULL){
+                       fill_gaps = FALSE, buffer = NULL, nrt = FALSE, output_format = "raster", .parallel = TRUE, .ncores = NULL){
   
   ## Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
@@ -176,25 +180,25 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   if(cache_layers & verbose){
     message("\nDownloaded layers are cached in the `imos.cache` folder in your working directory")
   }
-  
-  ## Extract environmental variable from env_stack
-  if(verbose){
-    message("Extracting and appending environmental data")
-  }
 
-  env_data <- .extract_var(unique_positions, env_stack, env_var, .fill_gaps = fill_gaps, .buffer = buffer, verbose = verbose)
+  if(!is.null(env_stack)) {
+    ## Extract environmental variable from env_stack
+    if(verbose){
+      message("Extracting and appending environmental data")
+    }
+    
+    env_data <- .extract_var(unique_positions, env_stack, env_var, .fill_gaps = fill_gaps, .buffer = buffer, verbose = verbose)
+  
   
   ## Combine environmental data with input detection data
-  output <- 
-    df %>% 
+  output <- df %>% 
     mutate(date = date(!!as.name(datetime))) %>%
     left_join(env_data, by = c(X, Y, "date"))
   
   
   ## Calculate additional variables for current data (current direction and velocity)
   if(env_var %in% "rs_current"){
-    output <-
-      output %>% 
+    output <- output %>% 
       mutate(rs_current_velocity = sqrt(rs_vcur^2 + rs_ucur^2),
              rs_current_bearing = atan2(rs_ucur,rs_vcur)*(180/pi))
     
@@ -207,8 +211,14 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   }
   
   output$date <- NULL
-  
+
   return(output)
+  
+  } else {
+    ## if no viable urls found then return input data
+    message("Returning original input data")
+    return(df)
+  }
 }
 
 

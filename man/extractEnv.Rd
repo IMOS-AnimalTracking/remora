@@ -17,6 +17,7 @@ extractEnv(
   full_timeperiod = FALSE,
   fill_gaps = FALSE,
   buffer = NULL,
+  nrt = FALSE,
   output_format = "raster",
   .parallel = TRUE,
   .ncores = NULL
@@ -62,6 +63,11 @@ environmental variables should be extracted from. A median value of pixels
 that fall within the buffer will be used if \code{fill_gaps = TRUE}. If \code{NULL} a
 buffer will be chosen based on the resolution of environmental layer. A
 numeric value (in m) can be used here to customise buffer radius.}
+
+\item{nrt}{should Near Real-Time current data be used if Delayed-Mode current
+data is missing. Default is \code{FALSE}, in which case NA's are appended to current
+variables for years when current data are missing. Note that Near Real-Time data
+are subject to less quality control than Delayed-Mode data.}
 
 \item{output_format}{File type for cached environmental layers. See
 \code{\link[raster]{writeFormats}}. The default format is 'raster'.}

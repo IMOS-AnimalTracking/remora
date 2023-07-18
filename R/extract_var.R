@@ -22,7 +22,7 @@
 
 .extract_var <- function(unique_positions, env_stack, env_var, .fill_gaps, .buffer = NULL, verbose = TRUE){
   ## Check arguments
-  
+
   ## Configure unique_positions to allow extraction
   pos_sf <- 
     unique_positions %>% 
@@ -79,7 +79,7 @@
           variable[i] <- NA
         }
       }
-      
+     
       ## gap filling
       if(.fill_gaps){
         ext_list_fill <- lapply(env_stack[[j]], function(x) extract(x, pos_sf_buffer, fun = median))
@@ -124,7 +124,7 @@
       }
     }
   } 
-  
+ 
   if(env_var %in% c("bathy", "dist_to_land")) {
     ## extraction for single/fixed layer ('bathy', 'dist_to_land')
     ext_matrix <- extract(env_stack, pos_sf, ID = FALSE)

@@ -15,7 +15,7 @@ test_that("extractEnv adds rs_current data", {
                          datetime = "detection_datetime", 
                          env_var = "rs_current",
                          cache_layers = FALSE,
-                         crop_layers = FALSE,
+                         crop_layers = TRUE,
                          full_timeperiod = FALSE,
                          fill_gaps = TRUE,
                          folder_name = "test",

@@ -16,12 +16,12 @@
 ##' @importFrom dplyr '%>%' slice left_join transmute mutate filter select case_when
 ##' @importFrom magrittr '%$%'
 ##' @importFrom xml2 read_html as_list
-##' @importFrom purrr map_dfr
+##' @importFrom purrr map_dfr map list_rbind
 ##' @importFrom tibble tibble
 ##'
 ##' @keywords internal
 
-.build_urls <- function(dates, var_name, verbose = TRUE){
+.build_urls <- function(dates, var_name, verbose = TRUE) {
   
   ## Check arguments
   if(!var_name %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current')){
@@ -204,22 +204,33 @@
         left_join(url_list, by = c("date", "fdates"))
       return(out_join)
     }
-    
+
     find_df <-
       catalog %>%
       split(., .$year) %>%
-      map_dfr( ~ find_url(.x), .progress = T) 
+      map( ~ try(find_url(.x), silent = T), .progress = T)
     
-    url_df <-
-      find_df %>% 
-      transmute(date = date,
-                       url_name = paste0(start_url, end_url),
-                       layer = case_when(!is.na(end_url) ~ 1))
+
+    idx <- sapply(find_df, function(x) inherits(x, "try-error"))
     
+    if(any(idx)) {
+      message(paste0("Unable to find IMOS Ocean Current data for the following year(s): ", 
+                  names(idx)[idx]))
+      find_df <- find_df[!idx]
+    }
+    
+    if(length(find_df) >= 1) {
+        find_df <- find_df %>% list_rbind()
+        
+        url_df <-
+          find_df %>% 
+          transmute(date = date,
+                    url_name = paste0(start_url, end_url),
+                    layer = case_when(!is.na(end_url) ~ 1))
+      } else {
+        url_df <- NULL
+      }
   }
-  
-  
-  
   
   ## build urls from which to download environmental data (current and salinity have different formats)
   if(!var_name %in% c("rs_current", "rs_salinity")){
@@ -237,9 +248,11 @@
     
     url_df <- tibble(date = sub_dates, url_name, layer) 
   }
+ 
   return(url_df)
+  }
   
-}
+
 
 
 
