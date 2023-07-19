@@ -4,7 +4,7 @@
 \alias{.build_urls}
 \title{Build urls to pull data environmental data from IMOS THREDDS server}
 \usage{
-.build_urls(dates, var_name, verbose = TRUE)
+.build_urls(dates, var_name, .nrt = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{dates}{detection data source in data frame with at the minimum a X, Y and date time field}

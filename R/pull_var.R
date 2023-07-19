@@ -10,6 +10,7 @@
 ##' default NULL produces automatic folder names based on study extent
 ##' @param .cache should the extracted environmental data be cached within the working directory? 
 ##' @param .crop should the extracted environmental data be cropped to within the study site
+##' @param .nrt should NRT Ocean Current data be used if DM data is not available for certain years?
 ##' @param .output_format File type for cached environmental layers. See \code{\link[raster]{writeFormats}}. The default format is 'raster'.
 ##' @param .parallel should the environmental data download be conducted in parallel to speed up the process? Currently, parallel processing
 ##' is only supported when downloading 'rs_current' data. 
@@ -31,7 +32,19 @@
 ##'
 ##' @keywords internal
 
-.pull_env <- function(dates, study_extent, var_name, folder_name = NULL, .cache, .crop, .output_format = "raster", .parallel = TRUE, .ncores = NULL, verbose = TRUE){
+.pull_env <-
+  function(dates,
+           study_extent,
+           var_name,
+           folder_name = NULL,
+           .cache,
+           .crop,
+           .nrt = FALSE,
+           .output_format = "raster",
+           .parallel = TRUE,
+           .ncores = NULL,
+           verbose = TRUE) {
+    
   
   ## Check arguments
   if(!var_name %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land')){
@@ -129,7 +142,7 @@
   ## Current layers
   if(var_name %in% "rs_current"){
     ## build urls based on dates and variable names
-    built_urls <- .build_urls(dates, var_name, verbose = verbose)
+    built_urls <- .build_urls(dates, var_name, .nrt = .nrt, verbose = verbose)
   
     if(!is.null(built_urls)) {
       ## error log

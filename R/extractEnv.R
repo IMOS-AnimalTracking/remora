@@ -95,9 +95,24 @@
 ##' @export
 ##'
 
-extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detection_timestamp", env_var, folder_name = NULL, 
-                       verbose = TRUE, cache_layers = TRUE, crop_layers = TRUE, full_timeperiod = FALSE, 
-                       fill_gaps = FALSE, buffer = NULL, nrt = FALSE, output_format = "raster", .parallel = TRUE, .ncores = NULL){
+extractEnv <-
+  function(df,
+           X = "longitude",
+           Y = "latitude",
+           datetime = "detection_timestamp",
+           env_var,
+           folder_name = NULL,
+           verbose = TRUE,
+           cache_layers = TRUE,
+           crop_layers = TRUE,
+           full_timeperiod = FALSE,
+           fill_gaps = FALSE,
+           buffer = NULL,
+           nrt = FALSE,
+           output_format = "raster",
+           .parallel = TRUE,
+           .ncores = NULL) {
+    
   
   ## Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
@@ -160,20 +175,36 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   if(.parallel){
       try(
         suppressWarnings(
-          env_stack <- .pull_env(dates = dates, study_extent = study_extent,
-                                 var_name = env_var, .cache = cache_layers,
-                                 folder_name = folder_name, .crop = crop_layers,
-                                 .output_format = output_format, verbose = verbose,
-                                 .parallel = .parallel, .ncores = .ncores)), 
+          env_stack <- .pull_env(
+            dates = dates,
+            study_extent = study_extent,
+            var_name = env_var,
+            .cache = cache_layers,
+            folder_name = folder_name,
+            .crop = crop_layers,
+            .nrt = nrt,
+            .output_format = output_format,
+            verbose = verbose,
+            .parallel = .parallel,
+            .ncores = .ncores
+          )), 
         silent = FALSE)
   } else {
     try(
       suppressWarnings(
-        env_stack <- .pull_env(dates = dates, study_extent = study_extent, 
-                               var_name = env_var, .cache = cache_layers, 
-                               folder_name = folder_name, .crop = crop_layers,
-                               .output_format = output_format, verbose = verbose,
-                               .parallel = .parallel, .ncores = .ncores)),
+        env_stack <- .pull_env(
+          dates = dates,
+          study_extent = study_extent,
+          var_name = env_var,
+          .cache = cache_layers,
+          folder_name = folder_name,
+          .crop = crop_layers,
+          .nrt = nrt,
+          .output_format = output_format,
+          verbose = verbose,
+          .parallel = .parallel,
+          .ncores = .ncores
+        )),
       silent = FALSE) 
   }
   
@@ -211,7 +242,9 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   }
   
   output$date <- NULL
-
+  if(max(date_range) >= as.Date("2021-01-01") & nrt) {
+    message("Near Real-Time Ocean Current data appended in place of unavailable Delayed-Mode data")
+  }
   return(output)
   
   } else {

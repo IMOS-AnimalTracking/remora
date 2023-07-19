@@ -21,10 +21,23 @@
 ##'
 ##' @keywords internal
 
-.build_urls <- function(dates, var_name, verbose = TRUE) {
+.build_urls <- function(dates,
+                        var_name,
+                        .nrt = FALSE,
+                        verbose = TRUE) {
+  
   
   ## Check arguments
-  if(!var_name %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current')){
+  if(!var_name %in% c(
+    'rs_sst',
+    'rs_sst_interpolated',
+    'rs_salinity',
+    'rs_chl',
+    'rs_turbidity',
+    'rs_npp',
+    'rs_current'
+  )) {
+    
     stop("Environmental variable not recognised, options include:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current'")}
   
   ## calculate date range in dataset
@@ -163,12 +176,14 @@
   ## Daily Ocean Current
   ## 
   if(var_name %in% "rs_current"){
-    ## check if IMOS ocean current data covers detection data range 
-    ## Ocean current: 1993-01-01 - present
+    ## check if IMOS Ocean Current DM data covers detection data range 
+    ## Ocean current: 1993-01-01 - 2020-12-31
     ## example : "http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/"
     if(date_range[1] < as.Date("1993-01-01")){
       warning("IMOS ocean current data is currently only available from 1993-01-01 onwards,\ndetections prior to this date will not have current data associated")
-    } 
+    } else if(date_range[2] > as.Date("2020-12-31") & !.nrt) {
+      warning("IMOS Ocean Current Delayed-Mode data is currently only available from 1993-01-01 to 2020-12-31,\ndetections after this date range will not have current data associated")
+    }
     sub_dates <-  dates[dates > as.Date("1993-01-01")]
     
     ## IDJ - 19/05/2023: directory name on thredds server has changed from: http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM00/ 
@@ -179,6 +194,20 @@
                      year = format(date, "%Y"),
                      base_url = paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/", year, "/"),
                      start_url =  paste0("http://thredds.aodn.org.au/thredds/fileServer/IMOS/OceanCurrent/GSLA/DM/", year, "/"))
+    
+    ## if .nrt == TRUE then substitute NRT data for DM when year > 2020
+    if(.nrt) {
+      catalog <- catalog %>%
+        mutate(base_url = ifelse(year > 2020, 
+                                 paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/NRT/", year, "/"),
+                                 paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/", year, "/")
+        )) %>%
+        mutate(start_url = ifelse(year > 2020, 
+                                  paste0("http://thredds.aodn.org.au/thredds/fileServer/IMOS/OceanCurrent/GSLA/NRT/", year, "/"),
+                                  paste0("http://thredds.aodn.org.au/thredds/fileServer/IMOS/OceanCurrent/GSLA/DM/", year, "/")
+        ))
+        
+    }
     
     if(verbose){
       message("Finding IMOS Ocean Current data...")
@@ -204,7 +233,7 @@
         left_join(url_list, by = c("date", "fdates"))
       return(out_join)
     }
-
+    
     find_df <-
       catalog %>%
       split(., .$year) %>%

@@ -11,6 +11,7 @@
   folder_name = NULL,
   .cache,
   .crop,
+  .nrt = FALSE,
   .output_format = "raster",
   .parallel = TRUE,
   .ncores = NULL,
@@ -31,6 +32,8 @@ default NULL produces automatic folder names based on study extent}
 \item{.cache}{should the extracted environmental data be cached within the working directory?}
 
 \item{.crop}{should the extracted environmental data be cropped to within the study site}
+
+\item{.nrt}{should NRT Ocean Current data be used if DM data is not available for certain years?}
 
 \item{.output_format}{File type for cached environmental layers. See \code{\link[raster]{writeFormats}}. The default format is 'raster'.}
 
