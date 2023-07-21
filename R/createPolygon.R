@@ -6,7 +6,7 @@ createPolygon <- function(occurrenceFile, fraction = 0.70, buff = 1000, partCoun
   library(sf)
   
   #Read in the occurrence CSV. 
-  occurence <- read_csv(occurrenceFile)
+  occurrence <- read_csv(occurrenceFile)
   
   #Using the R package rangeBuilder to generate an alpha hull polygon which defines a concave hull or boundary around a set of points in two or three dimensions. 
   #The alpha hull polygon is a generalization of the convex hull, allowing for the creation of concave regions. 
@@ -24,5 +24,5 @@ createPolygon <- function(occurrenceFile, fraction = 0.70, buff = 1000, partCoun
   #clipToCoast: Either "no" (no clipping), "terrestrial" (only terrestrial part of the range is kept) or "aquatic" (only non-terrestrial part is clipped).
   polygon <- getDynamicAlphaHull(occurrence, fraction = fraction, buff = buff, partCount = partCount, coordHeaders = coordHeaders, clipToCoast = clipToCoast)
   
-  return polygon
+  return(polygon)
 }
