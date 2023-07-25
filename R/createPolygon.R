@@ -1,6 +1,12 @@
 #Function made by Bruce Delo but the underlying code was developed by Jessica Castellanos (UGuelph). Many of the comments are hers too.
 
-createPolygon <- function(occurrenceFile, fraction = 0.70, buff = 1000, partCount = 20,  coordHeaders = c("decimalLongitude", "decimalLatitude"), clipToCoast = "aquatic") {
+createPolygon <- function(occurrenceFile, 
+                          fraction = 0.70, 
+                          buff = 1000, 
+                          partCount = 20,  
+                          coordHeaders = c("decimalLongitude", "decimalLatitude"), 
+                          clipToCoast = "aquatic",
+                          returnWhole = FALSE) {
   library(tidyverse)
   library(rangeBuilder)
   library(sf)
@@ -24,5 +30,10 @@ createPolygon <- function(occurrenceFile, fraction = 0.70, buff = 1000, partCoun
   #clipToCoast: Either "no" (no clipping), "terrestrial" (only terrestrial part of the range is kept) or "aquatic" (only non-terrestrial part is clipped).
   polygon <- getDynamicAlphaHull(occurrence, fraction = fraction, buff = buff, partCount = partCount, coordHeaders = coordHeaders, clipToCoast = clipToCoast)
   
-  return(polygon)
+  if(returnWhole == TRUE) {
+    return(polygon)
+  }
+  else{
+    return(polygon[[1]])
+  }
 }

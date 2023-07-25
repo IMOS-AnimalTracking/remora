@@ -231,8 +231,10 @@ plotQC <- function(x, path = getwd(), suffix = NULL, species_range = NULL) {
   			}
   			
   			legend(
-  			  x = 135,
-  			  y = -25,
+  			  #x = 135,
+  			  #y = -25,
+  			  x = 85,
+  			  y = 50,
   			  #centre on Australia landmass
   			  legend = leg,
   			  col = col,

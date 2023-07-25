@@ -24,7 +24,7 @@ getBuffer <- function(detection_extract, buffer_percentage = 0.15) {
   maxLon <- max(otn_test_data$longitude) + lonBuffer
   
   #Now we can return a vector of the lats and lons so they can be used.
-  buffers <- c(minLat, minLon, maxLat, maxLon)
+  buffers <- c(xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
   
   return(buffers)
 }
