@@ -46,7 +46,7 @@ NULL
 NULL
 
 ## stop R CMD check generating NOTES about global variables
-globalVariables(c(".", "sel", "logfile", "world_raster_sub", "built_urls", 
+globalVariables(c(".", "flags", "sel", "logfile", "world_raster_sub", "built_urls", 
                   "Attribute Name",
                   "Variable Name", "HARVEST_DATE", "COMMENTS", "RELEASE_LONGITUDE",
                   "RELEASE_LATITUDE", "RELEASE_LOCATION", "UTC_RELEASE_DATE_TIME",

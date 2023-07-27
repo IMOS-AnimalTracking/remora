@@ -1,6 +1,22 @@
+##' @title Create Buffer to Crop Shapefile 
+##'
+##' @description Create a buffer from detection data to crop species range shapefile
+##'
+##' @param detection_extract ...
+##' @param otn_test_data we want this as a proper input variable, not a test data set
+##' @param buffer_percentage ...
+##' 
+##' @details Internal function to create a buffer for shapefile cropping
+##'
+##' @return returns a buffer as a 4-element vector
+##'
+##'
+##' @keywords internal
 #Short utility function to get some buffer for shapefile cropping. 
 
-getBuffer <- function(detection_extract, buffer_percentage = 0.15) {
+getBuffer <- function(detection_extract, 
+                      otn_test_data,
+                      buffer_percentage = 0.15) {
   #First we've got to get the min/max of each of lat and lon
   
   minLat <- min(detection_extract$latitude)

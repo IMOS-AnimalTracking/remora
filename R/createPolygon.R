@@ -1,15 +1,35 @@
+##' @title Create Polygon 
+##'
+##' @description Create a species range polygon for QC tests from species occurence data
+##'
+##' @param occurencefile ...
+##' @param fraction ...
+##' @param buffer ...
+##' @param partCount ...
+##' @param coordHeaders ...
+##' @param clipToCoast ...
+##' @param returnWhole ...
+##' 
+##' @details Internal function to create species range polygon for QC tests
+##'
+##' @return retruns a polygon data frame
+##'
+##'
+##' @importFrom dplyr '%>%' filter
+##' @importFrom readr read_csv
+##' @importFrom rangeBuilder getDynamicAlphaHull
+##'
+##' @keywords internal
+
 #Function made by Bruce Delo but the underlying code was developed by Jessica Castellanos (UGuelph). Many of the comments are hers too.
 
 createPolygon <- function(occurrenceFile, 
                           fraction = 0.70, 
-                          buff = 1000, 
+                          buffer = 1000, 
                           partCount = 20,  
                           coordHeaders = c("decimalLongitude", "decimalLatitude"), 
                           clipToCoast = "aquatic",
                           returnWhole = FALSE) {
-  library(tidyverse)
-  library(rangeBuilder)
-  library(sf)
   
   #Read in the occurrence CSV. 
   occurrence <- read_csv(occurrenceFile)
@@ -28,7 +48,12 @@ createPolygon <- function(occurrenceFile,
   #buff: buffering distance in meters - 1000. This should be adjusted considering OBIS buffering
   #partCount: the maximum number of disjunct polygons that are allowed. I set this to a high number to allow for global distribution and multiple polygons.
   #clipToCoast: Either "no" (no clipping), "terrestrial" (only terrestrial part of the range is kept) or "aquatic" (only non-terrestrial part is clipped).
-  polygon <- getDynamicAlphaHull(occurrence, fraction = fraction, buff = buff, partCount = partCount, coordHeaders = coordHeaders, clipToCoast = clipToCoast)
+  polygon <- getDynamicAlphaHull(occurrence, 
+                                 fraction = fraction, 
+                                 buff = buffer, 
+                                 partCount = partCount, 
+                                 coordHeaders = coordHeaders, 
+                                 clipToCoast = clipToCoast)
   
   if(returnWhole == TRUE) {
     return(polygon)
@@ -37,3 +62,5 @@ createPolygon <- function(occurrenceFile,
     return(polygon[[1]])
   }
 }
+
+
