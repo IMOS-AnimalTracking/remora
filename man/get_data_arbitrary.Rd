@@ -42,8 +42,12 @@ are in detections data but not the tag metadata}
 \item{det_rcvr_column}{specifies the receiver ID variable used for ID checks
 when receivers are in detections data but not the receiver metadata}
 
+\item{rcvr_id_column}{...}
+
 \item{data_format}{the type of format and therefore the type of columns we'll
 need to use when we join all this together.}
+
+\item{col_spec}{...}
 }
 \value{
 a list of data.frames by individual tag deployments ready for QC

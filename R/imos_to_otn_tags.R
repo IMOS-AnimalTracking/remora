@@ -8,11 +8,12 @@
 #' @param animal_measurements_dataframe A dataframe containing IMOS-formatted animal measurements data. 
 #'
 #' @return A single dataframe containing the tag and measurement data combined into an OTN-like format. 
+#' 
+#' @importFrom dplyr '%>%' mutate rename left_join
+#' @importFrom tidyr unite separate
 #' @export
 #'
 imos_to_otn_tags <- function(tag_dataframe, animal_measurements_dataframe) {
-  library(stringr)
-  library(tidyverse)
   
   #First do the manipulation on the Tag dataframe. 
     tag_return <- tag_dataframe %>%

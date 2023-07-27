@@ -12,9 +12,14 @@
 ##' 
 ##' @return adds Detection Distribution test outcomes to temporal_outcome object
 ##' 
+##' @importFrom sf as_Spatial
 ##' @keywords internal
 ##' 
-qc_test_det_distro <- function(data, latlons, qc_results, species_range) {
+qc_test_det_distro <- function(data, 
+                               latlons, 
+                               qc_results, 
+                               species_range) {
+  
   qc_results[, "DetectionDistribution_QC"] <- ifelse(is.null(species_range), 3, 1)
   
   #Make a spatial object out of the lat/lon. These steps may not be necessary when running the IMOS version. Also
@@ -23,8 +28,8 @@ qc_test_det_distro <- function(data, latlons, qc_results, species_range) {
   #proj4string(latlons) <- CRS("+proj=longlat +datum=WGS84")
   if(!is.null(species_range)) {
     print("Need to do some debug in det distro")
-    print(over(latlons, sf::as_Spatial(species_range)))
-    out <- which(is.na(over(latlons, sf::as_Spatial(species_range))))
+    print(over(latlons, as_Spatial(species_range)))
+    out <- which(is.na(over(latlons, as_Spatial(species_range))))
     print(out)
     if(length(out) > 0) {
       qc_results[data$longitude %in% latlons@coords[out, 1] &

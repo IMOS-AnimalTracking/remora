@@ -5,12 +5,13 @@
 #' 
 #' @param rcvr_dataframe A dataframe containing IMOS receiver metadata. 
 #'
-#' @return A dataframe containing the above data in an OTN-like format. 
+#' @return A dataframe containing the above data in an OTN-like format.
+#'  
+#' @importFrom dplyr '%>%' mutate rename
+#' @importFrom tidyr separate
 #' @export
 #'
 imos_to_otn_receivers <- function(rcvr_dataframe) {
-  
-  library(tidyverse)
   
   rcvr_return <- rcvr_dataframe %>%
     dplyr::select(

@@ -24,7 +24,6 @@
 ##'
 
 shortest_dist <- function(position, inst, rast, tr){
-  library(raster)
   
   #message("Shortest dist part 1")
   pts2_o <- pts2 <- cbind(x = position$longitude[2:nrow(position)],

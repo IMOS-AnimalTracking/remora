@@ -5,11 +5,14 @@
 ##'
 ##' @param df The dataframe from which date data will be derived.
 ##' @param datetime The column in df that contains date/time information.
+##' @param full_timeperiod ...
 ##' @param url The base URL of the appropriate THREDDS server.
 ##' @param path The path to the file on the THREDDS server, not including the file name. (This lets us expand the functionality to
 ##' iterate over multiple folders).
 ##' @param file The name of the file on the THREDDS server. 
 ##' Might need to expand this to include dates if the need arises.
+##' @param var ...
+##' @param verbose turn on/off progress messages to console
 ##'
 ##' @details Built to be a small-scale utility function to grab an arbitrary file from an abritrary THREDDS server. May expand to allow
 ##' iteration over multiple files.
@@ -25,7 +28,15 @@
 ##'
 ##' @keywords internal
 
-build_thredds_url <- function(df, datetime="datecollected", full_timeperiod = FALSE, url = "", path = "", file = "", var = "", verbose=TRUE){
+build_thredds_url <- function(df,
+                              datetime = "datecollected",
+                              full_timeperiod = FALSE,
+                              url = "",
+                              path = "",
+                              file = "",
+                              var = "",
+                              verbose = TRUE) {
+  
   
   #Paste together the pieces of the URL.
   url = paste(url, path, file, sep="")
@@ -38,8 +49,6 @@ build_thredds_url <- function(df, datetime="datecollected", full_timeperiod = FA
     pull(date) 
   
   date_range <- range(unique_dates)
-  
-  View(unique_dates)
   
   ## Generate the dates for which we want to get environmental variables. If full_timeperiod is true, we get every date from the entire
   ## time period, otherwise we only extract environmental data against the days detections were present. 

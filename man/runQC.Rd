@@ -27,7 +27,21 @@ structure and variable names as the Web App data.}
 \item{lat.check}{(logical; default TRUE) test for receiver_deployment_latitudes
 in N hemisphere and correct to S hemisphere. Set to FALSE if QC'ing N hemisphere data}
 
-\item{shapefile}{Allows the user to supply a shapefile specifying species ranges.}
+\item{data_format}{specify data format as a quoted character string ("imos" or "otn")}
+
+\item{tests_vector}{a vector of possible QC tests as quoted character strings.
+All eight tests are: "FDA_QC", "Velocity_QC", "Distance_QC", "DetectionDistribution_QC",
+"DistanceRelease_QC", "ReleaseDate_QC", "ReleaseLocation_QC", and "Detection_QC".
+The default is to run all tests.}
+
+\item{shapefile}{Optional user-specified shapefile defining species range(s).}
+
+\item{col_spec}{Optional specification of input detection data column types
+(see \code{read_csv} for details on col_types).}
+
+\item{fda_type}{specify whether to use the time difference (Hoenner et al. 2018)
+or the Pincock (Pincock 2012) algorthim for the False Detections test
+(\code{time_diff} or \code{pincock}).}
 
 \item{.parallel}{logical; run QC tests in parallel across multiple processors
 (default is FALSE)}
@@ -100,4 +114,8 @@ system("rm QC_logfile.txt")
 Hoenner, X et al (2018) Australia’s continental-scale acoustic
 tracking database and its automated quality control process. Scientific Data
 5, 170206. https://doi.org/10.1038/sdata.2017.206
+
+Pincock, DG (2012) False detections: what they are and how to remove them
+from detection data. Amirix Document DOC-004691 Version 03. Amirix Systems Inc.,
+Halifax, Nova Scotia.
 }

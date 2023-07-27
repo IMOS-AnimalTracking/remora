@@ -15,7 +15,12 @@
 ##' 
 ##' @export
 
-getDistance <- function(trackingData, moorLocations, X="receiver_deployment_longitude", Y="receiver_deployment_latitude", datetime="detection_datetime"){
+getDistance <- function(trackingData,
+                        moorLocations,
+                        X = "receiver_deployment_longitude",
+                        Y = "receiver_deployment_latitude",
+                        datetime = "detection_datetime") {
+  
   
   if(!X %in% colnames(trackingData)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
   if(!Y %in% colnames(trackingData)){stop("Cannot find Y coordinate in dataset, provide column name where variable can be found")}

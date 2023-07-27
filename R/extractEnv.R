@@ -92,9 +92,23 @@
 ##' @export
 ##'
 
-extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detection_timestamp", env_var, folder_name = NULL, 
-                       verbose = TRUE, cache_layers = TRUE, crop_layers = TRUE, full_timeperiod = FALSE, 
-                       fill_gaps = FALSE, buffer = NULL, output_format = "raster", .parallel = TRUE, .ncores = NULL){
+extractEnv <-
+  function(df,
+           X = "longitude",
+           Y = "latitude",
+           datetime = "detection_timestamp",
+           env_var,
+           folder_name = NULL,
+           verbose = TRUE,
+           cache_layers = TRUE,
+           crop_layers = TRUE,
+           full_timeperiod = FALSE,
+           fill_gaps = FALSE,
+           buffer = NULL,
+           output_format = "raster",
+           .parallel = TRUE,
+           .ncores = NULL) {
+    
   
   ## Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}

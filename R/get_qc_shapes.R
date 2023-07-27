@@ -14,7 +14,10 @@
 ##' 
 ##' @keywords internal
 
-get_qc_shapes <- function(detection_extract, shapefile, worldimage = "./testDataOTN/NE2_50M_SR.tif") {
+get_qc_shapes <- function(detection_extract,
+                          shapefile,
+                          worldimage = "./testDataOTN/NE2_50M_SR.tif") {
+  
 
   if(!inherits(detection_extract, "sf")) {
     minLat = min(detection_extract$latitude) - 5
@@ -34,7 +37,7 @@ get_qc_shapes <- function(detection_extract, shapefile, worldimage = "./testData
   }
 
   #Generate a transition layer
-  transition_layer <- glatos::make_transition2(shapefile_crop)
+  transition_layer <- make_transition2(shapefile_crop)
   
   #Crop the world raster
   if(file.exists(worldimage)) {

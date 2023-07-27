@@ -1,5 +1,29 @@
-get_erddap_ncdf <- function(url, file, layer, df, date_col = "datecollected", lat_col = "latitude", lon_col = "longitude") {
-  library(lubridate)
+##' @title get environmental netCDF files via an ERDDAP server
+##'
+##' @description For internal use only
+##'
+##' @param url ...
+##' @param file ...
+##' @param layer ...
+##' @param df ...
+##' @param date_col name of date column as a character string
+##' @param lat_col name of latitude column as a character string
+##' @param lon_col name of longitude column as a character string
+##' 
+##' @return gridded environmental data
+##' 
+##' @importFrom lubridate parse_date_time "%m+%"
+##' @importFrom rerddap griddap
+##' 
+##' @keywords internal
+
+get_erddap_ncdf <- function(url,
+                            file,
+                            layer,
+                            df,
+                            date_col = "datecollected",
+                            lat_col = "latitude",
+                            lon_col = "longitude") {
   
   #calculate the study extent. 
   minLat <- min(df[lat_col])

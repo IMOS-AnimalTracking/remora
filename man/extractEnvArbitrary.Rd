@@ -34,6 +34,10 @@ date time field}
 \item{datetime}{name of column with date time stamp (Coordinated Universal
 Time; UTC)}
 
+\item{env_request}{...}
+
+\item{request_type}{...}
+
 \item{folder_name}{name of folder within 'imos.cache' where downloaded rasters
 should be saved. default NULL produces automatic folder names based on study extent}
 
@@ -67,10 +71,6 @@ numeric value (in m) can be used here to customise buffer radius.}
 
 \item{.ncores}{number of cores to use if set to parallel. If none provided,
 uses \code{\link[parallel]{detectCores}} to determine number.}
-
-\item{env_var}{variable needed options include ('rs_sst', 'rs_sst_interpolated',
-'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'bathy', 'dist_to_land',
-'rs_current')}
 }
 \value{
 a dataframe with the environmental variable appended as an extra

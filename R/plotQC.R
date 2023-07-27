@@ -7,6 +7,8 @@
 ##' @param path string; path where maps will be saved. Default is to write plot
 ##' to the working directory as a \code{.png} file. 
 ##' @param suffix text to be added to plot filename (default is NULL)
+##' @param species_range species range polygon object to be used for distribution
+##' tests (optional, to be used if detections not in Australian EEZ)
 ##' @return produces maps showing species expert distribution and
 ##' location of QC'd detections
 ##'
@@ -34,7 +36,10 @@
 ##'
 ##' @export
 
-plotQC <- function(x, path = getwd(), suffix = NULL, species_range = NULL) {
+plotQC <- function(x, 
+                   path = getwd(), 
+                   suffix = NULL, 
+                   species_range = NULL) {
 
   if(!inherits(x, "remora_QC")) 
     stop("\033[31;1mx must be a nested tibble with class `remora_QC`\033[0m")
@@ -56,7 +61,6 @@ plotQC <- function(x, path = getwd(), suffix = NULL, species_range = NULL) {
 	                       'species_common_name',
 	                       'freq')
 	
-	#View(species)
 
 	for (i in 1:nrow(species)){
 		expert_shp <-

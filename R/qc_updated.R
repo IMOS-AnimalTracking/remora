@@ -1,11 +1,15 @@
 ##' @title test the validity of individual detections for tags detected more than once
 ##'
-##' @description Subjects tag detections to 8 quality control tests and appends results to each detection record
+##' @description Subjects tag detections to 8 quality control tests and appends 
+##' results to each detection record
 ##'
 ##' @param x a list of un-QC'd data for each tag deployment
 ##' @param Lcheck (logical; default TRUE) test for receiver_deployment_latitudes
 ##' in N hemisphere at correct to S hemisphere. Set to FALSE for QC on N hemisphere data
 ##' @param datecolumn The name of the column in which the date information is held. 
+##' @param speciescolumn The name of the column in which the species scientific name is held.
+##' @param installationcolumn The name of the column in which the receiver installation
+##'  name is held.
 ##' @param logfile path to logfile; default is the working directory
 ##'
 ##' @details ...
@@ -17,11 +21,14 @@
 ##' @importFrom geosphere distGeo
 ##'
 ##' @keywords internal
-##'
 
-
-qc_updated <- function(x, Lcheck = TRUE, datecolumn = 'datecollected', speciescolumn = 'scientificname',
-                       installationcolumn = 'station', logfile) {
+qc_updated <- function(x,
+                       Lcheck = TRUE,
+                       datecolumn = 'datecollected',
+                       speciescolumn = 'scientificname',
+                       installationcolumn = 'station',
+                       logfile) {
+  
   message("Doing dataframe check")
   if(!is.data.frame(x)) stop("x must be a data.frame")
   
@@ -131,26 +138,23 @@ qc_updated <- function(x, Lcheck = TRUE, datecolumn = 'datecollected', speciesco
   #sta_rec <- sta_rec[order(sta_rec),]
   
   for (j in 1:length(sta_rec)){
-    #View(sta_rec[j,])
     #sel <- which(x[installationcolumn] == sta_rec[j])
     #sub <- x[sel, ]
     
     #Gotta do this bit of R jiggery-pokery to make filter recognize installationcolumn as a variable
     #containing a column name and not a column name in and of itself.
     sub <- filter(x, !!as.name(installationcolumn) %in% !!sta_rec[j,])
-    #View(sub)
-
-    #View(sub[datecolumn])
     
     message("Calculating time diff.")
     # Calculate time differences between detections (in minutes)
     #difftime checks the difference between time intervals (base function)
     #Had to add the commas to the second index so it would explicitly default to rows instead of cols. 
     start_times = sub[datecolumn][2:nrow(sub),]
-    View(start_times)
     end_times = sub[datecolumn][1:nrow(sub)-1,]
-    View(end_times)
-    time_diff <- as.numeric(difftime(start_times, end_times, tz = "UTC", units = "mins"))
+    time_diff <- as.numeric(difftime(start_times, 
+                                     end_times, 
+                                     tz = "UTC", 
+                                     units = "mins"))
     
     message("Time diff calculated")
     temporal_outcome[sel, 1] <-

@@ -4,7 +4,7 @@
 \alias{qc_detection_qc}
 \title{QC Detection QC test}
 \usage{
-qc_detection_qc(qc_result)
+qc_detection_qc(qc_result, data_format = "imos")
 }
 \arguments{
 \item{qc_results}{the \code{temporal_outcome} object, holding all QC test results,
