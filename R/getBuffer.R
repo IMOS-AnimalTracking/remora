@@ -6,12 +6,12 @@
 ##' @param otn_test_data we want this as a proper input variable, not a test data set
 ##' @param buffer_percentage ...
 ##' 
-##' @details Internal function to create a buffer for shapefile cropping
+##' @details Creates a buffer for shapefile cropping from location info in the detection_extract 
 ##'
 ##' @return returns a buffer as a 4-element vector
 ##'
-##'
-##' @keywords internal
+##' @export
+
 #Short utility function to get some buffer for shapefile cropping. 
 
 getBuffer <- function(detection_extract, 

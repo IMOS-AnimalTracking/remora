@@ -2,7 +2,7 @@
 ##'
 ##' @description Create a species range polygon for QC tests from species occurence data
 ##'
-##' @param occurencefile ...
+##' @param occurenceFile ...
 ##' @param fraction ...
 ##' @param buffer ...
 ##' @param partCount ...
@@ -10,7 +10,7 @@
 ##' @param clipToCoast ...
 ##' @param returnWhole ...
 ##' 
-##' @details Internal function to create species range polygon for QC tests
+##' @details Creates species range polygon for QC tests
 ##'
 ##' @return retruns a polygon data frame
 ##'
@@ -19,7 +19,7 @@
 ##' @importFrom readr read_csv
 ##' @importFrom rangeBuilder getDynamicAlphaHull
 ##'
-##' @keywords internal
+##' @export
 
 #Function made by Bruce Delo but the underlying code was developed by Jessica Castellanos (UGuelph). Many of the comments are hers too.
 

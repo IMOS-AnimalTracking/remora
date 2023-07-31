@@ -20,6 +20,5 @@ returns a buffer as a 4-element vector
 Create a buffer from detection data to crop species range shapefile
 }
 \details{
-Internal function to create a buffer for shapefile cropping
+Creates a buffer for shapefile cropping from location info in the detection_extract
 }
-\keyword{internal}

@@ -27,7 +27,7 @@ createPolygon(
 
 \item{returnWhole}{...}
 
-\item{occurencefile}{...}
+\item{occurenceFile}{...}
 }
 \value{
 retruns a polygon data frame
@@ -36,6 +36,5 @@ retruns a polygon data frame
 Create a species range polygon for QC tests from species occurence data
 }
 \details{
-Internal function to create species range polygon for QC tests
+Creates species range polygon for QC tests
 }
-\keyword{internal}
