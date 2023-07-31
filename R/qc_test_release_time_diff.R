@@ -12,7 +12,9 @@
 ##' 
 ##' @keywords internal
 ##' 
-qc_test_release_time_diff <- function(data, qc_results) {
+qc_test_release_time_diff <- function(data, 
+                                      qc_results) {
+  
   if("transmitter_deployment_datetime" %in% colnames(data)) {
     message("transmitter_deployment_datetime column exists.")
     ## IDJ - dropped lubridate::as.difftime b/c it was yielding different time diff's (why???)

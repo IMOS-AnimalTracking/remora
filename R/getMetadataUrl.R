@@ -1,5 +1,20 @@
-#Helper function to, given a URL, grab the requisite metadata. 
-
+#
+##' @title getMetadataUrl
+##' @description Helper function to grab requisite metadata, given a URL
+##'
+##' @param url ...
+##' @param type ...
+##'
+##' @details Internal function to process metadata URL
+##'
+##' @return a valid URL for metadata
+##'
+##' @importFrom tools file_path_sans_ext
+##' @importFrom utils tail
+##' @importFrom raster raster extract extent 
+##'
+##' @keywords internal
+##' 
 getMetadataUrl <- function(url, type='fgdc') {
   #Start by stripping any query string off the URL. 
   url = sub("\\?.+", "", url)
@@ -25,7 +40,7 @@ getMetadataUrl <- function(url, type='fgdc') {
   file <- tail(parts, n=1)
   
   #Strip off the file type extension.
-  file <- tools::file_path_sans_ext(file)
+  file <- file_path_sans_ext(file)
   
   #Bolt on the filename, the type, and .xml for the path. 
   metaUrl <- paste(metaUrl, file, "/index.csv", sep="")

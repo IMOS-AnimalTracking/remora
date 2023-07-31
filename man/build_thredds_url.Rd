@@ -20,6 +20,8 @@ build_thredds_url(
 
 \item{datetime}{The column in df that contains date/time information.}
 
+\item{full_timeperiod}{...}
+
 \item{url}{The base URL of the appropriate THREDDS server.}
 
 \item{path}{The path to the file on the THREDDS server, not including the file name. (This lets us expand the functionality to
@@ -27,6 +29,10 @@ iterate over multiple folders).}
 
 \item{file}{The name of the file on the THREDDS server.
 Might need to expand this to include dates if the need arises.}
+
+\item{var}{...}
+
+\item{verbose}{turn on/off progress messages to console}
 }
 \value{
 A URL (or tibble thereof) indicating files to be pulled.

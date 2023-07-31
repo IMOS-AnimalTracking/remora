@@ -8,13 +8,24 @@
 ##' structure and variable names as the Web App data.
 ##' @param lat.check (logical; default TRUE) test for receiver_deployment_latitudes
 ##' in N hemisphere and correct to S hemisphere. Set to FALSE if QC'ing N hemisphere data
+##' @param data_format specify data format as a quoted character string ("imos" or "otn")
+##' @param tests_vector a vector of possible QC tests as quoted character strings.
+##' All eight tests are: "FDA_QC", "Velocity_QC", "Distance_QC", "DetectionDistribution_QC", 
+##' "DistanceRelease_QC", "ReleaseDate_QC", "ReleaseLocation_QC", and "Detection_QC".
+##' The default is to run all tests.
+##' @param shapefile Optional user-specified shapefile defining species range(s).
+##' @param col_spec Optional specification of input detection data column types 
+##' (see `read_csv` for details on col_types).
+##' @param fda_type specify whether to use the time difference (Hoenner et al. 2018)
+##' or the Pincock (Pincock 2012) algorthim for the False Detections test 
+##' (`time_diff` or `pincock`).
 ##' @param .parallel logical; run QC tests in parallel across multiple processors
 ##' (default is FALSE)
 ##' @param .ncores integer; number of cores to run in parallel. If NULL and
 ##' \code{parallel = TRUE} then process will run across all available cores,
 ##' otherwise run across user-specified cores
 ##' @param .progress logical; display QC progress (default is TRUE).
-##' @param shapefile Allows the user to supply a shapefile specifying species ranges.
+
 ##'
 ##' @details The QC process merges data from the supplied files downloaded via
 ##' the IMOS-ATF Web App (URL): `IMOS_detections.csv`;
@@ -49,6 +60,10 @@
 ##' @references Hoenner, X et al (2018) Australia’s continental-scale acoustic
 ##' tracking database and its automated quality control process. Scientific Data
 ##' 5, 170206. https://doi.org/10.1038/sdata.2017.206
+##' 
+##' Pincock, DG (2012) False detections: what they are and how to remove them 
+##' from detection data. Amirix Document DOC-004691 Version 03. Amirix Systems Inc., 
+##' Halifax, Nova Scotia. 
 ##'
 ##' @examples
 ##' ## specify files to QC - use supplied example .csv data
@@ -85,7 +100,7 @@
 
 runQC <- function(x,
                   lat.check = TRUE,
-                  data_format = "imos", #Added by Bruce Delo for pass-through to get_data_arbitrary- since we can now have imos OR otn data!,
+                  data_format = "imos", 
                   tests_vector = c("FDA_QC",
                                      "Velocity_QC",
                                      "Distance_QC",
@@ -93,9 +108,9 @@ runQC <- function(x,
                                      "DistanceRelease_QC",
                                      "ReleaseDate_QC",
                                      "ReleaseLocation_QC",
-                                     "Detection_QC"), #Added by Bruce Delo for pass-through to QC, since users can now turn specific tests on and off.
-                  shapefile = NULL, #Added by Bruce Delo for pass-through to QC, allows user to specify a shapefile. Only gets used if data format is OTN, at the moment.
-                  col_spec = NULL, #Added by Bruce Delo for pass-through to get_data_arbitrary; we may need to specify the column types at the top level if read_csv guesses type incorrectly.
+                                     "Detection_QC"), 
+                  shapefile = NULL, 
+                  col_spec = NULL, 
                   fda_type = "time_diff", #Added by Bruce Delo for pass-through to QC, then to false detections. Lets user decide whether to use remora's time diff method or pincock method.
                    .parallel = FALSE,
                    .ncores = detectCores() - 2,

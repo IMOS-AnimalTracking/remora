@@ -13,6 +13,9 @@ plotQC(x, path = getwd(), suffix = NULL, species_range = NULL)
 to the working directory as a \code{.png} file.}
 
 \item{suffix}{text to be added to plot filename (default is NULL)}
+
+\item{species_range}{species range polygon object to be used for distribution
+tests (optional, to be used if detections not in Australian EEZ)}
 }
 \value{
 produces maps showing species expert distribution and

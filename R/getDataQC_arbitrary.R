@@ -17,8 +17,10 @@
 ##' are in detections data but not the tag metadata
 ##' @param det_rcvr_column specifies the receiver ID variable used for ID checks
 ##' when receivers are in detections data but not the receiver metadata
+##' @param rcvr_id_column ...
 ##' @param data_format the type of format and therefore the type of columns we'll
 ##' need to use when we join all this together. 
+##' @param col_spec ...
 ##'
 ##' @return a list of data.frames by individual tag deployments ready for QC
 ##'
@@ -45,9 +47,6 @@ get_data_arbitrary <- function(det=NULL,
                                rcvr_id_column = "receiver_deployment_id", 
                                data_format = "imos",
                                col_spec = NULL) {
-  library(tools) ## IDJ: pkg loading win fn should be ok for now, will need to be removed at a later point
-  library(dplyr)
-  library(tidyverse)
   
   ## IDJ: think below comments can be removed
   #Remember to formalize all of the new variables as comments up above:

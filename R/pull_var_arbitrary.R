@@ -35,8 +35,19 @@
 ##'
 ##' @keywords internal
 
-pull_env_arbitrary <- function(urls = NULL, request_type = 'single', study_extent, var_name, folder_name = NULL, .cache, .crop, .output_format = "raster", .parallel = TRUE, .ncores = NULL, verbose = TRUE,
-                               bathyUrl = "https://upwell.pfeg.noaa.gov/erddap/griddap/etopo5.geotif?ROSE%5B(40):1:(50)%5D%5B(280):1:(320)%5D"){
+pull_env_arbitrary <- function(urls = NULL,
+                               request_type = 'single',
+                               study_extent,
+                               var_name,
+                               folder_name = NULL,
+                               .cache,
+                               .crop,
+                               .output_format = "raster",
+                               .parallel = TRUE,
+                               .ncores = NULL,
+                               verbose = TRUE,
+                               bathyUrl = "https://upwell.pfeg.noaa.gov/erddap/griddap/etopo5.geotif?ROSE%5B(40):1:(50)%5D%5B(280):1:(320)%5D"
+){
   
   ## Check arguments
   #We gotta do something about these checks, they're not gonna jive with arbitrary variables. -- BD
@@ -103,8 +114,6 @@ pull_env_arbitrary <- function(urls = NULL, request_type = 'single', study_exten
           out_ras <- 
             try(raster(url$url_name, varname = url$layer, verbose = FALSE) %>%
                   {if (.crop) crop(.,study_extent) else .}, silent=TRUE)
-          
-          View(out_ras)
           
           if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
             names(out_ras) <- substr(out_ras@z[[1]], start = 1, stop = 10)
@@ -197,9 +206,7 @@ pull_env_arbitrary <- function(urls = NULL, request_type = 'single', study_exten
         write_csv(error_log %>% mutate(variable = var_name), paste0(var_name, "_errorlog.txt"))}
     }
     
-    message("assigning zvalues to raster stack output")
-    
-    View(out_brick)
+    message("assigning z-values to raster stack output")
     
     ## Assign a zvalues to raster stack output
     zval <-

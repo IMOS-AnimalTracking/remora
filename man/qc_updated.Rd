@@ -21,13 +21,19 @@ in N hemisphere at correct to S hemisphere. Set to FALSE for QC on N hemisphere 
 
 \item{datecolumn}{The name of the column in which the date information is held.}
 
+\item{speciescolumn}{The name of the column in which the species scientific name is held.}
+
+\item{installationcolumn}{The name of the column in which the receiver installation
+name is held.}
+
 \item{logfile}{path to logfile; default is the working directory}
 }
 \value{
 temporal_outcome is a list with each element corresponding to a QC'd tag detection file
 }
 \description{
-Subjects tag detections to 8 quality control tests and appends results to each detection record
+Subjects tag detections to 8 quality control tests and appends
+results to each detection record
 }
 \details{
 ...

@@ -1,6 +1,24 @@
-imos_otn_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_dataframe = NULL, derive = TRUE) {
-  library(tidyverse)
-  library(lubridate)
+##' @title Map IMOS receiver metadata to an OTN-like format
+##' @description In the same way that otn_imos_column_map takes OTN data and massages it into an IMOS-like format for REMORA, 
+##' this function and its ilk take IMOS data (in this case, receiver metadata) and massage it into an OTN-like format, for the
+##' purposes of reporting and more general applicability within the OTN suite of programs.
+##' 
+##' @param det_dataframe ...
+##' @param rcvr_dataframe A dataframe containing IMOS receiver metadata. 
+##' @param tag_dataframe ...
+##' @param derive ...
+##'
+##' @return A dataframe containing the above data in an OTN-like format. 
+##' 
+##' @importFrom dplyr '%>%' mutate rename
+##' @export
+##'
+
+imos_otn_column_map <- function(det_dataframe,
+                                rcvr_dataframe = NULL,
+                                tag_dataframe = NULL,
+                                derive = TRUE) {
+  
   
   #This way, if we don't end up having any way to change these throughout- i.e, no rcvr/tag sheets have been passed-
   #we just return whatever we got, unaltered. Probably null. 
@@ -47,7 +65,7 @@ imos_otn_column_map <- function(det_dataframe, rcvr_dataframe = NULL, tag_datafr
       sensor_value = transmitter_sensor_raw_value,
       sensor_unit = transmitter_sensor_unit
     )
-  det_return$transmitter_deployment_id = det_return$tag_id
+  det_return$transmitter_deployment_id <- det_return$tag_id
   
   if(!is.null(rcvr_dataframe) && !derive) {
     rcvr_return <- rcvr_dataframe %>%

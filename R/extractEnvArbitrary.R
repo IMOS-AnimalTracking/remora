@@ -9,9 +9,8 @@
 ##' @param Y name of column with Y coordinate or latitude (EPSG 4326)
 ##' @param datetime name of column with date time stamp (Coordinated Universal 
 ##' Time; UTC)
-##' @param env_var variable needed options include ('rs_sst', 'rs_sst_interpolated', 
-##' 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'bathy', 'dist_to_land', 
-##' 'rs_current')
+##' @param env_request ...
+##' @param request_type ...
 ##' @param folder_name name of folder within 'imos.cache' where downloaded rasters 
 ##' should be saved. default NULL produces automatic folder names based on study extent
 ##' @param verbose should function provide details of what operation is being conducted. 
@@ -92,9 +91,24 @@
 ##' @export
 ##'
 
-extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime="datecollected", env_request = NULL, request_type = 'single', folder_name = NULL, 
-                       verbose = TRUE, cache_layers = TRUE, crop_layers = TRUE, full_timeperiod = FALSE, 
-                       fill_gaps = FALSE, buffer = NULL, output_format = "raster", .parallel = TRUE, .ncores = NULL){
+extractEnvArbitrary <-
+  function(df,
+           X = "longitude",
+           Y = "latitude",
+           datetime = "datecollected",
+           env_request = NULL,
+           request_type = 'single',
+           folder_name = NULL,
+           verbose = TRUE,
+           cache_layers = TRUE,
+           crop_layers = TRUE,
+           full_timeperiod = FALSE,
+           fill_gaps = FALSE,
+           buffer = NULL,
+           output_format = "raster",
+           .parallel = TRUE,
+           .ncores = NULL) {
+    
   
   ## Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
@@ -140,20 +154,35 @@ extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime="d
     with_progress(
       try(
         suppressWarnings(
-          env_stack <- pull_env_arbitrary(urls = env_request, request_type = request_type, study_extent = study_extent,
-                                          var_name = env_var, .cache = cache_layers,
-                                          folder_name = folder_name, .crop = crop_layers,
-                                          .output_format = output_format, verbose = verbose,
-                                          .parallel = .parallel, .ncores = .ncores)), 
+          env_stack <- pull_env_arbitrary(
+            urls = env_request,
+            request_type = request_type,
+            study_extent = study_extent,
+            var_name = env_var,
+            .cache = cache_layers,
+            folder_name = folder_name,
+            .crop = crop_layers,
+            .output_format = output_format,
+            verbose = verbose,
+            .parallel = .parallel,
+            .ncores = .ncores
+          )), 
         silent = FALSE), cleanup = FALSE)
   } else {
     try(
       suppressWarnings(
-        env_stack <- pull_env_arbitrary(urls = env_request, study_extent = study_extent, 
-                                        var_name = env_var, .cache = cache_layers, 
-                                        folder_name = folder_name, .crop = crop_layers,
-                                        .output_format = output_format, verbose = verbose,
-                                        .parallel = .parallel, .ncores = .ncores)),
+        env_stack <- pull_env_arbitrary(
+          urls = env_request,
+          study_extent = study_extent,
+          var_name = env_var,
+          .cache = cache_layers,
+          folder_name = folder_name,
+          .crop = crop_layers,
+          .output_format = output_format,
+          verbose = verbose,
+          .parallel = .parallel,
+          .ncores = .ncores
+        )),
       silent = FALSE) 
   }
   
@@ -161,8 +190,8 @@ extractEnvArbitrary <- function(df, X = "longitude", Y = "latitude", datetime="d
     message("\nDownloaded layers are cached in the `imos.cache` folder in your working directory")
   }
   
-  View(env_stack)
-  image(env_stack)
+  #View(env_stack)
+  #image(env_stack)
   
   ## Extract environmental variable from env_stack
   if(verbose){
