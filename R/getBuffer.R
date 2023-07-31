@@ -24,6 +24,7 @@ getBuffer <- function(detection_extract, buffer_percentage = 0.15) {
   maxLon <- max(otn_test_data$longitude) + lonBuffer
   
   #Now we can return a vector of the lats and lons so they can be used.
+  #These are named so that they can be passed directly into sf::st_crop to generate the cropped shapefile.
   buffers <- c(xmin=minLon, ymin=minLat, xmax=maxLon, ymax=maxLat)
   
   return(buffers)
