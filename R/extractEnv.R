@@ -33,8 +33,9 @@
 ##' numeric value (in m) can be used here to customise buffer radius.
 ##' @param nrt should Near Real-Time current data be used if Delayed-Mode current 
 ##' data is missing. Default is `FALSE`, in which case NA's are appended to current
-##' variables for years when current data are missing. Note that Near Real-Time data
-##' are subject to less quality control than Delayed-Mode data.
+##' variables for years (currently, all years after 2020) when current data are 
+##' missing. Note that Near Real-Time data are subject to less quality control 
+##' than Delayed-Mode data.
 ##' @param output_format File type for cached environmental layers. See 
 ##' \code{\link[raster]{writeFormats}}. The default format is 'raster'.
 ##' @param .parallel should the function be run in parallel 

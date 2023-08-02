@@ -97,18 +97,36 @@
 
       ## establish a log to store all erroneous urls
       error_log <- tibble(date = as.Date(NULL), url_name = NULL, layer = NULL)
-      pb <- txtProgressBar(max = nrow(urls), style = 3)
+#      pb <- txtProgressBar(max = nrow(urls), style = 3)
   
       ras_lst <- lapply(1:nrow(urls), function(i) {
         tryCatch({
-          temp_nc <- tempfile(fileext = ".nc.gz")
-          download.file(urls$url_name[i], destfile = temp_nc, quiet = TRUE)
-          nc_path <- gunzip(temp_nc)
+          file.sfx <- str_split(urls$url_name[i], "\\.", simplify = TRUE)
+          file.sfx <- file.sfx[, ncol(file.sfx)]
           
-          ras <- try(rast(nc_path, 
-                          lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
-                          win = switch(.crop, study_extent, NULL)),
-                     silent = TRUE)
+          if(file.sfx == "gz") {
+            temp_nc <- tempfile(fileext = ".nc.gz")
+            download.file(urls$url_name[i], 
+                          destfile = temp_nc, 
+                          method = "auto")
+            nc_path <- gunzip(temp_nc)
+            
+            ras <- try(rast(nc_path, 
+                            lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
+                            win = switch(.crop, study_extent, NULL)),
+                       silent = TRUE)
+            
+          } else if (file.sfx == "nc") {
+            temp_nc <- tempfile(fileext = ".nc")
+            download.file(urls$url_name[i], 
+                          destfile = temp_nc, 
+                          method = "auto")
+            
+            ras <- try(rast(temp_nc, 
+                            lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
+                            win = switch(.crop, study_extent, NULL)),
+                       silent = TRUE)
+          }
           
           if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
             ## Convert to deg C
@@ -120,7 +138,7 @@
           error_log <<- bind_rows(error_log, urls[i,])
         })
         
-        setTxtProgressBar(pb, i)
+#        setTxtProgressBar(pb, i)
         
         return(ras)
       })
@@ -165,7 +183,10 @@
       
       fn2 <- function(url, .crop, study_extent){
         temp_nc <- tempfile(fileext = ".nc.gz")
-        download.file(url$url_name, destfile = temp_nc, quiet = TRUE)
+        download.file(url$url_name, 
+                      destfile = temp_nc, 
+                      quiet = TRUE, 
+                      method = "auto")
         nc_path <- gunzip(temp_nc)
         
         tryCatch({
@@ -219,11 +240,14 @@
       vcur_stack <- NULL
       ucur_stack <- NULL
       
-      pb <- txtProgressBar(max = nrow(urls), style = 3)
+#      pb <- txtProgressBar(max = nrow(urls), style = 3)
       
       for(i in 1:nrow(urls)){
         temp_nc <- tempfile(fileext = ".nc.gz")
-        download.file(urls$url_name[i], destfile = temp_nc, quiet = TRUE)
+        download.file(urls$url_name[i], 
+                      destfile = temp_nc, 
+                      quiet = FALSE,
+                      method = "auto")
         nc_path <- gunzip(temp_nc)
         
         tryCatch({
@@ -253,7 +277,7 @@
           message(e)
         })
         
-        setTxtProgressBar(pb, i)
+#        setTxtProgressBar(pb, i)
       }
       
       out_brick <- list(gsla = gsla_stack, vcur = vcur_stack, ucur = ucur_stack)
