@@ -42,10 +42,13 @@ qc_detection_qc <- function(qc_result, data_format = "imos") {
   #BD: With OTN detection extracts, we will have already QC'd for Release Date and Release Location, so we shouldn't count them towards the aggregation
   #even if they've been run. 
   else if(data_format == "otn") {
+    message("Using percentage aggregation")
     idx <- which(names(qc_result) %in% 
                    c("FDA_QC",
                      "Velocity_QC",
                      "Distance_QC",
+                     "Velocity_QC[,1]",
+                     "Distance_QC[,1]",
                      "DetectionDistribution_QC",
                      "DistanceRelease_QC"
                    ))
@@ -58,10 +61,11 @@ qc_detection_qc <- function(qc_result, data_format = "imos") {
     qc_result[which(ones/total_tests < 0.75), "Detection_QC"] <- 2
     qc_result[which(ones/total_tests < 0.50), "Detection_QC"] <- 3
     qc_result[which(ones/total_tests < 0.25), "Detection_QC"] <- 4
-    if("Velocity_QC" %in% idx) {
+    
+    if("Velocity_QC" %in% names(qc_result)) {
       qc_result$Velocity_QC <- as.numeric(qc_result$Velocity_QC)
     }
-    if("Distance_QC" %in% idx) {
+    if("Distance_QC" %in% names(qc_result)) {
       qc_result$Distance_QC <- as.numeric(qc_result$Distance_QC)
     }
   }

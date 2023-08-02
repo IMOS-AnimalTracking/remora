@@ -175,22 +175,6 @@ runQC <- function(x,
         flush.console()
       }
       
-      
-      #Adding this out here. The idea is that we'll eventually percolate this up to the user level to
-      #switch QC tests on and off as they like, but for now it's gonna be here to keep it close to where
-      #it needs to be. 
-      # tests_vector <-  c("FDA_QC",
-      #                   "Velocity_QC",
-      #                   "Distance_QC",
-      #                   #"DetectionDistribution_QC",
-      #                   "DistanceRelease_QC",
-      #                   "ReleaseDate_QC",
-      #                   "ReleaseLocation_QC",
-      #                   "Detection_QC")
-      
-      #message("StartingQC")
-      # Changed by Bruce Delo from qc to qc_updated
-      #Changed back to this.
       if(data_format == "otn") {
         message("Starting OTN QC")
         try(qc(all_data[[i]],
@@ -212,12 +196,6 @@ runQC <- function(x,
         )
       }
       
-      
-      # try(qc_updated(all_data[[i]], 
-      #        Lcheck = lat.check,
-      #        datecolumn = 'detection_datetime',
-      #        installationcolumn = 'installation_name', 
-      #        logfile = logfile), silent = TRUE)
      })
 
     cat("\n")
@@ -243,8 +221,6 @@ runQC <- function(x,
   if(file.size(logfile) > 1) {
     message("\n Please see ", logfile, " for potential data, metadata issues and/or QC error messages\n")
   }
-
-  #message(QC_result[[1]])
   
   ## IDJ: modified so fn returns QC results for any tags that did not fail the QC
   tmp <- bind_rows(QC_result[!fails])
