@@ -54,3 +54,5 @@ docs
 testDataOTN/
 /*.png
 /*.zip
+/data_testing/
+inst/ALA_Shapefile/.DS_Store

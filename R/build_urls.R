@@ -162,20 +162,23 @@
   ## Daily Ocean Current
   ## 
   if(var_name %in% "rs_current"){
+
     ## check if IMOS ocean current data covers detection data range 
     ## Ocean current: 1993-01-01 - present
-    ## example : "http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM00/"
+    ## example : "http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/"
     if(date_range[1] < as.Date("1993-01-01")){
       warning("IMOS ocean current data is currently only available from 1993-01-01 onwards,\ndetections prior to this date will not have current data associated")
     } 
     sub_dates <-  dates[dates > as.Date("1993-01-01")]
     
+    ## IDJ - 19/05/2023: directory name on thredds server has changed from: http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM00/ 
+    ##                      to http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/
     catalog <-
       tibble(date = sub_dates, 
                      fdates = format(date, "%Y%m%d"),
                      year = format(date, "%Y"),
-                     base_url = paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM00/", year, "/"),
-                     start_url =  paste0("http://thredds.aodn.org.au/thredds/fileServer/IMOS/OceanCurrent/GSLA/DM00/", year, "/"))
+                     base_url = paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/", year, "/"),
+                     start_url =  paste0("http://thredds.aodn.org.au/thredds/fileServer/IMOS/OceanCurrent/GSLA/DM/", year, "/"))
     
     if(verbose){
       message("Finding IMOS Ocean Current data...")

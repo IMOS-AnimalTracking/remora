@@ -221,7 +221,6 @@ runQC <- function(x,
   if(file.size(logfile) > 1) {
     message("\n Please see ", logfile, " for potential data, metadata issues and/or QC error messages\n")
   }
-  
   ## IDJ: modified so fn returns QC results for any tags that did not fail the QC
   tmp <- bind_rows(QC_result[!fails])
   out <- nest_by(tmp, filename, .key = "QC")

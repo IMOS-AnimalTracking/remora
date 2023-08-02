@@ -202,6 +202,7 @@
 
   ## Current layers
   if(var_name %in% "rs_current"){
+    
     ## build urls based on dates and variable names
     built_urls <- .build_urls(dates, var_name, verbose = verbose)
     
@@ -336,24 +337,24 @@
   ## If caching raster stack, define and set up folders to store files locally
   if(.cache){
     dir.create("imos.cache", showWarnings = FALSE)
-    dir.create("imos.cache/rs variables", showWarnings = FALSE)
+    dir.create(file.path("imos.cache", "rs variables"), showWarnings = FALSE)
     if(is.null(folder_name)){
-      path <- file.path("imos.cache/rs variables", paste("extent", paste0(round(study_extent[1:4]), collapse = "_"), sep = "_"))
+      path <- file.path("imos.cache", "rs variables", paste("extent", paste0(round(study_extent[1:4]), collapse = "_"), sep = "_"))
     } else {
-      path <- file.path("imos.cache/rs variables", folder_name) 
+      path <- file.path("imos.cache", "rs variables", folder_name) 
     }
     dir.create(path, showWarnings = FALSE)
     
     ## Save as requested raster output format
     if(var_name %in% "rs_current"){
-      writeRaster(out_brick$gsla, filename = paste(path, "rs_gsla", sep = "/"), overwrite = T, format = .output_format) 
-      writeRaster(out_brick$vcur, filename = paste(path, "rs_vcur", sep = "/"), overwrite = T, format = .output_format) 
-      writeRaster(out_brick$ucur, filename = paste(path, "rs_ucur", sep = "/"), overwrite = T, format = .output_format) 
+      writeRaster(out_brick$gsla, filename = file.path(path, "rs_gsla"), overwrite = T, format = .output_format) 
+      writeRaster(out_brick$vcur, filename = file.path(path, "rs_vcur"), overwrite = T, format = .output_format) 
+      writeRaster(out_brick$ucur, filename = file.path(path, "rs_ucur"), overwrite = T, format = .output_format) 
     } else {
       if(is.na(projection(out_brick))){
         projection(out_brick) <- CRS("EPSG:4326")
         }
-      writeRaster(out_brick, filename = paste(path, var_name, sep = "/"), overwrite = T, format = .output_format) 
+      writeRaster(out_brick, filename = file.path(path, var_name), overwrite = T, format = .output_format) 
     }
   } 
 

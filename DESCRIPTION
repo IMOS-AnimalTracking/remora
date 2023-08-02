@@ -116,6 +116,7 @@ Imports:
     readxl,
     rerddap,
     rangeBuilder
+    htmlwidgets
 Suggests: 
     testthat (>= 3.0.0),
     rnaturalearth,
@@ -128,3 +129,5 @@ SystemRequirements: GDAL (>= 2.4.2), GEOS (>= 3.7.0), PROJ (>= 5.2.0)
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Config/testthat/edition: 3
+Config/testthat/parallel: true
