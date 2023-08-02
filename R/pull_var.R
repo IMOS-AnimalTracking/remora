@@ -103,7 +103,7 @@
         tryCatch({
           file.sfx <- str_split(urls$url_name[i], "\\.", simplify = TRUE)
           file.sfx <- file.sfx[, ncol(file.sfx)]
-          
+         
           if(file.sfx == "gz") {
             temp_nc <- tempfile(fileext = ".nc.gz")
             download.file(urls$url_name[i], 
@@ -120,7 +120,8 @@
             temp_nc <- tempfile(fileext = ".nc")
             download.file(urls$url_name[i], 
                           destfile = temp_nc, 
-                          method = "auto")
+                          method = "auto",
+                          mode = "wb")
             
             ras <- try(rast(temp_nc, 
                             lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
@@ -247,7 +248,8 @@
         download.file(urls$url_name[i], 
                       destfile = temp_nc, 
                       quiet = FALSE,
-                      method = "auto")
+                      method = "auto",
+                      mode = "wb")
         nc_path <- gunzip(temp_nc)
         
         tryCatch({
