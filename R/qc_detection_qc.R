@@ -25,6 +25,19 @@ qc_detection_qc <- function(qc_result, data_format = "imos") {
                      "ReleaseDate_QC",
                      "ReleaseLocation_QC"
                    ))
+    
+    ones <- rowSums(qc_result[, idx] == 1)
+    
+    qc_result[which(ones <= 2), "Detection_QC"] <- 4
+    qc_result[which(ones == 3), "Detection_QC"] <- 3
+    qc_result[which(ones == 4), "Detection_QC"] <- 2
+    qc_result[which(ones >= 5), "Detection_QC"] <- 1
+    if("Velocity_QC" %in% idx) {
+      qc_result$Velocity_QC <- as.numeric(qc_result$Velocity_QC)
+    }
+    if("Distance_QC" %in% idx) {
+      qc_result$Distance_QC <- as.numeric(qc_result$Distance_QC)
+    }
   }
   #BD: With OTN detection extracts, we will have already QC'd for Release Date and Release Location, so we shouldn't count them towards the aggregation
   #even if they've been run. 
@@ -36,20 +49,21 @@ qc_detection_qc <- function(qc_result, data_format = "imos") {
                      "DetectionDistribution_QC",
                      "DistanceRelease_QC"
                    ))
-  }
-  
-  
-  ones <- rowSums(qc_result[, idx] == 1)
-  
-  qc_result[which(ones <= 2), "Detection_QC"] <- 4
-  qc_result[which(ones == 3), "Detection_QC"] <- 3
-  qc_result[which(ones == 4), "Detection_QC"] <- 2
-  qc_result[which(ones >= 5), "Detection_QC"] <- 1
-  if("Velocity_QC" %in% idx) {
-    qc_result$Velocity_QC <- as.numeric(qc_result$Velocity_QC)
-  }
-  if("Distance_QC" %in% idx) {
-    qc_result$Distance_QC <- as.numeric(qc_result$Distance_QC)
+    
+    ones <- rowSums(qc_result[, idx] == 1)
+    total_tests <- ncol(qc_result)
+    
+    #Set everything to be 1 and then reassign as below. 
+    qc_result[,"Detection_QC"] <- 1
+    qc_result[which(ones/total_tests < 0.75), "Detection_QC"] <- 2
+    qc_result[which(ones/total_tests < 0.50), "Detection_QC"] <- 3
+    qc_result[which(ones/total_tests < 0.25), "Detection_QC"] <- 4
+    if("Velocity_QC" %in% idx) {
+      qc_result$Velocity_QC <- as.numeric(qc_result$Velocity_QC)
+    }
+    if("Distance_QC" %in% idx) {
+      qc_result$Distance_QC <- as.numeric(qc_result$Distance_QC)
+    }
   }
 
   return(qc_result)
