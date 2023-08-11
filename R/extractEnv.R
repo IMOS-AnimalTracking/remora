@@ -128,7 +128,7 @@ extractEnv <-
     .parallel = FALSE
     fill_gaps = FALSE}
   
-  if(env_var %in% "rs_current"){.parallel = FALSE}
+#  if(env_var %in% "rs_current"){.parallel = FALSE}
   
   ## define date range
   unique_dates <- 
@@ -172,9 +172,8 @@ extractEnv <-
   if(verbose){
     message("Accessing and downloading IMOS environmental variable: ", env_var)
   }
-  
+
   if(.parallel){
-      try(
         suppressWarnings(
           env_stack <- .pull_env(
             dates = dates,
@@ -188,10 +187,8 @@ extractEnv <-
             verbose = verbose,
             .parallel = .parallel,
             .ncores = .ncores
-          )), 
-        silent = FALSE)
+          ))
   } else {
-    try(
       suppressWarnings(
         env_stack <- .pull_env(
           dates = dates,
@@ -205,8 +202,7 @@ extractEnv <-
           verbose = verbose,
           .parallel = .parallel,
           .ncores = .ncores
-        )),
-      silent = FALSE) 
+        ))
   }
   
   if(cache_layers & verbose){
@@ -218,7 +214,7 @@ extractEnv <-
     if(verbose){
       message("Extracting and appending environmental data")
     }
-    
+
     env_data <- .extract_var(unique_positions, env_stack, env_var, .fill_gaps = fill_gaps, .buffer = buffer, verbose = verbose)
   
   

@@ -20,10 +20,10 @@
 ##'
 ##' @return a SpatRaster object with daily spatial environmental layers associated with detection dates
 ##'
-##' @importFrom dplyr '%>%' filter bind_rows n_distinct 
+##' @importFrom dplyr '%>%' filter bind_rows n_distinct rowwise
 ##' @importFrom readr write_csv 
 ##' @importFrom utils txtProgressBar setTxtProgressBar download.file
-##' @importFrom terra rast ext crs 'crs<-' writeRaster 'time<-'
+##' @importFrom terra rast ext crs 'crs<-' writeRaster 'time<-' wrap unwrap crop
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options
@@ -97,7 +97,7 @@
 
       ## establish a log to store all erroneous urls
       error_log <- tibble(date = as.Date(NULL), url_name = NULL, layer = NULL)
-#      pb <- txtProgressBar(max = nrow(urls), style = 3)
+      pb <- txtProgressBar(max = nrow(urls), style = 3)
   
       ras_lst <- lapply(1:nrow(urls), function(i) {
         tryCatch({
@@ -108,25 +108,26 @@
             temp_nc <- tempfile(fileext = ".nc.gz")
             download.file(urls$url_name[i], 
                           destfile = temp_nc, 
-                          method = "auto")
+                          method = "auto",
+                          mode = "wb",
+                          quiet = TRUE)
             nc_path <- gunzip(temp_nc)
             
-            ras <- try(rast(nc_path, 
+            ras <- rast(nc_path, 
                             lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
-                            win = switch(.crop, study_extent, NULL)),
-                       silent = TRUE)
+                            win = switch(.crop, study_extent, NULL))
             
           } else if (file.sfx == "nc") {
             temp_nc <- tempfile(fileext = ".nc")
             download.file(urls$url_name[i], 
                           destfile = temp_nc, 
                           method = "auto",
-                          mode = "wb")
+                          mode = "wb",
+                          quiet = TRUE)
             
-            ras <- try(rast(temp_nc, 
+            ras <- rast(temp_nc, 
                             lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
-                            win = switch(.crop, study_extent, NULL)),
-                       silent = TRUE)
+                            win = switch(.crop, study_extent, NULL))
           }
           
           if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
@@ -135,11 +136,11 @@
           }
           names(ras) <- as.character(urls$date[i])
         }, 
-        error=function(e) {
+        error = function(e) {
           error_log <<- bind_rows(error_log, urls[i,])
         })
         
-#        setTxtProgressBar(pb, i)
+        setTxtProgressBar(pb, i)
         
         return(ras)
       })
@@ -171,68 +172,73 @@
       urls <- built_urls %>% filter(!is.na(layer))
     
       ## download raster files from built urls
-    if(.parallel){
-      message("Downloading IMOS Ocean Current data in parallel across ", 
-              .ncores, 
-              " cores...")
-      
-      plan("multisession", workers = .ncores)
-      
-      gsla_stack <- NULL
-      vcur_stack <- NULL
-      ucur_stack <- NULL
-      
-      fn2 <- function(url, .crop, study_extent){
-        temp_nc <- tempfile(fileext = ".nc.gz")
-        download.file(url$url_name, 
-                      destfile = temp_nc, 
-                      quiet = TRUE, 
-                      method = "auto")
-        nc_path <- gunzip(temp_nc)
+      if (.parallel) {
+        message("Downloading IMOS Ocean Current data in parallel across ",
+                .ncores,
+                " cores...")
         
-        tryCatch({
-          gsla <<- try(rast(nc_path, 
-                   subds = "GSLA",
-                   win = switch(.crop, study_extent, NULL)),
-              silent = TRUE)
-          names(gsla) <- url$date
-          gsla_stack <<- c(gsla_stack, gsla)
+        plan("multisession", workers = .ncores)
+        
+        fn2 <- function(url) {
+          temp_nc <- tempfile(fileext = ".nc.gz")
+          download.file(
+            url$url_name,
+            destfile = temp_nc,
+            quiet = TRUE,
+            method = "auto",
+            mode = "wb"
+          )
           
-          vcur <<- try(rast(nc_path, 
-                            subds = "VCUR",
-                            win = switch(.crop, study_extent, NULL)),
-                       silent = TRUE)
-          names(vcur) <- url$date
-          vcur_stack <<- c(vcur_stack, vcur)
+          nc_path <- gunzip(temp_nc)
           
-          ucur <<- try(rast(nc_path, 
-                            subds = "UCUR",
-                            win = switch(.crop, study_extent, NULL)),
-                       silent = TRUE)
-          names(ucur) <- url$date
-          ucur_stack <<- c(ucur_stack, ucur)
+          ## use terra::wrap to pack SpatRasters & pass through the connection
+          ##    set up by parallel processing via future
+          gsla <- rast(nc_path,
+                       subds = "GSLA")
           
-          },
-          error = function(e) {
-            message(e)
-          })
-        return(tibble(date = url$date, url_name = url$url_name, tempfile = temp_nc))
-      }
-      
-      ras_list <- 
-        urls %>% 
-        split(., .$date) %>% 
-        future_map( ~ try(fn2(url =.x,
-                              .crop = .crop,
-                              study_extent = study_extent),
-                          silent = TRUE),
-                   .options = furrr_options(seed = TRUE),
-                   .progress = TRUE)
-      
-      out_brick <- list(gsla = gsla_stack, vcur = vcur_stack, ucur = ucur_stack)
-      
-      plan("sequential")
-      
+          vcur <- rast(nc_path,
+                       subds = "VCUR")
+          
+          ucur <- rast(nc_path,
+                       subds = "UCUR")
+          
+          return(list(
+            gsla = wrap(gsla),
+            vcur = wrap(vcur),
+            ucur = wrap(ucur)
+          ))
+          
+        }
+        
+        ras.lst <- split(urls, urls$date) %>%
+          future_map(~ fn2(.x),
+                     .options = furrr_options(seed = TRUE),
+                     .progress = TRUE)
+        
+        ## unpack SpatRasters now that they've passed through the connection
+        ras.lst <- lapply(ras.lst, function(x)
+          lapply(x, unwrap))
+        
+        if (.crop) {
+          ras.lst <-
+            lapply(ras.lst, function(x)
+              lapply(x, crop, y = study_extent))
+        }
+        
+        gsla_stack <- rast(lapply(ras.lst, function(x)
+          x[[1]]))
+        vcur_stack <- rast(lapply(ras.lst, function(x)
+          x[[2]]))
+        ucur_stack <- rast(lapply(ras.lst, function(x)
+          x[[3]]))
+        
+        out_brick <-
+          list(gsla = gsla_stack,
+               vcur = vcur_stack,
+               ucur = ucur_stack)
+        
+        plan("sequential")
+        
     } else {
       ## Looped version
       ## run through urls to download, crop and stack environmental variables
@@ -241,48 +247,47 @@
       vcur_stack <- NULL
       ucur_stack <- NULL
       
-#      pb <- txtProgressBar(max = nrow(urls), style = 3)
+      pb <- txtProgressBar(max = nrow(urls), style = 3)
       
-      for(i in 1:nrow(urls)){
+      for (i in 1:nrow(urls)) {
         temp_nc <- tempfile(fileext = ".nc.gz")
-        download.file(urls$url_name[i], 
-                      destfile = temp_nc, 
-                      quiet = FALSE,
-                      method = "auto",
-                      mode = "wb")
+        download.file(
+          urls$url_name[i],
+          destfile = temp_nc,
+          quiet = TRUE,
+          method = "auto",
+          mode = "wb"
+        )
         nc_path <- gunzip(temp_nc)
         
-        tryCatch({
-          gsla <- try(rast(nc_path, 
-                           subds = "GSLA",
-                           win = switch(.crop, study_extent, NULL)),
-                      silent = TRUE)
-          names(gsla) <- urls$date[i]
-          gsla_stack <- c(gsla_stack, gsla)
-          
-          vcur <- try(rast(nc_path, 
-                           subds = "VCUR",
-                           win = switch(.crop, study_extent, NULL)),
-                      silent = TRUE)
-          names(vcur) <- urls$date[i]
-          vcur_stack <- c(vcur_stack, vcur)
-          
-          ucur <- try(rast(nc_path, 
-                           subds = "UCUR",
-                           win = switch(.crop, study_extent, NULL)),
-                      silent = TRUE)
-          names(ucur) <- urls$date[i]
-          ucur_stack <- c(ucur_stack, ucur)
-          
-        },
-        error = function(e) {
-          message(e)
-        })
+        gsla <- rast(nc_path,
+                     subds = "GSLA",
+                     win = switch(.crop, study_extent, NULL))
+        names(gsla) <- urls$date[i]
+        gsla_stack <- c(gsla_stack, gsla)
         
-#        setTxtProgressBar(pb, i)
+        vcur <- rast(nc_path,
+                     subds = "VCUR",
+                     win = switch(.crop, study_extent, NULL))
+        names(vcur) <- urls$date[i]
+        vcur_stack <- c(vcur_stack, vcur)
+        
+        ucur <- rast(nc_path,
+                     subds = "UCUR",
+                     win = switch(.crop, study_extent, NULL))
+        names(ucur) <- urls$date[i]
+        ucur_stack <- c(ucur_stack, ucur)
+        
+        
+        setTxtProgressBar(pb, i)
       }
       
-      out_brick <- list(gsla = gsla_stack, vcur = vcur_stack, ucur = ucur_stack)
+      out_brick <-
+        list(
+          gsla = rast(gsla_stack),
+          vcur = rast(vcur_stack),
+          ucur = rast(ucur_stack)
+        )
     }
     cat("\n")
     ## provide log of error prone urls
