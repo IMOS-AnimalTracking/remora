@@ -173,39 +173,23 @@ extractEnv <-
     message("Accessing and downloading IMOS environmental variable: ", env_var)
   }
 
-  if(.parallel){
-        suppressWarnings(
-          env_stack <- .pull_env(
-            dates = dates,
-            study_extent = study_extent,
-            var_name = env_var,
-            .cache = cache_layers,
-            folder_name = folder_name,
-            .crop = crop_layers,
-            .nrt = nrt,
-            .output_format = output_format,
-            verbose = verbose,
-            .parallel = .parallel,
-            .ncores = .ncores
-          ))
-  } else {
-      suppressWarnings(
-        env_stack <- .pull_env(
-          dates = dates,
-          study_extent = study_extent,
-          var_name = env_var,
-          .cache = cache_layers,
-          folder_name = folder_name,
-          .crop = crop_layers,
-          .nrt = nrt,
-          .output_format = output_format,
-          verbose = verbose,
-          .parallel = .parallel,
-          .ncores = .ncores
-        ))
-  }
+  suppressWarnings(
+    env_stack <- .pull_env(
+      dates = dates,
+      study_extent = study_extent,
+      var_name = env_var,
+      .cache = cache_layers,
+      folder_name = folder_name,
+      .crop = crop_layers,
+      .nrt = nrt,
+      .output_format = output_format,
+      verbose = verbose,
+      .parallel = .parallel,
+      .ncores = .ncores
+    )
+  )
   
-  if(cache_layers & verbose){
+  if (cache_layers & verbose) {
     message("\nDownloaded layers are cached in the `imos.cache` folder in your working directory")
   }
 

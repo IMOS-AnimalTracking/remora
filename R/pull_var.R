@@ -51,7 +51,7 @@
     stop("Environmental variable not recognised, options include:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
   
   ## setup parallelisation
-  if(all(.parallel, var_name == "rs_current")) {
+  if(.parallel) {
     if(is.null(.ncores)) {
       .ncores <- detectCores()
     } else {
@@ -87,23 +87,84 @@
   } 
 
   ## Ocean Color layers
-  if(var_name %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp')){
+  if(var_name %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp')) {
 
     ## build urls based on dates and variable names
     urls <- .build_urls(dates, var_name, verbose = verbose) 
     
+    if (.parallel) {
+      message("Downloading IMOS Ocean Current data in parallel across ",
+              .ncores,
+              " cores...")
+      
+      plan("multisession", workers = .ncores)
+      
+      fn2 <- function(url) {
+        file.sfx <- str_split(url$url_name, "\\.", simplify = TRUE)
+        file.sfx <- file.sfx[, ncol(file.sfx)]
+        
+        if(file.sfx == "gz") {
+          temp_nc <- tempfile(fileext = ".nc.gz")
+          download.file(url$url_name, 
+                        destfile = temp_nc, 
+                        method = "auto",
+                        mode = "wb",
+                        quiet = TRUE)
+          nc_path <- gunzip(temp_nc)
+          
+          ras <- rast(nc_path, 
+                      lyrs = switch(url$layer != "", url$layer, NULL))
+          
+        } else if (file.sfx == "nc") {
+          temp_nc <- tempfile(fileext = ".nc")
+          download.file(url$url_name, 
+                        destfile = temp_nc, 
+                        method = "auto",
+                        mode = "wb",
+                        quiet = TRUE)
+          
+          ras <- rast(temp_nc, 
+                      lyrs = switch(url$layer != "", url$layer, NULL))
+        }
+        
+        if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
+          ## Convert to deg C
+          ras <- ras - 273.15
+        }
+        
+        return(wrap(ras))
+      }
+      
+      ras.lst <- split(urls, urls$date) %>%
+        future_map(~ fn2(.x),
+                   .options = furrr_options(seed = TRUE),
+                   .progress = TRUE)
+      
+      ## unpack SpatRasters now that they've passed through the connection
+      ras.lst <- lapply(ras.lst, unwrap)
+      
+      if (.crop) {
+        ras.lst <- lapply(ras.lst, crop, y = study_extent)
+      }
+      
+      out_brick <- rast(ras.lst)
+        
+      plan("sequential")
+      
+    } else {
+      
       ## Looped version
       ## run through urls to download, crop and stack environmental variables
-
+      
       ## establish a log to store all erroneous urls
-      error_log <- tibble(date = as.Date(NULL), url_name = NULL, layer = NULL)
+#      error_log <- tibble(date = as.Date(NULL), url_name = NULL, layer = NULL)
       pb <- txtProgressBar(max = nrow(urls), style = 3)
-  
+      
       ras_lst <- lapply(1:nrow(urls), function(i) {
-        tryCatch({
+        
           file.sfx <- str_split(urls$url_name[i], "\\.", simplify = TRUE)
           file.sfx <- file.sfx[, ncol(file.sfx)]
-         
+          
           if(file.sfx == "gz") {
             temp_nc <- tempfile(fileext = ".nc.gz")
             download.file(urls$url_name[i], 
@@ -114,8 +175,8 @@
             nc_path <- gunzip(temp_nc)
             
             ras <- rast(nc_path, 
-                            lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
-                            win = switch(.crop, study_extent, NULL))
+                        lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
+                        win = switch(.crop, study_extent, NULL))
             
           } else if (file.sfx == "nc") {
             temp_nc <- tempfile(fileext = ".nc")
@@ -126,8 +187,8 @@
                           quiet = TRUE)
             
             ras <- rast(temp_nc, 
-                            lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
-                            win = switch(.crop, study_extent, NULL))
+                        lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
+                        win = switch(.crop, study_extent, NULL))
           }
           
           if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
@@ -135,10 +196,6 @@
             ras <- ras - 273.15
           }
           names(ras) <- as.character(urls$date[i])
-        }, 
-        error = function(e) {
-          error_log <<- bind_rows(error_log, urls[i,])
-        })
         
         setTxtProgressBar(pb, i)
         
@@ -147,11 +204,7 @@
       cat("\n")
       out_brick <- rast(ras_lst)
       
-      ## provide log of error prone urls
-      if(nrow(error_log) > 0){
-        message("Environmental data were not found for ", n_distinct(error_log$date)," dates")
-        message("Error log with missing data saved in the working directory")
-        write_csv(error_log %>% mutate(variable = var_name), paste0(var_name, "_errorlog.txt"))}
+    }
       
       if(any(is.na(crs(out_brick)), is.null(crs(out_brick)))) {
         crs(out_brick) <- "epsg:4326"
