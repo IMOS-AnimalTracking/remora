@@ -6,9 +6,9 @@
 \usage{
 extractBlue(
   df,
-  X = "longitude",
-  Y = "latitude",
-  datetime = "detection_timestamp",
+  X,
+  Y,
+  datetime,
   env_var,
   extract_depth = 0,
   var_name = paste(env_var, extract_depth, sep = "_"),
@@ -16,7 +16,7 @@ extractBlue(
   verbose = TRUE,
   cache_layers = FALSE,
   full_timeperiod = FALSE,
-  station_name,
+  station_name = NULL,
   fill_gaps = FALSE,
   buffer = 10000,
   export_step = TRUE,
@@ -54,7 +54,8 @@ Set to \code{FALSE} to keep it quiet}
 
 \item{cache_layers}{should the downloaded and processed environmental data be cached within
 the working directory? If FALSE (default), the Bluelink data will be stored in a temporary folder
-and discarded after environmental extraction}
+and discarded after environmental extraction. Otherwise, it will be saved in the "cached" folder
+within folder_name.}
 
 \item{full_timeperiod}{should environmental variables be extracted for each day
 across full monitoring period? This option is time and memory consuming for long projects. If this option is selected,
@@ -127,7 +128,6 @@ data_with_temp <-
                datetime = "detection_datetime", 
                env_var = "ocean_temp",
                extract_depth = 0,
-               cache_layers = FALSE,
                folder_name = "Bluelink",
                verbose = TRUE,
                fill_gaps = FALSE)

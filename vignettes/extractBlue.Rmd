@@ -33,7 +33,7 @@ The `extractBlue()` function can be used to obtain environmental data **anywhere
 
 <center>
 
-![Example of raw Bluelink (BRAN) water temperature data at the surface on 1 January 2013 showing its global coverage](images/bluelink/Bluelink_ex.png){#id .class width=100%} 
+![Example of Bluelink (BRAN) water temperature data at the surface on 1 January 2013 showing its global coverage](images/bluelink/Bluelink_ex.png){#id .class width=100%} 
 
 </center>
  
@@ -117,32 +117,28 @@ standdata_with_sst <-
     extractBlue(df = qc_data,
                 X = "receiver_deployment_longitude", 
                 Y = "receiver_deployment_latitude", 
+                station_name = "station_name",
                 datetime = "detection_datetime", 
                 env_var = "ocean_temp",
                 extract_depth = 0,
                 cache_layers = FALSE,
+                export_step = FALSE,
                 verbose = TRUE,
                 full_timeperiod = TRUE)
-
 ```
 
 If we have a look at this dataset it will look like this:
 
-|station_name|detection_datetime|receiver_recovery_latitude|receiver_recovery_longitude|Detection|ocean_temp_0|
-|:-----------|-----------------:|-------------------------:|--------------------------:|--------:|-----------:|
-|     Kelso 2|        2013-08-10|                 -18.41768|                   146.9910|        1|      23.565|
-|   Bramble 1|        2013-08-10|                 -18.38078|                   146.6596|        0|      23.285|
-|   Bramble 2|        2013-08-10|                 -18.42293|                   146.6741|        0|      22.997|
-|       Rib 1|        2013-08-10|                 -18.47911|                   146.8621|        0|      23.401|
-|       Rib 2|        2013-08-10|                 -18.48117|                   146.8857|        0|      23.401|
-|       Rib 3|        2013-08-10|                 -18.47005|                   146.8763|        0|      23.401|
-|       Rib 4|        2013-08-10|                 -18.49282|                   146.8673|        0|      23.401|
-|    Brewer 1|        2013-08-10|                 -18.63680|                   147.0237|        0|      23.386|
-| Lodestone 1|        2013-08-10|                 -18.69122|                   147.0883|        0|      23.386|
-| Lodestone 2|        2013-08-10|                 -18.69922|                   147.0909|        0|      23.386|
-| Lodestone 5|        2013-08-10|                 -18.68502|                   147.0987|        0|      23.386|
+|       date| station_name|     lon|    lat | ocean_temp_0| Detection| 
+|:----------|------------:|-------:|-------:|------------:|---------:|
+| 2013-08-10|      Kelso 2| 146.991| -18.417|      23.5647|         1|
+| 2013-08-11|      Kelso 2| 146.991| -18.417|      23.5492|         0|
+| 2013-08-12|      Kelso 2| 146.991| -18.417|      24.1562|         0|
+| 2013-08-13|      Kelso 2| 146.991| -18.417|      24.1873|         0|
+| 2013-08-14|      Kelso 2| 146.991| -18.417|      24.1951|         0|
+| 2013-08-15|      Kelso 2| 146.991| -18.417|      24.3274|         0|
 
-Which means that, in the first day (`2013-08-10`), detections were only recorded at the `Kelso 2` station (`Detection = 1`).
+Which means that, on (`2013-08-10`) detections were recorded at the `Kelso 2` station (`Detection = 1`), but not on the other days in the example (`Detection = 0`), but temperature data at the surface (`ocean_temp_0`) was extracted for all days. 
 
 
 #### *Gap filling functionality*
@@ -212,7 +208,7 @@ Max.   :24.70
 We are going to use the function to compare the water temperatures in the study area between the surface and the 30-m depths. Let's download and process the Bluelink (BRAN) data at the two depths of interest:
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
-## obtain water temperature data at the surface
+## Obtain water temperature data at the surface
 data_with_sst1 <- 
   extractBlue(df = qc_data,
              X = "receiver_deployment_longitude", 
@@ -220,10 +216,9 @@ data_with_sst1 <-
              datetime = "detection_datetime", 
              cache_layers = FALSE,
              env_var = "ocean_temp",
-             extract_depth = 0, # surface
-             full_timeperiod = TRUE)
+             extract_depth = 0) # surface
 
-## obtain water temperature data at the 30-m depths
+## Obtain water temperature data at the 30-m depths
 data_with_sst2 <- 
   extractBlue(df = qc_data,
              X = "receiver_deployment_longitude", 
@@ -231,9 +226,7 @@ data_with_sst2 <-
              datetime = "detection_datetime", 
              cache_layers = FALSE,
              env_var = "ocean_temp",
-             extract_depth = 30, # 30-m depths
-             full_timeperiod = TRUE)
-
+             extract_depth = 30) # 30-m depths
 ```
 
 Now let's see how the two variables look in relation to each other:
@@ -292,10 +285,9 @@ data_cur <-
                 extract_depth = 0,
                 cache_layers = TRUE,
                 verbose = TRUE)
-
 ```
 
-As we set `cache_layers` to `TRUE`, the downloaded and processed files will be cached in the `folder_name` folder within the working directory. We can then load these processed files and plot them, to look at the trends in current speed within the study area:
+As we set `cache_layers` to `TRUE`, the downloaded and processed files will be cached in the `folder_name` folder within the working directory, in a folder called `cached`. We can then load these processed files and plot them, to look at the trends in current speed within the study area:
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
 # Load processed netCDF files:
