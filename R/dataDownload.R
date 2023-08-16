@@ -1,13 +1,15 @@
-#' @title Download Bluelink environmental data 
-#' @description helper function to download netCDF files, not called by user
-#'
-#' @param type type of environmental data to download, "day" or "month" resolutions currently accepted. 
-#' @param year year of interest to download data for. Must be provided
-#' @param month month of interest to download data for. If not provided, all months with available data will be downloaded.
-#' @param varname Bluelink variable of interest to be downloaded.
-#' @param quiet Should the files be downloaded in silence?
-#' @return Download netCDF files from Bluelink for internal processing. 
-#' @keywords internal
+##' @title Download Bluelink environmental data 
+##' @description helper function to download netCDF files, not called by user
+##'
+##' @param type type of environmental data to download, "day" or "month" resolutions currently accepted. 
+##' @param year year of interest to download data for. Must be provided
+##' @param month month of interest to download data for. If not provided, all months with available data will be downloaded.
+##' @param varname Bluelink variable of interest to be downloaded.
+##' @param quiet Should the files be downloaded in silence?
+##' @return Download netCDF files from Bluelink for internal processing. 
+##' 
+##' @importFrom utils download.file
+##' @keywords internal
 
 dataDownload <- function(type, year, month = NULL, dir, varname, quiet = TRUE) {
   if (type %in% c("day", "month") == FALSE) {

@@ -117,7 +117,7 @@ qc_data <-
   ungroup() \%>\% 
   filter(Detection_QC \%in\% c(1,2)) \%>\%
   filter(filename == unique(filename)[1]) \%>\%
-  slice(1:20)
+  slice(5:8)
 
 ## Extract daily interpolated sea surface temperature
 ## cache_layers & fill_gaps args set to FALSE for speed
