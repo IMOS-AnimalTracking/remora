@@ -12,8 +12,7 @@
 ##' @return temporal_outcome is a list with each element corresponding to a QC'd tag detection file
 ##'
 ##' @importFrom dplyr '%>%' bind_cols
-##' @importFrom sp 'coordinates<-' 'proj4string<-' 'proj4string' over
-##' @importFrom geosphere distGeo
+##' @importFrom sf st_as_sf st_distance st_crs st_intersects st_coordinates
 ##'
 ##' @keywords internal
 ##'
@@ -137,16 +136,20 @@ qc <- function(x, Lcheck = TRUE, logfile) {
   ##  coordinates to SpatialPoints to test subsequently whether or not detections 
   ##  are in distribution range
   if (!is.null(shp_b)) {
-    ll <- unique(data.frame(x$longitude, x$latitude))
-    coordinates(ll) <- ~ x.longitude + x.latitude
-    proj4string(ll) <- suppressWarnings(proj4string(shp_b))
+    ll <- unique(data.frame(x$longitude, x$latitude)) %>%
+      st_as_sf(coords = c("x.longitude", "x.latitude"), crs = st_crs(shp_b))
+
+    # coordinates(ll) <- ~ x.longitude + x.latitude
+    # proj4string(ll) <- suppressWarnings(proj4string(shp_b))
 
     if (!is.na(x$transmitter_deployment_longitude[1])) {
-      ll_r <-
-        data.frame(x$transmitter_deployment_longitude[1], x$transmitter_deployment_latitude[1])
-      coordinates(ll_r) <-
-        ~ x.transmitter_deployment_longitude.1. + x.transmitter_deployment_latitude.1.
-      proj4string(ll_r) <- suppressWarnings(proj4string(shp_b))
+      ll_r <- data.frame(lon = x$transmitter_deployment_longitude[1], 
+                         lat = x$transmitter_deployment_latitude[1]) %>%
+        st_as_sf(coords = c("lon", "lat"), crs = st_crs(shp_b))
+      
+      # coordinates(ll_r) <-
+      #   ~ x.transmitter_deployment_longitude.1. + x.transmitter_deployment_latitude.1.
+      # proj4string(ll_r) <- suppressWarnings(proj4string(shp_b))
     }
   }
 
@@ -170,13 +173,12 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		## Distance and Velocity tests
 		position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
 		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
-
-		dist <-
-		  shortest_dist(position,
-		                x$installation_name,
-		                rast = Aust_raster,
-		                tr = tr)
-
+		
+		dist <- shortest_dist2(position,
+		                      x$installation_name,
+		                      raster = NULL,
+		                      tr = tr)
+		
 		if (length(dist) == 1) {
 		  timediff <- as.numeric(
 		    difftime(
@@ -218,7 +220,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		  temporal_outcome[1, 2] <- ifelse(velocity[1] > 10, 2, 1)
 		  temporal_outcome[nrow(x), 2] <-
 		    ifelse(velocity[nrow(x)] > 10, 2, 1)
-
+		  
 		  ## Distance test
 		  temporal_outcome[, 3] <-
 		    ifelse(dist > 1000 & dist_next > 1000, 2, 1)
@@ -231,17 +233,23 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		## Detection distribution test
 		temporal_outcome[, 4] <- ifelse(is.null(shp_b), 3, 1)
 		if(!is.null(shp_b)) {
-			out <- which(is.na(over(ll, shp_b)))
+			out <- suppressWarnings(which(is.na(st_intersects(ll, shp_b))))
 			if(length(out) > 0) {
-			  temporal_outcome[x$longitude %in% ll@coords[out, 1] &
-			                     x$latitude %in% ll@coords[out, 2], 4] <- 2
+			  ll.xy <- st_coordinates(ll)
+			  temporal_outcome[all(x$longitude %in% ll.xy[out, 1],
+			                     x$latitude %in% ll.xy[out, 2]), 4] <- 2
 			}
 		}
 
 		## Distance from release
-		dist_r <- distGeo(cbind(x$transmitter_deployment_longitude[rep(1, nrow(x))],
-		                        x$transmitter_deployment_latitude[rep(1, nrow(x))]),
-		                  cbind(x$longitude, x$latitude)) / 1000 ## return in km
+		rel.pts <- data.frame(lon = x$transmitter_deployment_longitude[rep(1, nrow(x))],
+		                     lat = x$transmitter_deployment_latitude[rep(1, nrow(x))]) %>%
+		  st_as_sf(coords = c("lon", "lat"), crs = 4326)
+		
+		det.pts <- data.frame(lon = x$longitude, lat = x$latitude) %>%
+		  st_as_sf(coords = c("lon", "lat"), crs = 4326)
+		## return distance in km
+		dist_r <- as.numeric(st_distance(rel.pts, det.pts, by_element = TRUE) / 1000)
 		temporal_outcome[, 5] <- ifelse(dist_r > 500, 2, 1)
 
 		## Release date before detection date
@@ -254,12 +262,12 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 
 		## Release location test
 		if(!is.null(shp_b)) {
-			temporal_outcome[, 7] <- ifelse(dist[1] > 500 &
-			                                   sum(is.na(over(ll_r, shp_b))) > 0, 2, 1)
+			temporal_outcome[, 7] <- ifelse(all(dist[1] > 500,
+			                                   sum(is.na(st_intersects(ll_r, shp_b))) > 0), 2, 1)
 		} else {
 			temporal_outcome[, 7] <- ifelse(dist[1] > 500, 2, 1)
 		}
-
+		
 		## Detection QC
 		ones <- as.numeric(rowSums(temporal_outcome[, c(1:5)] == 1))
 		temporal_outcome[which(ones <= 2), 8] <- 4
@@ -272,7 +280,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 	x <- x %>%
 	  rename(receiver_deployment_longitude = longitude,
 	         receiver_deployment_latitude = latitude)
-	
+
 	return(bind_cols(x, temporal_outcome))
 
 }

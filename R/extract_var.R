@@ -2,7 +2,7 @@
 ##' @description Extract variables from pulled variables 
 ##'
 ##' @param unique_positions dataframe with unique coordinates and dates from where to extract daily environmental data
-##' @param env_stack a raster stack object with daily spatial environmental layers associated with detection dates (output from `.pull_var` function) 
+##' @param env_stack a SpatRaster object with daily spatial environmental layers associated with detection dates (output from `.pull_var` function) 
 ##' @param env_var name of extracted variable (brought in from `extractEnv` function)
 ##' @param .fill_gaps Fill spatial gaps within each layer using a distance buffer
 ##' @param .buffer radius of buffer (in m) around each detection from which environmental variables should be extracted from. A median value of pixels 
@@ -15,20 +15,35 @@
 ##' @return a dataframe with unique position, unique dates and extracted environmental variables 
 ##'
 ##' @importFrom dplyr '%>%' mutate case_when select
-##' @importFrom sf st_as_sf st_drop_geometry
-##' @importFrom raster raster extract extent 
+##' @importFrom sf st_as_sf st_drop_geometry st_buffer
+##' @importFrom terra extract ext time
 ##'
 ##' @keywords internal
 
 .extract_var <- function(unique_positions, env_stack, env_var, .fill_gaps, .buffer = NULL, verbose = TRUE){
-  
   ## Check arguments
-  
+
   ## Configure unique_positions to allow extraction
   pos_sf <- 
     unique_positions %>% 
     st_as_sf(coords = c(1,2), crs = 4326, remove = F) %>% 
-    mutate(layer = paste0("X", gsub("\\-", ".", date)))
+    mutate(layer = as.character(date))
+
+  ## Setup buffer for extractions when .fill_gaps = TRUE; 20km buffer for currents and 5km for others
+  if(.fill_gaps){
+    if(is.null(.buffer)){
+      if(env_var %in% c("rs_current", "rs_salinity")){.buffer <- 20000}
+      if(env_var %in% c("rs_sst_interpolated")){.buffer <- 15000} 
+      if(env_var %in% c("rs_sst", "rs_chl", "rs_npp", "rs_turbidity")){.buffer <- 5000}
+    }
+  }
+  
+  ## create buffer coords for terra::extract if .buffer is not NULL
+  if(!is.null(.buffer)) {
+    pos_sf_buffer <- st_buffer(pos_sf, .buffer)
+  } else {
+    pos_sf_buffer <- pos_sf
+  }
   
   ## setup output dataset
   out_data <-
@@ -41,23 +56,19 @@
       env_names <- env_var
     }
 
-  ## Setup buffer for extractions when .fill_gaps = TRUE; 20km buffer for currents and 5km for others
-  if(.fill_gaps){
-    if(is.null(.buffer)){
-      if(env_var %in% c("rs_current", "rs_salinity")){.buffer <- 20000}
-      if(env_var %in% c("rs_sst_interpolated")){.buffer <- 15000} 
-      if(env_var %in% c("rs_sst", "rs_chl", "rs_npp", "rs_turbidity")){.buffer <- 5000}
-    }
-  }
-  
   if(.fill_gaps & verbose){
     message("Filling gaps in environmental data by extracting median values from a ", .buffer/1000, "km buffer around detections that fall on 'NA' values")
   }
-  
+
   if(env_var %in% "rs_current"){
     ## extraction current datasets run through each current dataset (gsla, vcur, ucur)
-    for(c in 1:length(env_names)){
-      ext_matrix <- extract(env_stack[[c]], pos_sf)
+    for(j in 1:length(env_names)){
+      ext_list <- lapply(env_stack[[j]], function(x) extract(x, pos_sf))
+      ext_matrix <- matrix(unlist(lapply(ext_list, function(x) x[,2])), 
+                           ncol = length(ext_list), 
+                           byrow = TRUE, 
+                           dimnames = list(NULL, sapply(env_stack[[j]], names)))
+
       variable <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
@@ -68,10 +79,15 @@
           variable[i] <- NA
         }
       }
-      
+     
       ## gap filling
       if(.fill_gaps){
-        ext_matrix_fill <- extract(env_stack[[c]], pos_sf, buffer = .buffer, fun = median)
+        ext_list_fill <- lapply(env_stack[[j]], function(x) extract(x, pos_sf_buffer, fun = median))
+        ext_matrix_fill <- matrix(unlist(lapply(ext_list_fill, function(x) x[,2])), 
+                                  ncol = length(ext_list_fill), 
+                                  byrow = TRUE,
+                                  dimnames = list(NULL, sapply(env_stack[[j]], names)))
+#        ext_matrix_fill <- extract(env_stack[[c]], pos_sf_buffer, fun = median)
         variable_fill <- vector()
         for (i in 1:nrow(ext_matrix)) {
           val <-
@@ -94,7 +110,7 @@
                                         variable = case_when(is.na(variable) ~ var_fill,
                                                                     TRUE ~ variable)) %>% 
               dplyr::select(., -var_fill) else .}
-        colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[c]
+        colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[j]
       } else {
         out_data <-
           out_data %>% 
@@ -104,16 +120,16 @@
                                         variable = case_when(is.na(variable) ~ var_fill,
                                                                     TRUE ~ variable)) %>% 
               dplyr::select(., -var_fill) else .}
-        colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[c]
+        colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names[j]
       }
     }
   } 
-  
+ 
   if(env_var %in% c("bathy", "dist_to_land")) {
     ## extraction for single/fixed layer ('bathy', 'dist_to_land')
-    ext_matrix <- extract(env_stack, pos_sf)
-    variable <- ext_matrix
-    
+    ext_matrix <- extract(env_stack, pos_sf, ID = FALSE)
+    variable <- ext_matrix[,1]
+
     ## Append extracted variables to pos_sf dataset
     if(length(variable) > 0){
       out_data <- 
@@ -131,7 +147,12 @@
   
   if(env_var %in% c("rs_sst", "rs_sst_interpolated", "rs_salinity", "rs_chl", "rs_turbidity", "rs_npp")) {
     ## extraction for time-series raster stacks
+    ## extract dates from env_stack for ext_matrix colnames
+    cnms <- time(env_stack) %>%
+      as.Date() %>%
+      as.character()
     ext_matrix <- extract(env_stack, pos_sf)
+    colnames(ext_matrix)[-1] <- cnms # first colname is ID
     variable <- vector()
     for (i in 1:nrow(ext_matrix)) {
       val <-
@@ -142,10 +163,16 @@
         variable[i] <- NA 
       }
     }
+    ## for some reason a SpatRaster leads to variable being a list, not a vector
+    variable <- unlist(variable)
     
     ## gap filling
     if(.fill_gaps){
-      ext_matrix_fill <- extract(env_stack, pos_sf, buffer = .buffer, fun = median)
+      cnms <- time(env_stack) %>%
+        as.Date() %>%
+        as.character()
+      ext_matrix_fill <- extract(env_stack, pos_sf_buffer, fun = median)
+      colnames(ext_matrix)[-1] <- cnms
       variable_fill <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
@@ -156,7 +183,11 @@
           variable_fill[i] <- NA
         }
       } 
+      ## for some reason a SpatRaster leads to variable_fill being a list, not a vector
+      variable_fill <- unlist(variable_fill)
     }
+    
+    
     ## Append extracted variables to pos_sf dataset
     if(length(variable) > 0){
       out_data <- 

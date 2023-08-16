@@ -63,13 +63,13 @@
 ##'               "IMOS_animal_measurements.csv"),
 ##'                     package = "remora"))
 ##' qc.out <- runQC(files)
-##' plotQC(qc.out, path = NULL) # plots to default graphics device
+##' plotQC(qc.out, path = ".") # saves .html file to working directory
 ##'
 ##' ## get detections with QC flags
 ##' d.qc <- grabQC(qc.out, what = "dQC")
 ##' 
 ##' ## clean up
-##' system("rm QC_logfile.txt")
+##' system("rm QC_logfile.txt *_QCmap.html")
 ##'
 ##' @importFrom stringr str_split
 ##' @importFrom readr read_csv cols col_character col_double col_integer col_datetime
@@ -135,17 +135,28 @@ runQC <- function(x,
   }
 
   ## warn of any QC failures
-  nfail <- sum(sapply(QC_result, function(x) inherits(x, "try-error")))
-  if(nfail > 0)
+  fails <- sapply(QC_result, function(x) inherits(x, "try-error"))
+  nfail <- sum(fails)
+  ## write `try-error` to logfile
+  if(nfail > 0) {
     warning(paste(nfail, "tag detection file(s) could not be QC'd"),
-            call. = FALSE)
+            call. = FALSE, immediate. = TRUE)
+    xfail <- all_data[fails]
+    lapply(1:length(xfail), function(i) {
+      write(paste0(xfail[[i]]$filename[1], ":  QC error: ", QC_result[[i]]),
+            file = logfile,
+            append = TRUE
+      )
+    })
+  }
+  
 
   ## notify if any entries in QC logfile
   if(file.size(logfile) > 1) {
     message("\n Please see ", logfile, " for potential data and/or metadata issues\n")
   }
 
-  tmp <- bind_rows(QC_result)
+  tmp <- bind_rows(QC_result[!fails])
   out <- nest_by(tmp, filename, .key = "QC")
   class(out) <- append("remora_QC", class(out))
 

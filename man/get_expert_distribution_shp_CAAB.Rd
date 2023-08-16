@@ -13,7 +13,7 @@ is required}
 \item{spe}{species scientific name}
 }
 \value{
-shp is a SpatialPolygons object of the species' distribution
+shp is a multipolygon sf data.frame object of the species' distribution
 }
 \description{
 Get expert distribution shapefile, if available, from CSIRO's
@@ -23,4 +23,10 @@ http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx
 \details{
 For a few species acoustically tagged no shapefile exists.
 }
-\keyword{internal}
+\examples{
+# example code
+x <- TownsvilleReefQC$QC[[1]]
+expert_shp <- get_expert_distribution_shp_CAAB(CAAB_species_id = x$CAAB_species_id[1], 
+spe = x$species_scientific_name[1])
+
+}

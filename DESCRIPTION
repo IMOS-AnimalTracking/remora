@@ -1,7 +1,7 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.7.4
-Date: 2023-06-19
+Version: 0.7.4.9485
+Date: 2023-08-16
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
@@ -57,67 +57,61 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    colormap,
-    crosstalk,
     data.table,
     dplyr,
-    DT,
     fasttime,
-    fs,
     furrr,
     future,
     gdistance,
-    geojsonio,
-    geosphere,
-    ggdist,
-    gghalves,
-    ggraph,
-    ggplot2,
-    gmt,
-    igraph,
     kableExtra,
     knitr,
     leaflet,
     lubridate,
     magrittr,
-    maps,
-    mapview,
     ncdf4,
     parallel,
     plotly,
     plyr,
-    progressr,
     purrr,
     RColorBrewer,
     R.utils,
-    raster (>= 3.0-2),
     readr,
-    rgdal,
-    rgeos,
-    scales,
-    sf,
+    sf (>= 1.0-10),
     shiny,
-    shinycssloaders,
-    shinythemes,
-    shinyWidgets,
-    sp,
     stringr,
     tibble,
     tidyr,
-    tools,
     viridis,
     xml2,
-    zip
+    htmlwidgets,
+    terra (>= 1.7-30),
+    geodist (>= 0.0.8)
 Suggests: 
+    colormap,
+    crosstalk,
+    DT,
+    geojsonio,
+    ggdist,
+    gghalves,
+    ggraph,
+    igraph,
+    scales,
+    shinycssloaders,
+    shinythemes,
+    shinyWidgets,
     testthat (>= 3.0.0),
+    tcltk,    
+    tidyverse,
+    tools,   
     rnaturalearth,
-    tcltk,
     rmarkdown,
     hrbrthemes,
     classInt,
-    tidyverse
+    sp (>= 2.0-0)
 Depends: R (>= 3.6.0)
-SystemRequirements: GDAL (>= 2.4.2), GEOS (>= 3.7.0), PROJ (>= 5.2.0)
+SystemRequirements: GDAL (>= 3.6.2), GEOS (>= 3.11.0), PROJ (>= 9.2.0)
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Config/testthat/edition: 3
+Config/testthat/parallel: true

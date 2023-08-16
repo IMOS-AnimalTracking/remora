@@ -2,37 +2,39 @@
 % Please edit documentation in R/plotQC.R
 \name{plotQC}
 \alias{plotQC}
-\title{produce maps showing the occurrence of QC'd detections per species}
+\title{produce interactive leaflet maps showing the occurrence of QC'd detections per species}
 \usage{
-plotQC(x, path = getwd(), suffix = NULL)
+plotQC(x, path = NULL, pal = "PuOr", revpal = TRUE)
 }
 \arguments{
-\item{x}{a remora output object with \code{class(remora_QC)}}
+\item{x}{a remora output object with \code{class(remora_QC)}.}
 
-\item{path}{string; path where maps will be saved. Default is to write plot
-to the working directory as a \code{.png} file.}
+\item{path}{path to save map(s). Options are: \code{NULL} (default) - renders to
+a viewer window (RStudio only); \code{wb} - renders in default web browser;
+or a valid file path - map saved as a self-contained .html file.}
 
-\item{suffix}{text to be added to plot filename (default is NULL)}
+\item{pal}{a \code{brewer.pal} palette name as a quoted character string. Use
+\code{RColorBrewer::display.brewer.all()} to see choices.}
+
+\item{revpal}{reverse order of colour palette.}
 }
 \value{
-produces maps showing species expert distribution and
+produces interactive leaflet maps of species expert distribution and
 location of QC'd detections
 }
 \description{
-\code{plotQC()} QC'd detections colour-coded by their
+\code{plotQCint()} QC'd detections colour-coded by their
 assessed validity status, overlaid on species expert distribution extent
 }
 \examples{
 ## example QC'd data
 data(TownsvilleReefQC)
 
-## Plot QC output to graphics window
-plotQC(TownsvilleReefQC, path = NULL)
+## save plot as an .html file to the working directory
+plotQC(TownsvilleReefQC, path = ".")
 
-\dontrun{
-## Plot QC output, saved to the working directory as .png file(s) 
-##   using species common name(s)
-plotQC(TownsvilleReefQC)
-}
+## clean up
+system("rm *_QCmap.html")
+
 
 }

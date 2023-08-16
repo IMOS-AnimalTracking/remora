@@ -6,7 +6,9 @@
 ##' @param sensorType character string detailing which sensor value we are interested in. Can be "temperature", "velocity", "salinity or "oxygen"."
 ##' @param itimeout integer value for number of seconds we are willing to wait before timeout to download netcdf from the web. Defaults to 60
 ##' @param file_loc character string for the location of the saved files
+##' 
 ##' @return The \code{moorData} dataframe with the sensor information time series for a given \code{site_code} 
+##' 
 ##' @importFrom ncdf4 nc_open ncvar_get ncatt_get nc_close
 ##' @export
 
@@ -48,44 +50,44 @@ mooringDownload <- function(moor_site_codes,
       }
       
       # Open the saved net cdf file
-      nc_ch <- ncdf4::nc_open(file_name)
+      nc_ch <- nc_open(file_name)
       
       #Get the time and time units and transform it to a datetime value
-      time <- ncdf4::ncvar_get(nc_ch,"TIME") # the times look pretty weird
-      tunits <- ncdf4::ncatt_get(nc_ch,"TIME","units") # what units are these times in
+      time <- ncvar_get(nc_ch,"TIME") # the times look pretty weird
+      tunits <- ncatt_get(nc_ch,"TIME","units") # what units are these times in
       data.time <- as.POSIXct(time*86400, origin = "1950-01-01",tz = "UTC") # Convert these to POSIXct object
       
-      depth <- ncdf4::ncvar_get(nc_ch, "DEPTH") #Get the depth 
-      fillvalue_depth <- ncdf4::ncatt_get(nc_ch, "DEPTH", "_Fillvalue")   #Get the NA values
+      depth <- ncvar_get(nc_ch, "DEPTH") #Get the depth 
+      fillvalue_depth <- ncatt_get(nc_ch, "DEPTH", "_Fillvalue")   #Get the NA values
       
       if(sensorType == "temperature"){
-        temperature <- ncdf4::ncvar_get(nc_ch, "TEMP") #Get the sea water temperature  
-        fillvalue_temperature <- ncdf4::ncatt_get(nc_ch, "TEMP", "_Fillvalue") #Get the NA values
+        temperature <- ncvar_get(nc_ch, "TEMP") #Get the sea water temperature  
+        fillvalue_temperature <- ncatt_get(nc_ch, "TEMP", "_Fillvalue") #Get the NA values
       }
       
       if(sensorType == "velocity"){
-        ucur <- ncdf4::ncvar_get(nc_ch, "UCUR")
-        vcur <- ncdf4::ncvar_get(nc_ch, "VCUR")
-        fillvalue_ucur <- ncdf4::ncatt_get(nc_ch, "UCUR", "_FillValue") 
-        fillvalue_vcur <- ncdf4::ncatt_get(nc_ch, "VCUR", "_FillValue") 
+        ucur <- ncvar_get(nc_ch, "UCUR")
+        vcur <- ncvar_get(nc_ch, "VCUR")
+        fillvalue_ucur <- ncatt_get(nc_ch, "UCUR", "_FillValue") 
+        fillvalue_vcur <- ncatt_get(nc_ch, "VCUR", "_FillValue") 
       }
       
       if(sensorType == "salinity"){
-        psal <- ncdf4::ncvar_get(nc_ch, "sea_water_practical_salinity")
-        fillvalue_psal <- ncdf4::ncatt_get(nc_ch, "sea_water_practical_salinity", "_FillValue") 
+        psal <- ncvar_get(nc_ch, "sea_water_practical_salinity")
+        fillvalue_psal <- ncatt_get(nc_ch, "sea_water_practical_salinity", "_FillValue") 
       }
       
       if(sensorType == "oxygen"){
-        mcDMO <- ncdf4::ncvar_get(nc_ch, "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water")
-        mOpum <- ncdf4::ncvar_get(nc_ch, "moles_of_oxygen_per_unit_mass_in_sea_water")
-        vcDMO <- ncdf4::ncvar_get(nc_ch, "volume_concentration_of_dissolved_molecular_oxygen_in_sea_water")
-        fillvalue_mcDMO <- ncdf4::ncatt_get(nc_ch, "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water", "_FillValue") 
-        fillvalue_mOpum <- ncdf4::ncatt_get(nc_ch, "moles_of_oxygen_per_unit_mass_in_sea_water, ", "_FillValue") 
-        fillvalue_vcDMO <- ncdf4::ncatt_get(nc_ch, "volume_concentration_of_dissolved_molecular_oxygen_in_sea_water, ", "_FillValue") 
+        mcDMO <- ncvar_get(nc_ch, "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water")
+        mOpum <- ncvar_get(nc_ch, "moles_of_oxygen_per_unit_mass_in_sea_water")
+        vcDMO <- ncvar_get(nc_ch, "volume_concentration_of_dissolved_molecular_oxygen_in_sea_water")
+        fillvalue_mcDMO <- ncatt_get(nc_ch, "mole_concentration_of_dissolved_molecular_oxygen_in_sea_water", "_FillValue") 
+        fillvalue_mOpum <- ncatt_get(nc_ch, "moles_of_oxygen_per_unit_mass_in_sea_water, ", "_FillValue") 
+        fillvalue_vcDMO <- ncatt_get(nc_ch, "volume_concentration_of_dissolved_molecular_oxygen_in_sea_water, ", "_FillValue") 
       }
       
       # Close the netcdf
-      ncdf4::nc_close(nc_ch)
+      nc_close(nc_ch)
       
       #Fill the NA values
       depth[depth == fillvalue_depth$value] <- NA

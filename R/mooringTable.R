@@ -1,7 +1,9 @@
 ##' @title Pull the Latest IMOS Moorings Dataset from the Server 
 ##' @description Uses a Web link to send a Web Feature Service (WFS) query directly to AODN geoserver
 ##' @param sensorType Character string containing name of mooring sensor to query. Can be "temperature" or "velocity"
+##' 
 ##' @return dataframe containing the locations of IMOS moorings as csv tibble
+##' 
 ##' @importFrom readr read_csv
 ##' @export
 

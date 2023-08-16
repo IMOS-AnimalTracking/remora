@@ -8,3 +8,14 @@
 ^docs$
 ^pkgdown$
 ^index\.md$
+^data\_testing$
+^data-raw$
+^imos\.cache$
+^rs\_salinity\_errorlog\.txt$
+^rs\_sst\_errorlog\.txt$
+^rs\_chl\_errorlog\.txt$
+^rs\_npp\_errorlog\.txt$
+^rs\_sst\_interpolated\_errorlog\.txt$
+^rs\_turbidity\_errorlog\.txt$
+^rs\_current\_errorlog\.txt$
+^QC\_errorlog\.txt$

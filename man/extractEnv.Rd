@@ -17,6 +17,7 @@ extractEnv(
   full_timeperiod = FALSE,
   fill_gaps = FALSE,
   buffer = NULL,
+  nrt = FALSE,
   output_format = "raster",
   .parallel = TRUE,
   .ncores = NULL
@@ -63,6 +64,12 @@ that fall within the buffer will be used if \code{fill_gaps = TRUE}. If \code{NU
 buffer will be chosen based on the resolution of environmental layer. A
 numeric value (in m) can be used here to customise buffer radius.}
 
+\item{nrt}{should Near Real-Time current data be used if Delayed-Mode current
+data is missing. Default is \code{FALSE}, in which case NA's are appended to current
+variables for years (currently, all years after 2020) when current data are
+missing. Note that Near Real-Time data are subject to less quality control
+than Delayed-Mode data.}
+
 \item{output_format}{File type for cached environmental layers. See
 \code{\link[raster]{writeFormats}}. The default format is 'raster'.}
 
@@ -99,14 +106,14 @@ available can be accessed using the \code{\link{imos_variables}} function.
 library(tidyverse)
 data("TownsvilleReefQC")
 
-## simplify & subset data for speed
+## simplify & subset data for example speed-up
 qc_data <- 
   TownsvilleReefQC \%>\% 
   unnest(cols = c(QC)) \%>\% 
   ungroup() \%>\% 
   filter(Detection_QC \%in\% c(1,2)) \%>\%
   filter(filename == unique(filename)[1]) \%>\%
-  slice(1:20)
+  slice(5:8)
 
 ## Extract daily interpolated sea surface temperature
 ## cache_layers & fill_gaps args set to FALSE for speed
@@ -119,7 +126,7 @@ data_with_sst <-
               cache_layers = FALSE,
               crop_layers = TRUE,
               full_timeperiod = FALSE,
-              fill_gaps = FALSE,
+              fill_gaps = TRUE,
               folder_name = "test",
               .parallel = FALSE)
 
