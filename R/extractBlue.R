@@ -10,7 +10,7 @@
 ##' @param datetime name of column with date time stamp (Coordinated Universal 
 ##' Time; UTC)
 ##' @param env_var variable needed from Bluelink. Options include ('ocean_temp', 'ocean_salt', 
-##' ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t')
+##' ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'air_wind')
 ##' @param extract_depth Bluelink data is 3D, so data can be obtained either at the water surface or at depth. Please
 ##' provide the depth of interest (between 0 and 4,509 m) as numeric and the function will automatically obtain the data at 
 ##' the nearest available layer. By default the data will be extracted at the water surface. 
@@ -110,9 +110,9 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
   if(!Y %in% colnames(df)){stop("Cannot find Y coordinate in dataset, provide column name where variable can be found")}
   if(!datetime %in% colnames(df)){stop("Cannot find datetime in dataset, provide column name where variable can be found")}
   if(!datetime %in% colnames(df)){stop("Cannot find date timestamp column in dataset, provide column name where variable can be found")}
-  if(!env_var %in% c('ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld')){
-    stop("Environmental variable not recognised, options include:\n'ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld'")}
-  if(length(env_var) > 1){stop("This function currently only supports extracting a single variable at a time. Please only select one of:\n'ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld'")}
+  if(!env_var %in% c('ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld', 'air_wind')){
+    stop("Environmental variable not recognised, options include:\n'ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld', 'air_wind'")}
+  if(length(env_var) > 1){stop("This function currently only supports extracting a single variable at a time. Please only select one of:\n'ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld', 'air_wind")}
   if(is.character(extract_depth)) {
     stop("Please provide the extract_depth argument as numeric")
   }
@@ -143,21 +143,44 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
     if (dir.exists(folder_name) == FALSE) 
       dir.create(folder_name)
     df$aux.date <- substr(df[,which(names(df) == datetime)], 1, 7)
-    if (var_name %in% names(df)) {
-      message(paste("The", var_name, "variable was found. Continuing data download."))
-      dates <- unique(df$aux.date[is.na(df[which(names(df) == var_name)])])  
+    if (env_var == "air_wind") {
+      if (c("wind_dir") %in% names(df)) {
+        message("Previous wind data found. Continuing data download.")
+        dates <- unique(df$aux.date[is.na(df[which(names(df) == "wind_dir")])])  
+      } else {
+        dates <- unique(df$aux.date)
+        df$wind_dir <- NA
+        df$wind_spe <- NA
+      }
     } else {
-      dates <- unique(df$aux.date)
-      df$Var <- NA
-      names(df)[length(names(df))] <- var_name
-    }
+      if (var_name %in% names(df)) {
+        message(paste("The", var_name, "variable was found. Continuing data download."))
+        dates <- unique(df$aux.date[is.na(df[which(names(df) == var_name)])])  
+      } else {
+        dates <- unique(df$aux.date)
+        df$Var <- NA
+        names(df)[length(names(df))] <- var_name
+      }
+    }    
   }
   # Download and extract variable:
   if (verbose) {
-    message(paste("Downloading and processing", var_name, "data:",
-      min(dates), "|", max(dates)))
+    if (env_var == "air_wind") {
+      message(paste("Downloading and processing wind data:",
+        min(dates), "|", max(dates)))
+    } else {
+      message(paste("Downloading and processing", var_name, "data:",
+        min(dates), "|", max(dates)))
+    }
     pb <-  txtProgressBar(min = 0, max = length(dates), initial = 0, style = 3, width = 60)
   }
+  # Change variables names for download
+  if (env_var == "air_wind") {
+    download.var <- "atm_flux_diag"
+  } else {
+    download.var <- env_var
+  }
+  # Processing begins
   for (i in 1:length(dates)) {
     # Download BRAN data
     options(timeout = 1000000000) # Increase timeout for slow internet connections
@@ -166,13 +189,18 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
       year = as.numeric(substr(aux.date, 1, 4)), 
       month = as.numeric(substr(aux.date, 6, 7)), 
       dir = folder_name, 
-      varname = env_var,
+      varname = download.var,
       quiet = TRUE)
     # Load BRAN data
     nc.bran <- terra::rast(
-      paste0(folder_name, "/", 
-      env_var, "_", substr(aux.date, 1, 4), "_", substr(aux.date, 6, 7), ".nc")) 
-    # Auxiliar object to find depth and day of interest (for 3D variables)
+        paste0(folder_name, "/", 
+        download.var, "_", substr(aux.date, 1, 4), "_", substr(aux.date, 6, 7), ".nc")) 
+    if (env_var == "air_wind") {
+      index <- which(substr(names(nc.bran), 1, 5) %in% 
+        c("u_atm", "v_atm"))
+      nc.bran <- nc.bran[[index]]
+    }
+    # Auxiliar object to find layers of interest 
     if (env_var == "ocean_temp")
       aux.names <- str_remove(names(nc.bran), pattern = "temp_st_ocean=")
     if (env_var == "ocean_salt")
@@ -185,6 +213,12 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
       aux.names <- str_remove(names(nc.bran), pattern = "eta_t_")
     if (env_var == "ocean_mld")
       aux.names <- str_remove(names(nc.bran), pattern = "mld_")
+    if (env_var == "air_wind") {
+      aux.names <- str_replace(names(nc.bran), pattern = "u_atm", 
+        replacement = "uatm")
+      aux.names <- str_replace(aux.names, pattern = "v_atm", 
+        replacement = "vatm")
+    }
     aux.names <- str_remove(aux.names, pattern = "Time=")
     aux.names <- str_split(aux.names, pattern = "_")          
     if (env_var %in% c("ocean_temp", "ocean_salt", "ocean_v", "ocean_u", "ocean_w")) {
@@ -192,17 +226,28 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
     } else {
       aux.depth <- 0
     }
-    aux.time <- NULL
-    for (size.depth in 1:length(aux.names)) {
-      if (env_var %in% c("ocean_temp", "ocean_salt", "ocean_v", "ocean_u", "ocean_w")) {
-        aux.depth <- c(aux.depth, aux.names[[size.depth]][1])
+    if (env_var == "air_wind") {
+      aux.time <- NULL
+      aux.var <- NULL
+      for (size.depth in 1:length(aux.names)) {
         aux.time <- c(aux.time, aux.names[[size.depth]][2]) 
-      } else {
-        aux.time <- c(aux.time, aux.names[[size.depth]][1]) 
+        aux.var <- c(aux.var, aux.names[[size.depth]][1])
       }
+      aux.names <- data.frame(Var = aux.var, Depth = as.numeric(aux.depth) * -1, Time = as.numeric(aux.time))
+      aux.names$Time <- as.Date("1979-01-01", tz = "UTC") + aux.names$Time 
+    } else {
+      aux.time <- NULL
+      for (size.depth in 1:length(aux.names)) {
+        if (env_var %in% c("ocean_temp", "ocean_salt", "ocean_v", "ocean_u", "ocean_w")) {
+          aux.depth <- c(aux.depth, aux.names[[size.depth]][1])
+          aux.time <- c(aux.time, aux.names[[size.depth]][2]) 
+        } else {
+          aux.time <- c(aux.time, aux.names[[size.depth]][1]) 
+        }
+      }
+      aux.names <- data.frame(Depth = as.numeric(aux.depth) * -1, Time = as.numeric(aux.time))
+      aux.names$Time <- as.Date("1979-01-01", tz = "UTC") + aux.names$Time
     }
-    aux.names <- data.frame(Depth = as.numeric(aux.depth) * -1, Time = as.numeric(aux.time))
-    aux.names$Time <- as.Date("1979-01-01", tz = "UTC") + aux.names$Time
     # Process data!
     if (full_timeperiod) { # Full timeperiod
       index.day <- which(df.all$aux.date == dates[i])
@@ -214,6 +259,7 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
           # Extract BRAN values
           index.layer <- which(aux.names$Depth == aux.day$Depth & aux.names$Time == aux.day$Time)
           aux.bran <- nc.bran[[index.layer]]
+          aux.bran <- invisible(terra::rotate(aux.bran))
           aux.val <- terra::extract(
             x = aux.bran, 
             y = df.all[index.day[ii], c("lon", "lat")])[1,2]
@@ -256,16 +302,39 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
     } else {  # Only tracking locations
       index.day <- which(df$aux.date == dates[i])
       for (ii in 1:length(index.day)) {
-        aux.day <- aux.names[which(as.character(aux.names$Time) == as.character(as.Date(df[index.day[ii], which(names(df) == datetime)], tz = "UTC"))),]
-        index.depth <- which.min(abs(aux.day$Depth - extract_depth))
-        aux.day <- aux.day[index.depth,]
+        if (env_var == "air_wind") {
+          aux.day <- aux.names[which(as.character(aux.names$Time) == as.character(as.Date(df[index.day[ii], which(names(df) == datetime)], tz = "UTC"))),]
+        } else {
+          aux.day <- aux.names[which(as.character(aux.names$Time) == as.character(as.Date(df[index.day[ii], which(names(df) == datetime)], tz = "UTC"))),]
+          index.depth <- which.min(abs(aux.day$Depth - extract_depth))
+          aux.day <- aux.day[index.depth,]
+        }     
         if (nrow(aux.day) > 0) {
           # Extract BRAN values
-          index.layer <- which(aux.names$Depth == aux.day$Depth & aux.names$Time == aux.day$Time)
-          aux.bran <- nc.bran[[index.layer]]
-          aux.val <- terra::extract(
-            x = aux.bran, 
-            y = df[index.day[ii], c(X, Y)])[1,2]
+          if (env_var == "air_wind") {
+            index.u <- which(aux.names$Var == "uatm" & aux.names$Depth == aux.day$Depth & aux.names$Time == aux.day$Time)
+            index.v <- which(aux.names$Var == "vatm" & aux.names$Depth == aux.day$Depth & aux.names$Time == aux.day$Time)
+            bran.u <- nc.bran[[index.u]]
+            bran.u <- invisible(terra::rotate(bran.u))
+            bran.v <- nc.bran[[index.v]]
+            bran.v <- invisible(terra::rotate(bran.v))
+            aux.u <- terra::extract(
+              x = bran.u, 
+              y = df[index.day[ii], c(X, Y)])[1,2]
+            aux.v <- terra::extract(
+              x = bran.v, 
+              y = df[index.day[ii], c(X, Y)])[1,2]
+            aux.dir <- round(windDir(u = aux.u, v = aux.v), 2)
+            aux.spe <- round(windSpd(u = aux.u, v = aux.v), 2)
+            aux.val <- c(aux.dir, aux.spe)
+          } else {
+            index.layer <- which(aux.names$Depth == aux.day$Depth & aux.names$Time == aux.day$Time)
+            aux.bran <- nc.bran[[index.layer]]
+            aux.bran <- invisible(terra::rotate(aux.bran))
+            aux.val <- terra::extract(
+              x = aux.bran, 
+              y = df[index.day[ii], c(X, Y)])[1,2]
+          }
           # Export processed netCDF if requested by user
           if (cache_layers == TRUE) {
             if (dir.exists(paste(folder_name, "cached", sep = "/")) == FALSE) 
@@ -275,14 +344,27 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
               max(df[,X]), 
               min(df[,Y]),
               max(df[,Y]))
-            aux.cache <- terra::crop(x = aux.bran,
-              y = aux.area)
-            terra::writeCDF(aux.cache, 
-              filename = paste0(folder_name, "/cached/", var_name, "_", aux.day$Time[1], ".nc"),
-              overwrite = TRUE)
+            if (env_var == "air_wind") {
+              aux.u <- terra::crop(x = bran.u,
+                y = aux.area)
+              aux.v <- terra::crop(x = bran.v,
+                y = aux.area)
+              terra::writeCDF(aux.u, 
+                filename = paste0(folder_name, "/cached/", "uwind_", aux.day$Time[1], ".nc"),
+                overwrite = TRUE)
+              terra::writeCDF(aux.v, 
+                filename = paste0(folder_name, "/cached/", "vwind_", aux.day$Time[1], ".nc"),
+                overwrite = TRUE)
+            } else {
+              aux.cache <- terra::crop(x = aux.bran,
+                y = aux.area)
+              terra::writeCDF(aux.cache, 
+                filename = paste0(folder_name, "/cached/", var_name, "_", aux.day$Time[1], ".nc"),
+                overwrite = TRUE)
+            }            
           }
           # Use buffer to fill NAs 
-          if (is.na(aux.val) & fill_gaps) {
+          if (is.na(aux.val[1]) & fill_gaps) {
             # Create point object and apply buffer
             pos_sf <- 
             df[index.day[ii], c(X, Y)] %>% 
@@ -302,7 +384,12 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
         }
         if (env_var %in% c('ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', "ocean_eta_t", "ocean_mld"))
           aux.day$Var <- round(aux.day$Var, 3)
-        df[index.day[ii], which(names(df) == var_name)] <- aux.day$Var
+        if (env_var == "air_wind") {
+          df[index.day[ii], which(names(df) == "wind_dir")] <- aux.dir
+          df[index.day[ii], which(names(df) == "wind_spe")] <- aux.spe
+        } else {
+          df[index.day[ii], which(names(df) == var_name)] <- aux.day$Var
+        }      
         gc()
       } 
     }
