@@ -145,7 +145,7 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
     df$aux.date <- substr(df[,which(names(df) == datetime)], 1, 7)
     if (env_var == "air_wind") {
       if (c("wind_dir") %in% names(df)) {
-        message("Previous wind data found. Continuing data download.")
+        message("Wind data was found. Continuing data download.")
         dates <- unique(df$aux.date[is.na(df[which(names(df) == "wind_dir")])])  
       } else {
         dates <- unique(df$aux.date)
