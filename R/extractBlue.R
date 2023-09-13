@@ -76,7 +76,7 @@
 ##'   ungroup() %>% 
 ##'   filter(Detection_QC %in% c(1,2)) %>%
 ##'   filter(filename == unique(filename)[1]) %>%
-##'   slice(1:20)
+##'   slice(5:8)
 ##' 
 ##' ## Extract daily interpolated sea surface temperature
 ##' ## cache_layers & fill_gaps args set to FALSE for speed
@@ -92,17 +92,33 @@
 ##'                fill_gaps = FALSE)
 ##'
 ##' @importFrom dplyr '%>%' mutate distinct pull left_join select
+##' @importFrom stringr str_remove str_split
 ##' @importFrom lubridate date 
 ##' @importFrom progressr with_progress
+##' @importFrom terra rast extract 'ext<-' crop writeCDF
+##' @importFrom sf st_as_sf st_buffer
+##' @importFrom utils write.csv txtProgressBar setTxtProgressBar
 ##'
 ##' @export
 ##'
  
-extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0, 
-  var_name = paste(env_var, extract_depth, sep = "_"), folder_name = "Bluelink", 
-  verbose = TRUE, cache_layers = FALSE, full_timeperiod = FALSE, station_name = NULL, 
-  fill_gaps = FALSE, buffer = 10000, 
-  export_step = TRUE, export_path = "Processed_data") {
+extractBlue <- function(df,
+                        X,
+                        Y,
+                        datetime,
+                        env_var,
+                        extract_depth = 0,
+                        var_name = paste(env_var, extract_depth, sep = "_"),
+                        folder_name = "Bluelink",
+                        verbose = TRUE,
+                        cache_layers = FALSE,
+                        full_timeperiod = FALSE,
+                        station_name = NULL,
+                        fill_gaps = FALSE,
+                        buffer = 10000,
+                        export_step = TRUE,
+                        export_path = "Processed_data") {
+  
   
   # Initial checks of parameters
   if (full_timeperiod & export_step){stop("'export_step' option is currently not available when full_timeperiod = TRUE. Please set export_step = FALSE.")}
@@ -192,6 +208,7 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
       varname = download.var,
       quiet = TRUE)
     # Load BRAN data
+
     nc.bran <- terra::rast(
         paste0(folder_name, "/", 
         download.var, "_", substr(aux.date, 1, 4), "_", substr(aux.date, 6, 7), ".nc")) 
@@ -200,7 +217,8 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
         c("u_atm", "v_atm"))
       nc.bran <- nc.bran[[index]]
     }
-    # Auxiliar object to find layers of interest 
+
+    # Auxiliary object to find depth and day of interest (for 3D variables)
     if (env_var == "ocean_temp")
       aux.names <- str_remove(names(nc.bran), pattern = "temp_st_ocean=")
     if (env_var == "ocean_salt")
@@ -265,14 +283,14 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
             y = df.all[index.day[ii], c("lon", "lat")])[1,2]
           # Export processed data if requested by user
           if (cache_layers == TRUE) {
-            aux.area <- terra::rast()
-            terra::ext(aux.area) <- c(min(df[,X]), 
+            aux.area <- rast()
+            ext(aux.area) <- c(min(df[,X]), 
               max(df[,X]), 
               min(df[,Y]),
               max(df[,Y]))
-            aux.cache <- terra::crop(x = aux.bran,
+            aux.cache <- crop(x = aux.bran,
               y = aux.area)
-            terra::writeCDF(aux.cache, 
+            writeCDF(aux.cache, 
               filename = paste0(folder_name, "/cached/", var_name, "_", aux.day$Time[1], ".nc"))
           }
           # Use buffer to fill NAs 
@@ -280,10 +298,10 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
             # Create point object and apply buffer
             pos_sf <- 
             df.all[index.day[ii], c("lon", "lat")] %>% 
-            sf::st_as_sf(coords = c(1,2), crs = 4326, remove = FALSE)
-            pos_sf <- sf::st_buffer(pos_sf, buffer)
+            st_as_sf(coords = c(1,2), crs = 4326, remove = FALSE)
+            pos_sf <- st_buffer(pos_sf, buffer)
             # Extract data from buffered points
-            aux.val <- terra::extract(x = aux.bran, y = pos_sf)
+            aux.val <- extract(x = aux.bran, y = pos_sf)
             names(aux.val)[2] <- "Buffer"
             aux.val <- aux.val %>%
               group_by(ID) %>%
@@ -339,8 +357,8 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
           if (cache_layers == TRUE) {
             if (dir.exists(paste(folder_name, "cached", sep = "/")) == FALSE) 
               dir.create(paste(folder_name, "cached", sep = "/"))
-            aux.area <- terra::rast()
-            terra::ext(aux.area) <- c(min(df[,X]), 
+            aux.area <- rast()
+            ext(aux.area) <- c(min(df[,X]), 
               max(df[,X]), 
               min(df[,Y]),
               max(df[,Y]))
@@ -368,10 +386,10 @@ extractBlue <- function(df, X, Y, datetime, env_var, extract_depth = 0,
             # Create point object and apply buffer
             pos_sf <- 
             df[index.day[ii], c(X, Y)] %>% 
-            sf::st_as_sf(coords = c(1,2), crs = 4326, remove = FALSE)
-            pos_sf <- sf::st_buffer(pos_sf, buffer)
+            st_as_sf(coords = c(1,2), crs = 4326, remove = FALSE)
+            pos_sf <- st_buffer(pos_sf, buffer)
             # Extract data from buffered points
-            aux.val <- terra::extract(x = aux.bran, y = pos_sf)
+            aux.val <- extract(x = aux.bran, y = pos_sf)
             names(aux.val)[2] <- "Buffer"
             aux.val <- aux.val %>%
               group_by(ID) %>%

@@ -19,3 +19,4 @@
 ^rs\_turbidity\_errorlog\.txt$
 ^rs\_current\_errorlog\.txt$
 ^QC\_errorlog\.txt$
+^Processed\_data\.csv$

@@ -46,7 +46,7 @@ NULL
 NULL
 
 ## stop R CMD check generating NOTES about global variables
-globalVariables(c(".", "start_dt", "end_dt", "year", "html", "type", "a", "fromdate", "todate", "median", 
+globalVariables(c(".", "ID", "Buffer", "start_dt", "end_dt", "year", "html", "type", "a", "fromdate", "todate", "median", 
                   "var_fill", "layer", "par_function", "receiver_name", "receiver_deployment_longitude",
                   "receiver_deployment_latitude", "receiver_deployment_datetime",
                   "installation_name","station_name","transmitter_id","species_common_name",
