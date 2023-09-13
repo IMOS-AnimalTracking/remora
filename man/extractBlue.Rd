@@ -35,7 +35,7 @@ date time field}
 Time; UTC)}
 
 \item{env_var}{variable needed from Bluelink. Options include ('ocean_temp', 'ocean_salt',
-ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t')}
+ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'air_wind')}
 
 \item{extract_depth}{Bluelink data is 3D, so data can be obtained either at the water surface or at depth. Please
 provide the depth of interest (between 0 and 4,509 m) as numeric and the function will automatically obtain the data at

@@ -18,8 +18,12 @@ dataDownload <- function(type, year, month = NULL, dir, varname, quiet = TRUE) {
   if (is.null(year)) {
     stop("Please provide a year of interest to download data.")
   }  
-  if(!varname %in% c('ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld')){
-      stop("Environmental variable not recognised, options include:\n'ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld'")}
+  if(!varname %in% c('ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld', 'atm_flux_diag')){
+      stop("Environmental variable not recognised, options include:\n'ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'ocean_mld', 'atm_flux_diag'")}
+  # Change variable name to download correct netCDF file from BRAN
+  if (varname %in% c('air_wind')) {
+    varname <- "atm_flux_diag"
+  }
   # Increase timeout for large file downloads and slow internet connexions
   options(timeout = 1000000000) 
   # Daily resolution
