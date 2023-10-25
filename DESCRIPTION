@@ -71,7 +71,6 @@ Imports:
     ncdf4,
     parallel,
     plotly,
-    plyr,
     purrr,
     RColorBrewer,
     R.utils,
@@ -85,8 +84,7 @@ Imports:
     xml2,
     htmlwidgets,
     terra (>= 1.7-30),
-    geodist (>= 0.0.8),
-    progressr
+    geodist (>= 0.0.8)
 Suggests: 
     colormap,
     crosstalk,

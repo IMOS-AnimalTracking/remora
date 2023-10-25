@@ -30,8 +30,7 @@
 ##' @importFrom leaflet markerClusterOptions
 ##' @importFrom RColorBrewer brewer.pal
 ##' @importFrom htmlwidgets saveWidget
-##' @importFrom dplyr '%>%' summarise left_join group_by bind_rows distinct
-##' @importFrom plyr ldply '.' ddply count
+##' @importFrom dplyr '%>%' summarise left_join group_by bind_rows distinct count
 ##' @importFrom grDevices extendrange
 ##' @importFrom utils browseURL
 ##'
@@ -106,14 +105,15 @@ plotQC <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		            start_dt = paste(start_dt, collapse = ", "),
 		            end_dt = paste(end_dt, collapse = ", "))
 		  
-		dataC <- count(data, vars = c('station_name',
-		                              'installation_name',
-		                              'receiver_deployment_longitude',
-		                              'receiver_deployment_latitude',
-		                              'Detection_QC'))
-		
-		binned_detects <- data.frame(dataC$freq,
-		                             bin=cut(dataC$freq,
+		dataC <- count(data, 
+		               station_name,
+		               installation_name,
+		               receiver_deployment_longitude,
+		               receiver_deployment_latitude,
+		               Detection_QC)
+
+		binned_detects <- data.frame(dataC$n,
+		                             bin=cut(dataC$n,
 		                                     c(0, 10, 100, 1000, 10000, 100000),
 		                                     include.lowest=TRUE))
 		
@@ -167,7 +167,7 @@ plotQC <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		                                   "Installation name:", dsub$installation_name, "<br>",
 		                                   "Longitude:", dsub$receiver_deployment_longitude, "<br>",
 		                                   "Latitude:", dsub$receiver_deployment_latitude, "<br>",
-		                                   "Number of detections:", dsub$freq, "<br>",
+		                                   "Number of detections:", dsub$n, "<br>",
 		                                   "Number of tags detected:", dsub$nT, "<br>",
 		                                   "Transmitter ID's:", dsub$transmitter_ids, "<br>",
 		                                   "First date by ID:", dsub$start_dt, "<br>",
@@ -194,7 +194,7 @@ plotQC <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 		                             "Installation name:", dsub$installation_name, "<br>",
 		                             "Longitude:", dsub$receiver_deployment_longitude, "<br>",
 		                             "Latitude:", dsub$receiver_deployment_latitude, "<br>",
-		                             "Number of detections:", dsub$freq, "<br>",
+		                             "Number of detections:", dsub$n, "<br>",
 		                             "Number of tags detected:", dsub$nT, "<br>",
 		                             "Transmitter ID's:", dsub$transmitter_ids, "<br>",
 		                             "First date by ID:", dsub$start_dt, "<br>",
@@ -245,7 +245,7 @@ plotQC <- function(x, path = NULL, pal = "PuOr", revpal = TRUE) {
 			                                   "Installation name:", dsub$installation_name, "<br>",
 			                                   "Longitude:", dsub$receiver_deployment_longitude, "<br>",
 			                                   "Latitude:", dsub$receiver_deployment_latitude, "<br>",
-			                                   "Number of detections:", dsub$freq, "<br>",
+			                                   "Number of detections:", dsub$n, "<br>",
 			                                   "Number of tags detected:", dsub$nT, "<br>",
 			                                   "Transmitter ID's:", dsub$transmitter_ids, "<br>",
 			                                   "First date by ID:", dsub$start_dt, "<br>",
