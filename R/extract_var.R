@@ -27,9 +27,16 @@
   pos_sf <- 
     unique_positions %>% 
     st_as_sf(coords = c(1,2), crs = 4326, remove = F) %>% 
-    mutate(layer = as.character(date)) %>%
-    st_transform(crs = st_crs(env_stack)$input)
+    mutate(layer = as.character(date))
   
+  if(length(env_stack) == 1) {
+    pos_sf <- pos_sf %>% 
+      st_transform(crs = st_crs(env_stack))
+  } else if(length(env_stack) > 1) {
+    # assumes all SpatRasters in stack have same crs
+    pos_sf <- pos_sf %>% 
+      st_transform(crs = st_crs(env_stack[[1]]))
+  } 
 
   ## Setup buffer for extractions when .fill_gaps = TRUE; 20km buffer for currents and 5km for others
   if(.fill_gaps){
