@@ -92,7 +92,7 @@
 ##'                fill_gaps = FALSE)
 ##'
 ##' @importFrom dplyr '%>%' mutate distinct pull left_join select
-##' @importFrom stringr str_remove str_split
+##' @importFrom stringr str_remove str_split str_replace
 ##' @importFrom lubridate date 
 ##' @importFrom terra rast extract 'ext<-' crop writeCDF
 ##' @importFrom sf st_as_sf st_buffer
