@@ -15,7 +15,7 @@
 ##' @return a dataframe with unique position, unique dates and extracted environmental variables 
 ##'
 ##' @importFrom dplyr '%>%' mutate case_when select
-##' @importFrom sf st_as_sf st_drop_geometry st_buffer
+##' @importFrom sf st_as_sf st_drop_geometry st_buffer st_transform st_crs
 ##' @importFrom terra extract ext time
 ##'
 ##' @keywords internal
@@ -27,7 +27,9 @@
   pos_sf <- 
     unique_positions %>% 
     st_as_sf(coords = c(1,2), crs = 4326, remove = F) %>% 
-    mutate(layer = as.character(date))
+    mutate(layer = as.character(date)) %>%
+    st_transform(crs = st_crs(env_stack)$input)
+  
 
   ## Setup buffer for extractions when .fill_gaps = TRUE; 20km buffer for currents and 5km for others
   if(.fill_gaps){
