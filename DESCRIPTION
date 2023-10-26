@@ -75,7 +75,7 @@ Imports:
     RColorBrewer,
     R.utils,
     readr,
-    sf (>= 1.0-10),
+    sf (>= 1.0-14),
     shiny,
     stringr,
     tibble,
