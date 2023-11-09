@@ -124,7 +124,7 @@ rec_meta <- grabQC(tag_qc, what = "rec_meta")
 meas <- grabQC(tag_qc, what = "meas")
 ```
 
-If a user wishes to work with a simple data.frame containing all the QC output then the nested tibble can be converted using `tidyr::unnest()` and `dplyr::ungroup()` as follows:
+If a user wishes to work with a simple data.frame containing all the QC output then the nested tibble can be converted to a flat file using `tidyr::unnest()` and `dplyr::ungroup()` as follows:
 
 ```{r unnest tag_qc, message=FALSE}
 require(tidyverse)
@@ -139,11 +139,12 @@ qc
 
 ## Visualising the QC'd detections
 
-The QC'd detections can be visualised as a map using the `plotQC()` function. By default, `plotQC()` produces a `.png` file for each species present in the data. The file(s) is/are named with the species' common name(s) and are written to the working directory. The file(s) can be saved elsewhere by supplying the `path` argument with a directory path (no filename). An error will be returned if the path does not exist. Alternatively, the maps can be sent to the graphics window by using `path = NULL`.
+The QC'd detections can be visualised as a map using the `plotQC()` function. Prior to `remora` version 0.8-0, `plotQC` generated a static map of detections categorised by QC flag. In version 0.8-0, `plotQC` is now interactive and renders by default (`path = NULL`) to a viewer window in RStudio. Other options to the `path` argument include `path = "wb"` which renders in the default web browser, if a valid file path is provided then the interactive map is saved as a self-contained .html file. Interactivity includes the ability to zoom in and out, and change which QC'd detections are displayed, map background layers, and colour scheme.
 
 ```{r plotQC, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 plotQC(tag_qc)
 ```
+
 ![ ](images/Bull_Shark.png)
 
 <br>
@@ -151,7 +152,7 @@ plotQC(tag_qc)
 ---------------------------------------
 
 **Vignette version**
-0.0.4 (05 Nov 2021)
+0.0.5 (09 Nov 2023)
 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
