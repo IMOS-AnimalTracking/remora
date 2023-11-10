@@ -139,7 +139,7 @@ qc
 
 ## Visualising the QC'd detections
 
-The QC'd detections can be visualised as a map using the `plotQC()` function. Prior to `remora` version 0.8-0, `plotQC` generated a static map of detections categorised by QC flag. In version 0.8-0, `plotQC` is now interactive and renders by default (`path = NULL`) to a viewer window in RStudio. Other options to the `path` argument include `path = "wb"` which renders in the default web browser, if a valid file path is provided then the interactive map is saved as a self-contained .html file. Interactivity includes the ability to zoom in and out, and change which QC'd detections are displayed, map background layers, and colour scheme.
+The QC'd detections can be visualised as a map using the `plotQC()` function. Prior to `remora` version 0.8-0, `plotQC` generated a static map of detections categorised by QC flag. In version 0.8-0, `plotQC` is now interactive and renders by default (`path = NULL`) to a viewer window in RStudio. Other options to the `path` argument include `path = "wb"` which renders in the default web browser, if a valid file path is provided then the interactive map is saved as a self-contained .html file. Interactivity includes the ability to zoom in and out to reveal more or less detail on the spatial distribution of detections, and change which QC'd detections are displayed, map background layers, and colour scheme.
 
 ```{r plotQC, eval=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 plotQC(tag_qc)
