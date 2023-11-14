@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -42,6 +42,9 @@
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -73,37 +76,52 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">extractMoor</span><span class="op">(</span>
-  <span class="va">trackingData</span>,
-  <span class="va">file_loc</span>,
-  sensorType <span class="op">=</span> <span class="st">"temperature"</span>,
-  timeMaxh <span class="op">=</span> <span class="cn">Inf</span>,
-  distMaxkm <span class="op">=</span> <span class="cn">Inf</span>,
-  targetDepthm <span class="op">=</span> <span class="cn">NA</span>,
-  scalc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"min"</span>, <span class="st">"max"</span>, <span class="st">"mean"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extractMoor</span><span class="op">(</span></span>
+<span>  <span class="va">trackingData</span>,</span>
+<span>  <span class="va">file_loc</span>,</span>
+<span>  sensorType <span class="op">=</span> <span class="st">"temperature"</span>,</span>
+<span>  timeMaxh <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  distMaxkm <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  targetDepthm <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  scalc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"min"</span>, <span class="st">"max"</span>, <span class="st">"mean"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>trackingData</dt>
 <dd><p>dataframe containing acoustic detection data in IMOS QC format with the <code>moor_site_code</code> next to it as generated using the <code>mooringDistance</code> function.</p></dd>
+
+
 <dt>file_loc</dt>
 <dd><p>character string describing folder location in which NetCDF files of mooring data have been saved after running mooringDownload function</p></dd>
+
+
 <dt>sensorType</dt>
 <dd><p>character string containing name of mooring sensor to query. Can be "temperature", "velocity" or "salinity".</p></dd>
+
+
 <dt>timeMaxh</dt>
 <dd><p>optional numeric string containing the maximum time threshold to merge detection and mooring sensor values.</p></dd>
+
+
 <dt>distMaxkm</dt>
 <dd><p>optional numeric string containing the maximum distance threshold in kilometers to include in output.</p></dd>
+
+
 <dt>targetDepthm</dt>
 <dd><p>extracts the nearest sensor to this depth value. if set as NA then all sensors returned for this timestamp at this mooring</p></dd>
+
+
 <dt>scalc</dt>
 <dd><p>select the lower or higher depth value when there are 2 options for sensors nearest the targetDepth provided. Users can also specify a mean or <code>NA</code> to return all sensor values.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>the <code>trackingData</code> dataframe as a nested tibble object with the sensor values from the nearest <code>moorLocations</code> that fall within the specified time, distance and depth thresholds.</p>
+    
+
+<p>the <code>trackingData</code> dataframe as a nested tibble object with the sensor values from the nearest <code>moorLocations</code> that fall within the specified time, distance and depth thresholds.</p>
     </div>
 
   </div>
@@ -114,11 +132,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

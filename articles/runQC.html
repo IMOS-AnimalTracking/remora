@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -61,6 +61,9 @@
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -84,11 +87,12 @@
 
       
 
-      </header><script src="runQC_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>runQC</h1>
-            <h3 data-toc-skip class="subtitle">Quality-controlling animal detections</h3>
+            <h3 data-toc-skip class="subtitle">Quality-controlling
+animal detections</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/IMOS-AnimalTracking/remora/blob/HEAD/vignettes/runQC.Rmd" class="external-link"><code>vignettes/runQC.Rmd</code></a></small>
@@ -99,155 +103,233 @@
     
     
 <hr>
-<p>The typical entry point to the <code>remora</code> package will be to apply quality control (QC) processes to acoustic telemetry detections data downloaded via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal Acoustic Telemetry Database</a>. The <code>remora</code> package uses the QC process described in <a href="https://www.nature.com/articles/sdata2017206" class="external-link">Hoenner et al. (2018)</a>, with necessary modifications to accommodate the IMOS database’s data and metadata formats. The QC workflow has been made as simple as possible, given the constraint of manually downloading the data and metadata prior to interaction with <code>remora</code>. This vignette describes the QC workflow.</p>
+<p>The typical entry point to the <code>remora</code> package will be to
+apply quality control (QC) processes to acoustic telemetry detections
+data downloaded via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal
+Acoustic Telemetry Database</a>. The <code>remora</code> package uses
+the QC process described in <a href="https://www.nature.com/articles/sdata2017206" class="external-link">Hoenner et
+al. (2018)</a>, with necessary modifications to accommodate the IMOS
+database’s data and metadata formats. The QC workflow has been made as
+simple as possible, given the constraint of manually downloading the
+data and metadata prior to interaction with <code>remora</code>. This
+vignette describes the QC workflow.</p>
 <div class="section level2">
 <h2 id="required-data">Required data<a class="anchor" aria-label="anchor" href="#required-data"></a>
 </h2>
-<p>Typically, users will download four <code>.csv</code> files via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal Acoustic Telemetry Database</a>:</p>
-<p><em>1. Transmitter detections data</em>, accessible via the <a href="https://animaltracking.aodn.org.au/detection" class="external-link">detections page</a></p>
-<p><em>2. Transmitter deployment metadata</em>, accessible via the <a href="https://animaltracking.aodn.org.au/transmitters/transmitter" class="external-link">transmitters page</a></p>
-<p><em>3. Receiver deployment metadata</em>, accessible via the <a href="https://animaltracking.aodn.org.au/receivers/deployment" class="external-link">receiver deployments page</a></p>
-<p><em>4. Animal measurements data</em>, downloaded along with either detections or transmitter deployment metadata</p>
+<p>Typically, users will download four <code>.csv</code> files via the
+<a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal
+Acoustic Telemetry Database</a>:</p>
+<p><em>1. Transmitter detections data</em>, accessible via the <a href="https://animaltracking.aodn.org.au/detection" class="external-link">detections
+page</a></p>
+<p><em>2. Transmitter deployment metadata</em>, accessible via the <a href="https://animaltracking.aodn.org.au/transmitters/transmitter" class="external-link">transmitters
+page</a></p>
+<p><em>3. Receiver deployment metadata</em>, accessible via the <a href="https://animaltracking.aodn.org.au/receivers/deployment" class="external-link">receiver
+deployments page</a></p>
+<p><em>4. Animal measurements data</em>, downloaded along with either
+detections or transmitter deployment metadata</p>
 <p><br></p>
-<p>Users will tell <code>remora</code> where to find these files by creating a <code>files</code> list as follows:</p>
+<p>Users will tell <code>remora</code> where to find these files by
+creating a <code>files</code> list as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>det <span class="op">=</span> <span class="st">"path_to/IMOS_detections.csv"</span>,
-              rmeta <span class="op">=</span> <span class="st">"path_to/IMOS_receiver_deployment_metadata.csv"</span>,
-              tmeta <span class="op">=</span> <span class="st">"path_to/IMOS_transmitter_deployment_metadata.csv"</span>,
-              meas <span class="op">=</span> <span class="st">"path_to/IMOS_animal_measurements.csv"</span><span class="op">)</span></code></pre></div>
-<p>The detections data, receiver and transmitter metadata files are required to enable the full QC process, however because of some redundancy in variables among the detections data and metadata files, a partial QC can be conducted when one or both metadata files are missing. In these latter cases, the path for a missing metadata file is set to <code>rmeta = NULL</code> and/or <code>tmeta = NULL</code>; a warning will be issued when the QC is run. Similarly, if no animal measurements data are present the path is set to <code>meas = NULL</code>. The presence or absence of this latter file does not affect the QC process.</p>
+<code class="sourceCode R"><span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>det <span class="op">=</span> <span class="st">"path_to/IMOS_detections.csv"</span>,</span>
+<span>              rmeta <span class="op">=</span> <span class="st">"path_to/IMOS_receiver_deployment_metadata.csv"</span>,</span>
+<span>              tmeta <span class="op">=</span> <span class="st">"path_to/IMOS_transmitter_deployment_metadata.csv"</span>,</span>
+<span>              meas <span class="op">=</span> <span class="st">"path_to/IMOS_animal_measurements.csv"</span><span class="op">)</span></span></code></pre></div>
+<p>The detections data, receiver and transmitter metadata files are
+required to enable the full QC process, however because of some
+redundancy in variables among the detections data and metadata files, a
+partial QC can be conducted when one or both metadata files are missing.
+In these latter cases, the path for a missing metadata file is set to
+<code>rmeta = NULL</code> and/or <code>tmeta = NULL</code>; a warning
+will be issued when the QC is run. Similarly, if no animal measurements
+data are present the path is set to <code>meas = NULL</code>. The
+presence or absence of this latter file does not affect the QC
+process.</p>
 <div class="section level4">
-<h4 id="what-if-my-tags-are-detected-across-many-reciever-array-projects">What if my tags are detected across many reciever array projects?<a class="anchor" aria-label="anchor" href="#what-if-my-tags-are-detected-across-many-reciever-array-projects"></a>
+<h4 id="what-if-my-tags-are-detected-across-many-reciever-array-projects">What if my tags are detected across many reciever array
+projects?<a class="anchor" aria-label="anchor" href="#what-if-my-tags-are-detected-across-many-reciever-array-projects"></a>
 </h4>
-<p>In situations where tagged animals may be detected across several receiver projects, we recommend downloading the entire IMOS receiver metadata file via the Web App. This file is relatively compact and the single download will save users time by not having to manually determine and download receiver metadata from many individual projects.</p>
+<p>In situations where tagged animals may be detected across several
+receiver projects, we recommend downloading the entire IMOS receiver
+metadata file via the Web App. This file is relatively compact and the
+single download will save users time by not having to manually determine
+and download receiver metadata from many individual projects.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="usage-of-the-runqc-function">Usage of the <code>runQC()</code> function<a class="anchor" aria-label="anchor" href="#usage-of-the-runqc-function"></a>
 </h2>
-<p>The primary function for conducting the QC is the <code><a href="../reference/runQC.html">runQC()</a></code> function. Let’s start with an example tagging project included in the <code>remora</code> package by first creating a <code>files</code> list:</p>
+<p>The primary function for conducting the QC is the
+<code><a href="../reference/runQC.html">runQC()</a></code> function. Let’s start with an example tagging
+project included in the <code>remora</code> package by first creating a
+<code>files</code> list:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>det <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_detections.csv"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,
-              rmeta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_receiver_deployment_metadata.csv"</span><span class="op">)</span>,
-                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,
-              tmeta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_transmitter_deployment_metadata.csv"</span><span class="op">)</span>,
-                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,
-              meas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_animal_measurements.csv"</span><span class="op">)</span>,
-                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>det <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_detections.csv"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,</span>
+<span>              rmeta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_receiver_deployment_metadata.csv"</span><span class="op">)</span>,</span>
+<span>                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,</span>
+<span>              tmeta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_transmitter_deployment_metadata.csv"</span><span class="op">)</span>,</span>
+<span>                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,</span>
+<span>              meas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_animal_measurements.csv"</span><span class="op">)</span>,</span>
+<span>                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>We invoke the QC using <code><a href="../reference/runQC.html">runQC()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tag_qc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/runQC.html">runQC</a></span><span class="op">(</span><span class="va">files</span>, .parallel <span class="op">=</span> <span class="cn">TRUE</span>, .progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<p>where the argument <code>.parallel = TRUE</code> runs the QC in parallel across the available number of processor cores - 2. This can be modified using the <code>.ncores</code> argument. If <code>.parallel = FALSE</code> then the QC is run sequentially, which can take considerable time but may be more efficient for projects with a small number of transmitters. The <code>.progress = FALSE</code> argument turns off the QC progress indicator, it is set to <code>TRUE</code> (turned on) by default but set to <code>FALSE</code> here to keep the vignette tidy.</p>
-<p>As part of the QC process, a logfile is generated by <code>runQC</code> to record common issues found in the data and/or metadata during the QC process. This logfile is saved to the working directory as <code>QC_logfile.txt</code>. Entries in the logfile provide some indication of a problem that the user may wish to explore and follow up as appropriate. An empty logfile indicates the QC process detected no common data issues, but this is not a guarantee that your data are problem-free! Simple issues, such as detection or receiver deployment latitudes in the northern hemisphere, are resolved automatically and corrected in the QC’d data output.</p>
+<code class="sourceCode R"><span><span class="va">tag_qc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/runQC.html">runQC</a></span><span class="op">(</span><span class="va">files</span>, .parallel <span class="op">=</span> <span class="cn">TRUE</span>, .progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>where the argument <code>.parallel = TRUE</code> runs the QC in
+parallel across the available number of processor cores - 2. This can be
+modified using the <code>.ncores</code> argument. If
+<code>.parallel = FALSE</code> then the QC is run sequentially, which
+can take considerable time but may be more efficient for projects with a
+small number of transmitters. The <code>.progress = FALSE</code>
+argument turns off the QC progress indicator, it is set to
+<code>TRUE</code> (turned on) by default but set to <code>FALSE</code>
+here to keep the vignette tidy.</p>
+<p>As part of the QC process, a logfile is generated by
+<code>runQC</code> to record common issues found in the data and/or
+metadata during the QC process. This logfile is saved to the working
+directory as <code>QC_logfile.txt</code>. Entries in the logfile provide
+some indication of a problem that the user may wish to explore and
+follow up as appropriate. An empty logfile indicates the QC process
+detected no common data issues, but this is not a guarantee that your
+data are problem-free! Simple issues, such as detection or receiver
+deployment latitudes in the northern hemisphere, are resolved
+automatically and corrected in the QC’d data output.</p>
 <p><br></p>
 <div class="section level3">
 <h3 id="accessing-the-qcd-data-and-metadata">Accessing the QC’d data and metadata<a class="anchor" aria-label="anchor" href="#accessing-the-qcd-data-and-metadata"></a>
 </h3>
-<p>The QC output object <code>tag_qc</code> is a nested tibble with each row corresponding to an individual animal using the <code>transmitter_id</code>, <code>tag_id</code> and <code>tag_deployment_id</code> as a unique identifier:</p>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 5 × 2</span></span>
-<span class="co">## <span style="color: #949494;"># Rowwise:  filename</span></span>
-<span class="co">##   filename                                          QC</span>
-<span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                            <span style="color: #949494; font-style: italic;">&lt;list&lt;tibble[,54]&gt;&gt;</span></span>
-<span class="co">## <span style="color: #BCBCBC;">1</span> A69-9002-13807_69918686_69918684          <span style="color: #949494;">[173 × 54]</span></span>
-<span class="co">## <span style="color: #BCBCBC;">2</span> A69-9002-13809_77523181_77523186           <span style="color: #949494;">[84 × 54]</span></span>
-<span class="co">## <span style="color: #BCBCBC;">3</span> A69-9002-13824_93016177_93016182           <span style="color: #949494;">[77 × 54]</span></span>
-<span class="co">## <span style="color: #BCBCBC;">4</span> A69-9002-14762_43669513_43669944           <span style="color: #949494;">[60 × 54]</span></span>
-<span class="co">## <span style="color: #BCBCBC;">5</span> A69-9002-14765_43669525_43669972          <span style="color: #949494;">[203 × 54]</span></span></code></pre>
-<p>The <code>QC</code> list variable contains the QC’d detections data and metadata for each individual deployment. The utility function <code><a href="../reference/grabQC.html">grabQC()</a></code> provides a simple method to extract manageable segments of the QC output for subsequent review and analysis. For example, we can grab only the basic detection data with the QC flags and then filter the detections to retain only those flagged as ‘valid’ or ‘likely valid’:</p>
+<p>The QC output object <code>tag_qc</code> is a nested tibble with each
+row corresponding to an individual animal using the
+<code>transmitter_id</code>, <code>tag_id</code> and
+<code>tag_deployment_id</code> as a unique identifier:</p>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># Rowwise:  filename</span></span></span>
+<span><span class="co">##   filename                                          QC</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                            <span style="color: #949494; font-style: italic;">&lt;list&lt;tibble[,54]&gt;&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> A69-9002-13807_69918686_69918684          <span style="color: #949494;">[173 × 54]</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> A69-9002-13809_77523181_77523186           <span style="color: #949494;">[84 × 54]</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> A69-9002-13824_93016177_93016182           <span style="color: #949494;">[77 × 54]</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> A69-9002-14762_43669513_43669944           <span style="color: #949494;">[60 × 54]</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> A69-9002-14765_43669525_43669972          <span style="color: #949494;">[203 × 54]</span></span></span></code></pre>
+<p>The <code>QC</code> list variable contains the QC’d detections data
+and metadata for each individual deployment. The utility function
+<code><a href="../reference/grabQC.html">grabQC()</a></code> provides a simple method to extract manageable
+segments of the QC output for subsequent review and analysis. For
+example, we can grab only the basic detection data with the QC flags and
+then filter the detections to retain only those flagged as ‘valid’ or
+‘likely valid’:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dQC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"dQC"</span>, flag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"valid"</span>,<span class="st">"likely valid"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">dQC</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 597 × 22</span></span>
-<span class="co">##    transmitter_id   tag_id transmitter_deploy… tagging_project… species_common_…</span>
-<span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="co">## <span style="color: #BCBCBC;"> 1</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 2</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 3</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 4</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 5</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 6</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 7</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 8</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 9</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;">10</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #949494;"># … with 587 more rows, and 17 more variables: species_scientific_name &lt;chr&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   detection_datetime &lt;dttm&gt;, receiver_deployment_longitude &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   receiver_deployment_latitude &lt;dbl&gt;, transmitter_sensor_raw_value &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   installation_name &lt;chr&gt;, station_name &lt;chr&gt;, receiver_name &lt;chr&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   receiver_deployment_id &lt;dbl&gt;, FDA_QC &lt;dbl&gt;, Velocity_QC &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   Distance_QC &lt;dbl&gt;, DetectionDistribution_QC &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   DistanceRelease_QC &lt;dbl&gt;, ReleaseDate_QC &lt;dbl&gt;, ReleaseLocation_QC &lt;dbl&gt;, …</span></span></code></pre>
+<code class="sourceCode R"><span><span class="va">dQC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"dQC"</span>, flag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"valid"</span>,<span class="st">"likely valid"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dQC</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 597 × 22</span></span></span>
+<span><span class="co">##    transmitter_id   tag_id transmitter_deployment_id tagging_project_name</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 587 more rows</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 18 more variables: species_common_name &lt;chr&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   species_scientific_name &lt;chr&gt;, detection_datetime &lt;dttm&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   receiver_deployment_longitude &lt;dbl&gt;, receiver_deployment_latitude &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   transmitter_sensor_raw_value &lt;dbl&gt;, installation_name &lt;chr&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   station_name &lt;chr&gt;, receiver_name &lt;chr&gt;, receiver_deployment_id &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   FDA_QC &lt;dbl&gt;, Velocity_QC &lt;dbl&gt;, Distance_QC &lt;dbl&gt;, …</span></span></span></code></pre>
 <p>or, to return all detection regardless of QC flag:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dQC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"dQC"</span><span class="op">)</span>
-<span class="va">dQC</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 597 × 22</span></span>
-<span class="co">##    transmitter_id   tag_id transmitter_deploy… tagging_project… species_common_…</span>
-<span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="co">## <span style="color: #BCBCBC;"> 1</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 2</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 3</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 4</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 5</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 6</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 7</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 8</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;"> 9</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #BCBCBC;">10</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686            69<span style="text-decoration: underline;">918</span>684 Townsville Reefs Bull Shark      </span>
-<span class="co">## <span style="color: #949494;"># … with 587 more rows, and 17 more variables: species_scientific_name &lt;chr&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   detection_datetime &lt;dttm&gt;, receiver_deployment_longitude &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   receiver_deployment_latitude &lt;dbl&gt;, transmitter_sensor_raw_value &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   installation_name &lt;chr&gt;, station_name &lt;chr&gt;, receiver_name &lt;chr&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   receiver_deployment_id &lt;dbl&gt;, FDA_QC &lt;dbl&gt;, Velocity_QC &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   Distance_QC &lt;dbl&gt;, DetectionDistribution_QC &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   DistanceRelease_QC &lt;dbl&gt;, ReleaseDate_QC &lt;dbl&gt;, ReleaseLocation_QC &lt;dbl&gt;, …</span></span></code></pre>
-<p>The <code>dQC</code> object can form the basis for subsequent annotation with environmental data (see <code><a href="../articles/extractEnv.html">vignette('extractEnv')</a></code>; and <code><a href="../articles/extractMoor.html">vignette('extractMoor')</a></code>) and analysis.</p>
-<p>The metadata and animal measurements associated with QC’d detections can also be extracted in a compact form (without duplication of records):</p>
+<code class="sourceCode R"><span><span class="va">dQC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"dQC"</span><span class="op">)</span></span>
+<span><span class="va">dQC</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 597 × 22</span></span></span>
+<span><span class="co">##    transmitter_id   tag_id transmitter_deployment_id tagging_project_name</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A69-9002-13807 69<span style="text-decoration: underline;">918</span>686                  69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 587 more rows</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 18 more variables: species_common_name &lt;chr&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   species_scientific_name &lt;chr&gt;, detection_datetime &lt;dttm&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   receiver_deployment_longitude &lt;dbl&gt;, receiver_deployment_latitude &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   transmitter_sensor_raw_value &lt;dbl&gt;, installation_name &lt;chr&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   station_name &lt;chr&gt;, receiver_name &lt;chr&gt;, receiver_deployment_id &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   FDA_QC &lt;dbl&gt;, Velocity_QC &lt;dbl&gt;, Distance_QC &lt;dbl&gt;, …</span></span></span></code></pre>
+<p>The <code>dQC</code> object can form the basis for subsequent
+annotation with environmental data (see
+<code><a href="../articles/extractEnv.html">vignette('extractEnv')</a></code>; and
+<code><a href="../articles/extractMoor.html">vignette('extractMoor')</a></code>) and analysis.</p>
+<p>The metadata and animal measurements associated with QC’d detections
+can also be extracted in a compact form (without duplication of
+records):</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tag_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"tag_meta"</span><span class="op">)</span>
-<span class="va">rec_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"rec_meta"</span><span class="op">)</span>
-<span class="va">meas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"meas"</span><span class="op">)</span></code></pre></div>
-<p>If a user wishes to work with a simple data.frame containing all the QC output then the nested tibble can be converted using <code><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">tidyr::unnest()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::ungroup()</a></code> as follows:</p>
+<code class="sourceCode R"><span><span class="va">tag_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"tag_meta"</span><span class="op">)</span></span>
+<span><span class="va">rec_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"rec_meta"</span><span class="op">)</span></span>
+<span><span class="va">meas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">tag_qc</span>, what <span class="op">=</span> <span class="st">"meas"</span><span class="op">)</span></span></code></pre></div>
+<p>If a user wishes to work with a simple data.frame containing all the
+QC output then the nested tibble can be converted to a flat file using
+<code><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">tidyr::unnest()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::ungroup()</a></code> as
+follows:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
-<span class="va">qc</span> <span class="op">&lt;-</span> <span class="va">tag_qc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">QC</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="va">qc</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 597 × 55</span></span>
-<span class="co">##    filename              transmitter_id tag_id transmitter_dep… tagging_project…</span>
-<span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
-<span class="co">## <span style="color: #BCBCBC;"> 1</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #BCBCBC;"> 2</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #BCBCBC;"> 3</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #BCBCBC;"> 4</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #BCBCBC;"> 5</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #BCBCBC;"> 6</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #BCBCBC;"> 7</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #BCBCBC;"> 8</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #BCBCBC;"> 9</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #BCBCBC;">10</span> A69-9002-13807_69918… A69-9002-13807 6.99<span style="color: #949494;">e</span>7         69<span style="text-decoration: underline;">918</span>684 Townsville Reefs</span>
-<span class="co">## <span style="color: #949494;"># … with 587 more rows, and 50 more variables: species_common_name &lt;chr&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   species_scientific_name &lt;chr&gt;, CAAB_species_id &lt;int&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   WORMS_species_aphia_id &lt;int&gt;, animal_sex &lt;chr&gt;, detection_datetime &lt;dttm&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   receiver_deployment_longitude &lt;dbl&gt;, receiver_deployment_latitude &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   receiver_project_name &lt;chr&gt;, installation_name &lt;chr&gt;, station_name &lt;chr&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   receiver_name &lt;chr&gt;, receiver_id &lt;int&gt;, receiver_deployment_id &lt;dbl&gt;,</span></span>
-<span class="co">## <span style="color: #949494;">#   receiver_depth &lt;dbl&gt;, purchasing_organisation &lt;chr&gt;, …</span></span></code></pre>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="va">qc</span> <span class="op">&lt;-</span> <span class="va">tag_qc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">QC</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">qc</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 597 × 55</span></span></span>
+<span><span class="co">##    filename    transmitter_id tag_id transmitter_deployme…¹ tagging_project_name</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> A69-9002-1… A69-9002-13807 6.99<span style="color: #949494;">e</span>7               69<span style="text-decoration: underline;">918</span>684 Townsville Reefs    </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 587 more rows</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ abbreviated name: ¹​transmitter_deployment_id</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 50 more variables: species_common_name &lt;chr&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   species_scientific_name &lt;chr&gt;, CAAB_species_id &lt;int&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   WORMS_species_aphia_id &lt;int&gt;, animal_sex &lt;chr&gt;, detection_datetime &lt;dttm&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   receiver_deployment_longitude &lt;dbl&gt;, receiver_deployment_latitude &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   receiver_project_name &lt;chr&gt;, installation_name &lt;chr&gt;, station_name &lt;chr&gt;, …</span></span></span></code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="visualising-the-qcd-detections">Visualising the QC’d detections<a class="anchor" aria-label="anchor" href="#visualising-the-qcd-detections"></a>
 </h3>
-<p>The QC’d detections can be visualised as a map using the <code><a href="../reference/plotQC.html">plotQC()</a></code> function. By default, <code><a href="../reference/plotQC.html">plotQC()</a></code> produces a <code>.png</code> file for each species present in the data. The file(s) is/are named with the species’ common name(s) and are written to the working directory. The file(s) can be saved elsewhere by supplying the <code>path</code> argument with a directory path (no filename). An error will be returned if the path does not exist. Alternatively, the maps can be sent to the graphics window by using <code>path = NULL</code>.</p>
+<p>The QC’d detections can be visualised as a map using the
+<code><a href="../reference/plotQC.html">plotQC()</a></code> function. Prior to <code>remora</code> version
+0.8-0, <code>plotQC</code> generated a static map of detections
+categorised by QC flag. In version 0.8-0, <code>plotQC</code> is now
+interactive and renders by default (<code>path = NULL</code>) to a
+viewer window in RStudio. Other options to the <code>path</code>
+argument include <code>path = "wb"</code> which renders in the default
+web browser, if a valid file path is provided then the interactive map
+is saved as a self-contained .html file. Interactivity includes the
+ability to zoom in and out to reveal more or less detail on the spatial
+distribution of detections, and change which QC’d detections are
+displayed, map background layers, and colour scheme.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plotQC.html">plotQC</a></span><span class="op">(</span><span class="va">tag_qc</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotQC.html">plotQC</a></span><span class="op">(</span><span class="va">tag_qc</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/Bull_Shark.png"></p>
 <p><br></p>
 <hr>
-<p><strong>Vignette version</strong> 0.0.4 (05 Nov 2021)</p>
+<p><strong>Vignette version</strong> 0.0.5 (09 Nov 2023)</p>
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;">
 
 </div>
@@ -267,12 +349,12 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+<p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

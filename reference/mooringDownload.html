@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -42,6 +42,9 @@
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -73,31 +76,44 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">mooringDownload</span><span class="op">(</span>
-  <span class="va">moor_site_codes</span>,
-  <span class="va">fromWeb</span>,
-  sensorType <span class="op">=</span> <span class="st">"temperature"</span>,
-  itimeout <span class="op">=</span> <span class="fl">240</span>,
-  <span class="va">file_loc</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mooringDownload</span><span class="op">(</span></span>
+<span>  <span class="va">moor_site_codes</span>,</span>
+<span>  <span class="va">fromWeb</span>,</span>
+<span>  sensorType <span class="op">=</span> <span class="st">"temperature"</span>,</span>
+<span>  itimeout <span class="op">=</span> <span class="fl">240</span>,</span>
+<span>  <span class="va">file_loc</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>moor_site_codes</dt>
 <dd><p>character vector of the name(s) of the desired mooring(s) (updated from moorID to match download file)</p></dd>
+
+
 <dt>fromWeb</dt>
 <dd><p>logical string detailing whether or no the netCDF should be downloaded from the web or uploaded from a saved file location</p></dd>
+
+
 <dt>sensorType</dt>
 <dd><p>character string detailing which sensor value we are interested in. Can be "temperature", "velocity", "salinity or "oxygen"."</p></dd>
+
+
 <dt>itimeout</dt>
 <dd><p>integer value for number of seconds we are willing to wait before timeout to download netcdf from the web. Defaults to 60</p></dd>
+
+
 <dt>file_loc</dt>
 <dd><p>character string for the location of the saved files</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The <code>moorData</code> dataframe with the sensor information time series for a given <code>site_code</code></p>
+    
+
+<p>The <code>moorData</code> dataframe with the sensor information time series for a given <code>site_code</code></p>
+
+
     </div>
 
   </div>
@@ -108,11 +124,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

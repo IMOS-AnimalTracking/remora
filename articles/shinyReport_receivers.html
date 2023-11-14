@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -61,6 +61,9 @@
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -84,11 +87,12 @@
 
       
 
-      </header><script src="shinyReport_receivers_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>shinyReport_receivers</h1>
-            <h3 data-toc-skip class="subtitle">Data Visualisations: Receiver Array Report</h3>
+            <h3 data-toc-skip class="subtitle">Data Visualisations:
+Receiver Array Report</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/IMOS-AnimalTracking/remora/blob/HEAD/vignettes/shinyReport_receivers.Rmd" class="external-link"><code>vignettes/shinyReport_receivers.Rmd</code></a></small>
@@ -99,56 +103,115 @@
     
     
 <hr>
-<p>The <code>remora</code> package includes statistics and data visualisations for acoustic telemetry <strong>receiver array</strong> and <strong>tagging</strong> projects. The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function allows users to create an interactive data report for their projects, which comprises a range of visualisations and analytical tools to aid data exploration and project management. The resulting plots and tables can be downloaded for further use and analysis. This interactive report is an exploratory tool and should not be considered an extensive analysis toolkit.</p>
-<p>Currently, the focus of the <code>remora</code> package is to integrate animal telemetry data and oceanographic observations collated by Australia’s <a href="https://imos.org.au" class="external-link">Integrated Marine Observing System</a>. Therefore, the geographical scope of available datasets is currently restricted to the Australasia region. <br></p>
+<p>The <code>remora</code> package includes statistics and data
+visualisations for acoustic telemetry <strong>receiver array</strong>
+and <strong>tagging</strong> projects. The <code><a href="../reference/shinyReport.html">shinyReport()</a></code>
+function allows users to create an interactive data report for their
+projects, which comprises a range of visualisations and analytical tools
+to aid data exploration and project management. The resulting plots and
+tables can be downloaded for further use and analysis. This interactive
+report is an exploratory tool and should not be considered an extensive
+analysis toolkit.</p>
+<p>Currently, the focus of the <code>remora</code> package is to
+integrate animal telemetry data and oceanographic observations collated
+by Australia’s <a href="https://imos.org.au" class="external-link">Integrated Marine Observing
+System</a>. Therefore, the geographical scope of available datasets is
+currently restricted to the Australasia region. <br></p>
 <hr>
 <div class="section level2">
 <h2 id="receiver-array-report">Receiver Array Report<a class="anchor" aria-label="anchor" href="#receiver-array-report"></a>
 </h2>
-<p>The receiver array report provides users with basic summary statistics and data visualisations for their acoustic telemetry receiver array project. When called, the function produces an interactive Shiny App that will open in the user’s default internet browser.</p>
+<p>The receiver array report provides users with basic summary
+statistics and data visualisations for their acoustic telemetry receiver
+array project. When called, the function produces an interactive Shiny
+App that will open in the user’s default internet browser.</p>
 <div class="section level3">
 <h3 id="run-shiny-app">Run Shiny App<a class="anchor" aria-label="anchor" href="#run-shiny-app"></a>
 </h3>
-<p>The <code>remora</code> package should be installed prior to calling the functions described in this vignette.</p>
-<p>The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function requires the user to specify the type of report to produce. Two options are available depending on whether the user wishes to produce a report for their receiver array project (<code>receivers</code>) or tagging project (<code>transmitters</code>).</p>
-<p>This vignette describes the receiver array (<code>receivers</code>) report.</p>
+<p>The <code>remora</code> package should be installed prior to calling
+the functions described in this vignette.</p>
+<p>The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function requires the user to specify
+the type of report to produce. Two options are available depending on
+whether the user wishes to produce a report for their receiver array
+project (<code>receivers</code>) or tagging project
+(<code>transmitters</code>).</p>
+<p>This vignette describes the receiver array (<code>receivers</code>)
+report.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/IMOS-AnimalTracking/remora/" class="external-link">"remora"</a></span><span class="op">)</span>
-<span class="fu"><a href="../reference/shinyReport.html">shinyReport</a></span><span class="op">(</span><span class="st">"receivers"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/IMOS-AnimalTracking/remora/" class="external-link">"remora"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/shinyReport.html">shinyReport</a></span><span class="op">(</span><span class="st">"receivers"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
-<p>The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function will generate a pop-up window enabling the user to navigate and select the detections data .CSV file for the receiver array project of their choice. Once this file is loaded, another pop-up window will appear prompting the user to select the corresponding receiver deployment metadata file. <em>Note: the pop-up windows appear in the background of RStudio for some OS.</em></p>
+<p>The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function will generate a pop-up window
+enabling the user to navigate and select the detections data .CSV file
+for the receiver array project of their choice. Once this file is
+loaded, another pop-up window will appear prompting the user to select
+the corresponding receiver deployment metadata file. <em>Note: the
+pop-up windows appear in the background of RStudio for some OS.</em></p>
 <p><img src="images/receiver_report/select_detections.png"></p>
 <p><img src="images/receiver_report/select_receiver_metadata.png"></p>
-<p>These files can be accessed via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal Acoustic Telemetry Database</a>.</p>
-<p>For the detections file, the user can access the <a href="https://animaltracking.aodn.org.au/detection" class="external-link">Detections tab</a>, filter by “Receiver Deployment Project Name”, and download the data.</p>
+<p>These files can be accessed via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal
+Acoustic Telemetry Database</a>.</p>
+<p>For the detections file, the user can access the <a href="https://animaltracking.aodn.org.au/detection" class="external-link">Detections tab</a>,
+filter by “Receiver Deployment Project Name”, and download the data.</p>
 <p><img src="images/receiver_report/detections-webapp.png"><br><br></p>
-<p>For the receiver metadata file, the user can access the <a href="https://animaltracking.aodn.org.au/receivers/deployment" class="external-link">Receiver Deployments tab</a>, filter by the same project selected above, and download the data.</p>
+<p>For the receiver metadata file, the user can access the <a href="https://animaltracking.aodn.org.au/receivers/deployment" class="external-link">Receiver
+Deployments tab</a>, filter by the same project selected above, and
+download the data.</p>
 <p><img src="images/receiver_report/receivers-webapp.png"><br></p>
-<p>Alternatively, the user can select their own data, previously formatted to match the IMOS database output format.</p>
-<p>In this vignette, multi-year and multi-species data from the IMOS Heron Island receiver array project are presented as an example.</p>
+<p>Alternatively, the user can select their own data, previously
+formatted to match the IMOS database output format.</p>
+<p>In this vignette, multi-year and multi-species data from the IMOS
+Heron Island receiver array project are presented as an example.</p>
 </div>
 <div class="section level3">
 <h3 id="detections-map">Detections map<a class="anchor" aria-label="anchor" href="#detections-map"></a>
 </h3>
-<p><br> Map of the detections recorded at each station in the receiver array. The user can select different datasets to overlay on the map including the number of detections, transmitters or species detected. Additionally, the date range can be modified with the time slider on the left panel. Hovering on the markers reveals pop-up text including the station name, installation name, number of detections, number of species, number of transmitters and the coordinates of the receiver station.</p>
+<p><br> Map of the detections recorded at each station in the receiver
+array. The user can select different datasets to overlay on the map
+including the number of detections, transmitters or species detected.
+Additionally, the date range can be modified with the time slider on the
+left panel. Hovering on the markers reveals pop-up text including the
+station name, installation name, number of detections, number of
+species, number of transmitters and the coordinates of the receiver
+station.</p>
 <p><br></p>
 <p><img src="images/receiver_report/detections_map.png"></p>
 </div>
 <div class="section level3">
 <h3 id="detections-overview">Detections overview<a class="anchor" aria-label="anchor" href="#detections-overview"></a>
 </h3>
-<p><br> Bar plot presenting the number of detections recorded at each station, colour-coded according to the different species detected in the array. The user can filter by station and/or species to explore patterns in the data. Hovering on each bar will reveal additional information including the station name, species common name and number of detections recorded.</p>
-<p>The plot can be saved by clicking on the camera icon in the top right corner.</p>
-<p>The summary table on the left panel summarises the number of detections per species per station within the receiver array. This summary table is refreshed as the user selects different filter options. This table can be saved as .CSV, Excel or .PDF file by clicking on the respective buttons.</p>
+<p><br> Bar plot presenting the number of detections recorded at each
+station, colour-coded according to the different species detected in the
+array. The user can filter by station and/or species to explore patterns
+in the data. Hovering on each bar will reveal additional information
+including the station name, species common name and number of detections
+recorded.</p>
+<p>The plot can be saved by clicking on the camera icon in the top right
+corner.</p>
+<p>The summary table on the left panel summarises the number of
+detections per species per station within the receiver array. This
+summary table is refreshed as the user selects different filter options.
+This table can be saved as .CSV, Excel or .PDF file by clicking on the
+respective buttons.</p>
 <p><br></p>
 <p><img src="images/receiver_report/detections_overview.png"></p>
 </div>
 <div class="section level3">
 <h3 id="transmitters-overview">Transmitters overview<a class="anchor" aria-label="anchor" href="#transmitters-overview"></a>
 </h3>
-<p><br> Bar plot presenting the number of transmitters detected at each receiver station, colour-coded by according to the different species detected in the array. The user can filter by station and/or species, as required. Hovering on each bar will reveal additional information including the station name, species common name and number of transmitters detected.</p>
-<p>The plot can be saved by clicking on the camera icon in the top right corner.</p>
-<p>The summary table on the left panel summarises the number of transmitters detected per species at per station. When the user selects different filters the summary table will be modified accordingly. This table can be saved as .CSV, Excel or .PDF by clicking on the respective buttons.</p>
+<p><br> Bar plot presenting the number of transmitters detected at each
+receiver station, colour-coded by according to the different species
+detected in the array. The user can filter by station and/or species, as
+required. Hovering on each bar will reveal additional information
+including the station name, species common name and number of
+transmitters detected.</p>
+<p>The plot can be saved by clicking on the camera icon in the top right
+corner.</p>
+<p>The summary table on the left panel summarises the number of
+transmitters detected per species at per station. When the user selects
+different filters the summary table will be modified accordingly. This
+table can be saved as .CSV, Excel or .PDF by clicking on the respective
+buttons.</p>
 <p><br></p>
 <p><img src="images/receiver_report/transmitters_overview.png"></p>
 </div>
@@ -158,15 +221,30 @@
 <div class="section level4">
 <h4 id="detections-per-station">Detections per station<a class="anchor" aria-label="anchor" href="#detections-per-station"></a>
 </h4>
-<p><br> Scatter plot presenting the number of detections per day recorded at a receiver station, colour-coded according to the receiver deployed. The user can filter by installation, station, month and/or species to explore patterns in the data. Additionally, the user can select a different timezone (default timezone is UTC; <span style="color: red;"> WARNING modifying the timezone may incur some delays to update the plot</span>).Hovering on the data points reveals additional information including the date, number of detections recorded and the receiver name.</p>
-<p>The plot can be saved by clicking on the camera icon in the top right corner.</p>
+<p><br> Scatter plot presenting the number of detections per day
+recorded at a receiver station, colour-coded according to the receiver
+deployed. The user can filter by installation, station, month and/or
+species to explore patterns in the data. Additionally, the user can
+select a different timezone (default timezone is UTC; <span style="color: red;"> WARNING modifying the timezone may incur some
+delays to update the plot</span>).Hovering on the data points reveals
+additional information including the date, number of detections recorded
+and the receiver name.</p>
+<p>The plot can be saved by clicking on the camera icon in the top right
+corner.</p>
 <p><br><img src="images/receiver_report/detections_per_station.png"></p>
 </div>
 <div class="section level4">
 <h4 id="detections-per-hour">Detections per hour<a class="anchor" aria-label="anchor" href="#detections-per-hour"></a>
 </h4>
-<p><br> Box plot presenting the number of detections recorded per hour. The user can filter by installation, station, month and/or species. Additionally, the user can select a different timezone (default timezone is UTC; <span style="color: red;"> WARNING modifying the timezone may incur some delays to update the plot</span>).Hovering on the plot will reveal additional information including the maximum value, upper fence, Q3, median and Q1.</p>
-<p>The plot can be saved by clicking on the camera icon in the top right corner.</p>
+<p><br> Box plot presenting the number of detections recorded per hour.
+The user can filter by installation, station, month and/or species.
+Additionally, the user can select a different timezone (default timezone
+is UTC; <span style="color: red;"> WARNING modifying the timezone may
+incur some delays to update the plot</span>).Hovering on the plot will
+reveal additional information including the maximum value, upper fence,
+Q3, median and Q1.</p>
+<p>The plot can be saved by clicking on the camera icon in the top right
+corner.</p>
 <p><br><img src="images/receiver_report/detections_per_hour.png"></p>
 </div>
 </div>
@@ -174,49 +252,82 @@
 <h3 id="array-performance">Array performance<a class="anchor" aria-label="anchor" href="#array-performance"></a>
 </h3>
 <p><br></p>
-<p>Plot of the Station Efficiency Index, modified from <a href="https://doi.org/10.1016/j.fishres.2018.09.015" class="external-link">Ellis et al. (2019)</a> and based on the <a href="https://resonate.readthedocs.io/en/latest/receiver_efficiency_index.html" class="external-link">resonATe toolkit</a>. This index assesses the performance of a station in the context of the entire receiver array. Values range from 0 to 1, with higher values indicating higher performance.</p>
+<p>Plot of the Station Efficiency Index, modified from <a href="https://doi.org/10.1016/j.fishres.2018.09.015" class="external-link">Ellis et
+al. (2019)</a> and based on the <a href="https://resonate.readthedocs.io/en/latest/receiver_efficiency_index.html" class="external-link">resonATe
+toolkit</a>. This index assesses the performance of a station in the
+context of the entire receiver array. Values range from 0 to 1, with
+higher values indicating higher performance.</p>
 <p><span class="math display">\[
-SEI = \frac{T_s}{T_a} \cdot \frac{S_s}{S_a} \cdot \frac{DD_s}{DD_a} \cdot \frac{D_a}{D_s}
+SEI = \frac{T_s}{T_a} \cdot \frac{S_s}{S_a} \cdot \frac{DD_s}{DD_a}
+\cdot \frac{D_a}{D_s}
 \]</span> Where:</p>
 <ul>
 <li>
-<span class="math inline">\(SEI\)</span> = Station Efficiency Index</li>
+<span class="math inline">\(SEI\)</span> = Station Efficiency
+Index</li>
 <li>
-<span class="math inline">\(T_s\)</span> = Number of tags detected on the station for the date range selected</li>
+<span class="math inline">\(T_s\)</span> = Number of tags detected
+on the station for the date range selected</li>
 <li>
-<span class="math inline">\(T_a\)</span> = Number of tags detected across all stations for the date range selected</li>
+<span class="math inline">\(T_a\)</span> = Number of tags detected
+across all stations for the date range selected</li>
 <li>
-<span class="math inline">\(S_s\)</span> = Number of species detected on the station for the date range selected</li>
+<span class="math inline">\(S_s\)</span> = Number of species
+detected on the station for the date range selected</li>
 <li>
-<span class="math inline">\(S_a\)</span> = Number of species detected across all stations for the date range selected</li>
+<span class="math inline">\(S_a\)</span> = Number of species
+detected across all stations for the date range selected</li>
 <li>
-<span class="math inline">\(DD_s\)</span> = Number of unique days with detections for the station and date range selected</li>
+<span class="math inline">\(DD_s\)</span> = Number of unique days
+with detections for the station and date range selected</li>
 <li>
-<span class="math inline">\(DD_a\)</span> = Number of unique days for the date range selected</li>
+<span class="math inline">\(DD_a\)</span> = Number of unique days
+for the date range selected</li>
 <li>
-<span class="math inline">\(D_a\)</span> = Number of days for the date range selected</li>
+<span class="math inline">\(D_a\)</span> = Number of days for the
+date range selected</li>
 <li>
-<span class="math inline">\(D_s\)</span> = Number of days that the station was active*</li>
+<span class="math inline">\(D_s\)</span> = Number of days that the
+station was active*</li>
 </ul>
 <p>*<em>Note:</em></p>
 <ul>
-<li><p><em>If the station was active for more days than the date range selected</em> <span class="math inline">\(D_a = D_s\)</span></p></li>
-<li><p><em>If the station was active before the date range selected, the start date of</em> <span class="math inline">\(D_s\)</span> <em>will be the same as the start date for</em> <span class="math inline">\(D_a\)</span></p></li>
-<li><p><em>If the station was active until after the end date for the date range selected, the end date of</em> <span class="math inline">\(D_s\)</span> <em>will be the same as the end date for</em> <span class="math inline">\(D_a\)</span></p></li>
+<li><p><em>If the station was active for more days than the date range
+selected</em> <span class="math inline">\(D_a = D_s\)</span></p></li>
+<li><p><em>If the station was active before the date range selected, the
+start date of</em> <span class="math inline">\(D_s\)</span> <em>will be
+the same as the start date for</em> <span class="math inline">\(D_a\)</span></p></li>
+<li><p><em>If the station was active until after the end date for the
+date range selected, the end date of</em> <span class="math inline">\(D_s\)</span> <em>will be the same as the end date
+for</em> <span class="math inline">\(D_a\)</span></p></li>
 </ul>
 <p><br></p>
-<p>The user can filter by installation and date range (i.e. days where the station was considered active). Hovering on the plot will reveal additional information including the value of the index for each station. The plot can be saved by clicking on the camera icon in the top right corner.</p>
-<p>The table on the left panel summarises the names of the receivers deployed at each station for the installation and date range selected. This table can be saved as .CSV, Excel or .PDF by clicking on the respective buttons.</p>
+<p>The user can filter by installation and date range (i.e. days where
+the station was considered active). Hovering on the plot will reveal
+additional information including the value of the index for each
+station. The plot can be saved by clicking on the camera icon in the top
+right corner.</p>
+<p>The table on the left panel summarises the names of the receivers
+deployed at each station for the installation and date range selected.
+This table can be saved as .CSV, Excel or .PDF by clicking on the
+respective buttons.</p>
 <p><br></p>
 <p><img src="images/receiver_report/array_performance.png"></p>
-<p><em>Note: To explore and visualise data relative to a tagging project, head over to the <a href="shinyReport_transmitters.html">shinyReport_transmitters vignette</a></em></p>
+<p><em>Note: To explore and visualise data relative to a tagging
+project, head over to the <a href="shinyReport_transmitters.html">shinyReport_transmitters
+vignette</a></em></p>
 </div>
 <div class="section level3">
 <h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h3>
 <ol style="list-style-type: decimal">
-<li><p>Ellis, R.D., Flaherty-Walia, K.E., Collins, A.B., Bickford, J.W., Boucek, R., Walters Burnsed S.L., Lowerre-Barbieri, S.K. (2019) Acoustic telemetry array evolution: From species- and project-specific designs to large-scale, multispecies, cooperative networks. Fisheries Research (209): 186-195. <a href="https://doi.org/10.1016/j.fishres.2018.09.015" class="external-link uri">https://doi.org/10.1016/j.fishres.2018.09.015</a></p></li>
-<li><p>IMOS (2021). Animal Tracking Database. <a href="https://animaltracking.aodn.org.au" class="external-link uri">https://animaltracking.aodn.org.au</a>. Accessed: 2021-10-11.</p></li>
+<li><p>Ellis, R.D., Flaherty-Walia, K.E., Collins, A.B., Bickford, J.W.,
+Boucek, R., Walters Burnsed S.L., Lowerre-Barbieri, S.K. (2019) Acoustic
+telemetry array evolution: From species- and project-specific designs to
+large-scale, multispecies, cooperative networks. Fisheries Research
+(209): 186-195. <a href="https://doi.org/10.1016/j.fishres.2018.09.015" class="external-link uri">https://doi.org/10.1016/j.fishres.2018.09.015</a></p></li>
+<li><p>IMOS (2021). Animal Tracking Database. <a href="https://animaltracking.aodn.org.au" class="external-link uri">https://animaltracking.aodn.org.au</a>. Accessed:
+2021-10-11.</p></li>
 </ol>
 <p><br></p>
 <p><strong>Vignette version</strong> 0.0.5 (5 Nov 2021)</p>
@@ -239,12 +350,12 @@ SEI = \frac{T_s}{T_a} \cdot \frac{S_s}{S_a} \cdot \frac{DD_s}{DD_a} \cdot \frac{
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+<p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

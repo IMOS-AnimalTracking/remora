@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -42,6 +42,9 @@
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -73,42 +76,61 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotDT</span><span class="op">(</span>
-  <span class="va">moorData</span>,
-  <span class="va">moorName</span>,
-  dateStart <span class="op">=</span> <span class="cn">NULL</span>,
-  dateEnd <span class="op">=</span> <span class="cn">NULL</span>,
-  varName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span>, <span class="st">"vcur"</span>, <span class="st">"ucur"</span>, <span class="st">"psal"</span><span class="op">)</span>,
-  trackingData <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">speciesID</span>,
-  IDtype <span class="op">=</span> <span class="st">"CAAB"</span>,
-  detStart <span class="op">=</span> <span class="cn">NULL</span>,
-  detEnd <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotDT</span><span class="op">(</span></span>
+<span>  <span class="va">moorData</span>,</span>
+<span>  <span class="va">moorName</span>,</span>
+<span>  dateStart <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dateEnd <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  varName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span>, <span class="st">"vcur"</span>, <span class="st">"ucur"</span>, <span class="st">"psal"</span><span class="op">)</span>,</span>
+<span>  trackingData <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">speciesID</span>,</span>
+<span>  IDtype <span class="op">=</span> <span class="st">"CAAB"</span>,</span>
+<span>  detStart <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  detEnd <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>moorData</dt>
 <dd><p>Dataframe containing the sensor data from a single IMOS mooring.</p></dd>
+
+
 <dt>moorName</dt>
 <dd><p>Character string specifying mooring name using IMOS ID code.</p></dd>
+
+
 <dt>dateStart</dt>
 <dd><p>Optional character string of start date of date range of mooring data to plot, as "YYYY-MM-DD"</p></dd>
+
+
 <dt>dateEnd</dt>
 <dd><p>Optional character string of end date of date range of mooring data to plot, as "YYYY-MM-DD"</p></dd>
+
+
 <dt>varName</dt>
 <dd><p>Character string of mooring sensor variable of interest. Can be "temperature", "ucur" for meridional (u) velocity, "vcur" for zonal (v) velocity</p></dd>
+
+
 <dt>trackingData</dt>
 <dd><p>Dataframe containing tag detections data to plot. Takes output from getDistance() function as input. Set as NULL for a base plot with no detections.</p></dd>
+
+
 <dt>speciesID</dt>
 <dd><p>Character string describing species or tag identifier.</p></dd>
+
+
 <dt>IDtype</dt>
 <dd><p>Character string describing type of species or tag identifier. Can be CAAB code, tag ID, common name or scientific name. Must match identifier in detections dataset.</p></dd>
+
+
 <dt>detStart</dt>
 <dd><p>Optional character string of start date of date range of detections data to overlay on depth-time plot.</p></dd>
+
+
 <dt>detEnd</dt>
 <dd><p>Optional character string of end date of date range of detections data to overlay on depth-time plot.</p></dd>
+
 </dl></div>
 
   </div>
@@ -119,11 +141,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

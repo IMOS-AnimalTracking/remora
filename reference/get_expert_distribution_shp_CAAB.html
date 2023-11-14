@@ -19,7 +19,7 @@ http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx"><!-- mathjax -
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -28,7 +28,7 @@ http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx"><!-- mathjax -
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -44,6 +44,9 @@ http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx"><!-- mathjax -
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -77,7 +80,7 @@ http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_expert_distribution_shp_CAAB</span><span class="op">(</span><span class="va">CAAB_species_id</span>, <span class="va">spe</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_expert_distribution_shp_CAAB</span><span class="op">(</span><span class="va">CAAB_species_id</span>, <span class="va">spe</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -85,18 +88,32 @@ http://www.marine.csiro.au/datacentre/caab/caab_dump_latest.xlsx</p>
     <dl><dt>CAAB_species_id</dt>
 <dd><p>CAAB id of species for which a distribution shapefile
 is required</p></dd>
+
+
 <dt>spe</dt>
 <dd><p>species scientific name</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>shp is a SpatialPolygons object of the species' distribution</p>
+    
+
+<p>shp is a multipolygon sf data.frame object of the species' distribution</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>For a few species acoustically tagged no shapefile exists.</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># example code</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">TownsvilleReefQC</span><span class="op">$</span><span class="va">QC</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">expert_shp</span> <span class="op">&lt;-</span> <span class="fu">get_expert_distribution_shp_CAAB</span><span class="op">(</span>CAAB_species_id <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">CAAB_species_id</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, </span></span>
+<span class="r-in"><span>spe <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">species_scientific_name</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
@@ -105,11 +122,11 @@ is required</p></dd>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

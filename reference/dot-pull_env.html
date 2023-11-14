@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -42,6 +42,9 @@
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -73,46 +76,71 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">.pull_env</span><span class="op">(</span>
-  <span class="va">dates</span>,
-  <span class="va">study_extent</span>,
-  <span class="va">var_name</span>,
-  folder_name <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">.cache</span>,
-  <span class="va">.crop</span>,
-  .output_format <span class="op">=</span> <span class="st">"raster"</span>,
-  .parallel <span class="op">=</span> <span class="cn">TRUE</span>,
-  .ncores <span class="op">=</span> <span class="cn">NULL</span>,
-  verbose <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.pull_env</span><span class="op">(</span></span>
+<span>  <span class="va">dates</span>,</span>
+<span>  <span class="va">study_extent</span>,</span>
+<span>  <span class="va">var_name</span>,</span>
+<span>  folder_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">.cache</span>,</span>
+<span>  <span class="va">.crop</span>,</span>
+<span>  .nrt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  .output_format <span class="op">=</span> <span class="st">"raster"</span>,</span>
+<span>  .parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .ncores <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>dates</dt>
 <dd><p>detection data source in data frame with at the minimum a X, Y and date time field</p></dd>
+
+
 <dt>study_extent</dt>
-<dd><p>raster Extent object defining the study area from which environmental data should be cropped</p></dd>
+<dd><p><code><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">terra::ext</a></code> object defining the study area from which environmental data should be cropped</p></dd>
+
+
 <dt>var_name</dt>
 <dd><p>variable needed options include current options ('rs_sst', 'rs_sst_interpolated',
 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land')</p></dd>
+
+
 <dt>folder_name</dt>
 <dd><p>name of folder within 'imos.cache' where downloaded rasters should be saved.
 default NULL produces automatic folder names based on study extent</p></dd>
+
+
 <dt>.cache</dt>
 <dd><p>should the extracted environmental data be cached within the working directory?</p></dd>
+
+
 <dt>.crop</dt>
 <dd><p>should the extracted environmental data be cropped to within the study site</p></dd>
+
+
+<dt>.nrt</dt>
+<dd><p>should NRT Ocean Current data be used if DM data is not available for certain years?</p></dd>
+
+
 <dt>.output_format</dt>
 <dd><p>File type for cached environmental layers. See <code><a href="https://rdrr.io/pkg/raster/man/writeFormats.html" class="external-link">writeFormats</a></code>. The default format is 'raster'.</p></dd>
+
+
 <dt>.parallel</dt>
-<dd><p>should the environmental data download be conducted in parallel to speed up the process?</p></dd>
+<dd><p>should the environmental data download be conducted in parallel to speed up the process? Currently, parallel processing
+is only supported when downloading 'rs_current' data.</p></dd>
+
+
 <dt>.ncores</dt>
 <dd></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a raster stack object with daily spatial environmental layers associated with detection dates</p>
+    
+
+<p>a SpatRaster object with daily spatial environmental layers associated with detection dates</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -127,11 +155,11 @@ default NULL produces automatic folder names based on study extent</p></dd>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

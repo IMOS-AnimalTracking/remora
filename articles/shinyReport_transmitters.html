@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -61,6 +61,9 @@
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -84,11 +87,12 @@
 
       
 
-      </header><script src="shinyReport_transmitters_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>shinyReport_transmitters</h1>
-            <h3 data-toc-skip class="subtitle">Visualisations: Tagging Project</h3>
+            <h3 data-toc-skip class="subtitle">Visualisations: Tagging
+Project</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/IMOS-AnimalTracking/remora/blob/HEAD/vignettes/shinyReport_transmitters.Rmd" class="external-link"><code>vignettes/shinyReport_transmitters.Rmd</code></a></small>
@@ -99,36 +103,71 @@
     
     
 <hr>
-<p>The <code>remora</code> package includes statistics and data visualisations for acoustic telemetry <strong>receiver array</strong> and <strong>tagging</strong> projects. The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function allows users to create an interactive data report for their projects, which comprises a range of visualisations and analytical tools to aid data exploration and project management. The resulting plots and tables can be downloaded for further use and analysis. This interactive report is an exploratory tool and should not be considered an extensive analysis toolkit.</p>
-<p>Currently, the focus of the <code>remora</code> package is to integrate animal telemetry data and oceanographic observations collated by Australia’s <a href="https://imos.org.au" class="external-link">Integrated Marine Observing System</a>. Therefore, the geographical scope of available datasets is currently restricted to the Australasia region. <br></p>
+<p>The <code>remora</code> package includes statistics and data
+visualisations for acoustic telemetry <strong>receiver array</strong>
+and <strong>tagging</strong> projects. The <code><a href="../reference/shinyReport.html">shinyReport()</a></code>
+function allows users to create an interactive data report for their
+projects, which comprises a range of visualisations and analytical tools
+to aid data exploration and project management. The resulting plots and
+tables can be downloaded for further use and analysis. This interactive
+report is an exploratory tool and should not be considered an extensive
+analysis toolkit.</p>
+<p>Currently, the focus of the <code>remora</code> package is to
+integrate animal telemetry data and oceanographic observations collated
+by Australia’s <a href="https://imos.org.au" class="external-link">Integrated Marine Observing
+System</a>. Therefore, the geographical scope of available datasets is
+currently restricted to the Australasia region. <br></p>
 <hr>
 <div class="section level2">
 <h2 id="tagging-project">Tagging Project<a class="anchor" aria-label="anchor" href="#tagging-project"></a>
 </h2>
-<p>The tagging report provides users with basic summary statistics and data visualisations for their acoustic telemetry tagging project. When called, the function produces an interactive Shiny App that will open in the user’s default internet browser.</p>
+<p>The tagging report provides users with basic summary statistics and
+data visualisations for their acoustic telemetry tagging project. When
+called, the function produces an interactive Shiny App that will open in
+the user’s default internet browser.</p>
 <div class="section level3">
 <h3 id="run-shiny-app">Run Shiny App<a class="anchor" aria-label="anchor" href="#run-shiny-app"></a>
 </h3>
-<p><br> The <code>remora</code> package should be installed prior to calling the functions described in this vignette.</p>
-<p>The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function requires the user to specify the type of report to produce. Two options are available depending on whether the user wishes to produce a report for their receiver array project (<code>receivers</code>) or tagging project (<code>transmitters</code>).</p>
-<p>This vignette describes the tagging project (<code>transmitters</code>) report.</p>
+<p><br> The <code>remora</code> package should be installed prior to
+calling the functions described in this vignette.</p>
+<p>The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function requires the user to specify
+the type of report to produce. Two options are available depending on
+whether the user wishes to produce a report for their receiver array
+project (<code>receivers</code>) or tagging project
+(<code>transmitters</code>).</p>
+<p>This vignette describes the tagging project
+(<code>transmitters</code>) report.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/IMOS-AnimalTracking/remora/" class="external-link">"remora"</a></span><span class="op">)</span>
-<span class="fu"><a href="../reference/shinyReport.html">shinyReport</a></span><span class="op">(</span><span class="st">"transmitters"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/IMOS-AnimalTracking/remora/" class="external-link">"remora"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/shinyReport.html">shinyReport</a></span><span class="op">(</span><span class="st">"transmitters"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
-<p>The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function will generate a pop-up window enabling the user to navigate and select the detections data .CSV file for the receiver array project of their choice. <em>Note: the pop-up window appears in the background of RStudio for some OS.</em></p>
+<p>The <code><a href="../reference/shinyReport.html">shinyReport()</a></code> function will generate a pop-up window
+enabling the user to navigate and select the detections data .CSV file
+for the receiver array project of their choice. <em>Note: the pop-up
+window appears in the background of RStudio for some OS.</em></p>
 <p><img src="images/transmitter_report/select-detections.png"></p>
-<p>The detections file can be accessed via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal Acoustic Telemetry Database</a>. For this, the user can navigate to the <a href="https://animaltracking.aodn.org.au/detection" class="external-link">Detections tab</a>, filter the data by “Tag project name”, and download the detections.</p>
+<p>The detections file can be accessed via the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal
+Acoustic Telemetry Database</a>. For this, the user can navigate to the
+<a href="https://animaltracking.aodn.org.au/detection" class="external-link">Detections
+tab</a>, filter the data by “Tag project name”, and download the
+detections.</p>
 <p><img src="images/transmitter_report/detections-webapp.png"><br></p>
-<p>Alternatively, the user can select their own data, previously formatted to match the IMOS database output format.</p>
-<p>In this vignette, a sample dataset from the Townsville Reefs project (Heupel et al. 2021) archived in the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal Acoustic Telemetry Database</a> is presented.</p>
+<p>Alternatively, the user can select their own data, previously
+formatted to match the IMOS database output format.</p>
+<p>In this vignette, a sample dataset from the Townsville Reefs project
+(Heupel et al. 2021) archived in the <a href="https://animaltracking.aodn.org.au" class="external-link">IMOS Australian Animal
+Acoustic Telemetry Database</a> is presented.</p>
 </div>
 <div class="section level3">
 <h3 id="transmitter-deployments">Transmitter deployments<a class="anchor" aria-label="anchor" href="#transmitter-deployments"></a>
 </h3>
 <p><br></p>
-<p>Map showcasing the locations of transmitter deployments associated with the selected tagging project, colour-coded by species. The user can filter according to the species and/or date of the transmitter deployment.</p>
-<p>Hovering on the markers will reveal additional information including the transmitter ID, species common name and deployment coordinates.</p>
+<p>Map showcasing the locations of transmitter deployments associated
+with the selected tagging project, colour-coded by species. The user can
+filter according to the species and/or date of the transmitter
+deployment.</p>
+<p>Hovering on the markers will reveal additional information including
+the transmitter ID, species common name and deployment coordinates.</p>
 <p><br></p>
 <p><img src="images/transmitter_report/transmitter_deployments.png"></p>
 </div>
@@ -136,21 +175,37 @@
 <h3 id="transmitter-detections">Transmitter detections<a class="anchor" aria-label="anchor" href="#transmitter-detections"></a>
 </h3>
 <p><br></p>
-<p>Bar plot presenting the number of detections recorded per transmitter, colour-coded by species. The user can filter by transmitter ID and/or species. Hovering on the bars will reveal additional information including the species common name and number of detections recorded. The plot can be downloaded by clicking on the camera icon in the top right corner.</p>
-<p>The table on the left panel summarises the number of detections per transmitter per species. This summary table can be downloaded as a .CSV, Excel or .PDF file by clicking on the respective buttons.</p>
+<p>Bar plot presenting the number of detections recorded per
+transmitter, colour-coded by species. The user can filter by transmitter
+ID and/or species. Hovering on the bars will reveal additional
+information including the species common name and number of detections
+recorded. The plot can be downloaded by clicking on the camera icon in
+the top right corner.</p>
+<p>The table on the left panel summarises the number of detections per
+transmitter per species. This summary table can be downloaded as a .CSV,
+Excel or .PDF file by clicking on the respective buttons.</p>
 <p><br></p>
 <p><img src="images/transmitter_report/transmitter_detections.png"></p>
 </div>
 <div class="section level3">
 <h3 id="detections-over-time">Detections over time<a class="anchor" aria-label="anchor" href="#detections-over-time"></a>
 </h3>
-<p>This tab comprises an interactive abacus plot as well as a connectivity plot allowing the exploration of transmitter detections through time. Users can filter both plots according to the transmitter ID(s) and date range of interest. A warning message will appear if the date is out of range.</p>
+<p>This tab comprises an interactive abacus plot as well as a
+connectivity plot allowing the exploration of transmitter detections
+through time. Users can filter both plots according to the transmitter
+ID(s) and date range of interest. A warning message will appear if the
+date is out of range.</p>
 <div class="section level4">
 <h4 id="abacus-plot">Abacus plot<a class="anchor" aria-label="anchor" href="#abacus-plot"></a>
 </h4>
 <p><br></p>
-<p>Interactive plot of the detections over time for the selected transmitter(s), colour-coded according to the receiver installation they were detected at. Hovering on the plot will reveal additional information including the detection date, number of detections, species common name and transmitter ID.</p>
-<p>The plot can be saved by clicking on the camera icon in the top right corner of the plot.</p>
+<p>Interactive plot of the detections over time for the selected
+transmitter(s), colour-coded according to the receiver installation they
+were detected at. Hovering on the plot will reveal additional
+information including the detection date, number of detections, species
+common name and transmitter ID.</p>
+<p>The plot can be saved by clicking on the camera icon in the top right
+corner of the plot.</p>
 <p><br></p>
 <p><img src="images/transmitter_report/abacus_plot.png"></p>
 </div>
@@ -158,30 +213,59 @@
 <h4 id="connectivity-plot">Connectivity plot<a class="anchor" aria-label="anchor" href="#connectivity-plot"></a>
 </h4>
 <p><br></p>
-<p>The connectivity plot represents movements recorded between receiver stations visited by the selected transmitter(s), coloured by the different installations in the dataset. Each node represents a station in the array, and the connections between the nodes describe the movement of the tagged animal between each station. The size of the node indicates the number of detections recorded by the station for the transmitter(s) selected.</p>
+<p>The connectivity plot represents movements recorded between receiver
+stations visited by the selected transmitter(s), coloured by the
+different installations in the dataset. Each node represents a station
+in the array, and the connections between the nodes describe the
+movement of the tagged animal between each station. The size of the node
+indicates the number of detections recorded by the station for the
+transmitter(s) selected.</p>
 <p>The plot can be saved by clicking on the “Download plot” button.</p>
 <p><br></p>
-<p><img src="images/transmitter_report/connectivity_plot.png"><em>Note: Since the connectivity plot is represented in a one-dimensional layout, it does not provide the overall structure of the network.</em></p>
-<p><span style="color: red;"> Warning: if the tagging project presents a high number of detections, it may incur some delays to load the plot. To avoid this, select a transmitter before clicking on the Connectivity plot tab.</span></p>
+<p><img src="images/transmitter_report/connectivity_plot.png"><em>Note: Since the connectivity plot is represented in a
+one-dimensional layout, it does not provide the overall structure of the
+network.</em></p>
+<p><span style="color: red;"> Warning: if the tagging project presents a
+high number of detections, it may incur some delays to load the plot. To
+avoid this, select a transmitter before clicking on the Connectivity
+plot tab.</span></p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="detections-network-map">Detections network map<a class="anchor" aria-label="anchor" href="#detections-network-map"></a>
 </h3>
 <p><br></p>
-<p>The detections network map features the connectivity paths between detections recorded for the selected transmitter. Each marker on the map represents the station at which the transmitter was detected, colour-coded by the number of detections recorded (see legend on the right side of the map). The left panel also presents the species common name, total number of detections as well as stations and installations that the transmitter was detected at. <strong>The user has to select the transmitters one by one without deselecting the previous one for the map to show the network.</strong></p>
+<p>The detections network map features the connectivity paths between
+detections recorded for the selected transmitter. Each marker on the map
+represents the station at which the transmitter was detected,
+colour-coded by the number of detections recorded (see legend on the
+right side of the map). The left panel also presents the species common
+name, total number of detections as well as stations and installations
+that the transmitter was detected at. <strong>The user has to select the
+transmitters one by one without deselecting the previous one for the map
+to show the network.</strong></p>
 <p><br><img src="images/transmitter_report/detections_network_map.png"></p>
 <p><br></p>
-<p><span style="color: red;">Warning: The map may take more time to load depending on the number of detections for the selected transmitter.</span></p>
+<p><span style="color: red;">Warning: The map may take more time to load
+depending on the number of detections for the selected
+transmitter.</span></p>
 <p><br></p>
-<p><em>Note: To explore and visualise data relative to a receiver array project, head over to the <a href="shinyReport_receivers.html">shinyReport_receivers vignette</a></em></p>
+<p><em>Note: To explore and visualise data relative to a receiver array
+project, head over to the <a href="shinyReport_receivers.html">shinyReport_receivers
+vignette</a></em></p>
 </div>
 <div class="section level3">
 <h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h3>
 <ol style="list-style-type: decimal">
-<li><p>Heupel, M., Simpfendorfer, C., Espinoza, M., Bierwagen, S., de Faria, F., Lédée, E., Matley, J., Tobin, A. (2021) Townsville Reefs. Australian Institute of Marine Science and James Cook University. (Available: Integrated Marine Observing System. Animal Tracking Database. <a href="https://animaltracking.aodn.org.au" class="external-link uri">https://animaltracking.aodn.org.au</a>. Accessed: 2021-10-11).</p></li>
-<li><p>IMOS 2021. Animal Tracking Database. <a href="https://animaltracking.aodn.org.au" class="external-link uri">https://animaltracking.aodn.org.au</a>. Accessed: 2021-10-11.</p></li>
+<li><p>Heupel, M., Simpfendorfer, C., Espinoza, M., Bierwagen, S., de
+Faria, F., Lédée, E., Matley, J., Tobin, A. (2021) Townsville Reefs.
+Australian Institute of Marine Science and James Cook University.
+(Available: Integrated Marine Observing System. Animal Tracking
+Database. <a href="https://animaltracking.aodn.org.au" class="external-link uri">https://animaltracking.aodn.org.au</a>. Accessed:
+2021-10-11).</p></li>
+<li><p>IMOS 2021. Animal Tracking Database. <a href="https://animaltracking.aodn.org.au" class="external-link uri">https://animaltracking.aodn.org.au</a>. Accessed:
+2021-10-11.</p></li>
 </ol>
 <p><strong>Vignette version</strong> 0.0.5 (5 Nov 2021)</p>
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;">
@@ -203,12 +287,12 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+<p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

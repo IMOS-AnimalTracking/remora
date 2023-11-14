@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -42,6 +42,9 @@
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -73,13 +76,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">runQC</span><span class="op">(</span>
-  <span class="va">x</span>,
-  lat.check <span class="op">=</span> <span class="cn">TRUE</span>,
-  .parallel <span class="op">=</span> <span class="cn">FALSE</span>,
-  .ncores <span class="op">=</span> <span class="fu">detectCores</span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2</span>,
-  .progress <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">runQC</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  lat.check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  .ncores <span class="op">=</span> <span class="fu">detectCores</span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2</span>,</span>
+<span>  .progress <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -89,23 +92,36 @@
 deployment metadata, and animal measurements data files. These data must be
 downloaded from the IMOS-ATF Web App (URL), or have exactly the same
 structure and variable names as the Web App data.</p></dd>
+
+
 <dt>lat.check</dt>
 <dd><p>(logical; default TRUE) test for receiver_deployment_latitudes
 in N hemisphere at correct to S hemisphere. Set to FALSE if QC'ing N hemisphere data</p></dd>
+
+
 <dt>.parallel</dt>
 <dd><p>logical; run QC tests in parallel across multiple processors
 (default is FALSE)</p></dd>
+
+
 <dt>.ncores</dt>
 <dd><p>integer; number of cores to run in parallel. If NULL and
 <code>parallel = TRUE</code> then process will run across all available cores,
 otherwise run across user-specified cores</p></dd>
+
+
 <dt>.progress</dt>
 <dd><p>logical; display QC progress (default is TRUE).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>the QC output is returned to the parent frame as a nested tibble
+    
+
+<p>the QC output is returned to the parent frame as a nested tibble
 with class <code>remora_QC</code></p>
+
+
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -142,31 +158,30 @@ tracking database and its automated quality control process. Scientific Data
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## specify files to QC - use supplied example .csv data</span></span>
-<span class="r-in"><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>det <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_detections.csv"</span><span class="op">)</span>,</span>
-<span class="r-in">                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,</span>
-<span class="r-in">              rmeta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,</span>
-<span class="r-in">              <span class="st">"IMOS_receiver_deployment_metadata.csv"</span><span class="op">)</span>,</span>
-<span class="r-in">                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,</span>
-<span class="r-in">              tmeta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,</span>
-<span class="r-in">              <span class="st">"IMOS_transmitter_deployment_metadata.csv"</span><span class="op">)</span>,</span>
-<span class="r-in">                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,</span>
-<span class="r-in">              meas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,</span>
-<span class="r-in">              <span class="st">"IMOS_animal_measurements.csv"</span><span class="op">)</span>,</span>
-<span class="r-in">                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">qc.out</span> <span class="op">&lt;-</span> <span class="fu">runQC</span><span class="op">(</span><span class="va">files</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## specify files to QC - use supplied example .csv data</span></span></span>
+<span class="r-in"><span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>det <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,<span class="st">"IMOS_detections.csv"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              rmeta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,</span></span>
+<span class="r-in"><span>              <span class="st">"IMOS_receiver_deployment_metadata.csv"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              tmeta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,</span></span>
+<span class="r-in"><span>              <span class="st">"IMOS_transmitter_deployment_metadata.csv"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              meas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"test_data"</span>,</span></span>
+<span class="r-in"><span>              <span class="st">"IMOS_animal_measurements.csv"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    package <span class="op">=</span> <span class="st">"remora"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">qc.out</span> <span class="op">&lt;-</span> <span class="fu">runQC</span><span class="op">(</span><span class="va">files</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Reading data...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Starting sequential QC...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file: A69-9002-14762_43669513_43669944, 1 of 5    file: A69-9002-14765_43669525_43669972, 2 of 5    file: A69-9002-13807_69918686_69918684, 3 of 5    file: A69-9002-13809_77523181_77523186, 4 of 5    file: A69-9002-13824_93016177_93016182, 5 of 5    </span>
-<span class="r-in"><span class="fu"><a href="plotQC.html">plotQC</a></span><span class="op">(</span><span class="va">qc.out</span>, path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="co"># plots to default graphics device</span></span>
-<span class="r-plt img"><img src="runQC-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## get detections with QC flags</span></span>
-<span class="r-in"><span class="va">d.qc</span> <span class="op">&lt;-</span> <span class="fu"><a href="grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">qc.out</span>, what <span class="op">=</span> <span class="st">"dQC"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## clean up</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"rm QC_logfile.txt"</span><span class="op">)</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span><span class="fu"><a href="plotQC.html">plotQC</a></span><span class="op">(</span><span class="va">qc.out</span>, path <span class="op">=</span> <span class="st">"."</span><span class="op">)</span> <span class="co"># saves .html file to working directory</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## get detections with QC flags</span></span></span>
+<span class="r-in"><span><span class="va">d.qc</span> <span class="op">&lt;-</span> <span class="fu"><a href="grabQC.html">grabQC</a></span><span class="op">(</span><span class="va">qc.out</span>, what <span class="op">=</span> <span class="st">"dQC"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## clean up</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"rm QC_logfile.txt *_QCmap.html"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -177,11 +192,11 @@ tracking database and its automated quality control process. Scientific Data
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

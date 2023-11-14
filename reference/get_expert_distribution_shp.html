@@ -22,7 +22,7 @@ each species' known range."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-0</span>
       </span>
     </div>
 
@@ -31,7 +31,7 @@ each species' known range."><!-- mathjax --><script src="https://cdnjs.cloudflar
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -47,6 +47,9 @@ each species' known range."><!-- mathjax --><script src="https://cdnjs.cloudflar
     </li>
     <li>
       <a href="../articles/extractEnv.html">extractEnv</a>
+    </li>
+    <li>
+      <a href="../articles/extractBlue.html">extractBlue</a>
     </li>
     <li>
       <a href="../articles/extractMoor.html">extractMoor</a>
@@ -82,7 +85,7 @@ each species' known range.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_expert_distribution_shp</span><span class="op">(</span><span class="va">CAAB_species_id</span>, <span class="va">spe</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_expert_distribution_shp</span><span class="op">(</span><span class="va">CAAB_species_id</span>, <span class="va">spe</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -90,18 +93,23 @@ each species' known range.</p>
     <dl><dt>CAAB_species_id</dt>
 <dd><p>CAAB id of species for which a distribution
 shapefile is required</p></dd>
+
+
 <dt>spe</dt>
 <dd><p>species_scientific_name for which a distribution shapefile
 is required</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>shp_b is a SpatialPolygons object of the species' distribution</p>
+    
+
+<p>shp_b is a spatial polygon sf data.frame object of the species' distribution</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>For a few species acoustically tagged no shapefile exists, for a
-few others multiple shapefiles need to be merged into a single one. gBuffer
+few others multiple shapefiles need to be merged into a single one. <code><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">sf::st_buffer</a></code>
 extends the boundary of the original shapefile.</p>
     </div>
 
@@ -113,11 +121,11 @@ extends the boundary of the original shapefile.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers.</p>
+  <p></p><p>Developed by Fabrice Jaine, Ian Jonsen, Vinay Udyawer, Ross Dwyer, Kylie Scales, Francisca Maron, Xavier Hoenner, Charlie Huveneers, Yuri Niella.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
