@@ -77,7 +77,6 @@
                            ncol = length(ext_list), 
                            byrow = TRUE, 
                            dimnames = list(NULL, sapply(env_stack[[j]], names)))
-
       variable <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
