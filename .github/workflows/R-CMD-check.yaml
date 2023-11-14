@@ -57,14 +57,6 @@ jobs:
           args: 'c("--no-manual")'
           error-on: '"error"'
           check-dir: '"check"'
-<<<<<<< HEAD
-=======
-
-      - name: Show testthat output
-        if: always()
-        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
->>>>>>> master
 
       - name: Show testthat output
         if: always()
