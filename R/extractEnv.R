@@ -89,7 +89,7 @@
 ##'               folder_name = "test",
 ##'               .parallel = FALSE)
 ##'
-##' @importFrom dplyr '%>%' mutate distinct pull left_join select
+##' @importFrom dplyr %>% mutate distinct pull left_join select
 ##' @importFrom terra ext
 ##' @importFrom lubridate date 
 ##'

@@ -13,7 +13,7 @@
 ##'
 ##' @importFrom readr read_csv cols_only col_character col_integer col_guess
 ##' @importFrom readr col_logical col_datetime col_double
-##' @importFrom dplyr '%>%' mutate left_join select group_by ungroup distinct
+##' @importFrom dplyr %>% mutate left_join select group_by ungroup distinct
 ##' @importFrom dplyr transmute any_of everything
 ##' @importFrom lubridate dmy_hms dmy
 ##'
@@ -30,6 +30,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   det_data <- suppressWarnings(read_csv(det,
                                           col_types = cols(
                                             detection_datetime = col_datetime(),
+                                            detection_corrected_datetime = col_datetime(),
                                             transmitter_id = col_character(),
                                             tag_id = col_integer(),
                                             transmitter_deployment_id = col_integer(),

@@ -20,10 +20,10 @@
 ##'
 ##' @return a SpatRaster object with daily spatial environmental layers associated with detection dates
 ##'
-##' @importFrom dplyr '%>%' filter bind_rows n_distinct rowwise
+##' @importFrom dplyr %>% filter bind_rows n_distinct rowwise
 ##' @importFrom readr write_csv 
 ##' @importFrom utils txtProgressBar setTxtProgressBar download.file
-##' @importFrom terra rast ext crs 'crs<-' writeRaster 'time<-' wrap unwrap crop
+##' @importFrom terra rast ext crs crs<- writeRaster time<- wrap unwrap crop
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options

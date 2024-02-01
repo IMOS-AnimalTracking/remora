@@ -74,7 +74,7 @@
 ##' @importFrom stringr str_split
 ##' @importFrom readr read_csv cols col_character col_double col_integer col_datetime
 ##' @importFrom lubridate ymd_hms dmy_hm
-##' @importFrom dplyr '%>%' rename mutate nest_by bind_rows
+##' @importFrom dplyr %>% rename mutate nest_by bind_rows
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options

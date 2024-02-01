@@ -16,7 +16,7 @@
 ##' ## If there is a specific variable you are interested in
 ##' imos_variables(variable = "rs_sst_interpolated")
 ##'
-##' @importFrom dplyr '%>%' 
+##' @importFrom dplyr %>% 
 ##' @importFrom knitr kable
 ##' @importFrom kableExtra kable_paper column_spec
 ##' 
