@@ -14,7 +14,7 @@
 ##'
 ##' @return a dataframe with unique position, unique dates and extracted environmental variables 
 ##'
-##' @importFrom dplyr '%>%' mutate case_when select
+##' @importFrom dplyr %>% mutate case_when select
 ##' @importFrom sf st_as_sf st_drop_geometry st_buffer st_transform st_crs
 ##' @importFrom terra extract ext time
 ##'

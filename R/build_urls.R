@@ -13,8 +13,8 @@
 ##' @return a tibble with urls from where to download environmental data and layer names (where applicable) 
 ##'
 ##'
-##' @importFrom dplyr '%>%' slice left_join transmute mutate filter select case_when
-##' @importFrom magrittr '%$%'
+##' @importFrom dplyr %>% slice left_join transmute mutate filter select case_when
+##' @importFrom magrittr %$%
 ##' @importFrom xml2 read_html as_list
 ##' @importFrom purrr map_dfr map list_rbind
 ##' @importFrom tibble tibble

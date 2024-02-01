@@ -11,7 +11,7 @@
 ##'
 ##' @return temporal_outcome is a list with each element corresponding to a QC'd tag detection file
 ##'
-##' @importFrom dplyr '%>%' bind_cols
+##' @importFrom dplyr %>% bind_cols
 ##' @importFrom sf st_as_sf st_distance st_crs st_intersects st_coordinates
 ##'
 ##' @keywords internal
@@ -107,7 +107,6 @@ qc <- function(x, Lcheck = TRUE, logfile) {
     stop("NA's found in transmitter deployment locations - check logfile for details")
   }
 
-
   spe <- unique(x$species_scientific_name)
   CAAB_species_id <- unique(x$CAAB_species_id)
 
@@ -131,7 +130,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
           append = TRUE)
     shp_b <- NULL
   }
-
+  
   ## Converts unique sets of lat/lon detection coordinates and release lat/lon 
   ##  coordinates to SpatialPoints to test subsequently whether or not detections 
   ##  are in distribution range
@@ -173,7 +172,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		## Distance and Velocity tests
 		position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
 		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
-		
+
 		dist <- shortest_dist2(position,
 		                      x$installation_name,
 		                      raster = NULL,

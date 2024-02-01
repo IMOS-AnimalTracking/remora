@@ -23,7 +23,7 @@
 ##' ## return all detections
 ##' d.qc <- grabQC(TownsvilleReefQC, what = "dQC")
 ##'
-##' @importFrom dplyr "%>%" select ungroup distinct nest_by
+##' @importFrom dplyr %>% select ungroup distinct nest_by
 ##' @importFrom tidyr unnest
 ##'
 ##' @export

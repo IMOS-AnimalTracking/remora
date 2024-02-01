@@ -30,7 +30,7 @@
 ##' @importFrom leaflet markerClusterOptions
 ##' @importFrom RColorBrewer brewer.pal
 ##' @importFrom htmlwidgets saveWidget
-##' @importFrom dplyr '%>%' summarise left_join group_by bind_rows distinct count
+##' @importFrom dplyr %>% summarise left_join group_by bind_rows distinct count
 ##' @importFrom grDevices extendrange
 ##' @importFrom utils browseURL
 ##'
