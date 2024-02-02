@@ -168,11 +168,10 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 			  ifelse(sum(time_diff <= 30) > sum(time_diff >= 720) & nrow(sub) > 1, 1, 2)
 		}
 
-
 		## Distance and Velocity tests
 		position <- data.frame(longitude = c(x$transmitter_deployment_longitude[1], x$longitude),
 		                       latitude = c(x$transmitter_deployment_latitude[1], x$latitude))
-
+		
 		dist <- shortest_dist2(position,
 		                      x$installation_name,
 		                      raster = NULL,
