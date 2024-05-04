@@ -1,5 +1,5 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   extractBlue: extractBlue.html
@@ -8,7 +8,7 @@ articles:
   runQC: runQC.html
   shinyReport_receivers: shinyReport_receivers.html
   shinyReport_transmitters: shinyReport_transmitters.html
-last_built: 2024-02-02T16:47Z
+last_built: 2024-05-04T03:56Z
 urls:
   reference: https://imos-animaltracking.github.io/remora/reference
   article: https://imos-animaltracking.github.io/remora/articles
