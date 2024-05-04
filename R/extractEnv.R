@@ -222,7 +222,7 @@ extractEnv <-
                          TRUE ~ rs_current_bearing))
   }
   
-  output$date <- NULL
+  # output$date <- NULL
   if(max(date_range) >= as.Date("2021-01-01") & nrt) {
     message("Near Real-Time Ocean Current data appended in place of unavailable Delayed-Mode data")
   }
