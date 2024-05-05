@@ -211,16 +211,19 @@ extractEnv <-
   
   ## Calculate additional variables for current data (current direction and velocity)
   if(env_var %in% "rs_current"){
+    
+    windDir <- function(u, v) {(180 / pi) * atan(u/v) + ifelse(v>0,180,ifelse(u>0,360,0))}
+    
     output <- output %>% 
       mutate(rs_current_velocity = sqrt(rs_vcur^2 + rs_ucur^2),
-             rs_current_bearing = atan2(rs_ucur,rs_vcur)*(180/pi))
+             rs_current_bearing = windDir(u = rs_ucur, v = rs_vcur))
     
-    ## Adjust bearing to 0 - 360 degrees clockwise
-    output <- 
-      output %>% 
-      mutate(rs_current_bearing = 
-               case_when(rs_current_bearing < 0 ~ rs_current_bearing + 360, 
-                         TRUE ~ rs_current_bearing))
+    # ## Adjust bearing to 0 - 360 degrees clockwise
+    # output <- 
+    #   output %>% 
+    #   mutate(rs_current_bearing = 
+    #            case_when(rs_current_bearing < 0 ~ rs_current_bearing + 360, 
+    #                      TRUE ~ rs_current_bearing))
   }
   
   # output$date <- NULL
