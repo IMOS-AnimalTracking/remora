@@ -15,8 +15,8 @@
 ##' @return a dataframe with unique position, unique dates and extracted environmental variables 
 ##'
 ##' @importFrom dplyr '%>%' mutate case_when select
-##' @importFrom sf st_as_sf st_drop_geometry
-##' @importFrom raster raster extract extent 
+##' @importFrom sf st_as_sf st_drop_geometry st_buffer
+##' @importFrom terra extract
 ##'
 ##' @keywords internal
 
@@ -27,8 +27,8 @@
   ## Configure unique_positions to allow extraction
   pos_sf <- 
     unique_positions %>% 
-    st_as_sf(coords = c(1,2), crs = 4326, remove = F) %>% 
-    mutate(layer = paste0("X", gsub("\\-", ".", date)))
+    st_as_sf(coords = c(1,2), crs = 4326, remove = F)# %>% 
+    # mutate(layer = paste0("X", gsub("\\-", ".", date)))
   
   ## setup output dataset
   out_data <-
@@ -57,13 +57,13 @@
   if(env_var %in% "rs_current"){
     ## extraction current datasets run through each current dataset (gsla, vcur, ucur)
     for(c in 1:length(env_names)){
-      ext_matrix <- extract(env_stack[[c]], pos_sf)
+      ext_matrix <- terra::extract(env_stack[[c]], pos_sf)
       variable <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
-          ext_matrix[i,][which(colnames(ext_matrix) %in% pos_sf$layer[i])]
+          ext_matrix[i,][which(colnames(ext_matrix) %in% pos_sf$date[i])]
         if (length(val) > 0) {
-          variable[i] <- val
+          variable[i] <- val[[1]]
         } else {
           variable[i] <- NA
         }
@@ -71,13 +71,14 @@
       
       ## gap filling
       if(.fill_gaps){
-        ext_matrix_fill <- extract(env_stack[[c]], pos_sf, buffer = .buffer, fun = median)
+        pos_sf_buffer <- sf::st_buffer(pos_sf, dist = .buffer)
+        ext_matrix_fill <- terra::extract(env_stack[[c]], pos_sf_buffer, fun = median)
         variable_fill <- vector()
         for (i in 1:nrow(ext_matrix)) {
           val <-
-            ext_matrix_fill[i,][which(colnames(ext_matrix_fill) %in% pos_sf$layer[i])]
+            ext_matrix_fill[i,][which(colnames(ext_matrix_fill) %in% pos_sf$date[i])]
           if (length(val) > 0) {
-            variable_fill[i] <- val
+            variable_fill[i] <- val[[1]]
           } else {
             variable_fill[i] <- NA
           }
@@ -111,7 +112,7 @@
   
   if(env_var %in% c("bathy", "dist_to_land")) {
     ## extraction for single/fixed layer ('bathy', 'dist_to_land')
-    ext_matrix <- extract(env_stack, pos_sf)
+    ext_matrix <- terra::extract(env_stack, pos_sf)
     variable <- ext_matrix
     
     ## Append extracted variables to pos_sf dataset
@@ -131,13 +132,13 @@
   
   if(env_var %in% c("rs_sst", "rs_sst_interpolated", "rs_salinity", "rs_chl", "rs_turbidity", "rs_npp")) {
     ## extraction for time-series raster stacks
-    ext_matrix <- extract(env_stack, pos_sf)
+    ext_matrix <- terra::extract(env_stack, pos_sf)
     variable <- vector()
     for (i in 1:nrow(ext_matrix)) {
       val <-
-        ext_matrix[i, ][which(colnames(ext_matrix) %in% pos_sf$layer[i])]
+        ext_matrix[i, ][which(colnames(ext_matrix) %in% pos_sf$date[i])]
       if (length(val) > 0) {
-        variable[i] <- val
+        variable[i] <- val[[1]]
       } else {
         variable[i] <- NA 
       }
@@ -145,13 +146,14 @@
     
     ## gap filling
     if(.fill_gaps){
-      ext_matrix_fill <- extract(env_stack, pos_sf, buffer = .buffer, fun = median)
+      pos_sf_buffer <- st_buffer(pos_sf, dist = .buffer)
+      ext_matrix_fill <- terra::extract(env_stack, pos_sf_buffer, fun = median)
       variable_fill <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
-          ext_matrix_fill[i,][which(colnames(ext_matrix_fill) %in% pos_sf$layer[i])]
+          ext_matrix_fill[i,][which(colnames(ext_matrix_fill) %in% pos_sf$date[i])]
         if (length(val) > 0) {
-          variable_fill[i] <- val
+          variable_fill[i] <- val[[1]]
         } else {
           variable_fill[i] <- NA
         }
@@ -163,9 +165,9 @@
         out_data %>% 
         mutate(variable = variable) %>% 
         {if(.fill_gaps) mutate(., 
-                                      var_fill = variable_fill,
-                                      variable = case_when(is.na(variable) ~ var_fill,
-                                                                  TRUE ~ variable)) %>% 
+                               var_fill = variable_fill,
+                               variable = case_when(is.na(variable) ~ var_fill,
+                                                    TRUE ~ variable)) %>% 
             dplyr::select(., -var_fill) else .}
       colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names
     } else {
@@ -173,12 +175,12 @@
         out_data %>% 
         mutate(variable = NA) %>% 
         {if(.fill_gaps) mutate(., 
-                                      var_fill = variable_fill,
-                                      variable = case_when(is.na(variable) ~ var_fill,
-                                                                  TRUE ~ variable)) %>% 
+                               var_fill = variable_fill,
+                               variable = case_when(is.na(variable) ~ var_fill,
+                                                    TRUE ~ variable)) %>% 
             dplyr::select(., -var_fill) else .}
       colnames(out_data)[colnames(out_data) %in% "variable"] <- env_names
     }
   }
-  return(out_data[-4])
+  return(out_data)
 }

@@ -31,8 +31,14 @@
 ##' that fall within the buffer will be used if `fill_gaps = TRUE`. If `NULL` a 
 ##' buffer will be chosen based on the resolution of environmental layer. A 
 ##' numeric value (in m) can be used here to customise buffer radius.
-##' @param output_format File type for cached environmental layers. See 
-##' \code{\link[raster]{writeFormats}}. The default format is 'raster'.
+##' @param nrt should Near Real-Time current data be used if Delayed-Mode current 
+##' data is missing. Default is `FALSE`, in which case NA's are appended to current
+##' variables for years (currently, all years after 2020) when current data are 
+##' missing. Note that Near Real-Time data are subject to less quality control 
+##' than Delayed-Mode data.
+##' @param output_format File format for cached environmental layers. You can use 
+##' \code{gdal(drivers=TRUE)} to see what drivers are available in your installation.
+##' The default format is '.grd'.
 ##' @param .parallel should the function be run in parallel 
 ##' @param .ncores number of cores to use if set to parallel. If none provided, 
 ##' uses \code{\link[parallel]{detectCores}} to determine number.
@@ -60,14 +66,14 @@
 ##' library(tidyverse)
 ##' data("TownsvilleReefQC")
 ##' 
-##' ## simplify & subset data for speed
+##' ## simplify & subset data for example speed-up
 ##' qc_data <- 
 ##'   TownsvilleReefQC %>% 
 ##'   unnest(cols = c(QC)) %>% 
 ##'   ungroup() %>% 
 ##'   filter(Detection_QC %in% c(1,2)) %>%
 ##'   filter(filename == unique(filename)[1]) %>%
-##'   slice(1:20)
+##'   slice(5:8)
 ##' 
 ##' ## Extract daily interpolated sea surface temperature
 ##' ## cache_layers & fill_gaps args set to FALSE for speed
@@ -80,21 +86,35 @@
 ##'               cache_layers = FALSE,
 ##'               crop_layers = TRUE,
 ##'               full_timeperiod = FALSE,
-##'               fill_gaps = FALSE,
+##'               fill_gaps = TRUE,
 ##'               folder_name = "test",
 ##'               .parallel = FALSE)
 ##'
-##' @importFrom dplyr '%>%' mutate distinct pull left_join select
-##' @importFrom raster raster extent
+##' @importFrom dplyr %>% mutate distinct pull left_join select
+##' @importFrom terra ext
 ##' @importFrom lubridate date 
-##' @importFrom progressr with_progress
 ##'
 ##' @export
 ##'
 
-extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detection_timestamp", env_var, folder_name = NULL, 
-                       verbose = TRUE, cache_layers = TRUE, crop_layers = TRUE, full_timeperiod = FALSE, 
-                       fill_gaps = FALSE, buffer = NULL, output_format = "raster", .parallel = TRUE, .ncores = NULL){
+extractEnv <-
+  function(df,
+           X = "longitude",
+           Y = "latitude",
+           datetime = "detection_timestamp",
+           env_var,
+           folder_name = NULL,
+           verbose = TRUE,
+           cache_layers = TRUE,
+           crop_layers = TRUE,
+           full_timeperiod = FALSE,
+           fill_gaps = FALSE,
+           buffer = NULL,
+           nrt = FALSE,
+           output_format = ".grd",
+           .parallel = TRUE,
+           .ncores = NULL) {
+    
   
   ## Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
@@ -109,7 +129,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
     .parallel = FALSE
     fill_gaps = FALSE}
   
-  if(env_var %in% "rs_current"){.parallel = FALSE}
+#  if(env_var %in% "rs_current"){.parallel = FALSE}
   
   ## define date range
   unique_dates <- 
@@ -121,7 +141,7 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   date_range <- range(unique_dates)
   
   ## define spatial extent and extend by 40%
-  study_extent <- extent(c(min(df[[X]]), max(df[[X]]), min(df[[Y]]), max(df[[Y]]))) * 1.4
+  study_extent <- ext(c(min(df[[X]]), max(df[[X]]), min(df[[Y]]), max(df[[Y]]))) * 1.4
   
   ## define unique positions (for quicker environmental variable extraction)
   unique_positions <-
@@ -153,49 +173,45 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
   if(verbose){
     message("Accessing and downloading IMOS environmental variable: ", env_var)
   }
+
+  suppressWarnings(
+    env_stack <- .pull_env(
+      dates = dates,
+      study_extent = study_extent,
+      var_name = env_var,
+      .cache = cache_layers,
+      folder_name = folder_name,
+      .crop = crop_layers,
+      .nrt = nrt,
+      .output_format = output_format,
+      verbose = verbose,
+      .parallel = .parallel,
+      .ncores = .ncores
+    )
+  )
   
-  if(.parallel){
-    with_progress(
-      try(
-        suppressWarnings(
-          env_stack <- .pull_env(dates = dates, study_extent = study_extent,
-                                 var_name = env_var, .cache = cache_layers,
-                                 folder_name = folder_name, .crop = crop_layers,
-                                 .output_format = output_format, verbose = verbose,
-                                 .parallel = .parallel, .ncores = .ncores)), 
-        silent = FALSE), cleanup = FALSE)
-  } else {
-    try(
-      suppressWarnings(
-        env_stack <- .pull_env(dates = dates, study_extent = study_extent, 
-                               var_name = env_var, .cache = cache_layers, 
-                               folder_name = folder_name, .crop = crop_layers,
-                               .output_format = output_format, verbose = verbose,
-                               .parallel = .parallel, .ncores = .ncores)),
-      silent = FALSE) 
-  }
-  
-  if(cache_layers & verbose){
+  if (cache_layers & verbose) {
     message("\nDownloaded layers are cached in the `imos.cache` folder in your working directory")
   }
+
+  if(!is.null(env_stack)) {
+    ## Extract environmental variable from env_stack
+    if(verbose){
+      message("Extracting and appending environmental data")
+    }
+
+    env_data <- .extract_var(unique_positions, env_stack, env_var, .fill_gaps = fill_gaps, .buffer = buffer, verbose = verbose)
   
-  ## Extract environmental variable from env_stack
-  if(verbose){
-    message("Extracting and appending environmental data")
-  }
-  env_data <- .extract_var(unique_positions, env_stack, env_var, .fill_gaps = fill_gaps, .buffer = buffer, verbose = verbose)
   
   ## Combine environmental data with input detection data
-  output <- 
-    df %>% 
+  output <- df %>% 
     mutate(date = date(!!as.name(datetime))) %>%
     left_join(env_data, by = c(X, Y, "date"))
   
   
   ## Calculate additional variables for current data (current direction and velocity)
   if(env_var %in% "rs_current"){
-    output <-
-      output %>% 
+    output <- output %>% 
       mutate(rs_current_velocity = sqrt(rs_vcur^2 + rs_ucur^2),
              rs_current_bearing = atan2(rs_ucur,rs_vcur)*(180/pi))
     
@@ -207,9 +223,17 @@ extractEnv <- function(df, X = "longitude", Y = "latitude", datetime = "detectio
                          TRUE ~ rs_current_bearing))
   }
   
-  output$date <- NULL
-  
+  # output$date <- NULL
+  if(max(date_range) >= as.Date("2021-01-01") & nrt) {
+    message("Near Real-Time Ocean Current data appended in place of unavailable Delayed-Mode data")
+  }
   return(output)
+  
+  } else {
+    ## if no viable urls found then return input data
+    message("Returning original input data")
+    return(df)
+  }
 }
 
 
