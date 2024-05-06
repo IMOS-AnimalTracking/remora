@@ -277,8 +277,39 @@
     
     url_df <- tibble(date = sub_dates, url_name, layer) 
   }
- 
+  
+  if(var_name %in% c("rs_sst_interpolated", "rs_sst", "rs_chl", "rs_chl", "rs_turbidity", "rs_npp")){
+    
+    if(verbose){
+      message('Checking if files exist on IMOS server...')
+    }
+    
+    ## URL verification using base R functions (slower but doesnt require additional dependencies)
+    valid_url <-
+      function(url_in, t = 2){
+        con <- url(url_in)
+        check <- suppressWarnings(try(open.connection(con, open = "rt", timeout = t), silent = T)[1])
+        suppressWarnings(try(close.connection(con), silent = T))
+        ifelse(is.null(check), TRUE, FALSE)
+      }
+    
+    ## using RCurl to speed up the URL verification (but requires an additional dependency `RCurl`)
+    # url_df$valid <- RCurl::url.exists(url_df$url_name)
+    
+    url_tab <-
+      url_df %>%
+      mutate(valid = sapply(url_name, valid_url))
+    
+    if(verbose){
+      message('Data for the following dates are not available on IMOS:\n', paste(as.Date(url_tab[url_tab$valid %in% FALSE, "date"]), sep = "\n"))
+    }
+    
+    url_df <- filter(url_tab, valid %in% TRUE)
+    
+  }
+
   return(url_df)
+  
   }
   
 

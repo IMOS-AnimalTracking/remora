@@ -36,8 +36,9 @@
 ##' variables for years (currently, all years after 2020) when current data are 
 ##' missing. Note that Near Real-Time data are subject to less quality control 
 ##' than Delayed-Mode data.
-##' @param output_format File type for cached environmental layers. See 
-##' \code{\link[raster]{writeFormats}}. The default format is 'raster'.
+##' @param output_format File format for cached environmental layers. You can use 
+##' \code{gdal(drivers=TRUE)} to see what drivers are available in your installation.
+##' The default format is '.grd'.
 ##' @param .parallel should the function be run in parallel 
 ##' @param .ncores number of cores to use if set to parallel. If none provided, 
 ##' uses \code{\link[parallel]{detectCores}} to determine number.
@@ -110,7 +111,7 @@ extractEnv <-
            fill_gaps = FALSE,
            buffer = NULL,
            nrt = FALSE,
-           output_format = "raster",
+           output_format = ".grd",
            .parallel = TRUE,
            .ncores = NULL) {
     
@@ -210,16 +211,19 @@ extractEnv <-
   
   ## Calculate additional variables for current data (current direction and velocity)
   if(env_var %in% "rs_current"){
+    
+    windDir <- function(u, v) {(180 / pi) * atan(u/v) + ifelse(v>0,180,ifelse(u>0,360,0))}
+    
     output <- output %>% 
       mutate(rs_current_velocity = sqrt(rs_vcur^2 + rs_ucur^2),
-             rs_current_bearing = atan2(rs_ucur,rs_vcur)*(180/pi))
+             rs_current_bearing = windDir(u = rs_ucur, v = rs_vcur))
     
-    ## Adjust bearing to 0 - 360 degrees clockwise
-    output <- 
-      output %>% 
-      mutate(rs_current_bearing = 
-               case_when(rs_current_bearing < 0 ~ rs_current_bearing + 360, 
-                         TRUE ~ rs_current_bearing))
+    # ## Adjust bearing to 0 - 360 degrees clockwise
+    # output <- 
+    #   output %>% 
+    #   mutate(rs_current_bearing = 
+    #            case_when(rs_current_bearing < 0 ~ rs_current_bearing + 360, 
+    #                      TRUE ~ rs_current_bearing))
   }
   
   # output$date <- NULL
