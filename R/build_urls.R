@@ -300,9 +300,9 @@
       url_df %>%
       mutate(valid = sapply(url_name, valid_url))
     
-    if(verbose){
-      message('Data for the following dates are not available on IMOS:\n', paste(as.Date(url_tab[url_tab$valid %in% FALSE, "date"]), sep = "\n"))
-    }
+    # if(verbose){
+    #   message('Data for the following dates are not available on IMOS:\n', paste(as.Date(url_tab[url_tab$valid %in% FALSE, "date"]), sep = "\n"))
+    # }
     
     url_df <- filter(url_tab, valid %in% TRUE)
     

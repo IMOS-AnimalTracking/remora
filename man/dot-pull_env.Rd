@@ -12,7 +12,7 @@
   .cache,
   .crop,
   .nrt = FALSE,
-  .output_format = "raster",
+  .output_format = ".grd",
   .parallel = TRUE,
   .ncores = NULL,
   verbose = TRUE
