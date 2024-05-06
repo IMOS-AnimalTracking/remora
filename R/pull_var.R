@@ -40,7 +40,7 @@
            .cache,
            .crop,
            .nrt = FALSE,
-           .output_format = "raster",
+           .output_format = ".grd",
            .parallel = TRUE,
            .ncores = NULL,
            verbose = TRUE) {
@@ -132,7 +132,7 @@
           ras <- ras - 273.15
         }
         
-        return(wrap(ras))
+        return(terra::wrap(ras))
       }
       
       ras.lst <- split(urls, urls$date) %>%
@@ -141,7 +141,7 @@
                    .progress = TRUE)
       
       ## unpack SpatRasters now that they've passed through the connection
-      ras.lst <- lapply(ras.lst, unwrap)
+      ras.lst <- lapply(ras.lst, terra::unwrap)
       
       if (.crop) {
         ras.lst <- lapply(ras.lst, crop, y = study_extent)
@@ -157,7 +157,7 @@
       ## run through urls to download, crop and stack environmental variables
       
       ## establish a log to store all erroneous urls
-#      error_log <- tibble(date = as.Date(NULL), url_name = NULL, layer = NULL)
+      # error_log <- tibble(date = as.Date(NULL), url_name = NULL, layer = NULL)
       pb <- txtProgressBar(max = nrow(urls), style = 3)
       
       ras_lst <- lapply(1:nrow(urls), function(i) {
@@ -256,9 +256,9 @@
                        subds = "UCUR")
           
           return(list(
-            gsla = wrap(gsla),
-            vcur = wrap(vcur),
-            ucur = wrap(ucur)
+            gsla = terra::wrap(gsla),
+            vcur = terra::wrap(vcur),
+            ucur = terra::wrap(ucur)
           ))
           
         }
@@ -368,14 +368,14 @@
     
     ## Save as requested raster output format
     if(var_name %in% "rs_current"){
-      writeRaster(out_brick$gsla, filename = paste0(file.path(path, "rs_gsla"), ".grd"), overwrite = TRUE)#, format = .output_format) 
-      writeRaster(out_brick$vcur, filename = paste0(file.path(path, "rs_vcur"), ".grd"), overwrite = TRUE)#, format = .output_format) 
-      writeRaster(out_brick$ucur, filename = paste0(file.path(path, "rs_ucur"), ".grd"), overwrite = TRUE)#, format = .output_format) 
+      writeRaster(out_brick$gsla, filename = paste0(file.path(path, "rs_gsla"), .output_format), overwrite = TRUE)
+      writeRaster(out_brick$vcur, filename = paste0(file.path(path, "rs_vcur"), .output_format), overwrite = TRUE)
+      writeRaster(out_brick$ucur, filename = paste0(file.path(path, "rs_ucur"), .output_format), overwrite = TRUE)
     } else {
       if(any(is.na(crs(out_brick)), is.null(crs(out_brick)))) {
         crs(out_brick) <- "epsg:4326"
       }
-      writeRaster(out_brick, filename = paste0(file.path(path, var_name), ".grd"), overwrite = TRUE) #, format = .output_format) 
+      writeRaster(out_brick, filename = paste0(file.path(path, var_name), .output_format), overwrite = TRUE)
     }
   } 
 

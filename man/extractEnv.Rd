@@ -18,7 +18,7 @@ extractEnv(
   fill_gaps = FALSE,
   buffer = NULL,
   nrt = FALSE,
-  output_format = "raster",
+  output_format = ".grd",
   .parallel = TRUE,
   .ncores = NULL
 )

@@ -19,10 +19,11 @@ test_that("extractEnv adds rs_current data", {
                          full_timeperiod = FALSE,
                          fill_gaps = TRUE,
                          folder_name = "test",
-                         .parallel = TRUE)
+                         .parallel = FALSE)
 
-  sub <- qc_data1[1, 56:60]
-  expect_named(sub, c("rs_gsla", 
+  sub <- qc_data1[1, 56:61]
+  expect_named(sub, c("date", 
+                      "rs_gsla", 
                       "rs_vcur", 
                       "rs_ucur", 
                       "rs_current_velocity", 
