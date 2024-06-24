@@ -13,14 +13,15 @@ extractBlue(
   extract_depth = 0,
   var_name = paste(env_var, extract_depth, sep = "_"),
   folder_name = "Bluelink",
-  verbose = TRUE,
+  env_buffer = 1,
   cache_layers = FALSE,
   full_timeperiod = FALSE,
   station_name = NULL,
-  fill_gaps = FALSE,
-  buffer = 10000,
-  export_step = TRUE,
-  export_path = "Processed_data"
+  export_step = FALSE,
+  export_path = "Processed_data",
+  .parallel = FALSE,
+  .ncores = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -34,8 +35,8 @@ date time field}
 \item{datetime}{name of column with date time stamp (Coordinated Universal
 Time; UTC)}
 
-\item{env_var}{variable needed from Bluelink. Options include ('ocean_temp', 'ocean_salt',
-ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'air_wind')}
+\item{env_var}{variable needed from Bluelink. Options include ('BRAN_temp', 'BRAN_salt',
+BRAN_ssh', 'BRAN_mld', 'BRAN_cur', 'BRAN_wind').}
 
 \item{extract_depth}{Bluelink data is 3D, so data can be obtained either at the water surface or at depth. Please
 provide the depth of interest (between 0 and 4,509 m) as numeric and the function will automatically obtain the data at
@@ -49,8 +50,7 @@ extract_depth arguments.}
 netCDF files should be saved. Default (NULL) produces automatic folder names based on study extent and deletes
 processed files after processing.}
 
-\item{verbose}{should function provide details of what operation is being conducted.
-Set to \code{FALSE} to keep it quiet}
+\item{env_buffer}{distance (in decimal degrees) to expand the study area beyond the coordinates to extract environmental data. Default value is 1°.}
 
 \item{cache_layers}{should the downloaded and processed environmental data be cached within
 the working directory? If FALSE (default), the Bluelink data will be stored in a temporary folder
@@ -65,21 +65,19 @@ detected. For more details please see the package vignettes.}
 \item{station_name}{if full_timeperiod = TRUE, please provide the column that identifies the name of the
 acoustic stations}
 
-\item{fill_gaps}{should the function use a spatial buffer to estimate
-environmental variables for detections where there is missing data. Default
-is \code{FALSE} to save computational time.}
-
-\item{buffer}{radius of buffer (in m) around each detection from which
-environmental variables should be extracted from. A median value of pixels
-that fall within the buffer will be used if \code{fill_gaps = TRUE}. If \code{NULL} a
-buffer will be chosen based on the resolution of environmental layer. A
-numeric value (in m) can be used here to customise buffer radius.}
-
 \item{export_step}{should the processed dataset be exported to file? This is particularly usefull for large
 datasets, to avoid function failure due to issues with internet connexion. The rows with missing data will be
 exported as NAs, and only these will be completed if the function is rerun providing the exported dataset as input (df)}
 
 \item{export_path}{path and name of to export the dataset with appended environmnetal data}
+
+\item{.parallel}{should the function be run in parallel}
+
+\item{.ncores}{number of cores to use if set to parallel. If none provided,
+uses \code{\link[parallel]{detectCores}} to determine number.}
+
+\item{verbose}{should function provide details of what operation is being conducted.
+Set to \code{FALSE} to keep it quiet}
 }
 \value{
 a dataframe with the environmental variable appended as an extra
@@ -126,10 +124,8 @@ data_with_temp <-
                X = "receiver_deployment_longitude", 
                Y = "receiver_deployment_latitude", 
                datetime = "detection_datetime", 
-               env_var = "ocean_temp",
+               env_var = "BRAN_temp",
                extract_depth = 0,
-               folder_name = "Bluelink",
-               verbose = TRUE,
-               fill_gaps = FALSE)
+               verbose = TRUE)
 
 }
