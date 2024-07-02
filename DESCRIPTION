@@ -1,7 +1,7 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.7.4.9500
-Date: 2023-05-19
+Version: 0.7.4.9501
+Date: 2024-07-02
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
@@ -11,7 +11,7 @@ Authors@R:
            person(given = "Ian",
            family = "Jonsen",
            role = c("aut", "ctb", "cre"),
-           email = "ian.jonsen@mq.edu.au",
+           email = "jonsen@stochastic-qc.org",
            comment = c(ORCID = "0000-0001-5423-6076")),
            person(given = "Vinay",
            family = "Udyawer",
