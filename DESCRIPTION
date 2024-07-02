@@ -6,7 +6,7 @@ Authors@R:
     c(person(given = "Fabrice",
            family = "Jaine",
            role = c("aut", "ctb"),
-           email = "fabrice.jaine@sims.org.au",
+           email = "fabrice.jaine@utas.edu.au",
            comment = c(ORCID = "0000-0002-9304-5034")),
            person(given = "Ian",
            family = "Jonsen",
