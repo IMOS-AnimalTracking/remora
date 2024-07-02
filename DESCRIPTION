@@ -46,7 +46,7 @@ Authors@R:
            person(given = "Yuri",
            family = "Niella",
            role = c("aut", "ctb"),
-           email = "yuri.niella@mq.edu.au",
+           email = "yuri.niella@sims.org.au",
            comment = c(ORCID = "0000-0003-1878-6091")))
 Maintainer: Ian Jonsen <ian.jonsen@mq.edu.au>
 Description: R Package to access and integrate animal tracking data from the IMOS Animal Tracking Facility database and web-app, and environmental data from the AODN database.
