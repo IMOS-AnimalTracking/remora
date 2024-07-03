@@ -4,7 +4,7 @@
 ##'
 ##' @name remora-package
 ##' @aliases remora remora-package
-##' @docType package
+##' @docType _PACKAGE
 ##' @author Ross Dwyer, Xavier Hoenner, Charlie Huveneers, Fabrice Jaine, Ian Jonsen, Francisca Maron, Kylie Scales, Vinay Udyawer
 ##'
 ##' @seealso runQC extractEnv extractMoor shinyReport
