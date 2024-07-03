@@ -17,4 +17,3 @@ Wind direction in degrees clockwise
 \description{
 helper function to calculate wind direction
 }
-\keyword{internal}
