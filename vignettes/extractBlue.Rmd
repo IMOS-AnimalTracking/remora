@@ -27,7 +27,7 @@ require(remora, quietly = TRUE)
 
 --------------------------------------
 
-This functionality of the `remora` package allows users to integrate acoustic telemetry data and [Bluelink (BRAN)](https://research.csiro.au/bluelink/) environmental data. Since this is a reanalysis data with 10-km spatial resolution, the user will benefit from a dataset with daily resolution and no gaps, which are common in remotely sensed data due to cloud cover. Again, we advocate for users to first undertake a quality control step using the `runQC()` function and workflow before further analysis (see `vignette('runQC')`), however the functionality to append Bluelink (BRAN) environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. A benefit of using Bluelink (BRAN) data in your analyses of animal movements is that data can be obtained in *3D*, ranging from the ocean surface all the way to 4,509 m in depth. 
+This functionality of the `remora` package allows users to integrate acoustic telemetry data and [Bluelink Reanalysis (BRAN)](https://research.csiro.au/bluelink/) environmental data. Since this is a reanalysis data with 10-km spatial resolution, the user will benefit from a dataset with daily resolution and no gaps, which are common in remotely sensed data due to cloud cover. Again, we advocate for users to first undertake a quality control step using the `runQC()` function and workflow before further analysis (see `vignette('runQC')`), however the functionality to append Bluelink (BRAN) environmental data will work on any dataset that has at the minimum spatial coordinates and a timestamp for each detection event. A benefit of using Bluelink (BRAN) data in your analyses of animal movements is that data can be obtained in *3D*, ranging from the ocean surface all the way to 4,509 m in depth. 
 
 The `extractBlue()` function can be used to obtain environmental data **anywhere in the world**. 
 
@@ -102,7 +102,8 @@ Each variable will need to be accessed one at a time using the `extractBlue()` f
 + **datetime**: the name of the column with the date-timestamp for each detection
 + **env_var**: the name of the environmental variable to download and append (see `imos_variables()` for available variables and variable names)
 + **extract_depth**: since the Bluelink (BRAN) data is 3D, the user can define a specific depth of interest and the function will obtain the environmental data at the nearest layer available. By default, data is obtained at the water surface (`extract_depth = 0`).
-+ **cache_layers**: should the extracted and processed environmental data layers be cached within the working directory? If so, spatial layers will be cached in a folder (`folder_name`) within your working directory, and named after the environmental variable of interest. Since the raw files downloaded have a global resolution, for computational purposes these exported files will encompass only your study area
++ **cache_layers**: should the extracted and processed environmental data layers be cached within the working directory? If so, the environmental data will be cached as a csv file in a folder (`folder_name`) within your working directory, and named after the environmental variable of interest. 
++ **env_buffer**: since each Bluelink BRAN file was global spatial coverage, to reduce computational cost, files are cropped to the respective area of interest before being downloaded. By default, the minimum and maximum latitudes and logitudes will be obtained from the Y and X columns, and buffered at 1° in each direction. This argument allows the user to specify default values for this buffer (e.g. higher than 1° if interested in the environmental trends outside the area of study, such as for running species distribution models).
 + **full_timeperiod**: should environmental variables extracted for each day across full monitoring period? If set to `TRUE` it can be time and memory consuming for long projects
 
 <br>
@@ -113,134 +114,64 @@ If this option is selected the `extractBlue` function will standardize the acous
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
 ## Obtain standardized data with water temperatures at the surface:
-standdata_with_sst <- 
+data_with_sst <- 
     extractBlue(df = qc_data,
                 X = "receiver_deployment_longitude", 
                 Y = "receiver_deployment_latitude", 
                 station_name = "station_name",
                 datetime = "detection_datetime", 
-                env_var = "ocean_temp",
+                env_var = "BRAN_temp",
                 extract_depth = 0,
-                cache_layers = FALSE,
-                export_step = FALSE,
                 verbose = TRUE,
                 full_timeperiod = TRUE)
 ```
 
 If we have a look at this dataset it will look like this:
 
-|       date| station_name|     lon|    lat | ocean_temp_0| Detection| 
-|:----------|------------:|-------:|-------:|------------:|---------:|
-| 2013-08-10|      Kelso 2| 146.991| -18.417|      23.5647|         1|
-| 2013-08-11|      Kelso 2| 146.991| -18.417|      23.5492|         0|
-| 2013-08-12|      Kelso 2| 146.991| -18.417|      24.1562|         0|
-| 2013-08-13|      Kelso 2| 146.991| -18.417|      24.1873|         0|
-| 2013-08-14|      Kelso 2| 146.991| -18.417|      24.1951|         0|
-| 2013-08-15|      Kelso 2| 146.991| -18.417|      24.3274|         0|
+|       date| station_name|     lon|    lat | BRAN_temp_0| Detection| 
+|:----------|------------:|-------:|-------:|-----------:|---------:|
+| 2013-08-10|      Kelso 2| 146.991| -18.417|     23.5647|         1|
+| 2013-08-11|      Kelso 2| 146.991| -18.417|     23.5492|         0|
+| 2013-08-12|      Kelso 2| 146.991| -18.417|     24.1562|         0|
+| 2013-08-13|      Kelso 2| 146.991| -18.417|     24.1873|         0|
+| 2013-08-14|      Kelso 2| 146.991| -18.417|     24.1951|         0|
+| 2013-08-15|      Kelso 2| 146.991| -18.417|     24.3274|         0|
 
 Which means that, on (`2013-08-10`) detections were recorded at the `Kelso 2` station (`Detection = 1`), but not on the other days in the example (`Detection = 0`), but temperature data at the surface (`ocean_temp_0`) was extracted for all days. 
 
-
-#### *Gap filling functionality*
-
-While cloud cover is not a limitation to obtain Bluelink (BRAN) environmental data at oceanic regions, those locations in very close proximity to the coast might return `NA` values. In these cases, you can use the `fill_gaps` and `buffer` arguments (similar to their uses in `extractEnv()`) to fill the rows with missing information. By default, `fill_gaps` is set to `FALSE` and `buffer` is set to 10-km (i.e. the same resolution as the raw environmental data). 
-
-These two arguments can be particularly usefull if the user wants to extract environmental data at *depths deeper* than the deployment locations of the acoustic receivers. 
-
-<br>
-
-For example, if we want to extract water temperature data at 40-m depth without the gap filling function, we would get the following output:
-
-```{r, eval = FALSE, message=FALSE, warning=FALSE}
- data1_with_temp40 <- 
-    extractBlue(df = qc_data,
-                X = "receiver_deployment_longitude", 
-                Y = "receiver_deployment_latitude", 
-                datetime = "detection_datetime", 
-                env_var = "ocean_temp",
-                extract_depth = 40,
-                cache_layers = FALSE,
-                verbose = TRUE,
-                fill_gaps = FALSE)
-
-summary(data1_with_temp40$ocean_temp_40)
-```
-```
-ocean_temp_40
-Min.   :23.44
-1st Qu.:23.53
-Median :23.60
-Mean   :23.75
-3rd Qu.:23.83
-Max.   :24.70
-NA's   :12
-```
-
-Which means that, **12 stations (out of 20)** were located in depths *shallower than 40 m*. Therefore, we can use the gap filling function to obtain data at the nearest 40-m available pixels by using a 25-km buffer:
-
-```{r, eval = FALSE, message=FALSE, warning=FALSE}
- data2_with_temp40 <- 
-    extractBlue(df = qc_data,
-                X = "receiver_deployment_longitude", 
-                Y = "receiver_deployment_latitude", 
-                datetime = "detection_datetime", 
-                env_var = "ocean_temp",
-                extract_depth = 40,
-                cache_layers = FALSE,
-                verbose = TRUE,
-                fill_gaps = TRUE,
-                buffer = 25000) # use a 25-km buffer
-
-summary(data2_with_temp40$ocean_temp_40)
-```
-```
-ocean_temp_40
-Min.   :23.44
-1st Qu.:23.77
-Median :23.32
-Mean   :23.12
-3rd Qu.:23.37
-Max.   :24.70
-```
 
 #### *Water temperature at depth (30 m)*
 
 We are going to use the function to compare the water temperatures in the study area between the surface and the 30-m depths. Let's download and process the Bluelink (BRAN) data at the two depths of interest:
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
-## Obtain water temperature data at the surface
-data_with_sst1 <- 
-  extractBlue(df = qc_data,
-             X = "receiver_deployment_longitude", 
-             Y = "receiver_deployment_latitude", 
-             datetime = "detection_datetime", 
-             cache_layers = FALSE,
-             env_var = "ocean_temp",
-             extract_depth = 0) # surface
-
 ## Obtain water temperature data at the 30-m depths
 data_with_sst2 <- 
-  extractBlue(df = qc_data,
-             X = "receiver_deployment_longitude", 
-             Y = "receiver_deployment_latitude", 
-             datetime = "detection_datetime", 
-             cache_layers = FALSE,
-             env_var = "ocean_temp",
-             extract_depth = 30) # 30-m depths
+    extractBlue(df = qc_data,
+                X = "receiver_deployment_longitude", 
+                Y = "receiver_deployment_latitude", 
+                station_name = "station_name",
+                datetime = "detection_datetime", 
+                env_var = "BRAN_temp",
+                extract_depth = 30,
+                verbose = TRUE,
+                full_timeperiod = TRUE)
 ```
 
 Now let's see how the two variables look in relation to each other:
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
-data_plot <- data.frame(Station = data_with_sst1$station_name,
-  Date = data_with_sst1$detection_datetime,
-  Variable = c(rep("Surface", nrow(data_with_sst1)), rep("Depth", nrow(data_with_sst1))),
-  Temperature = c(data_with_sst1$ocean_temp_0, data_with_sst2$ocean_temp_30))
+data_plot <- data.frame(Station = data_with_sst$station_name,
+  Date = data_with_sst$date,
+  Variable = c(rep("Surface", nrow(data_with_sst)), rep("Depth", nrow(data_with_sst2))),
+  Temperature = c(data_with_sst$BRAN_temp_0, data_with_sst2$BRAN_temp_30))
 data_plot$Variable <- factor(data_plot$Variable, levels = c("Surface", "Depth"))
 
 ggplot() + theme_bw() +
   geom_boxplot(data = data_plot, aes(x = Station, y = Temperature, colour = Variable)) +
   labs(y = "Temperature (°C)", colour = "")
+
+ggsave("Temp_surf_depth.png", units = "cm", width = 25, height = 12)
 
 ```
 
@@ -249,56 +180,43 @@ ggplot() + theme_bw() +
 
 #### *Surface 3D current speeds* 
 
-We can also use the `extractBlue()` function to obtain 3D current data along our study region. In this example, we are going to download horizontal (u and v components) and vertical current data, and save the processed Bluelink (BRAN) files for further investigation. 
+Besides from enabling users to extract environmental data at different depths (using the `extract_depth` argument), we can also use the `extractBlue()` function to obtain 3D current data along our study region. When horizontal current data is requested (`env_var = BRAN_cur`), two new variables are calculated (similarly, the same is done for wind data when using `env_var = BRAN_wind`), including speed (in m/s) and direction (degrees clockwise). When vertical current is requested (using `env_var = "BRAN_wcur"`), a representative vertical current value in the water column will be calculated, using the available layers of vertical data between the water surface and 200-m depth.   
+
+In this example, we are going to download horizontal (speed and direction) and vertical current data, and save the processed Bluelink (BRAN) files for further investigation. 
 First, let's download the data:
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
-# download u-current data (horizontal x-direction)
+# download horizontal current data:
 data_cur <- 
     extractBlue(df = qc_data,
                 X = "receiver_deployment_longitude", 
                 Y = "receiver_deployment_latitude", 
                 datetime = "detection_datetime", 
-                env_var = "ocean_u",
+                env_var = "BRAN_cur",
                 extract_depth = 0,
                 cache_layers = TRUE,
+                folder_name = "Bluelink",
                 verbose = TRUE)
 
-# download v-current data (horizontal y-direction)
+# download vertical current data:
 data_cur <- 
     extractBlue(df = data_cur,
                 X = "receiver_deployment_longitude", 
                 Y = "receiver_deployment_latitude", 
                 datetime = "detection_datetime", 
-                env_var = "ocean_v",
+                env_var = "BRAN_wcur",
                 extract_depth = 0,
                 cache_layers = TRUE,
-                verbose = TRUE)
-
-# download w-current data (vertical direction)
-data_cur <- 
-    extractBlue(df = data_cur,
-                X = "receiver_deployment_longitude", 
-                Y = "receiver_deployment_latitude", 
-                datetime = "detection_datetime", 
-                env_var = "ocean_w",
-                extract_depth = 0,
-                cache_layers = TRUE,
+                folder_name = "Bluelink",
                 verbose = TRUE)
 ```
 
-As we set `cache_layers` to `TRUE`, the downloaded and processed files will be cached in the `folder_name` folder within the working directory, in a folder called `cached`. We can then load these processed files and plot them, to look at the trends in current speed within the study area:
+As we set `cache_layers` to `TRUE`, the downloaded and processed files will be cached in the `folder_name` folder within the working directory (Bluelink), as a csv file. We can then load these processed files and plot them, to look at the trends in current speed within the study area:
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
-# Load processed netCDF files:
-nc.u <- brick("Bluelink/Bluelink_ocean_u_0.nc")
-nc.v <- brick("Bluelink/Bluelink_ocean_v_0.nc")
-nc.w <- brick("Bluelink/Bluelink_ocean_w_0.nc")
-
-# Convert to data frame for plotting (first day of data)
-df.u <- as.data.frame(nc.u[[1]], xy = TRUE)
-df.v <- as.data.frame(nc.v[[1]], xy = TRUE)
-df.w <- as.data.frame(nc.w[[1]], xy = TRUE)
+# Load environmental data:
+cur.hor <- read.csv("Bluelink/BRAN_cur_0.csv")
+cur.ver <- read.csv("Bluelink/BRAN_wcur_0.csv")
 
 # Plot variables
 library(cmocean) 
@@ -307,41 +225,43 @@ library(ozmaps)
 oz_states <- ozmap_states # load Australia shapefile
 
 plot1 <- ggplot() + theme_bw() +
-  geom_raster(data = df.u, aes(x = x, y = y, fill = X1)) +
-  scale_fill_gradientn(colours = cmocean("balance")(100), na.value = NA, limits = c(-0.37, 0.37)) +
-  geom_sf(data = oz_states, fill = "lightgray", colour = "darkgray", lwd = 0.2, alpha = 0.5) +
+  geom_tile(data = cur.hor, aes(x = x, y = y, fill = BRAN_dir)) +
+  scale_fill_gradientn(colours = cmocean("delta")(100), na.value = NA) +
+  geom_sf(data = oz_states, fill = "lightgray", colour = "darkgray", 
+    lwd = 0.2, alpha = 0.5) +
   coord_sf(xlim = c(145.7, 148.1), ylim = c(-19.7, -17.3), expand = FALSE) + 
-  geom_point(data = qc_data, 
-    aes(x = receiver_deployment_longitude, y = receiver_deployment_latitude)) + 
-  labs(x = "", y = "", title = "u-current", fill = "Speed (m/s)") +
   scale_x_continuous(breaks = seq(146, 148, 1)) +
+  geom_point(data = qc_data, 
+    aes(x = receiver_deployment_longitude, y = receiver_deployment_latitude)) +
+  labs(x = "Longitude", y = "Latitude", fill = "Current bearing (°)") +
   theme(legend.position = "bottom")
 
 plot2 <- ggplot() + theme_bw() +
-  geom_raster(data = df.v, aes(x = x, y = y, fill = X1)) +
-  scale_fill_gradientn(colours = cmocean("balance")(100), na.value = NA, limits = c(-0.37, 0.37)) +
-  geom_sf(data = oz_states, fill = "lightgray", colour = "darkgray", lwd = 0.2, alpha = 0.5) +
+  geom_tile(data = cur.hor, aes(x = x, y = y, fill = BRAN_spd)) +
+  scale_fill_gradientn(colours = cmocean("speed")(100), na.value = NA) +
+  geom_sf(data = oz_states, fill = "lightgray", colour = "darkgray", 
+    lwd = 0.2, alpha = 0.5) +
   coord_sf(xlim = c(145.7, 148.1), ylim = c(-19.7, -17.3), expand = FALSE) + 
-  geom_point(data = qc_data, 
-    aes(x = receiver_deployment_longitude, y = receiver_deployment_latitude)) + 
-  labs(x = "", y = "", title = "v-current", fill = "Speed (m/s)") +
   scale_x_continuous(breaks = seq(146, 148, 1)) +
+  geom_point(data = qc_data, 
+    aes(x = receiver_deployment_longitude, y = receiver_deployment_latitude)) +
+  labs(x = "Longitude", y = "Latitude", fill = "Current speed (m/s)") +
   theme(legend.position = "bottom")
 
 plot3 <- ggplot() + theme_bw() +
-  geom_raster(data = df.w, aes(x = x, y = y, fill = X1)) +
-  scale_fill_gradientn(colours = cmocean("balance")(100), na.value = NA, limits = c(-4e-05, 4e-05),
-    breaks = c(-4e-05, 0, 4e-05)) +
-  geom_sf(data = oz_states, fill = "lightgray", colour = "darkgray", lwd = 0.2, alpha = 0.5) +
+  geom_tile(data = cur.ver, aes(x = x, y = y, fill = ocean_w)) +
+  scale_fill_gradientn(colours = cmocean("balance")(100), na.value = NA,
+    limits = c(-0.0005, 0.0005), breaks = seq(-0.0005, 0.0005, 0.0005)) +
+  geom_sf(data = oz_states, fill = "lightgray", colour = "darkgray", 
+    lwd = 0.2, alpha = 0.5) +
   coord_sf(xlim = c(145.7, 148.1), ylim = c(-19.7, -17.3), expand = FALSE) + 
-  geom_point(data = qc_data, 
-    aes(x = receiver_deployment_longitude, y = receiver_deployment_latitude)) + 
-  labs(x = "", y = "", title = "w-current", fill = "Speed (m/s)") +
   scale_x_continuous(breaks = seq(146, 148, 1)) +
+  geom_point(data = qc_data, 
+    aes(x = receiver_deployment_longitude, y = receiver_deployment_latitude)) +
+  labs(x = "Longitude", y = "Latitude", fill = "Vertical current speed (m/s)") +
   theme(legend.position = "bottom")
 
 plot1 + plot2 + plot3
-
 ```
 
 ![](images/bluelink/Current_3D.png){#id .class width=100%} 

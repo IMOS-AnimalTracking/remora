@@ -17,4 +17,3 @@ Wind speed in meters per second
 \description{
 helper function to calculate wind speed
 }
-\keyword{internal}
