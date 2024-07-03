@@ -105,18 +105,18 @@
     
 <hr>
 <p>This functionality of the <code>remora</code> package allows users to
-integrate acoustic telemetry data and <a href="https://research.csiro.au/bluelink/" class="external-link">Bluelink (BRAN)</a>
-environmental data. Since this is a reanalysis data with 10-km spatial
-resolution, the user will benefit from a dataset with daily resolution
-and no gaps, which are common in remotely sensed data due to cloud
-cover. Again, we advocate for users to first undertake a quality control
-step using the <code><a href="../reference/runQC.html">runQC()</a></code> function and workflow before further
-analysis (see <code><a href="../articles/runQC.html">vignette('runQC')</a></code>), however the functionality
-to append Bluelink (BRAN) environmental data will work on any dataset
-that has at the minimum spatial coordinates and a timestamp for each
-detection event. A benefit of using Bluelink (BRAN) data in your
-analyses of animal movements is that data can be obtained in
-<em>3D</em>, ranging from the ocean surface all the way to 4,509 m in
+integrate acoustic telemetry data and <a href="https://research.csiro.au/bluelink/" class="external-link">Bluelink Reanalysis
+(BRAN)</a> environmental data. Since this is a reanalysis data with
+10-km spatial resolution, the user will benefit from a dataset with
+daily resolution and no gaps, which are common in remotely sensed data
+due to cloud cover. Again, we advocate for users to first undertake a
+quality control step using the <code><a href="../reference/runQC.html">runQC()</a></code> function and
+workflow before further analysis (see <code><a href="../articles/runQC.html">vignette('runQC')</a></code>),
+however the functionality to append Bluelink (BRAN) environmental data
+will work on any dataset that has at the minimum spatial coordinates and
+a timestamp for each detection event. A benefit of using Bluelink (BRAN)
+data in your analyses of animal movements is that data can be obtained
+in <em>3D</em>, ranging from the ocean surface all the way to 4,509 m in
 depth.</p>
 <p>The <code><a href="../reference/extractBlue.html">extractBlue()</a></code> function can be used to obtain
 environmental data <strong>anywhere in the world</strong>.</p>
@@ -511,7 +511,7 @@ IMOS
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_temp
+BRAN_temp
 </td>
 <td style="text-align:left;">
 3D Raster product
@@ -534,7 +534,7 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_salt
+BRAN_salt
 </td>
 <td style="text-align:left;">
 3D Raster product
@@ -557,10 +557,36 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_u
+BRAN_cur
 </td>
 <td style="text-align:left;">
 3D Raster product
+</td>
+<td style="text-align:left;">
+daily (1993-01-01 - present)
+</td>
+<td style="text-align:left;">
+ms-1; degrees clockwise
+</td>
+<td style="text-align:left;">
+extractBlue()
+</td>
+<td style="text-align:left;width: 30em; ">
+Geostrophic velocity in the east-west (UCUR) and north-south (VCUR)
+directions from the surface to 4,509-m depth. Two additional variables
+are calculated: BRAN_spd = current velocity (ms-1) and BRAN_dir =
+current bearing (degrees).
+</td>
+<td style="text-align:left;">
+Bluelink (CSIRO)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+BRAN_wcur
+</td>
+<td style="text-align:left;">
+Raster product
 </td>
 <td style="text-align:left;">
 daily (1993-01-01 - present)
@@ -572,8 +598,9 @@ ms-1
 extractBlue()
 </td>
 <td style="text-align:left;width: 30em; ">
-Current horizontal speed component in the x direction at specified depth
-from the surface to 4,509-m depth
+Vertical current speed in the water column is calculated (negative =
+downwards; positive = upwards) using the layers available between the
+surface to 200-m depths.
 </td>
 <td style="text-align:left;">
 Bluelink (CSIRO)
@@ -581,58 +608,10 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_v
+BRAN_ssh
 </td>
 <td style="text-align:left;">
-3D Raster product
-</td>
-<td style="text-align:left;">
-daily (1993-01-01 - present)
-</td>
-<td style="text-align:left;">
-ms-1
-</td>
-<td style="text-align:left;">
-extractBlue()
-</td>
-<td style="text-align:left;width: 30em; ">
-Current horizontal speed component in the y direction at specified depth
-from the surface to 4,509-m depth
-</td>
-<td style="text-align:left;">
-Bluelink (CSIRO)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-weight: bold;">
-ocean_w
-</td>
-<td style="text-align:left;">
-3D Raster product
-</td>
-<td style="text-align:left;">
-daily (1993-01-01 - present)
-</td>
-<td style="text-align:left;">
-ms-1
-</td>
-<td style="text-align:left;">
-extractBlue()
-</td>
-<td style="text-align:left;width: 30em; ">
-Current vertical speed component at specified depth from the surface to
-4,509-m depth
-</td>
-<td style="text-align:left;">
-Bluelink (CSIRO)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-weight: bold;">
-ocean_eta_t
-</td>
-<td style="text-align:left;">
-3D Raster product
+Raster product
 </td>
 <td style="text-align:left;">
 daily (1993-01-01 - present)
@@ -652,10 +631,10 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_mld
+BRAN_mld
 </td>
 <td style="text-align:left;">
-3D Raster product
+Raster product
 </td>
 <td style="text-align:left;">
 daily (1993-01-01 - present)
@@ -675,7 +654,7 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-air_wind
+BRAN_wind
 </td>
 <td style="text-align:left;">
 Raster product
@@ -690,8 +669,8 @@ ms-1; degrees clockwise
 extractBlue()
 </td>
 <td style="text-align:left;width: 30em; ">
-Returns both wind speed (ms-1) and direction (° clockwise) as two
-separate columns
+Two variables are calculated, including BRAN_wind_spd = wind velocity
+(ms-1) and BRAN_wind_dir = wind bearing (degrees).
 </td>
 <td style="text-align:left;">
 Bluelink (CSIRO)
@@ -771,11 +750,18 @@ default, data is obtained at the water surface
 <li>
 <strong>cache_layers</strong>: should the extracted and processed
 environmental data layers be cached within the working directory? If so,
-spatial layers will be cached in a folder (<code>folder_name</code>)
-within your working directory, and named after the environmental
-variable of interest. Since the raw files downloaded have a global
-resolution, for computational purposes these exported files will
-encompass only your study area</li>
+the environmental data will be cached as a csv file in a folder
+(<code>folder_name</code>) within your working directory, and named
+after the environmental variable of interest.</li>
+<li>
+<strong>env_buffer</strong>: since each Bluelink BRAN file was
+global spatial coverage, to reduce computational cost, files are cropped
+to the respective area of interest before being downloaded. By default,
+the minimum and maximum latitudes and logitudes will be obtained from
+the Y and X columns, and buffered at 1° in each direction. This argument
+allows the user to specify default values for this buffer (e.g. higher
+than 1° if interested in the environmental trends outside the area of
+study, such as for running species distribution models).</li>
 <li>
 <strong>full_timeperiod</strong>: should environmental variables
 extracted for each day across full monitoring period? If set to
@@ -800,16 +786,14 @@ will comprise 1 (days with detections) and 0 (days without detections)
 values:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Obtain standardized data with water temperatures at the surface:</span></span>
-<span><span class="va">standdata_with_sst</span> <span class="op">&lt;-</span> </span>
+<span><span class="va">data_with_sst</span> <span class="op">&lt;-</span> </span>
 <span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
 <span>                X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
 <span>                Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span>
 <span>                station_name <span class="op">=</span> <span class="st">"station_name"</span>,</span>
 <span>                datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span>
-<span>                env_var <span class="op">=</span> <span class="st">"ocean_temp"</span>,</span>
+<span>                env_var <span class="op">=</span> <span class="st">"BRAN_temp"</span>,</span>
 <span>                extract_depth <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>                cache_layers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                export_step <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                full_timeperiod <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>If we have a look at this dataset it will look like this:</p>
@@ -819,7 +803,7 @@ values:</p>
 <th align="right">station_name</th>
 <th align="right">lon</th>
 <th align="right">lat</th>
-<th align="right">ocean_temp_0</th>
+<th align="right">BRAN_temp_0</th>
 <th align="right">Detection</th>
 </tr></thead>
 <tbody>
@@ -880,170 +864,92 @@ recorded at the <code>Kelso 2</code> station
 (<code>ocean_temp_0</code>) was extracted for all days.</p>
 </div>
 <div class="section level5">
-<h5 id="gap-filling-functionality">
-<em>Gap filling functionality</em><a class="anchor" aria-label="anchor" href="#gap-filling-functionality"></a>
-</h5>
-<p>While cloud cover is not a limitation to obtain Bluelink (BRAN)
-environmental data at oceanic regions, those locations in very close
-proximity to the coast might return <code>NA</code> values. In these
-cases, you can use the <code>fill_gaps</code> and <code>buffer</code>
-arguments (similar to their uses in <code><a href="../reference/extractEnv.html">extractEnv()</a></code>) to fill
-the rows with missing information. By default, <code>fill_gaps</code> is
-set to <code>FALSE</code> and <code>buffer</code> is set to 10-km
-(i.e. the same resolution as the raw environmental data).</p>
-<p>These two arguments can be particularly usefull if the user wants to
-extract environmental data at <em>depths deeper</em> than the deployment
-locations of the acoustic receivers.</p>
-<p><br></p>
-<p>For example, if we want to extract water temperature data at 40-m
-depth without the gap filling function, we would get the following
-output:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="va">data1_with_temp40</span> <span class="op">&lt;-</span> </span>
-<span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
-<span>                X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
-<span>                Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span>
-<span>                datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span>
-<span>                env_var <span class="op">=</span> <span class="st">"ocean_temp"</span>,</span>
-<span>                extract_depth <span class="op">=</span> <span class="fl">40</span>,</span>
-<span>                cache_layers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                fill_gaps <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">data1_with_temp40</span><span class="op">$</span><span class="va">ocean_temp_40</span><span class="op">)</span></span></code></pre></div>
-<pre><code>ocean_temp_40
-Min.   :23.44
-1st Qu.:23.53
-Median :23.60
-Mean   :23.75
-3rd Qu.:23.83
-Max.   :24.70
-NA's   :12</code></pre>
-<p>Which means that, <strong>12 stations (out of 20)</strong> were
-located in depths <em>shallower than 40 m</em>. Therefore, we can use
-the gap filling function to obtain data at the nearest 40-m available
-pixels by using a 25-km buffer:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="va">data2_with_temp40</span> <span class="op">&lt;-</span> </span>
-<span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
-<span>                X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
-<span>                Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span>
-<span>                datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span>
-<span>                env_var <span class="op">=</span> <span class="st">"ocean_temp"</span>,</span>
-<span>                extract_depth <span class="op">=</span> <span class="fl">40</span>,</span>
-<span>                cache_layers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                fill_gaps <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                buffer <span class="op">=</span> <span class="fl">25000</span><span class="op">)</span> <span class="co"># use a 25-km buffer</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">data2_with_temp40</span><span class="op">$</span><span class="va">ocean_temp_40</span><span class="op">)</span></span></code></pre></div>
-<pre><code>ocean_temp_40
-Min.   :23.44
-1st Qu.:23.77
-Median :23.32
-Mean   :23.12
-3rd Qu.:23.37
-Max.   :24.70</code></pre>
-</div>
-<div class="section level5">
 <h5 id="water-temperature-at-depth-30-m">
 <em>Water temperature at depth (30 m)</em><a class="anchor" aria-label="anchor" href="#water-temperature-at-depth-30-m"></a>
 </h5>
 <p>We are going to use the function to compare the water temperatures in
 the study area between the surface and the 30-m depths. Let’s download
 and process the Bluelink (BRAN) data at the two depths of interest:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Obtain water temperature data at the surface</span></span>
-<span><span class="va">data_with_sst1</span> <span class="op">&lt;-</span> </span>
-<span>  <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
-<span>             X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
-<span>             Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span>
-<span>             datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span>
-<span>             cache_layers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>             env_var <span class="op">=</span> <span class="st">"ocean_temp"</span>,</span>
-<span>             extract_depth <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="co"># surface</span></span>
-<span></span>
-<span><span class="co">## Obtain water temperature data at the 30-m depths</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Obtain water temperature data at the 30-m depths</span></span>
 <span><span class="va">data_with_sst2</span> <span class="op">&lt;-</span> </span>
-<span>  <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
-<span>             X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
-<span>             Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span>
-<span>             datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span>
-<span>             cache_layers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>             env_var <span class="op">=</span> <span class="st">"ocean_temp"</span>,</span>
-<span>             extract_depth <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="co"># 30-m depths</span></span></code></pre></div>
+<span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
+<span>                X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
+<span>                Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span>
+<span>                station_name <span class="op">=</span> <span class="st">"station_name"</span>,</span>
+<span>                datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span>
+<span>                env_var <span class="op">=</span> <span class="st">"BRAN_temp"</span>,</span>
+<span>                extract_depth <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>                verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                full_timeperiod <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Now let’s see how the two variables look in relation to each
 other:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Station <span class="op">=</span> <span class="va">data_with_sst1</span><span class="op">$</span><span class="va">station_name</span>,</span>
-<span>  Date <span class="op">=</span> <span class="va">data_with_sst1</span><span class="op">$</span><span class="va">detection_datetime</span>,</span>
-<span>  Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Surface"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_with_sst1</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Depth"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_with_sst1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  Temperature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">data_with_sst1</span><span class="op">$</span><span class="va">ocean_temp_0</span>, <span class="va">data_with_sst2</span><span class="op">$</span><span class="va">ocean_temp_30</span><span class="op">)</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Station <span class="op">=</span> <span class="va">data_with_sst</span><span class="op">$</span><span class="va">station_name</span>,</span>
+<span>  Date <span class="op">=</span> <span class="va">data_with_sst</span><span class="op">$</span><span class="va">date</span>,</span>
+<span>  Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Surface"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_with_sst</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Depth"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_with_sst2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  Temperature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">data_with_sst</span><span class="op">$</span><span class="va">BRAN_temp_0</span>, <span class="va">data_with_sst2</span><span class="op">$</span><span class="va">BRAN_temp_30</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">data_plot</span><span class="op">$</span><span class="va">Variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">data_plot</span><span class="op">$</span><span class="va">Variable</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Surface"</span>, <span class="st">"Depth"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data_plot</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Station</span>, y <span class="op">=</span> <span class="va">Temperature</span>, colour <span class="op">=</span> <span class="va">Variable</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Temperature (°C)"</span>, colour <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Temperature (°C)"</span>, colour <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"Temp_surf_depth.png"</span>, units <span class="op">=</span> <span class="st">"cm"</span>, width <span class="op">=</span> <span class="fl">25</span>, height <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images/bluelink/Temp_surf_depth.png" id="id" class="class" style="width:90.0%"></p>
 </div>
 <div class="section level5">
 <h5 id="surface-3d-current-speeds">
 <em>Surface 3D current speeds</em><a class="anchor" aria-label="anchor" href="#surface-3d-current-speeds"></a>
 </h5>
-<p>We can also use the <code><a href="../reference/extractBlue.html">extractBlue()</a></code> function to obtain 3D
-current data along our study region. In this example, we are going to
-download horizontal (u and v components) and vertical current data, and
-save the processed Bluelink (BRAN) files for further investigation.
-First, let’s download the data:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># download u-current data (horizontal x-direction)</span></span>
+<p>Besides from enabling users to extract environmental data at
+different depths (using the <code>extract_depth</code> argument), we can
+also use the <code><a href="../reference/extractBlue.html">extractBlue()</a></code> function to obtain 3D current
+data along our study region. When horizontal current data is requested
+(<code>env_var = BRAN_cur</code>), two new variables are calculated
+(similarly, the same is done for wind data when using
+<code>env_var = BRAN_wind</code>), including speed (in m/s) and
+direction (degrees clockwise). When vertical current is requested (using
+<code>env_var = "BRAN_wcur"</code>), a representative vertical current
+value in the water column will be calculated, using the available layers
+of vertical data between the water surface and 200-m depth.</p>
+<p>In this example, we are going to download horizontal (speed and
+direction) and vertical current data, and save the processed Bluelink
+(BRAN) files for further investigation. First, let’s download the
+data:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># download horizontal current data:</span></span>
 <span><span class="va">data_cur</span> <span class="op">&lt;-</span> </span>
 <span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
 <span>                X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
 <span>                Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span>
 <span>                datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span>
-<span>                env_var <span class="op">=</span> <span class="st">"ocean_u"</span>,</span>
+<span>                env_var <span class="op">=</span> <span class="st">"BRAN_cur"</span>,</span>
 <span>                extract_depth <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>                cache_layers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                folder_name <span class="op">=</span> <span class="st">"Bluelink"</span>,</span>
 <span>                verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># download v-current data (horizontal y-direction)</span></span>
+<span><span class="co"># download vertical current data:</span></span>
 <span><span class="va">data_cur</span> <span class="op">&lt;-</span> </span>
 <span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">data_cur</span>,</span>
 <span>                X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
 <span>                Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span>
 <span>                datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span>
-<span>                env_var <span class="op">=</span> <span class="st">"ocean_v"</span>,</span>
+<span>                env_var <span class="op">=</span> <span class="st">"BRAN_wcur"</span>,</span>
 <span>                extract_depth <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>                cache_layers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># download w-current data (vertical direction)</span></span>
-<span><span class="va">data_cur</span> <span class="op">&lt;-</span> </span>
-<span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">data_cur</span>,</span>
-<span>                X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
-<span>                Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span>
-<span>                datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span>
-<span>                env_var <span class="op">=</span> <span class="st">"ocean_w"</span>,</span>
-<span>                extract_depth <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>                cache_layers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                folder_name <span class="op">=</span> <span class="st">"Bluelink"</span>,</span>
 <span>                verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>As we set <code>cache_layers</code> to <code>TRUE</code>, the
 downloaded and processed files will be cached in the
-<code>folder_name</code> folder within the working directory, in a
-folder called <code>cached</code>. We can then load these processed
-files and plot them, to look at the trends in current speed within the
-study area:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load processed netCDF files:</span></span>
-<span><span class="va">nc.u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="st">"Bluelink/Bluelink_ocean_u_0.nc"</span><span class="op">)</span></span>
-<span><span class="va">nc.v</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="st">"Bluelink/Bluelink_ocean_v_0.nc"</span><span class="op">)</span></span>
-<span><span class="va">nc.w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="st">"Bluelink/Bluelink_ocean_w_0.nc"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Convert to data frame for plotting (first day of data)</span></span>
-<span><span class="va">df.u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">nc.u</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, xy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">df.v</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">nc.v</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, xy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">df.w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">nc.w</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, xy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code>folder_name</code> folder within the working directory (Bluelink),
+as a csv file. We can then load these processed files and plot them, to
+look at the trends in current speed within the study area:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load environmental data:</span></span>
+<span><span class="va">cur.hor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"Bluelink/BRAN_cur_0.csv"</span><span class="op">)</span></span>
+<span><span class="va">cur.ver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"Bluelink/BRAN_wcur_0.csv"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot variables</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://matplotlib.org/cmocean/" class="external-link">cmocean</a></span><span class="op">)</span> </span>
@@ -1052,37 +958,40 @@ study area:</p>
 <span><span class="va">oz_states</span> <span class="op">&lt;-</span> <span class="va">ozmap_states</span> <span class="co"># load Australia shapefile</span></span>
 <span></span>
 <span><span class="va">plot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">df.u</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, fill <span class="op">=</span> <span class="va">X1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_fill_gradientn</a></span><span class="op">(</span>colours <span class="op">=</span> <span class="fu">cmocean</span><span class="op">(</span><span class="st">"balance"</span><span class="op">)</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, na.value <span class="op">=</span> <span class="cn">NA</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.37</span>, <span class="fl">0.37</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">oz_states</span>, fill <span class="op">=</span> <span class="st">"lightgray"</span>, colour <span class="op">=</span> <span class="st">"darkgray"</span>, lwd <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_tile</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">cur.hor</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, fill <span class="op">=</span> <span class="va">BRAN_dir</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_fill_gradientn</a></span><span class="op">(</span>colours <span class="op">=</span> <span class="fu">cmocean</span><span class="op">(</span><span class="st">"delta"</span><span class="op">)</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">oz_states</span>, fill <span class="op">=</span> <span class="st">"lightgray"</span>, colour <span class="op">=</span> <span class="st">"darkgray"</span>, </span>
+<span>    lwd <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">145.7</span>, <span class="fl">148.1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">19.7</span>, <span class="op">-</span><span class="fl">17.3</span><span class="op">)</span>, expand <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">qc_data</span>, </span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, y <span class="op">=</span> <span class="va">receiver_deployment_latitude</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"u-current"</span>, fill <span class="op">=</span> <span class="st">"Speed (m/s)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">146</span>, <span class="fl">148</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">qc_data</span>, </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, y <span class="op">=</span> <span class="va">receiver_deployment_latitude</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span>, fill <span class="op">=</span> <span class="st">"Current bearing (°)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plot2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">df.v</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, fill <span class="op">=</span> <span class="va">X1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_fill_gradientn</a></span><span class="op">(</span>colours <span class="op">=</span> <span class="fu">cmocean</span><span class="op">(</span><span class="st">"balance"</span><span class="op">)</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, na.value <span class="op">=</span> <span class="cn">NA</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.37</span>, <span class="fl">0.37</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">oz_states</span>, fill <span class="op">=</span> <span class="st">"lightgray"</span>, colour <span class="op">=</span> <span class="st">"darkgray"</span>, lwd <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_tile</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">cur.hor</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, fill <span class="op">=</span> <span class="va">BRAN_spd</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_fill_gradientn</a></span><span class="op">(</span>colours <span class="op">=</span> <span class="fu">cmocean</span><span class="op">(</span><span class="st">"speed"</span><span class="op">)</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">oz_states</span>, fill <span class="op">=</span> <span class="st">"lightgray"</span>, colour <span class="op">=</span> <span class="st">"darkgray"</span>, </span>
+<span>    lwd <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">145.7</span>, <span class="fl">148.1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">19.7</span>, <span class="op">-</span><span class="fl">17.3</span><span class="op">)</span>, expand <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">qc_data</span>, </span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, y <span class="op">=</span> <span class="va">receiver_deployment_latitude</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"v-current"</span>, fill <span class="op">=</span> <span class="st">"Speed (m/s)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">146</span>, <span class="fl">148</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">qc_data</span>, </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, y <span class="op">=</span> <span class="va">receiver_deployment_latitude</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span>, fill <span class="op">=</span> <span class="st">"Current speed (m/s)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plot3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_raster</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">df.w</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, fill <span class="op">=</span> <span class="va">X1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_fill_gradientn</a></span><span class="op">(</span>colours <span class="op">=</span> <span class="fu">cmocean</span><span class="op">(</span><span class="st">"balance"</span><span class="op">)</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, na.value <span class="op">=</span> <span class="cn">NA</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4e-05</span>, <span class="fl">4e-05</span><span class="op">)</span>,</span>
-<span>    breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4e-05</span>, <span class="fl">0</span>, <span class="fl">4e-05</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">oz_states</span>, fill <span class="op">=</span> <span class="st">"lightgray"</span>, colour <span class="op">=</span> <span class="st">"darkgray"</span>, lwd <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_tile</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">cur.ver</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, fill <span class="op">=</span> <span class="va">ocean_w</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_fill_gradientn</a></span><span class="op">(</span>colours <span class="op">=</span> <span class="fu">cmocean</span><span class="op">(</span><span class="st">"balance"</span><span class="op">)</span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, na.value <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.0005</span>, <span class="fl">0.0005</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.0005</span>, <span class="fl">0.0005</span>, <span class="fl">0.0005</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">oz_states</span>, fill <span class="op">=</span> <span class="st">"lightgray"</span>, colour <span class="op">=</span> <span class="st">"darkgray"</span>, </span>
+<span>    lwd <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">145.7</span>, <span class="fl">148.1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">19.7</span>, <span class="op">-</span><span class="fl">17.3</span><span class="op">)</span>, expand <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">qc_data</span>, </span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, y <span class="op">=</span> <span class="va">receiver_deployment_latitude</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"w-current"</span>, fill <span class="op">=</span> <span class="st">"Speed (m/s)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">146</span>, <span class="fl">148</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">qc_data</span>, </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">receiver_deployment_longitude</span>, y <span class="op">=</span> <span class="va">receiver_deployment_latitude</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Longitude"</span>, y <span class="op">=</span> <span class="st">"Latitude"</span>, fill <span class="op">=</span> <span class="st">"Vertical current speed (m/s)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plot1</span> <span class="op">+</span> <span class="va">plot2</span> <span class="op">+</span> <span class="va">plot3</span></span></code></pre></div>

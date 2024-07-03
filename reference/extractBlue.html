@@ -87,14 +87,15 @@ server and append variables to detection data based on date of detection</p>
 <span>  extract_depth <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  var_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">env_var</span>, <span class="va">extract_depth</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span>,</span>
 <span>  folder_name <span class="op">=</span> <span class="st">"Bluelink"</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  env_buffer <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  cache_layers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  full_timeperiod <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  station_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fill_gaps <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  buffer <span class="op">=</span> <span class="fl">10000</span>,</span>
-<span>  export_step <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  export_path <span class="op">=</span> <span class="st">"Processed_data"</span></span>
+<span>  export_step <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  export_path <span class="op">=</span> <span class="st">"Processed_data"</span>,</span>
+<span>  .parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  .ncores <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -119,8 +120,8 @@ Time; UTC)</p></dd>
 
 
 <dt>env_var</dt>
-<dd><p>variable needed from Bluelink. Options include ('ocean_temp', 'ocean_salt',
-ocean_u', 'ocean_v', 'ocean_w', 'ocean_eta_t', 'air_wind')</p></dd>
+<dd><p>variable needed from Bluelink. Options include ('BRAN_temp', 'BRAN_salt',
+BRAN_ssh', 'BRAN_mld', 'BRAN_cur', 'BRAN_wind').</p></dd>
 
 
 <dt>extract_depth</dt>
@@ -141,9 +142,8 @@ netCDF files should be saved. Default (NULL) produces automatic folder names bas
 processed files after processing.</p></dd>
 
 
-<dt>verbose</dt>
-<dd><p>should function provide details of what operation is being conducted.
-Set to <code>FALSE</code> to keep it quiet</p></dd>
+<dt>env_buffer</dt>
+<dd><p>distance (in decimal degrees) to expand the study area beyond the coordinates to extract environmental data. Default value is 1°.</p></dd>
 
 
 <dt>cache_layers</dt>
@@ -165,20 +165,6 @@ detected. For more details please see the package vignettes.</p></dd>
 acoustic stations</p></dd>
 
 
-<dt>fill_gaps</dt>
-<dd><p>should the function use a spatial buffer to estimate
-environmental variables for detections where there is missing data. Default
-is <code>FALSE</code> to save computational time.</p></dd>
-
-
-<dt>buffer</dt>
-<dd><p>radius of buffer (in m) around each detection from which
-environmental variables should be extracted from. A median value of pixels
-that fall within the buffer will be used if <code>fill_gaps = TRUE</code>. If <code>NULL</code> a
-buffer will be chosen based on the resolution of environmental layer. A
-numeric value (in m) can be used here to customise buffer radius.</p></dd>
-
-
 <dt>export_step</dt>
 <dd><p>should the processed dataset be exported to file? This is particularly usefull for large
 datasets, to avoid function failure due to issues with internet connexion. The rows with missing data will be
@@ -187,6 +173,20 @@ exported as NAs, and only these will be completed if the function is rerun provi
 
 <dt>export_path</dt>
 <dd><p>path and name of to export the dataset with appended environmnetal data</p></dd>
+
+
+<dt>.parallel</dt>
+<dd><p>should the function be run in parallel</p></dd>
+
+
+<dt>.ncores</dt>
+<dd><p>number of cores to use if set to parallel. If none provided,
+uses <code><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></code> to determine number.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>should function provide details of what operation is being conducted.
+Set to <code>FALSE</code> to keep it quiet</p></dd>
 
 </dl></div>
     <div id="value">
@@ -237,7 +237,7 @@ available can be accessed using the <code><a href="imos_variables.html">imos_var
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Detection_QC</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">filename</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Extract daily interpolated sea surface temperature</span></span></span>
 <span class="r-in"><span><span class="co">## cache_layers &amp; fill_gaps args set to FALSE for speed</span></span></span>
@@ -246,13 +246,13 @@ available can be accessed using the <code><a href="imos_variables.html">imos_var
 <span class="r-in"><span>               X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span></span>
 <span class="r-in"><span>               Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span></span>
 <span class="r-in"><span>               datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span></span>
-<span class="r-in"><span>               env_var <span class="op">=</span> <span class="st">"ocean_temp"</span>,</span></span>
+<span class="r-in"><span>               env_var <span class="op">=</span> <span class="st">"BRAN_temp"</span>,</span></span>
 <span class="r-in"><span>               extract_depth <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>               folder_name <span class="op">=</span> <span class="st">"Bluelink"</span>,</span></span>
-<span class="r-in"><span>               verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>               fill_gaps <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading and processing ocean_temp_0 data: 2013-08 | 2013-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                                    |                                                            |   0%  |                                                                    |==============================                              |  50%  |                                                                    |============================================================| 100%</span>
+<span class="r-in"><span>               verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading BRAN_temp data: 2013-08 | 2013-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                          |                                                  |   0%  |                                                          |=========================                         |  50%  |                                                          |==================================================| 100%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting environmental data...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                          |                                                  |   0%  |                                                          |==================================================| 100%</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

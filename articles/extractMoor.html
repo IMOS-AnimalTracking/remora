@@ -517,7 +517,7 @@ IMOS
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_temp
+BRAN_temp
 </td>
 <td style="text-align:left;">
 3D Raster product
@@ -540,7 +540,7 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_salt
+BRAN_salt
 </td>
 <td style="text-align:left;">
 3D Raster product
@@ -563,10 +563,36 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_u
+BRAN_cur
 </td>
 <td style="text-align:left;">
 3D Raster product
+</td>
+<td style="text-align:left;">
+daily (1993-01-01 - present)
+</td>
+<td style="text-align:left;">
+ms-1; degrees clockwise
+</td>
+<td style="text-align:left;">
+extractBlue()
+</td>
+<td style="text-align:left;width: 30em; ">
+Geostrophic velocity in the east-west (UCUR) and north-south (VCUR)
+directions from the surface to 4,509-m depth. Two additional variables
+are calculated: BRAN_spd = current velocity (ms-1) and BRAN_dir =
+current bearing (degrees).
+</td>
+<td style="text-align:left;">
+Bluelink (CSIRO)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+BRAN_wcur
+</td>
+<td style="text-align:left;">
+Raster product
 </td>
 <td style="text-align:left;">
 daily (1993-01-01 - present)
@@ -578,8 +604,9 @@ ms-1
 extractBlue()
 </td>
 <td style="text-align:left;width: 30em; ">
-Current horizontal speed component in the x direction at specified depth
-from the surface to 4,509-m depth
+Vertical current speed in the water column is calculated (negative =
+downwards; positive = upwards) using the layers available between the
+surface to 200-m depths.
 </td>
 <td style="text-align:left;">
 Bluelink (CSIRO)
@@ -587,58 +614,10 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_v
+BRAN_ssh
 </td>
 <td style="text-align:left;">
-3D Raster product
-</td>
-<td style="text-align:left;">
-daily (1993-01-01 - present)
-</td>
-<td style="text-align:left;">
-ms-1
-</td>
-<td style="text-align:left;">
-extractBlue()
-</td>
-<td style="text-align:left;width: 30em; ">
-Current horizontal speed component in the y direction at specified depth
-from the surface to 4,509-m depth
-</td>
-<td style="text-align:left;">
-Bluelink (CSIRO)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-weight: bold;">
-ocean_w
-</td>
-<td style="text-align:left;">
-3D Raster product
-</td>
-<td style="text-align:left;">
-daily (1993-01-01 - present)
-</td>
-<td style="text-align:left;">
-ms-1
-</td>
-<td style="text-align:left;">
-extractBlue()
-</td>
-<td style="text-align:left;width: 30em; ">
-Current vertical speed component at specified depth from the surface to
-4,509-m depth
-</td>
-<td style="text-align:left;">
-Bluelink (CSIRO)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-weight: bold;">
-ocean_eta_t
-</td>
-<td style="text-align:left;">
-3D Raster product
+Raster product
 </td>
 <td style="text-align:left;">
 daily (1993-01-01 - present)
@@ -658,10 +637,10 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-ocean_mld
+BRAN_mld
 </td>
 <td style="text-align:left;">
-3D Raster product
+Raster product
 </td>
 <td style="text-align:left;">
 daily (1993-01-01 - present)
@@ -681,7 +660,7 @@ Bluelink (CSIRO)
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
-air_wind
+BRAN_wind
 </td>
 <td style="text-align:left;">
 Raster product
@@ -696,8 +675,8 @@ ms-1; degrees clockwise
 extractBlue()
 </td>
 <td style="text-align:left;width: 30em; ">
-Returns both wind speed (ms-1) and direction (° clockwise) as two
-separate columns
+Two variables are calculated, including BRAN_wind_spd = wind velocity
+(ms-1) and BRAN_wind_dir = wind bearing (degrees).
 </td>
 <td style="text-align:left;">
 Bluelink (CSIRO)
