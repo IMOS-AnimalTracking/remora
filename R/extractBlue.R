@@ -72,7 +72,7 @@
 ##'   ungroup() %>% 
 ##'   filter(Detection_QC %in% c(1,2)) %>%
 ##'   filter(filename == unique(filename)[1]) %>%
-##'   slice(5:8)
+##'   slice(1:20)
 ##' 
 ##' ## Extract daily interpolated sea surface temperature
 ##' ## cache_layers & fill_gaps args set to FALSE for speed
@@ -85,42 +85,16 @@
 ##'                extract_depth = 0,
 ##'                verbose = TRUE)
 ##'
-##' @importFrom dplyr %>% mutate distinct pull left_join select
-##' @importFrom stringr str_remove str_split str_replace
-##' @importFrom lubridate date 
-##' @importFrom terra rast extract ext<- crop writeCDF
-##' @importFrom sf st_as_sf st_buffer
-##' @importFrom utils write.csv txtProgressBar setTxtProgressBar
 ##' @importFrom foreach %dopar%
 ##'
 ##' @export
- 
-<<<<<<< HEAD
-extractBlue <- function(df,
-                        X,
-                        Y,
-                        datetime,
-                        env_var,
-                        extract_depth = 0,
-                        var_name = paste(env_var, extract_depth, sep = "_"),
-                        folder_name = "Bluelink",
-                        verbose = TRUE,
-                        cache_layers = FALSE,
-                        full_timeperiod = FALSE,
-                        station_name = NULL,
-                        fill_gaps = FALSE,
-                        buffer = 10000,
-                        export_step = TRUE,
-                        export_path = "Processed_data") {
-  
-=======
+
 extractBlue <- function(df, X, Y, datetime, 
-  env_var, extract_depth = 0, var_name = paste(env_var, extract_depth, sep = "_"), 
-  folder_name = "Bluelink", env_buffer = 1, cache_layers = FALSE,
-  full_timeperiod = FALSE, station_name = NULL, 
-  export_step = FALSE, export_path = "Processed_data",
-  .parallel = FALSE, .ncores = NULL, verbose = TRUE) {
->>>>>>> 490291637cd7b7701d1c323f84e456bf7aa7dcac
+                        env_var, extract_depth = 0, var_name = paste(env_var, extract_depth, sep = "_"), 
+                        folder_name = "Bluelink", env_buffer = 1, cache_layers = FALSE,
+                        full_timeperiod = FALSE, station_name = NULL, 
+                        export_step = FALSE, export_path = "Processed_data",
+                        .parallel = FALSE, .ncores = NULL, verbose = TRUE) {
   
   # Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
@@ -149,9 +123,9 @@ extractBlue <- function(df, X, Y, datetime,
       df.all$lat <- df[,Y][match(df.all[,station_name], df[,station_name])]
       df.all$Var <- NA 
       names(df.all)[length(names(df.all))] <- var_name
-        # For data download!
-        df.all$aux.date <- substr(df.all$date, 1, 7) 
-        dates <- unique(df.all$aux.date)
+      # For data download!
+      df.all$aux.date <- substr(df.all$date, 1, 7) 
+      dates <- unique(df.all$aux.date)
       if (cache_layers) {
         if (dir.exists(folder_name) == FALSE)  
           dir.create(folder_name)
@@ -201,126 +175,79 @@ extractBlue <- function(df, X, Y, datetime,
     download.var <- "ocean_w"
   }   
   # Processing begins
-<<<<<<< HEAD
-  for (i in 1:length(dates)) {
-    # Download BRAN data
-    options(timeout = 1000000000) # Increase timeout for slow internet connections
-    aux.date <- dates[i]
-    dataDownload(type = "day", 
-      year = as.numeric(substr(aux.date, 1, 4)), 
-      month = as.numeric(substr(aux.date, 6, 7)), 
-      dir = folder_name, 
-      varname = download.var,
-      quiet = TRUE)
-    # Load BRAN data
-
-    nc.bran <- terra::rast(
-        paste0(folder_name, "/", 
-        download.var, "_", substr(aux.date, 1, 4), "_", substr(aux.date, 6, 7), ".nc")) 
-    if (env_var == "air_wind") {
-      index <- which(substr(names(nc.bran), 1, 5) %in% 
-        c("u_atm", "v_atm"))
-      nc.bran <- nc.bran[[index]]
-    }
-
-    # Auxiliary object to find depth and day of interest (for 3D variables)
-    if (env_var == "ocean_temp")
-      aux.names <- str_remove(names(nc.bran), pattern = "temp_st_ocean=")
-    if (env_var == "ocean_salt")
-      aux.names <- str_remove(names(nc.bran), pattern = "salt_st_ocean=")
-    if (env_var == "ocean_v")
-      aux.names <- str_remove(names(nc.bran), pattern = "v_st_ocean=")
-    if (env_var == "ocean_u")
-      aux.names <- str_remove(names(nc.bran), pattern = "u_st_ocean=")
-    if (env_var == "ocean_eta_t")
-      aux.names <- str_remove(names(nc.bran), pattern = "eta_t_")
-    if (env_var == "ocean_mld")
-      aux.names <- str_remove(names(nc.bran), pattern = "mld_")
-    if (env_var == "air_wind") {
-      aux.names <- str_replace(names(nc.bran), pattern = "u_atm", 
-        replacement = "uatm")
-      aux.names <- str_replace(aux.names, pattern = "v_atm", 
-        replacement = "vatm")
-    }
-    aux.names <- str_remove(aux.names, pattern = "Time=")
-    aux.names <- str_split(aux.names, pattern = "_")          
-    if (env_var %in% c("ocean_temp", "ocean_salt", "ocean_v", "ocean_u", "ocean_w")) {
-      aux.depth <- NULL
-=======
   if (.parallel) { # Run in parallel
     `%dopar%` <- foreach::`%dopar%`
     if (is.null(.ncores)) {
       .ncores = parallel::detectCores()
       cl <- parallel::makeCluster(.ncores[1]-1)
       doParallel::registerDoParallel(cl)
->>>>>>> 490291637cd7b7701d1c323f84e456bf7aa7dcac
     } else {
       cl <- parallel::makeCluster(.ncores)
       doParallel::registerDoParallel(cl)
     }
     if (verbose) {
       message(paste("Downloading", env_var, "data:",
-        min(dates), "|", max(dates), "in parallel..."))
+                    min(dates), "|", max(dates), "in parallel..."))
     }
     nc.bran <- foreach::foreach(i = 1:length(dates),
-      .combine = rbind, .packages = c('remora', 'dplyr')) %dopar% {
-        if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
-          if (env_var == "BRAN_cur") {
-            # Open netCDF files
-            save.bran_u <- remoteNCDF(
-              year = as.numeric(substr(dates[i], 1, 4)),
-              month = as.numeric(substr(dates[i], 6, 7)),
-              var = "ocean_u",      
-              depth = extract_depth,
-              lon.min = min(df[,X]) - env_buffer,
-              lon.max = max(df[,X]) + env_buffer,
-              lat.min = min(df[,Y]) - env_buffer,
-              lat.max = max(df[,Y]) + env_buffer
-              )
-            save.bran_v <- remoteNCDF(
-              year = as.numeric(substr(dates[i], 1, 4)),
-              month = as.numeric(substr(dates[i], 6, 7)),
-              var = "ocean_v",      
-              depth = extract_depth,
-              lon.min = min(df[,X]) - env_buffer,
-              lon.max = max(df[,X]) + env_buffer,
-              lat.min = min(df[,Y]) - env_buffer,
-              lat.max = max(df[,Y]) + env_buffer
-              )
-            save.bran <- save.bran_u
-            save.bran$ocean_v <- save.bran_v$ocean_v
-            save.bran$BRAN_dir <- windDir(u = save.bran$ocean_u, v = save.bran$ocean_v)
-            save.bran$BRAN_spd <- windSpd(u = save.bran$ocean_u, v = save.bran$ocean_v)
-            save.bran <- save.bran[,c(7,8,2:5)]
-          } else {
-            save.bran <- remoteNCDF(
-              year = as.numeric(substr(dates[i], 1, 4)),
-              month = as.numeric(substr(dates[i], 6, 7)),
-              var = download.var,      
-              depth = extract_depth,
-              lon.min = min(df[,X]) - env_buffer,
-              lon.max = max(df[,X]) + env_buffer,
-              lat.min = min(df[,Y]) - env_buffer,
-              lat.max = max(df[,Y]) + env_buffer
-              )
-            save.bran$BRAN_wind_dir <- windDir(u = save.bran$u, v = save.bran$v)
-            save.bran$BRAN_wind_spd <- windSpd(u = save.bran$u, v = save.bran$v)
-            save.bran <- save.bran[,c(6,7,3:5)]
-          }
-        } else {
-          # Open netCDF files
-          save.bran <- remoteNCDF(
-            year = as.numeric(substr(dates[i], 1, 4)),
-            month = as.numeric(substr(dates[i], 6, 7)),
-            var = download.var,      
-            depth = extract_depth,
-            lon.min = min(df[,X]) - env_buffer,
-            lon.max = max(df[,X]) + env_buffer,
-            lat.min = min(df[,Y]) - env_buffer,
-            lat.max = max(df[,Y]) + env_buffer
-            )
-        }
-    }  
+                                .combine = rbind, .packages = c('remora', 'dplyr')) %dopar% {
+                                  if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
+                                    if (env_var == "BRAN_cur") {
+                                      # Open netCDF files
+                                      save.bran_u <- remoteNCDF(
+                                        year = as.numeric(substr(dates[i], 1, 4)),
+                                        month = as.numeric(substr(dates[i], 6, 7)),
+                                        var = "ocean_u",      
+                                        depth = extract_depth,
+                                        lon.min = min(df[,X]) - env_buffer,
+                                        lon.max = max(df[,X]) + env_buffer,
+                                        lat.min = min(df[,Y]) - env_buffer,
+                                        lat.max = max(df[,Y]) + env_buffer
+                                      )
+                                      save.bran_v <- remoteNCDF(
+                                        year = as.numeric(substr(dates[i], 1, 4)),
+                                        month = as.numeric(substr(dates[i], 6, 7)),
+                                        var = "ocean_v",      
+                                        depth = extract_depth,
+                                        lon.min = min(df[,X]) - env_buffer,
+                                        lon.max = max(df[,X]) + env_buffer,
+                                        lat.min = min(df[,Y]) - env_buffer,
+                                        lat.max = max(df[,Y]) + env_buffer
+                                      )
+                                      save.bran <- save.bran_u
+                                      save.bran$ocean_v <- save.bran_v$ocean_v
+                                      save.bran$BRAN_dir <- windDir(u = save.bran$ocean_u, v = save.bran$ocean_v)
+                                      save.bran$BRAN_spd <- windSpd(u = save.bran$ocean_u, v = save.bran$ocean_v)
+                                      save.bran <- save.bran[,c(7,8,2:5)]
+                                    } else {
+                                      save.bran <- remoteNCDF(
+                                        year = as.numeric(substr(dates[i], 1, 4)),
+                                        month = as.numeric(substr(dates[i], 6, 7)),
+                                        var = download.var,      
+                                        depth = extract_depth,
+                                        lon.min = min(df[,X]) - env_buffer,
+                                        lon.max = max(df[,X]) + env_buffer,
+                                        lat.min = min(df[,Y]) - env_buffer,
+                                        lat.max = max(df[,Y]) + env_buffer
+                                      )
+                                      save.bran$BRAN_wind_dir <- windDir(u = save.bran$u, v = save.bran$v)
+                                      save.bran$BRAN_wind_spd <- windSpd(u = save.bran$u, v = save.bran$v)
+                                      save.bran <- save.bran[,c(6,7,3:5)]
+                                    }
+                                  } else {
+                                    # Open netCDF files
+                                    save.bran <- remoteNCDF(
+                                      year = as.numeric(substr(dates[i], 1, 4)),
+                                      month = as.numeric(substr(dates[i], 6, 7)),
+                                      var = download.var,      
+                                      depth = extract_depth,
+                                      lon.min = min(df[,X]) - env_buffer,
+                                      lon.max = max(df[,X]) + env_buffer,
+                                      lat.min = min(df[,Y]) - env_buffer,
+                                      lat.max = max(df[,Y]) + env_buffer
+                                    )
+                                  }
+                                }  
     parallel::stopCluster(cl)
   } else { # Not in parallel
     if (verbose) {
@@ -342,7 +269,7 @@ extractBlue <- function(df, X, Y, datetime,
             lon.max = max(df[,X]) + env_buffer,
             lat.min = min(df[,Y]) - env_buffer,
             lat.max = max(df[,Y]) + env_buffer
-            )
+          )
           save.bran_v <- remoteNCDF(
             year = as.numeric(substr(aux.date, 1, 4)),
             month = as.numeric(substr(aux.date, 6, 7)),
@@ -352,7 +279,7 @@ extractBlue <- function(df, X, Y, datetime,
             lon.max = max(df[,X]) + env_buffer,
             lat.min = min(df[,Y]) - env_buffer,
             lat.max = max(df[,Y]) + env_buffer
-            )
+          )
           save.bran <- save.bran_u
           save.bran$ocean_v <- save.bran_v$ocean_v
           save.bran$BRAN_dir <- windDir(u = save.bran$ocean_u, v = save.bran$ocean_v)
@@ -371,7 +298,7 @@ extractBlue <- function(df, X, Y, datetime,
             lon.max = max(df[,X]) + env_buffer,
             lat.min = min(df[,Y]) - env_buffer,
             lat.max = max(df[,Y]) + env_buffer
-            )
+          )
           save.bran$BRAN_wind_dir <- windDir(u = save.bran$u, v = save.bran$v)
           save.bran$BRAN_wind_spd <- windSpd(u = save.bran$u, v = save.bran$v)
           save.bran <- save.bran[,c(6,7,3:5)]
@@ -390,167 +317,13 @@ extractBlue <- function(df, X, Y, datetime,
           lon.max = max(df[,X]) + env_buffer,
           lat.min = min(df[,Y]) - env_buffer,
           lat.max = max(df[,Y]) + env_buffer
-          )
+        )
         nc.bran <- rbind(nc.bran, save.bran) 
         gc() 
       }
       if (verbose)
         setTxtProgressBar(pb, i)     
     }
-<<<<<<< HEAD
-    # Process data!
-    if (full_timeperiod) { # Full timeperiod
-      index.day <- which(df.all$aux.date == dates[i])
-      for (ii in 1:length(index.day)) {
-        aux.day <- aux.names[which(as.character(aux.names$Time) == as.character(as.Date(df.all[index.day[ii], "date"], tz = "UTC"))),]
-        index.depth <- which.min(abs(aux.day$Depth - extract_depth))
-        aux.day <- aux.day[index.depth,]
-        if (nrow(aux.day) > 0) {
-          # Extract BRAN values
-          index.layer <- which(aux.names$Depth == aux.day$Depth & aux.names$Time == aux.day$Time)
-          aux.bran <- nc.bran[[index.layer]]
-          aux.bran <- invisible(terra::rotate(aux.bran))
-          aux.val <- terra::extract(
-            x = aux.bran, 
-            y = df.all[index.day[ii], c("lon", "lat")])[1,2]
-          # Export processed data if requested by user
-          if (cache_layers == TRUE) {
-            aux.area <- rast()
-            ext(aux.area) <- c(min(df[,X]), 
-              max(df[,X]), 
-              min(df[,Y]),
-              max(df[,Y]))
-            aux.cache <- crop(x = aux.bran,
-              y = aux.area)
-            writeCDF(aux.cache, 
-              filename = paste0(folder_name, "/cached/", var_name, "_", aux.day$Time[1], ".nc"))
-          }
-          # Use buffer to fill NAs 
-          if (is.na(aux.val) & fill_gaps) {
-            # Create point object and apply buffer
-            pos_sf <- 
-            df.all[index.day[ii], c("lon", "lat")] %>% 
-            st_as_sf(coords = c(1,2), crs = 4326, remove = FALSE)
-            pos_sf <- st_buffer(pos_sf, buffer)
-            # Extract data from buffered points
-            aux.val <- extract(x = aux.bran, y = pos_sf)
-            names(aux.val)[2] <- "Buffer"
-            aux.val <- aux.val %>%
-              group_by(ID) %>%
-              summarise(Buffer_mean = mean(Buffer, na.rm = TRUE))
-            aux.val <- aux.val$Buffer_mean
-            aux.day$Var <- aux.val
-          } else {
-            aux.day$Var <- aux.val
-          }
-        }
-        if (env_var %in% c('ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', "ocean_eta_t", "ocean_mld"))
-          aux.day$Var <- round(aux.day$Var, 4)
-        df.all[index.day[ii], which(names(df.all) == var_name)] <- aux.day$Var
-        gc()
-      } 
-    } else {  # Only tracking locations
-      index.day <- which(df$aux.date == dates[i])
-      for (ii in 1:length(index.day)) {
-        if (env_var == "air_wind") {
-          aux.day <- aux.names[which(as.character(aux.names$Time) == as.character(as.Date(df[index.day[ii], which(names(df) == datetime)], tz = "UTC"))),]
-        } else {
-          aux.day <- aux.names[which(as.character(aux.names$Time) == as.character(as.Date(df[index.day[ii], which(names(df) == datetime)], tz = "UTC"))),]
-          index.depth <- which.min(abs(aux.day$Depth - extract_depth))
-          aux.day <- aux.day[index.depth,]
-        }     
-        if (nrow(aux.day) > 0) {
-          # Extract BRAN values
-          if (env_var == "air_wind") {
-            index.u <- which(aux.names$Var == "uatm" & aux.names$Depth == aux.day$Depth & aux.names$Time == aux.day$Time)
-            index.v <- which(aux.names$Var == "vatm" & aux.names$Depth == aux.day$Depth & aux.names$Time == aux.day$Time)
-            bran.u <- nc.bran[[index.u]]
-            bran.u <- invisible(terra::rotate(bran.u))
-            bran.v <- nc.bran[[index.v]]
-            bran.v <- invisible(terra::rotate(bran.v))
-            aux.u <- terra::extract(
-              x = bran.u, 
-              y = df[index.day[ii], c(X, Y)])[1,2]
-            aux.v <- terra::extract(
-              x = bran.v, 
-              y = df[index.day[ii], c(X, Y)])[1,2]
-            aux.dir <- round(windDir(u = aux.u, v = aux.v), 2)
-            aux.spe <- round(windSpd(u = aux.u, v = aux.v), 2)
-            aux.val <- c(aux.dir, aux.spe)
-          } else {
-            index.layer <- which(aux.names$Depth == aux.day$Depth & aux.names$Time == aux.day$Time)
-            aux.bran <- nc.bran[[index.layer]]
-            aux.bran <- invisible(terra::rotate(aux.bran))
-            aux.val <- terra::extract(
-              x = aux.bran, 
-              y = df[index.day[ii], c(X, Y)])[1,2]
-          }
-          # Export processed netCDF if requested by user
-          if (cache_layers == TRUE) {
-            if (dir.exists(paste(folder_name, "cached", sep = "/")) == FALSE) 
-              dir.create(paste(folder_name, "cached", sep = "/"))
-            aux.area <- rast()
-            ext(aux.area) <- c(min(df[,X]), 
-              max(df[,X]), 
-              min(df[,Y]),
-              max(df[,Y]))
-            if (env_var == "air_wind") {
-              aux.u <- terra::crop(x = bran.u,
-                y = aux.area)
-              aux.v <- terra::crop(x = bran.v,
-                y = aux.area)
-              terra::writeCDF(aux.u, 
-                filename = paste0(folder_name, "/cached/", "uwind_", aux.day$Time[1], ".nc"),
-                overwrite = TRUE)
-              terra::writeCDF(aux.v, 
-                filename = paste0(folder_name, "/cached/", "vwind_", aux.day$Time[1], ".nc"),
-                overwrite = TRUE)
-            } else {
-              aux.cache <- terra::crop(x = aux.bran,
-                y = aux.area)
-              terra::writeCDF(aux.cache, 
-                filename = paste0(folder_name, "/cached/", var_name, "_", aux.day$Time[1], ".nc"),
-                overwrite = TRUE)
-            }            
-          }
-          # Use buffer to fill NAs 
-          if (is.na(aux.val[1]) & fill_gaps) {
-            # Create point object and apply buffer
-            pos_sf <- 
-            df[index.day[ii], c(X, Y)] %>% 
-            st_as_sf(coords = c(1,2), crs = 4326, remove = FALSE)
-            pos_sf <- st_buffer(pos_sf, buffer)
-            # Extract data from buffered points
-            aux.val <- extract(x = aux.bran, y = pos_sf)
-            names(aux.val)[2] <- "Buffer"
-            aux.val <- aux.val %>%
-              group_by(ID) %>%
-              summarise(Buffer_mean = mean(Buffer, na.rm = TRUE))
-            aux.val <- aux.val$Buffer_mean
-            aux.day$Var <- aux.val
-          } else {
-            aux.day$Var <- aux.val
-          }
-        }
-        if (env_var %in% c('ocean_temp', 'ocean_salt', 'ocean_u', 'ocean_v', "ocean_eta_t", "ocean_mld"))
-          aux.day$Var <- round(aux.day$Var, 3)
-        if (env_var == "air_wind") {
-          df[index.day[ii], which(names(df) == "wind_dir")] <- aux.dir
-          df[index.day[ii], which(names(df) == "wind_spe")] <- aux.spe
-        } else {
-          df[index.day[ii], which(names(df) == var_name)] <- aux.day$Var
-        }      
-        gc()
-      } 
-    }
-    if (export_step) # Export extracted data 
-      write.csv(df[,-which(names(df) == "aux.date")], paste0(export_path, ".csv"), row.names = FALSE)
-    # Delete BRAN raw file
-    nc.names <- list.files(folder_name, pattern = ".nc")
-    nc.names <- paste(folder_name, nc.names, sep = "/")
-    invisible(file.remove(nc.names))
-=======
->>>>>>> 490291637cd7b7701d1c323f84e456bf7aa7dcac
     if (verbose)
       close(pb)
   }
@@ -593,47 +366,47 @@ extractBlue <- function(df, X, Y, datetime,
       if (full_timeperiod) {
         index.day <- unique(as.Date(df.run[,"date"]))
         var.save <- foreach::foreach(i = 1:length(index.day),
-          .combine = 'c', 
-          .packages = c('foreach', 'geosphere')) %dopar% {  
-          aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
-          index.locs <- which(as.Date(df.run[,"date"]) == index.day[i]) 
-          var.run <- foreach::foreach(ii = 1:length(index.locs), 
-            .combine = 'c',
-            .packages = 'geosphere') %dopar% {
-            aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], "lon"], df.run[index.locs[ii], "lat"]),
-              x = aux.nc[,c("x","y")]
-              ))
-            if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
-              var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),1]
-              var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),2]
-              var.run <- c(var1, var2)
-            } else {
-              var.run <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),1]
-            }
-          }
-        }
+                                     .combine = 'c', 
+                                     .packages = c('foreach', 'geosphere')) %dopar% {  
+                                       aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
+                                       index.locs <- which(as.Date(df.run[,"date"]) == index.day[i]) 
+                                       var.run <- foreach::foreach(ii = 1:length(index.locs), 
+                                                                   .combine = 'c',
+                                                                   .packages = 'geosphere') %dopar% {
+                                                                     aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], "lon"], df.run[index.locs[ii], "lat"]),
+                                                                                                                    x = aux.nc[,c("x","y")]
+                                                                     ))
+                                                                     if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
+                                                                       var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),1]
+                                                                       var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),2]
+                                                                       var.run <- c(var1, var2)
+                                                                     } else {
+                                                                       var.run <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),1]
+                                                                     }
+                                                                   }
+                                     }
       } else { 
         index.day <- unique(as.Date(df.run[,datetime])) 
         var.save <- foreach::foreach(i = 1:length(index.day),
-          .combine = 'c', 
-          .packages = c('foreach', 'geosphere')) %dopar% {  
-            aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
-            index.locs <- which(as.Date(df.run[,datetime]) == index.day[i])      
-            var.run <- foreach::foreach(ii = 1:length(index.locs), 
-              .combine = 'c', 
-              .packages = 'geosphere') %dopar% {
-              aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
-                x = aux.nc[,c("x","y")]
-                ))
-              if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
-                var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
-                var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],2]
-                var.run <- c(var1, var2)
-              } else {
-                var.run <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
-              } 
-            }     
-        }      
+                                     .combine = 'c', 
+                                     .packages = c('foreach', 'geosphere')) %dopar% {  
+                                       aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
+                                       index.locs <- which(as.Date(df.run[,datetime]) == index.day[i])      
+                                       var.run <- foreach::foreach(ii = 1:length(index.locs), 
+                                                                   .combine = 'c', 
+                                                                   .packages = 'geosphere') %dopar% {
+                                                                     aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
+                                                                                                                    x = aux.nc[,c("x","y")]
+                                                                     ))
+                                                                     if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
+                                                                       var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
+                                                                       var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],2]
+                                                                       var.run <- c(var1, var2)
+                                                                     } else {
+                                                                       var.run <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
+                                                                     } 
+                                                                   }     
+                                     }      
       }
       parallel::stopCluster(cl)
       if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
@@ -669,8 +442,8 @@ extractBlue <- function(df, X, Y, datetime,
           index.locs <- which(as.Date(df.run[,"date"]) == index.day[i])
           for (ii in 1:length(index.locs)) {
             aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], "lon"], df.run[index.locs[ii], "lat"]),
-              x = aux.nc[,c("x","y")]
-              ))
+                                                           x = aux.nc[,c("x","y")]
+            ))
             if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
               if(env_var == "BRAN_cur") {
                 df.run[index.locs[ii], "BRAN_dir"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
@@ -703,8 +476,8 @@ extractBlue <- function(df, X, Y, datetime,
           index.locs <- which(as.Date(df.run[,datetime]) == index.day[i])
           for (ii in 1:length(index.locs)) {
             aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
-              x = aux.nc[,c("x","y")]
-              ))
+                                                           x = aux.nc[,c("x","y")]
+            ))
             if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
               if(env_var == "BRAN_cur") {
                 df.run[index.locs[ii], "BRAN_dir"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
