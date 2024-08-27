@@ -3,7 +3,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-02</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-03</span>
       </span>
     </div>
 
@@ -28,7 +28,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -53,7 +53,7 @@
 <li>
   <a href="https://github.com/IMOS-AnimalTracking/remora" class="external-link">
     <span class="fa fa-github fa-lg"></span>
-     
+
     GitHub
   </a>
 </li>
@@ -61,13 +61,13 @@
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Depth-time plot</h1>
-    <small class="dont-index">Source: <a href="https://github.com/IMOS-AnimalTracking/remora/blob/HEAD/R/plotDT.r" class="external-link"><code>R/plotDT.r</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/IMOS-AnimalTracking/remora/blob/master/R/plotDT.r" class="external-link"><code>R/plotDT.r</code></a></small>
     <div class="hidden name"><code>plotDT.Rd</code></div>
     </div>
 
@@ -92,43 +92,45 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>moorData</dt>
+
+
+<dl><dt id="arg-moordata">moorData<a class="anchor" aria-label="anchor" href="#arg-moordata"></a></dt>
 <dd><p>Dataframe containing the sensor data from a single IMOS mooring.</p></dd>
 
 
-<dt>moorName</dt>
+<dt id="arg-moorname">moorName<a class="anchor" aria-label="anchor" href="#arg-moorname"></a></dt>
 <dd><p>Character string specifying mooring name using IMOS ID code.</p></dd>
 
 
-<dt>dateStart</dt>
+<dt id="arg-datestart">dateStart<a class="anchor" aria-label="anchor" href="#arg-datestart"></a></dt>
 <dd><p>Optional character string of start date of date range of mooring data to plot, as "YYYY-MM-DD"</p></dd>
 
 
-<dt>dateEnd</dt>
+<dt id="arg-dateend">dateEnd<a class="anchor" aria-label="anchor" href="#arg-dateend"></a></dt>
 <dd><p>Optional character string of end date of date range of mooring data to plot, as "YYYY-MM-DD"</p></dd>
 
 
-<dt>varName</dt>
+<dt id="arg-varname">varName<a class="anchor" aria-label="anchor" href="#arg-varname"></a></dt>
 <dd><p>Character string of mooring sensor variable of interest. Can be "temperature", "ucur" for meridional (u) velocity, "vcur" for zonal (v) velocity</p></dd>
 
 
-<dt>trackingData</dt>
+<dt id="arg-trackingdata">trackingData<a class="anchor" aria-label="anchor" href="#arg-trackingdata"></a></dt>
 <dd><p>Dataframe containing tag detections data to plot. Takes output from getDistance() function as input. Set as NULL for a base plot with no detections.</p></dd>
 
 
-<dt>speciesID</dt>
+<dt id="arg-speciesid">speciesID<a class="anchor" aria-label="anchor" href="#arg-speciesid"></a></dt>
 <dd><p>Character string describing species or tag identifier.</p></dd>
 
 
-<dt>IDtype</dt>
+<dt id="arg-idtype">IDtype<a class="anchor" aria-label="anchor" href="#arg-idtype"></a></dt>
 <dd><p>Character string describing type of species or tag identifier. Can be CAAB code, tag ID, common name or scientific name. Must match identifier in detections dataset.</p></dd>
 
 
-<dt>detStart</dt>
+<dt id="arg-detstart">detStart<a class="anchor" aria-label="anchor" href="#arg-detstart"></a></dt>
 <dd><p>Optional character string of start date of date range of detections data to overlay on depth-time plot.</p></dd>
 
 
-<dt>detEnd</dt>
+<dt id="arg-detend">detEnd<a class="anchor" aria-label="anchor" href="#arg-detend"></a></dt>
 <dd><p>Optional character string of end date of date range of detections data to overlay on depth-time plot.</p></dd>
 
 </dl></div>
@@ -145,15 +147,15 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
