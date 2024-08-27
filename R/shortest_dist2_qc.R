@@ -126,7 +126,7 @@ shortest_dist2 <- function(position, inst, raster = NULL, tr) {
               paired = TRUE,
               measure = "geodesic",
               quiet = TRUE
-            )) / 1000
+            )) 
           ## Find closest point on coast for river system
           pts[is.na(ext.pts), ] <- Aust_sub[dist_sub, 1:2]
         }
@@ -140,7 +140,7 @@ shortest_dist2 <- function(position, inst, raster = NULL, tr) {
                 paired = TRUE,
                 measure = "geodesic",
                 quiet = TRUE
-              )) / 1000
+              ))
             ## Find closest point on coast for river system
             pts[k, ] <- Aust_sub[dist_sub, 1:2]
           }
@@ -157,7 +157,7 @@ shortest_dist2 <- function(position, inst, raster = NULL, tr) {
                 paired = TRUE,
                 measure = "geodesic",
                 quiet = TRUE
-              )) / 1000
+              )) 
             ## Find closest point on coast for river system
             pts[is.na(ext.pts), ] <- Aust_sub[dist_sub, 1:2]
           }
@@ -173,7 +173,7 @@ shortest_dist2 <- function(position, inst, raster = NULL, tr) {
                     measure = "geodesic",
                     quiet = TRUE
                   )
-                ) / 1000
+                )
               ## Find closest point on coast for river system
               pts[k, ] <- Aust_sub[dist_sub, 1:2]
               
