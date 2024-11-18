@@ -113,13 +113,52 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                                             ),
                                           na = c("","null","NA")
                                           ))
+    ## retain only the metadata for the current tagging_project_name
+    tag_meta <- tag_meta |> 
+      filter(tagging_project_name %in% unique(det_data$tagging_project_name))
+    
     ## drop any unnamed columns, up to a possible 20 of them...
     if(any(paste0("X",1:20) %in% names(tag_meta))) {
       drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(tag_meta)]
       tag_meta <- tag_meta %>% select(-any_of(drops))
     }
+    
+    ## check for duplicate entries of same transmitter_id & retain only the most
+    ##  recent deployment date with valid deployment lon, lat entries (not NA's)
+    tmp <- split(tag_meta, tag_meta$transmitter_id)
+    tmp <- lapply(tmp, function(x) {
+      if (nrow(x) > 1) {
+        xx <- x |> filter(
+          !is.na(transmitter_deployment_longitude) |
+            !is.na(transmitter_deployment_latitude)
+        )
+        if (nrow(xx) != 0) {
+          xx <- x |>
+            arrange(transmitter_deployment_datetime)
+          xx <- xx[1, ]
+        } 
+        xx
+      } else {
+        x
+      }
+    }) |>
+      bind_rows()
+    
+    ## check for NA's in deployment lat,lon entries & use mean reported value
+    ##  for NA's at same transmitter_deployment_locality
+    tag_meta <- tmp |> 
+      group_by(transmitter_deployment_locality) |>
+      mutate(transmitter_deployment_longitude = 
+               ifelse(is.na(transmitter_deployment_longitude),
+                      mean(transmitter_deployment_longitude, na.rm = TRUE),
+                      transmitter_deployment_longitude),
+             transmitter_deployment_latitude = 
+               ifelse(is.na(transmitter_deployment_latitude),
+                      mean(transmitter_deployment_latitude, na.rm = TRUE),
+                      transmitter_deployment_latitude)) |>
+      ungroup()
   }
-
+  
   ## animal measurements data
   if(!is.null(meas)) {
     anim_meas <- suppressWarnings(read_csv(meas,
@@ -301,9 +340,11 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         -species_scientific_name.y,
         -animal_sex.y,
         -embargo_date.x)
+    
 ## deal with any cases where deploy lon/lat is missing in detections but not metadata
     if(any(is.na(dd$transmitter_deployment_longitude.x)) |
        any(is.na(dd$transmitter_deployment_latitude.x))) {
+
       dd <- dd %>%
         mutate(transmitter_deployment_longitude.x =
                  ifelse(is.na(transmitter_deployment_longitude.x),

@@ -72,7 +72,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
                                   "ReleaseDate_QC",
                                   "ReleaseLocation_QC",
                                   "Detection_QC")
-
+  
   ## FIXME: these 2 sections now redundant - IDJ 25/01/2022
   ## check for missing detection coordinates
   if(any(is.na(x$longitude)) | any(is.na(x$latitude))) {
@@ -94,6 +94,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
   ## check for missing transmitter deployment coordinates
   if(any(is.na(x$transmitter_deployment_longitude),
          is.na(x$transmitter_deployment_latitude))) {
+    browser()
     ## write to logfile
     write(paste0(x$filename[1],
                  ":  transmitter_deployment_longitude &/or latitude are missing; file not QC'd"),
