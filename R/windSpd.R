@@ -4,7 +4,7 @@
 #' @param u horizontal (u) wind speed 
 #' @param v vertical (v) wind speed
 #' @return Wind speed in meters per second
-#' @keywords internal
+#' @export
 
 windSpd <-function(u,v){
   sqrt(u^2+v^2)

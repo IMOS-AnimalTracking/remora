@@ -18,7 +18,7 @@ extractEnv(
   fill_gaps = FALSE,
   buffer = NULL,
   nrt = FALSE,
-  output_format = "raster",
+  output_format = ".grd",
   .parallel = TRUE,
   .ncores = NULL
 )
@@ -70,8 +70,9 @@ variables for years (currently, all years after 2020) when current data are
 missing. Note that Near Real-Time data are subject to less quality control
 than Delayed-Mode data.}
 
-\item{output_format}{File type for cached environmental layers. See
-\code{\link[raster]{writeFormats}}. The default format is 'raster'.}
+\item{output_format}{File format for cached environmental layers. You can use
+\code{gdal(drivers=TRUE)} to see what drivers are available in your installation.
+The default format is '.grd'.}
 
 \item{.parallel}{should the function be run in parallel}
 

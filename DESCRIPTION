@@ -1,7 +1,7 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.8-01.9102
-Date: 2024-07-02
+Version: 0.8-03.9105
+Date: 2024-08-27
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
@@ -46,7 +46,7 @@ Authors@R:
            person(given = "Yuri",
            family = "Niella",
            role = c("aut", "ctb"),
-           email = "yuri.niella@mq.edu.au",
+           email = "yuri.niella@sims.org.au",
            comment = c(ORCID = "0000-0003-1878-6091")))
 Maintainer: Ian Jonsen <ian.jonsen@mq.edu.au>
 Description: R Package to access and integrate animal tracking data from the IMOS Animal Tracking Facility database and web-app, and environmental data from the AODN database.
@@ -69,17 +69,22 @@ Imports:
     lubridate,
     magrittr,
     ncdf4,
+    ncmeta,
     parallel,
+    doParallel,
+    foreach,
     plotly,
     purrr,
     RColorBrewer,
     R.utils,
+    RNetCDF,
     readr,
     sf (>= 1.0-14),
     shiny,
     stringr,
     tibble,
     tidyr,
+    tidync,
     viridis,
     xml2,
     htmlwidgets,
@@ -90,6 +95,7 @@ Suggests:
     crosstalk,
     DT,
     geojsonio,
+    geosphere,
     ggdist,
     gghalves,
     ggraph,
@@ -111,6 +117,6 @@ Depends: R (>= 3.6.0)
 SystemRequirements: GDAL (>= 3.6.2), GEOS (>= 3.11.0), PROJ (>= 9.2.0)
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.2
 Config/testthat/edition: 3
 Config/testthat/parallel: true
