@@ -34,7 +34,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                                             transmitter_id = col_character(),
                                             tag_id = col_integer(),
                                             transmitter_deployment_id = col_integer(),
-                                            tagging_project_name = col_character(),
+                                            tag_deployment_project_name = col_character(),
                                             species_common_name = col_character(),
                                             species_scientific_name = col_character(),
                                             CAAB_species_id = col_integer(),
@@ -88,7 +88,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                                           col_types = cols(
                                             transmitter_id = col_character(),
                                             transmitter_serial_number = col_integer(),
-                                            tagging_project_name = col_character(),
+                                            tag_deployment_project_name = col_character(),
                                             transmitter_type = col_character(),
                                             transmitter_sensor_type = col_character(),
                                             transmitter_sensor_slope = col_character(),
@@ -218,7 +218,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
       transmitter_id,
       tag_id,
       transmitter_deployment_id,
-      tagging_project_name,
+      tag_deployment_project_name,
       species_common_name,
       species_scientific_name,
       CAAB_species_id = ifelse(
@@ -259,7 +259,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         transmitter_id,
         tag_id,
         transmitter_deployment_id,
-        tagging_project_name,
+        tag_deployment_project_name,
         species_common_name,
         species_scientific_name,
         CAAB_species_id = ifelse(
@@ -289,7 +289,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                     by = c("transmitter_id", "transmitter_deployment_id")) %>%
       select(
         -transmitter_serial_number.y,
-        -tagging_project_name.y,
+        -tag_deployment_project_name.y,
         -transmitter_type.y,
         -transmitter_sensor_type.y,
         -transmitter_sensor_slope.y,
@@ -325,7 +325,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         -transmitter_deployment_datetime.y
       ) %>%
       rename(
-        tagging_project_name = tagging_project_name.x,
+        tag_deployment_project_name = tag_deployment_project_name.x,
         species_common_name = species_common_name.x,
         species_scientific_name = species_scientific_name.x,
         animal_sex = animal_sex.x,
