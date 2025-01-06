@@ -31,13 +31,13 @@ corresponding to each row of the nested tibble. A summary of the QC process
 is written to \code{QCsummary.csv}. The summary contains the following information for each QC'd tag
 (see references for more details):
 \itemize{
-\item{total_detections}{the number of raw detections}
-\item{detections_before_deployment}{the number of detections recorded prior to deployment date in metadata}
-\item{invalid_deployment_location}{logical indicating whether deployment longitude,latitude is valid}
-\item{detections_outside_species_range}{the number of detections that occurred outside the species expert distribution}
-\item{valid_detections}{the number of detections that passed the QC process (QC flags 1 and 2)}
-\item{tracking_duration_days}{the number of days between deployment and the last valid detection}
-\item{invalid_velocity}{the number of detections associated with implausible travel speeds}
+\item total detections - the number of raw detections
+\item detections_before_deployment - the number of detections recorded prior to deployment date in metadata
+\item invalid_deployment_location - logical indicating whether deployment longitude,latitude is valid
+\item detections_outside_species_range - the number of detections that occurred outside the species expert distribution
+\item valid_detections - the number of detections that passed the QC process (QC flags 1 and 2)
+\item tracking_duration_days - the number of days between deployment and the last valid detection
+\item invalid_velocity - the number of detections associated with implausible travel speeds
 }
 }
 \examples{

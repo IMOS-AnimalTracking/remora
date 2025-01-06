@@ -4,7 +4,7 @@
 ##'
 ##' @name remora-package
 ##' @aliases remora remora-package
-##' @docType _PACKAGE
+##' "_PACKAGE"
 ##' @author Ross Dwyer, Xavier Hoenner, Charlie Huveneers, Fabrice Jaine, Ian Jonsen, Francisca Maron, Kylie Scales, Vinay Udyawer
 ##'
 ##' @seealso runQC extractEnv extractMoor shinyReport
@@ -94,4 +94,5 @@ globalVariables(c(".", "ID", "Buffer", "start_dt", "end_dt", "year", "html", "ty
                   "transmitter_sensor_unit", "transmitter_estimated_battery_life",
                   "transmitter_status", "receiver_project_name", "measurement", 
                   "detection_date", "transmitter_sensor_intercept",
-                  "imos_variables_table", "transmitter_sensor_raw_value"))
+                  "imos_variables_table", "transmitter_sensor_raw_value", "tag_deployment_project_name",
+                  "tag_deployment_project_name.x","tag_deployment_project_name.y", "valid"))

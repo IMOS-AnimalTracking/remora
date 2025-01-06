@@ -11,6 +11,7 @@
 ##'
 ##' @return a list of data.frames by individual tag deployments ready for QC
 ##'
+##' @importFrom utils read.csv
 ##' @importFrom readr read_csv cols_only col_character col_integer col_guess
 ##' @importFrom readr col_logical col_datetime col_double
 ##' @importFrom dplyr %>% mutate left_join select group_by ungroup distinct
