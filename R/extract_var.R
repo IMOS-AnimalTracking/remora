@@ -57,7 +57,7 @@
   if(env_var %in% "rs_current"){
     ## extraction current datasets run through each current dataset (gsla, vcur, ucur)
     for(c in 1:length(env_names)){
-      ext_matrix <- terra::extract(env_stack[[c]], pos_sf)
+      ext_matrix <- suppressWarnings(terra::extract(env_stack[[c]], pos_sf))
       variable <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
@@ -72,7 +72,7 @@
       ## gap filling
       if(.fill_gaps){
         pos_sf_buffer <- sf::st_buffer(pos_sf, dist = .buffer)
-        ext_matrix_fill <- terra::extract(env_stack[[c]], pos_sf_buffer, fun = median)
+        ext_matrix_fill <- suppressWarnings(terra::extract(env_stack[[c]], pos_sf_buffer, fun = median))
         variable_fill <- vector()
         for (i in 1:nrow(ext_matrix)) {
           val <-
@@ -112,7 +112,7 @@
   
   if(env_var %in% c("bathy", "dist_to_land")) {
     ## extraction for single/fixed layer ('bathy', 'dist_to_land')
-    ext_matrix <- terra::extract(env_stack, pos_sf)
+    ext_matrix <- suppressWarnings(terra::extract(env_stack, pos_sf))
     variable <- ext_matrix
     
     ## Append extracted variables to pos_sf dataset
@@ -132,7 +132,7 @@
   
   if(env_var %in% c("rs_sst", "rs_sst_interpolated", "rs_salinity", "rs_chl", "rs_turbidity", "rs_npp")) {
     ## extraction for time-series raster stacks
-    ext_matrix <- terra::extract(env_stack, pos_sf)
+    ext_matrix <- suppressWarnings(terra::extract(env_stack, pos_sf))
     variable <- vector()
     for (i in 1:nrow(ext_matrix)) {
       val <-
@@ -147,7 +147,7 @@
     ## gap filling
     if(.fill_gaps){
       pos_sf_buffer <- st_buffer(pos_sf, dist = .buffer)
-      ext_matrix_fill <- terra::extract(env_stack, pos_sf_buffer, fun = median)
+      ext_matrix_fill <- suppressWarnings(terra::extract(env_stack, pos_sf_buffer, fun = median))
       variable_fill <- vector()
       for (i in 1:nrow(ext_matrix)) {
         val <-
