@@ -18,7 +18,7 @@ of quality-controlled detections to .csv files"><!-- mathjax --><script src="htt
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-03</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-04</span>
       </span>
     </div>
 
@@ -113,13 +113,13 @@ each file is written to the specified <code>path</code></p></dd>
     <p>takes a <code>remora_QC</code> nested tibble and writes .csv files
 corresponding to each row of the nested tibble. A summary of the QC process
 is written to <code>QCsummary.csv</code>. The summary contains the following information for each QC'd tag
-(see references for more details):</p><ul><li><p>total_detectionsthe number of raw detections</p></li>
-<li><p>detections_before_deploymentthe number of detections recorded prior to deployment date in metadata</p></li>
-<li><p>invalid_deployment_locationlogical indicating whether deployment longitude,latitude is valid</p></li>
-<li><p>detections_outside_species_rangethe number of detections that occurred outside the species expert distribution</p></li>
-<li><p>valid_detectionsthe number of detections that passed the QC process (QC flags 1 and 2)</p></li>
-<li><p>tracking_duration_daysthe number of days between deployment and the last valid detection</p></li>
-<li><p>invalid_velocitythe number of detections associated with implausible travel speeds</p></li>
+(see references for more details):</p><ul><li><p>total detections - the number of raw detections</p></li>
+<li><p>detections_before_deployment - the number of detections recorded prior to deployment date in metadata</p></li>
+<li><p>invalid_deployment_location - logical indicating whether deployment longitude,latitude is valid</p></li>
+<li><p>detections_outside_species_range - the number of detections that occurred outside the species expert distribution</p></li>
+<li><p>valid_detections - the number of detections that passed the QC process (QC flags 1 and 2)</p></li>
+<li><p>tracking_duration_days - the number of days between deployment and the last valid detection</p></li>
+<li><p>invalid_velocity - the number of detections associated with implausible travel speeds</p></li>
 </ul></div>
     <div id="references">
     <h2>References</h2>
