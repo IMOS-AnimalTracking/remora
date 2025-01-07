@@ -94,7 +94,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
   ## check for missing transmitter deployment coordinates
   if(any(is.na(x$transmitter_deployment_longitude),
          is.na(x$transmitter_deployment_latitude))) {
-    browser()
+
     ## write to logfile
     write(paste0(x$filename[1],
                  ":  transmitter_deployment_longitude &/or latitude are missing; file not QC'd"),
@@ -279,7 +279,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 	x <- x %>%
 	  rename(receiver_deployment_longitude = longitude,
 	         receiver_deployment_latitude = latitude)
-
+	
 	return(bind_cols(x, temporal_outcome))
 
 }

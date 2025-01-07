@@ -88,8 +88,8 @@ grabQC <-
       tag_id_vars <- c("transmitter_id","tag_id","transmitter_deployment_id","tagging_project_name")
       tag_meta_vars <- c("transmitter_id","transmitter_serial_number","tagging_project_name")
     } else {
-      tag_id_vars <- c("transmitter_id","tag_id","transmitter_deployment_id","tag_deployment_project_name") 
-      tag_meta_vars <- c("transmitter_id","transmitter_serial_number","tag_deployment_project_name")
+      tag_id_vars <- c("transmitter_id","tag_id","transmitter_deployment_id","tag_device_project_name","tag_deployment_project_name") 
+      tag_meta_vars <- c("transmitter_id","transmitter_serial_number","tag_device_project_name","tag_deployment_project_name")
     }
     
   out <- switch(what,

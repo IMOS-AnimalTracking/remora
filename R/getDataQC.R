@@ -423,7 +423,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     
     dd <- left_join(dd,
                     tag_meta,
-                    by = c("transmitter_id", "transmitter_deployment_id")) %>%
+                    by = c("transmitter_id", "transmitter_deployment_id")) |>
       select(
         -transmitter_serial_number.y,
         -tag_deployment_project_name.y,
@@ -440,7 +440,9 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         -embargo_date.x)
     
     if("tag_device_project_name.x" %in% names(dd)) {
-      dd <- rename(dd, tag_device_project_name = tag_device_project_name.x)
+      dd <- dd |> 
+        rename(tag_device_project_name = tag_device_project_name.x) |>
+        select(-tag_device_project_name.y)
     }
     
 ## deal with any cases where deploy lon/lat is missing in detections but not metadata
