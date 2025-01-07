@@ -28,7 +28,11 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   ## detections
   if(is.null(det)) stop("\033[31;1mCan not run QC without a detections file!\033[0m\n")
  
-  if("tagging_project_name" %in% names(read.csv(det))) {
+  ## account for old & new tag project name variables: tagging_project_name (old);
+  ##  tag_deployment_project_name (new)
+  tpdet.log <- "tagging_project_name" %in% names(read.csv(det))
+  
+  if(tpdet.log) {
     det.cols <- cols(
       detection_datetime = "T",
       detection_corrected_datetime = "T",
@@ -64,6 +68,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
       transmitter_id = "c",
       tag_id = "i",
       transmitter_deployment_id = "i",
+      tag_device_project_name = "c",
       tag_deployment_project_name = "c",
       species_common_name = "c",
       species_scientific_name = "c",
@@ -92,7 +97,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                                           col_types = det.cols,
                                         na = c("","null","NA")
                                         ))
-
+  
   ## drop any unnamed columns, up to a possible 20 of them...
   if(any(paste0("X",1:20) %in% names(det_data))) {
     drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(det_data)]
@@ -118,7 +123,11 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
 
   ## tag deployment metadata
   if(!is.null(tmeta)) {
-    if("tagging_project_name" %in% names(read.csv(tmeta))) {
+    ## account for old & new tag project name variables: tagging_project_name (old);
+    ##  tag_deployment_project_name (new)
+    tpmeta.log <- "tagging_project_name" %in% names(read.csv(tmeta))
+    
+    if(tpmeta.log) {
       tmeta.cols <- cols(
         transmitter_id = "c",
         transmitter_serial_number = "i",
@@ -151,6 +160,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
       tmeta.cols <- cols(
         transmitter_id = "c",
         transmitter_serial_number = "i",
+        tag_device_project_name = "c",
         tag_deployment_project_name = "c",
         transmitter_type = "c",
         transmitter_sensor_type = "c",
@@ -175,16 +185,23 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         transmitter_recovery_longitude = "d",
         .default = "d"
       )
-      
     }
+    
     tag_meta <- suppressWarnings(read_csv(tmeta,
                                           col_types = tmeta.cols,
                                           na = c("","null","NA")
                                           ))
-    ## retain only the metadata for the current tagging_project_name
-    tag_meta <- tag_meta |> 
-      filter(tagging_project_name %in% unique(det_data$tagging_project_name))
+
+    ## retain only the metadata for the current tagging_project_name/tag_deployment_project_name
+    if(tpmeta.log) {
+      tag_meta <- tag_meta |> 
+        filter(tagging_project_name %in% unique(det_data$tagging_project_name))
+    } else {
+      tag_meta <- tag_meta |> 
+        filter(tag_deployment_project_name %in% unique(det_data$tag_deployment_project_name))
+    }
     
+
     ## drop any unnamed columns, up to a possible 20 of them...
     if(any(paste0("X",1:20) %in% names(tag_meta))) {
       drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(tag_meta)]
@@ -319,6 +336,8 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   if(!is.null(rec_meta)) {
   ## merge detections with receiver metadata - to get receiver_depth,
   ##    but merge everything & keep detections data version of common variables
+    
+    ## coerce old tag project name variable to new variable in detections data
     if("tagging_project_name" %in% names(det_data)) {
       id.r <- which(names(det_data) == "tagging_project_name")
       names(det_data)[id.r] <- "tag_deployment_project_name"
@@ -396,6 +415,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   }
 
   if(!is.null(tag_meta)) {
+    ## coerce old tag project name variable to new variable in tag metadata
     if("tagging_project_name" %in% names(tag_meta)) {
       id.t <- which(names(tag_meta) == "tagging_project_name")
       names(tag_meta)[id.t] <- "tag_deployment_project_name"
@@ -403,7 +423,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     
     dd <- left_join(dd,
                     tag_meta,
-                    by = c("transmitter_id", "transmitter_deployment_id")) %>%
+                    by = c("transmitter_id", "transmitter_deployment_id")) |>
       select(
         -transmitter_serial_number.y,
         -tag_deployment_project_name.y,
@@ -418,6 +438,12 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         -species_scientific_name.y,
         -animal_sex.y,
         -embargo_date.x)
+    
+    if("tag_device_project_name.x" %in% names(dd)) {
+      dd <- dd |> 
+        rename(tag_device_project_name = tag_device_project_name.x) |>
+        select(-tag_device_project_name.y)
+    }
     
 ## deal with any cases where deploy lon/lat is missing in detections but not metadata
     if(any(is.na(dd$transmitter_deployment_longitude.x)) |
@@ -481,12 +507,12 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     }
   }
   
-  ## ensure tagging_project_name variable is returned if exists in input data
+  ## ensure old tagging_project_name variable is returned if exists in input data
   if(exists("id.r")) {
     id <- which(names(dd) == "tag_deployment_project_name")
     names(dd)[id] <- "tagging_project_name"
   }
-  ## ensure tagging_project_name variable is returned if exists in input tag_metadata
+  ## ensure old tagging_project_name variable is returned if exists in input tag_metadata
   if(exists("id.t")) {
     id <- which(names(dd) == "tag_deployment_project_name")
     names(dd)[id] <- "tagging_project_name"

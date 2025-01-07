@@ -15,7 +15,7 @@
 ##'
 ##' @return a 1-column matrix of shortest distances
 ##'
-##' @importFrom terra rast extract crop ext crds values
+##' @importFrom terra rast extract crop ext crds values allNA
 ##' @importFrom gdistance costDistance
 ##' @importFrom sf st_as_sf st_distance st_coordinates
 ##' @importFrom geodist geodist
@@ -107,6 +107,14 @@ shortest_dist2 <- function(position, inst, raster = NULL, tr) {
                        max(pts[, 1]) + 2,
                        min(pts[, 2]) - 2,
                        max(pts[, 2]) + 2)))
+        if(all(values(allNA(Aust_sub)))) {
+          Aust_sub <-
+            try(crop(raster,
+                     ext(min(pts[, 1]) - 4,
+                         max(pts[, 1]) + 4,
+                         min(pts[, 2]) - 4,
+                         max(pts[, 2]) + 4)))
+        }
         if (inherits(Aust_sub, "try-error")) {
           stop("detection locations outside extent of land raster")
         }

@@ -143,8 +143,9 @@ runQC <- function(x,
     warning(paste(nfail, "tag detection file(s) could not be QC'd"),
             call. = FALSE, immediate. = TRUE)
     xfail <- all_data[fails]
+    idx.fails <- which(fails)
     lapply(1:length(xfail), function(i) {
-      write(paste0(xfail[[i]]$filename[1], ":  QC error: ", QC_result[[i]]),
+      write(paste0(xfail[[i]]$filename[1], ":  QC error: ", QC_result[[idx.fails[i]]]),
             file = logfile,
             append = TRUE
       )
