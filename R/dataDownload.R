@@ -33,11 +33,11 @@ dataDownload <- function(type, year, month = NULL, dir, varname, quiet = TRUE) {
         month <- 1:12
         for (i in 1:length(month)) {
           if (month[i] < 10) {
-            download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/daily/", varname, "_", year, "_0", month[i], ".nc"), 
+            download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", varname, "_", year, "_0", month[i], ".nc"), 
               destfile = paste0(dir, "/", varname, "_", year, "_0", month[i], ".nc"), mode = 'wb', quiet = quiet)
             gc()
           } else {
-            download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/daily/", varname, "_", year, "_", month[i], ".nc"), 
+            download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", varname, "_", year, "_", month[i], ".nc"), 
               destfile = paste0(dir, "/", varname, "_", year, "_", month[i], ".nc"), mode = 'wb', quiet = quiet)
             gc()
           }
@@ -45,11 +45,11 @@ dataDownload <- function(type, year, month = NULL, dir, varname, quiet = TRUE) {
       } else {
         for (i in 1:length(month)) {
           if (month[i] < 10) {
-            download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/daily/", varname, "_", year, "_0", month[i], ".nc"), 
+            download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", varname, "_", year, "_0", month[i], ".nc"), 
               destfile = paste0(dir, "/", varname, "_", year, "_0", month[i], ".nc"), mode = 'wb', quiet = quiet)
             gc()
           } else {
-            download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/daily/", varname, "_", year, "_", month[i], ".nc"), 
+            download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", varname, "_", year, "_", month[i], ".nc"), 
               destfile = paste0(dir, "/", varname, "_", year, "_", month[i], ".nc"), mode = 'wb', quiet = quiet)
             gc()
           }
@@ -57,14 +57,14 @@ dataDownload <- function(type, year, month = NULL, dir, varname, quiet = TRUE) {
       }      
     } else {
       if (is.null(month)) {
-        month <- 1:6 # 2023 data goes to June!
+        month <- 1:12 # 2023 data now goes to december!
         for (i in 1:length(month)) {
           if (month[i] < 10) {
-            download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/daily/", varname, "_", year, "_0", month[i], ".nc"), 
+            download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", varname, "_", year, "_0", month[i], ".nc"), 
               destfile = paste0(dir, "/", varname, "_", year, "_0", month[i], ".nc"), mode = 'wb', quiet = quiet)
             gc()
           } else {
-            download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/daily/", varname, "_", year, "_", month[i], ".nc"), 
+            download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", varname, "_", year, "_", month[i], ".nc"), 
               destfile = paste0(dir, "/", varname, "_", year, "_", month[i], ".nc"), mode = 'wb', quiet = quiet)
             gc()
           }
@@ -72,11 +72,11 @@ dataDownload <- function(type, year, month = NULL, dir, varname, quiet = TRUE) {
       } else {
         for (i in 1:length(month)) {
           if (month[i] < 10) {
-            download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/daily/", varname, "_", year, "_0", month[i], ".nc"), 
+            download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", varname, "_", year, "_0", month[i], ".nc"), 
               destfile = paste0(dir, "/", varname, "_", year, "_0", month[i], ".nc"), mode = 'wb', quiet = quiet)
             gc()
           } else {
-            download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/daily/", varname, "_", year, "_", month[i], ".nc"), 
+            download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", varname, "_", year, "_", month[i], ".nc"), 
               destfile = paste0(dir, "/", varname, "_", year, "_", month[i], ".nc"), mode = 'wb', quiet = quiet)
             gc()
           }
@@ -90,11 +90,11 @@ dataDownload <- function(type, year, month = NULL, dir, varname, quiet = TRUE) {
       month <- 1:12
       for (i in 1:length(month)) {
         if (month[i] < 10) {
-          download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/month/", varname, "_mth_", year, "_0", month[i], ".nc"), 
+          download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/month/", varname, "_mth_", year, "_0", month[i], ".nc"), 
             destfile = paste0(dir, "/", varname, "_", year, "_0", month[i], ".nc"), mode = 'wb', quiet = quiet)
           gc()
         } else {
-          download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/month/", varname, "_mth_", year, "_", month[i], ".nc"), 
+          download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/month/", varname, "_mth_", year, "_", month[i], ".nc"), 
             destfile = paste0(dir, "/", varname, "_", year, "_", month[i], ".nc"), mode = 'wb', quiet = quiet)
           gc()
         }
@@ -102,11 +102,11 @@ dataDownload <- function(type, year, month = NULL, dir, varname, quiet = TRUE) {
     } else {
       for (i in 1:length(month)) {
         if (month[i] < 10) {
-          download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/month/", varname, "_mth_", year, "_0", month[i], ".nc"), 
+          download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/month/", varname, "_mth_", year, "_0", month[i], ".nc"), 
             destfile = paste0(dir, "/", varname, "_", year, "_0", month[i], ".nc"), mode = 'wb', quiet = quiet)
           gc()
         } else {
-          download.file(paste0("https://dapds00.nci.org.au/thredds/fileServer/gb6/BRAN/BRAN2020/month/", varname, "_mth_", year, "_", month[i], ".nc"), 
+          download.file(paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/month/", varname, "_mth_", year, "_", month[i], ".nc"), 
             destfile = paste0(dir, "/", varname, "_", year, "_", month[i], ".nc"), mode = 'wb', quiet = quiet)
           gc()
         }
