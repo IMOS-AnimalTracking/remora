@@ -102,8 +102,6 @@ sensed environmental data with QC’d animal detections</h3>
 
     
     
-<pre><code><span><span class="co">## Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">##   object 'type_sum.accel' not found</span></span></code></pre>
 <hr>
 <p>Another key functionality of the <code>remora</code> package allows
 users to integrate acoustic telemetry data and environmental and habitat
@@ -146,7 +144,7 @@ kilometers). Variable names that start with <code>rs_</code> are
 remotely-sensed or gridded environmental layers, and variables starting
 with <code>moor_</code> include <em>in situ</em> sub-surface mooring
 environmental layers.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/IMOS-AnimalTracking/remora/" class="external-link">remora</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/imos_variables.html">imos_variables</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -698,7 +696,7 @@ data. A suite of additional functions can be used to access and extract
 acoustic detection data is the <code><a href="../reference/extractEnv.html">extractEnv()</a></code> function. Lets
 start with a dataset that has undergone quality control (see
 <code><a href="../articles/runQC.html">vignette('runQC')</a></code>).</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://paleolimbot.github.io/ggspatial/" class="external-link">ggspatial</a></span><span class="op">)</span></span>
@@ -714,7 +712,7 @@ start with a dataset that has undergone quality control (see
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Detection_QC</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>Lets have a quick look at the spatial patterns in detection data:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qc_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">transmitter_id</span>, <span class="va">station_name</span>, <span class="va">installation_name</span>, <span class="va">receiver_deployment_longitude</span>, <span class="va">receiver_deployment_latitude</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>num_det <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -728,7 +726,7 @@ start with a dataset that has undergone quality control (see
 <p><img src="images%2Fenv_extract%2Fenv_extract_plot1.png"></p>
 <p><br></p>
 <p>We can also have a look at the temporal pattern in detections:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qc_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">detection_datetime</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">transmitter_id</span>, <span class="va">date</span>, <span class="va">installation_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -825,7 +823,7 @@ radius based on the resolution of environmental layer [5 km for
 <h5 id="interpolated-sea-surface-temperature">
 <em>Interpolated sea surface temperature</em><a class="anchor" aria-label="anchor" href="#interpolated-sea-surface-temperature"></a>
 </h5>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_with_sst</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="../reference/extractEnv.html">extractEnv</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
 <span>             X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
@@ -845,7 +843,7 @@ radius based on the resolution of environmental layer [5 km for
 <em>Modeled ocean surface currents</em><a class="anchor" aria-label="anchor" href="#modeled-ocean-surface-currents"></a>
 </h5>
 <p>We can now also append current data to this dataset:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_with_sst_and_current</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="va">data_with_sst</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/extractEnv.html">extractEnv</a></span><span class="op">(</span>X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span>
@@ -878,7 +876,7 @@ calculate current velocity and bearing and appended to detections</p>
 </h3>
 <p>We can now see the extracted environmental variables are appended as
 new columns to the input dataset</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_with_sst_and_current</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 597 × 61</span></span></span>
 <span><span class="co">##    filename    transmitter_id tag_id transmitter_deployme…¹ tagging_project_name</span></span>
@@ -901,7 +899,7 @@ new columns to the input dataset</p>
 <span><span class="co">## <span style="color: #949494;">#   receiver_deployment_longitude &lt;dbl&gt;, receiver_deployment_latitude &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   receiver_project_name &lt;chr&gt;, installation_name &lt;chr&gt;, station_name &lt;chr&gt;, …</span></span></span></code></pre>
 <p>We can also now add the variables to the detection plots:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">summarised_data</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">data_with_sst_and_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">detection_datetime</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -918,7 +916,7 @@ new columns to the input dataset</p>
 <span>       y <span class="op">=</span> <span class="cn">NULL</span>, color <span class="op">=</span> <span class="st">"SST (˚C)"</span>, size <span class="op">=</span> <span class="st">"Number of\nDetections"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="images%2Fenv_extract%2Fenv_extract_plot3.png"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">summarised_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">transmitter_id</span>, color <span class="op">=</span> <span class="va">mean_current_velocity</span>,</span>
 <span>                 size <span class="op">=</span> <span class="va">num_det</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -932,7 +930,7 @@ new columns to the input dataset</p>
 <p><br><br></p>
 <p>If the environmental layers were cached, we can also look at how the
 variables altered spatially:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Detection data summary</span></span>
 <span><span class="va">det_summary</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">qc_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -959,7 +957,7 @@ variables altered spatially:</p>
 <p>Current data can be plotted using other very useful libraries like
 the <a href="https://github.com/eliocamp/metR" class="external-link"><code>metR</code></a>
 package.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Current</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://eliocamp.github.io/metR/" class="external-link">metR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>

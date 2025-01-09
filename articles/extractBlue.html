@@ -102,8 +102,6 @@
 
     
     
-<pre><code><span><span class="co">## Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">##   object 'type_sum.accel' not found</span></span></code></pre>
 <hr>
 <p>This functionality of the <code>remora</code> package allows users to
 integrate acoustic telemetry data and <a href="https://research.csiro.au/bluelink/" class="external-link">Bluelink Reanalysis
@@ -144,7 +142,7 @@ y (v) directions) and vertical planes (i.e. <code>ocean_w</code> will
 provide data on current speed in the vertical plane), and other
 environmental variables at depths ranging between the ocean surface to
 4,905 m.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/IMOS-AnimalTracking/remora/" class="external-link">remora</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/imos_variables.html">imos_variables</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -695,7 +693,7 @@ surface.</p>
 telemetry data is the <code><a href="../reference/extractBlue.html">extractBlue()</a></code> function. Lets start
 with a dataset that has undergone quality control (see
 <code><a href="../articles/runQC.html">vignette('runQC')</a></code>).</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://paleolimbot.github.io/ggspatial/" class="external-link">ggspatial</a></span><span class="op">)</span></span>
@@ -785,7 +783,7 @@ column) and date (<code>detection_datetime</code> column converted to
 Date format). A new column <code>Detection</code> will be included, and
 will comprise 1 (days with detections) and 0 (days without detections)
 values:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Obtain standardized data with water temperatures at the surface:</span></span>
 <span><span class="va">data_with_sst</span> <span class="op">&lt;-</span> </span>
 <span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
@@ -871,7 +869,7 @@ recorded at the <code>Kelso 2</code> station
 <p>We are going to use the function to compare the water temperatures in
 the study area between the surface and the 30-m depths. Let’s download
 and process the Bluelink (BRAN) data at the two depths of interest:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Obtain water temperature data at the 30-m depths</span></span>
 <span><span class="va">data_with_sst2</span> <span class="op">&lt;-</span> </span>
 <span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
@@ -885,7 +883,7 @@ and process the Bluelink (BRAN) data at the two depths of interest:</p>
 <span>                full_timeperiod <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Now let’s see how the two variables look in relation to each
 other:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Station <span class="op">=</span> <span class="va">data_with_sst</span><span class="op">$</span><span class="va">station_name</span>,</span>
 <span>  Date <span class="op">=</span> <span class="va">data_with_sst</span><span class="op">$</span><span class="va">date</span>,</span>
 <span>  Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Surface"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_with_sst</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Depth"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data_with_sst2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -918,7 +916,7 @@ of vertical data between the water surface and 200-m depth.</p>
 direction) and vertical current data, and save the processed Bluelink
 (BRAN) files for further investigation. First, let’s download the
 data:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># download horizontal current data:</span></span>
 <span><span class="va">data_cur</span> <span class="op">&lt;-</span> </span>
 <span>    <span class="fu"><a href="../reference/extractBlue.html">extractBlue</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span>
@@ -947,7 +945,7 @@ downloaded and processed files will be cached in the
 <code>folder_name</code> folder within the working directory (Bluelink),
 as a csv file. We can then load these processed files and plot them, to
 look at the trends in current speed within the study area:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load environmental data:</span></span>
 <span><span class="va">cur.hor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"Bluelink/BRAN_cur_0.csv"</span><span class="op">)</span></span>
 <span><span class="va">cur.ver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"Bluelink/BRAN_wcur_0.csv"</span><span class="op">)</span></span>
