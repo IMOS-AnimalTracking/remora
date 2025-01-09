@@ -249,6 +249,8 @@ extractBlue <- function(df, X, Y, datetime,
                                   }
                                 }  
     parallel::stopCluster(cl)
+    nc.bran$x <- as.numeric(nc.bran$x)
+    nc.bran$y <- as.numeric(nc.bran$y)
   } else { # Not in parallel
     if (verbose) {
       message(paste("Downloading", env_var, "data:", min(dates), "|", max(dates)))
@@ -324,6 +326,8 @@ extractBlue <- function(df, X, Y, datetime,
       if (verbose)
         setTxtProgressBar(pb, i)     
     }
+    nc.bran$x <- as.numeric(nc.bran$x)
+    nc.bran$y <- as.numeric(nc.bran$y)
     if (verbose)
       close(pb)
   }
@@ -369,11 +373,11 @@ extractBlue <- function(df, X, Y, datetime,
                                      .combine = 'c', 
                                      .packages = c('foreach', 'geosphere')) %dopar% {  
                                        aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
-                                       index.locs <- which(as.Date(df.run[,"date"]) == index.day[i]) 
+                                       index.locs <- which(as.Date(df.run[,datetime]) == index.day[i]) 
                                        var.run <- foreach::foreach(ii = 1:length(index.locs), 
                                                                    .combine = 'c',
                                                                    .packages = 'geosphere') %dopar% {
-                                                                     aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], "lon"], df.run[index.locs[ii], "lat"]),
+                                                                     aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
                                                                                                                     x = aux.nc[,c("x","y")]
                                                                      ))
                                                                      if (env_var %in% c("BRAN_cur", "BRAN_wind")) {

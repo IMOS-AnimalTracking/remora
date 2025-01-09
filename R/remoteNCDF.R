@@ -20,10 +20,10 @@
 remoteNCDF <- function(year, month, var, depth, lon.min, lon.max, lat.min, lat.max) {
   options(dplyr.summarise.inform = FALSE)
   # Create filename
-  if (month < 10) {
+  if (month < 10) {   
     filename = paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily/", var, "_", year, "_0", month, ".nc")
   } else {
-    filename = paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily/", var, "_", year, "_", month, ".nc")
+    filename = paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", var, "_", year, "_", month, ".nc")
   }
   # Open file remotely
   tryCatch(
@@ -38,7 +38,7 @@ remoteNCDF <- function(year, month, var, depth, lon.min, lon.max, lat.min, lat.m
     bran_depth <- nc %>% 
       tidync::activate("st_ocean") %>% 
       tidync::hyper_tibble()
-    bran_depth$st_ocean <- bran_depth$st_ocean * -1
+    bran_depth$st_ocean <- as.numeric(bran_depth$st_ocean) * -1
     if (depth > 0)
       depth <- depth * -1
     depth_layer <- which.min(abs(bran_depth$st_ocean - depth))
@@ -66,22 +66,23 @@ remoteNCDF <- function(year, month, var, depth, lon.min, lon.max, lat.min, lat.m
       yt_ocean = yt_ocean > lat.min & yt_ocean < lat.max) %>%
     tidync::hyper_tibble()
   }
-  # Convert time variable
-  tunit <- ncmeta::nc_atts(filename, "Time") %>% dplyr::filter(name == "units")
-  tunit <- as.character(tunit$value)
-  time_parts <- RNetCDF::utcal.nc(tunit, df.nc$Time)
-  df.nc$Time <- ISOdatetime(time_parts[,"year"], 
-            time_parts[,"month"], 
-            time_parts[,"day"], 
-            time_parts[,"hour"], 
-            time_parts[,"minute"], 
-            time_parts[,"second"])
+  # Convert time and depth variables
+  # tunit <- ncmeta::nc_atts(filename, "Time") %>% dplyr::filter(name == "units")
+  # tunit <- as.character(tunit$value)
+  # time_parts <- RNetCDF::utcal.nc(tunit, df.nc$Time)
+  # df.nc$Time <- ISOdatetime(time_parts[,"year"], 
+  #           time_parts[,"month"], 
+  #           time_parts[,"day"], 
+  #           time_parts[,"hour"], 
+  #           time_parts[,"minute"], 
+  #           time_parts[,"second"])
+  df.nc$Time <- as.POSIXct(df.nc$Time, format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
   if (var == "atm_flux_diag") 
     names(df.nc) <- c("u", "v", "x", "y", "Time")
   if (var %in% c("ocean_eta_t", "ocean_mld"))
     names(df.nc) <- c(var, "x", "y", "Time")
   if (var %in% c("ocean_temp", "ocean_salt", "ocean_u", "ocean_v"))
-    names(df.nc) <- c(var, "x", "y", "depth", "Time")   
+    names(df.nc) <- c(var, "x", "y", "Time")   
   if (var == "ocean_w") {
     df.nc <- df.nc[-which(df.nc$sw_ocean > 200),] # Use only layers < 200 m
     names(df.nc) <- c(var, "x", "y", "depth", "Time")   
