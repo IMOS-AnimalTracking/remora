@@ -258,11 +258,11 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		## -720 minutes (12 h) to take into account potential time zone differences
 		temporal_outcome[which(release_timediff >= (-720)), 6] <- 1
 		temporal_outcome[which(release_timediff < (-720)), 6] <- 2
-
+		
 		## Release location test
 		if(!is.null(shp_b)) {
 			temporal_outcome[, 7] <- ifelse(all(dist[1] > 500,
-			                                   sum(is.na(st_intersects(ll_r, shp_b))) > 0), 2, 1)
+			                                   sum(is.na(as.numeric(st_intersects(ll_r, shp_b)))) > 0), 2, 1)
 		} else {
 			temporal_outcome[, 7] <- ifelse(dist[1] > 500, 2, 1)
 		}
