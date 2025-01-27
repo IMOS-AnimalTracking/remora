@@ -202,9 +202,10 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         filter(tagging_project_name %in% unique(det_data$tagging_project_name))
     } else {
       tag_meta <- tag_meta |> 
+        ## check for "/" in tag_deployment_project_name & replace with " - "
+        mutate(tag_deployment_project_name = gsub("\\/", "-", tag_deployment_project_name)) |>
         filter(tag_deployment_project_name %in% unique(det_data$tag_deployment_project_name))
     }
-    
 
     ## drop any unnamed columns, up to a possible 20 of them...
     if(any(paste0("X",1:20) %in% names(tag_meta))) {
@@ -233,9 +234,6 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     }) |>
       bind_rows()
     
-    ## check for "/" in tag_deployment_project_name & replace with " - "
-    tmp <- tmp |>
-      mutate(tag_deployment_project_name = gsub("\\/", "-", tag_deployment_project_name))
     
     ## check for NA's in deployment lat,lon entries & use mean reported value
     ##  for NA's at same transmitter_deployment_locality
