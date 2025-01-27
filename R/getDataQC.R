@@ -104,6 +104,10 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     det_data <- det_data %>% select(-any_of(drops))
   }
 
+  ## check for "/" in tag_deployment_project_name & replace with " - "
+  det_data <- det_data |>
+    mutate(tag_deployment_project_name = gsub("\\/", "-", tag_deployment_project_name))
+  
   ## add embargo_date variable if not present so downstream code works
   if(!"embargo_date" %in% names(det_data)) {
     det_data <- det_data %>% 
@@ -228,6 +232,10 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
       }
     }) |>
       bind_rows()
+    
+    ## check for "/" in tag_deployment_project_name & replace with " - "
+    tmp <- tmp |>
+      mutate(tag_deployment_project_name = gsub("\\/", "-", tag_deployment_project_name))
     
     ## check for NA's in deployment lat,lon entries & use mean reported value
     ##  for NA's at same transmitter_deployment_locality
