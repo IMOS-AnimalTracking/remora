@@ -231,6 +231,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     
     ## check for NA's in deployment lat,lon entries & use mean reported value
     ##  for NA's at same transmitter_deployment_locality
+    if(sum(is.na(tmp$transmitter_deployment_locality)) == 0) {
     tag_meta <- tmp |> 
       group_by(transmitter_deployment_locality) |>
       mutate(transmitter_deployment_longitude = 
@@ -242,6 +243,28 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                       mean(transmitter_deployment_latitude, na.rm = TRUE),
                       transmitter_deployment_latitude)) |>
       ungroup()
+    } else {
+      ## create filenames
+      fns <-
+        with(
+          subset(det_data, transmitter_deployment_id %in% missing_ids),
+          paste(
+            unique(transmitter_id),
+            unique(tag_id),
+            unique(transmitter_deployment_id),
+            sep = "_"
+          )
+        )
+      ## write to logfile
+      write(
+        paste0(
+          fns,
+          ":  transmitter_deployment_locality is not entered in the transmitter metadata"
+        ),
+        file = logfile,
+        append = TRUE
+      )
+    }
   }
   
   ## animal measurements data
