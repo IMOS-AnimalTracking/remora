@@ -23,7 +23,7 @@ remoteNCDF <- function(year, month, var, depth, lon.min, lon.max, lat.min, lat.m
   if (month < 10) {   
     filename = paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily/", var, "_", year, "_0", month, ".nc")
   } else {
-    filename = paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily", var, "_", year, "_", month, ".nc")
+    filename = paste0("https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily/", var, "_", year, "_", month, ".nc")
   }
   # Open file remotely
   tryCatch(
