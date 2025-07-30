@@ -70,8 +70,8 @@
       ## Update with IMOS github repo link
       url <- "https://github.com/IMOS-AnimalTracking/environmental_layers/blob/main/bathymetry_AustralianEEZ.tif?raw=true"
       out_brick <-
-        try(rast(url) %>%
-              {if (.crop) crop(., study_extent) else .} , silent=TRUE)
+        try(terra::rast(url) %>%
+              {if (.crop) terra::crop(., study_extent) else .} , silent=TRUE)
       names(out_brick) <- "bathy"
     }
     
@@ -79,8 +79,8 @@
     if(var_name %in% "dist_to_land"){
       url <- "https://github.com/IMOS-AnimalTracking/environmental_layers/blob/main/dist_to_land_AustralianEEZ.tif?raw=true"
       out_brick <-
-        try(rast(url) %>%
-              {if (.crop) crop(., study_extent) else .} , silent=TRUE)
+        try(terra::rast(url) %>%
+              {if (.crop) terra::crop(., study_extent) else .} , silent=TRUE)
       names(out_brick) <- "dist_to_land"
     }
     
@@ -112,7 +112,7 @@
                         quiet = TRUE)
           nc_path <- gunzip(temp_nc)
           
-          ras <- rast(nc_path, 
+          ras <- terra::rast(nc_path, 
                       lyrs = switch(url$layer != "", url$layer, NULL))
           
         } else if (file.sfx == "nc") {
@@ -123,7 +123,7 @@
                         mode = "wb",
                         quiet = TRUE)
           
-          ras <- rast(temp_nc, 
+          ras <- terra::rast(temp_nc, 
                       lyrs = switch(url$layer != "", url$layer, NULL))
         }
         
@@ -147,7 +147,7 @@
         ras.lst <- lapply(ras.lst, crop, y = study_extent)
       }
       
-      out_brick <- rast(ras.lst)
+      out_brick <- terra::rast(ras.lst)
         
       plan("sequential")
       
@@ -174,7 +174,7 @@
                           quiet = TRUE)
             nc_path <- gunzip(temp_nc)
             
-            ras <- rast(nc_path, 
+            ras <- terra::rast(nc_path, 
                         lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
                         win = switch(.crop, study_extent, NULL))
             
@@ -186,7 +186,7 @@
                           mode = "wb",
                           quiet = TRUE)
             
-            ras <- rast(temp_nc, 
+            ras <- terra::rast(temp_nc, 
                         lyrs = switch(urls$layer[i] != "", urls$layer[i], NULL),
                         win = switch(.crop, study_extent, NULL))
           }
@@ -202,12 +202,12 @@
         return(ras)
       })
       cat("\n")
-      out_brick <- rast(ras_lst)
+      out_brick <- terra::rast(ras_lst)
       
     }
       
-      if(any(is.na(crs(out_brick)), is.null(crs(out_brick)))) {
-        crs(out_brick) <- "epsg:4326"
+      if(any(is.na(terra::crs(out_brick)), is.null(terra::crs(out_brick)))) {
+        terra::crs(out_brick) <- "epsg:4326"
       }
     }
 
@@ -246,13 +246,13 @@
           
           ## use terra::wrap to pack SpatRasters & pass through the connection
           ##    set up by parallel processing via future
-          gsla <- rast(nc_path,
+          gsla <- terra::rast(nc_path,
                        subds = "GSLA")
           
-          vcur <- rast(nc_path,
+          vcur <- terra::rast(nc_path,
                        subds = "VCUR")
           
-          ucur <- rast(nc_path,
+          ucur <- terra::rast(nc_path,
                        subds = "UCUR")
           
           return(list(
@@ -278,11 +278,11 @@
               lapply(x, crop, y = study_extent))
         }
         
-        gsla_stack <- rast(lapply(ras.lst, function(x)
+        gsla_stack <- terra::rast(lapply(ras.lst, function(x)
           x[[1]]))
-        vcur_stack <- rast(lapply(ras.lst, function(x)
+        vcur_stack <- terra::rast(lapply(ras.lst, function(x)
           x[[2]]))
-        ucur_stack <- rast(lapply(ras.lst, function(x)
+        ucur_stack <- terra::rast(lapply(ras.lst, function(x)
           x[[3]]))
         
         out_brick <-
@@ -313,19 +313,19 @@
         )
         nc_path <- gunzip(temp_nc)
         
-        gsla <- rast(nc_path,
+        gsla <- terra::rast(nc_path,
                      subds = "GSLA",
                      win = switch(.crop, study_extent, NULL))
         names(gsla) <- urls$date[i]
         gsla_stack <- c(gsla_stack, gsla)
         
-        vcur <- rast(nc_path,
+        vcur <- terra::rast(nc_path,
                      subds = "VCUR",
                      win = switch(.crop, study_extent, NULL))
         names(vcur) <- urls$date[i]
         vcur_stack <- c(vcur_stack, vcur)
         
-        ucur <- rast(nc_path,
+        ucur <- terra::rast(nc_path,
                      subds = "UCUR",
                      win = switch(.crop, study_extent, NULL))
         names(ucur) <- urls$date[i]
@@ -337,9 +337,9 @@
       
       out_brick <-
         list(
-          gsla = rast(gsla_stack),
-          vcur = rast(vcur_stack),
-          ucur = rast(ucur_stack)
+          gsla = terra::rast(gsla_stack),
+          vcur = terra::rast(vcur_stack),
+          ucur = terra::rast(ucur_stack)
         )
     }
     cat("\n")
@@ -372,8 +372,8 @@
       writeRaster(out_brick$vcur, filename = paste0(file.path(path, "rs_vcur"), .output_format), overwrite = TRUE)
       writeRaster(out_brick$ucur, filename = paste0(file.path(path, "rs_ucur"), .output_format), overwrite = TRUE)
     } else {
-      if(any(is.na(crs(out_brick)), is.null(crs(out_brick)))) {
-        crs(out_brick) <- "epsg:4326"
+      if(any(is.na(terra::crs(out_brick)), is.null(terra::crs(out_brick)))) {
+        terra::crs(out_brick) <- "epsg:4326"
       }
       writeRaster(out_brick, filename = paste0(file.path(path, var_name), .output_format), overwrite = TRUE)
     }

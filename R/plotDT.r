@@ -36,7 +36,7 @@ plotDT <- function(moorData,
     stop('Only "temperature", "vcur", "ucur" or "psal" can be provided as a valid varName')
   
   moorData <- moorData %>% 
-    mutate(mooring.date = lubridate::as_date(moor_timestamp), 
+    dplyr::mutate(mooring.date = lubridate::as_date(moor_timestamp), 
                   depth_bin = round((moor_depth/5))*5) 
   if (!is.null(dateStart) | !is.null(dateEnd)){
     dateStart <- lubridate::as_date(dateStart); dateEnd <- lubridate::as_date(dateEnd)

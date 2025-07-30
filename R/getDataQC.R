@@ -104,10 +104,6 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     det_data <- det_data %>% select(-any_of(drops))
   }
 
-  ## check for "/" in tag_deployment_project_name & replace with " - "
-  det_data <- det_data |>
-    mutate(tag_deployment_project_name = gsub("\\/", "-", tag_deployment_project_name))
-  
   ## add embargo_date variable if not present so downstream code works
   if(!"embargo_date" %in% names(det_data)) {
     det_data <- det_data %>% 
@@ -202,10 +198,9 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         filter(tagging_project_name %in% unique(det_data$tagging_project_name))
     } else {
       tag_meta <- tag_meta |> 
-        ## check for "/" in tag_deployment_project_name & replace with " - "
-        mutate(tag_deployment_project_name = gsub("\\/", "-", tag_deployment_project_name)) |>
         filter(tag_deployment_project_name %in% unique(det_data$tag_deployment_project_name))
     }
+    
 
     ## drop any unnamed columns, up to a possible 20 of them...
     if(any(paste0("X",1:20) %in% names(tag_meta))) {
@@ -234,10 +229,8 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
     }) |>
       bind_rows()
     
-    
     ## check for NA's in deployment lat,lon entries & use mean reported value
     ##  for NA's at same transmitter_deployment_locality
-    if(sum(is.na(tmp$transmitter_deployment_locality)) == 0) {
     tag_meta <- tmp |> 
       group_by(transmitter_deployment_locality) |>
       mutate(transmitter_deployment_longitude = 
@@ -249,28 +242,6 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
                       mean(transmitter_deployment_latitude, na.rm = TRUE),
                       transmitter_deployment_latitude)) |>
       ungroup()
-    } else {
-      ## create filenames
-      fns <-
-        with(
-          subset(det_data, transmitter_deployment_id %in% missing_ids),
-          paste(
-            unique(transmitter_id),
-            unique(tag_id),
-            unique(transmitter_deployment_id),
-            sep = "_"
-          )
-        )
-      ## write to logfile
-      write(
-        paste0(
-          fns,
-          ":  transmitter_deployment_locality is not entered in the transmitter metadata"
-        ),
-        file = logfile,
-        append = TRUE
-      )
-    }
   }
   
   ## animal measurements data

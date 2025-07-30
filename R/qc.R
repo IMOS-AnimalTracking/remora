@@ -114,7 +114,7 @@ qc <- function(x, Lcheck = TRUE, logfile) {
   ## Find corresponding ALA shapefile based on species name
   shp_b <- NULL
   if (!is.na(spe) & !is.na(CAAB_species_id))
-    shp_b <- try(suppressWarnings(get_expert_distribution_shp(CAAB_species_id, spe)), silent = TRUE)
+    shp_b <- try(get_expert_distribution_shp(CAAB_species_id, spe), silent = TRUE)
 
   ## if no shape file or spe or CAAB_species_id is missing then append to logfile & continue
   if(is.null(shp_b)) {
@@ -258,11 +258,11 @@ qc <- function(x, Lcheck = TRUE, logfile) {
 		## -720 minutes (12 h) to take into account potential time zone differences
 		temporal_outcome[which(release_timediff >= (-720)), 6] <- 1
 		temporal_outcome[which(release_timediff < (-720)), 6] <- 2
-		
+
 		## Release location test
 		if(!is.null(shp_b)) {
 			temporal_outcome[, 7] <- ifelse(all(dist[1] > 500,
-			                                   sum(is.na(unlist(st_intersects(ll_r, shp_b)))) > 0), 2, 1)
+			                                   sum(is.na(st_intersects(ll_r, shp_b))) > 0), 2, 1)
 		} else {
 			temporal_outcome[, 7] <- ifelse(dist[1] > 500, 2, 1)
 		}
