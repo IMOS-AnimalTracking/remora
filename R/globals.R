@@ -11,4 +11,6 @@ utils::globalVariables(c("Time",
   "xu_ocean",
   "yt_ocean",
   "yu_ocean",
-  "error"))
+  "error",
+  "tag_device_project_name.x",
+  "tag_device_project_name.y"))
