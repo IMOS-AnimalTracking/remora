@@ -21,7 +21,7 @@ test_that("extractEnv adds rs_current data", {
                          folder_name = "test",
                          .parallel = FALSE)
 
-  sub <- qc_data1[1, 56:61]
+  sub <- qc_data1[1, 57:62]
   expect_named(sub, c("date", 
                       "rs_gsla", 
                       "rs_vcur", 
