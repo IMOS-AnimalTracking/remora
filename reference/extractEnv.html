@@ -18,7 +18,7 @@ server and append variables to detection data based on date of detection"><!-- m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-05</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.8-05.9137</span>
       </span>
     </div>
 
@@ -80,19 +80,17 @@ server and append variables to detection data based on date of detection</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extractEnv</span><span class="op">(</span></span>
 <span>  <span class="va">df</span>,</span>
-<span>  X <span class="op">=</span> <span class="st">"longitude"</span>,</span>
-<span>  Y <span class="op">=</span> <span class="st">"latitude"</span>,</span>
-<span>  datetime <span class="op">=</span> <span class="st">"detection_timestamp"</span>,</span>
+<span>  <span class="va">X</span>,</span>
+<span>  <span class="va">Y</span>,</span>
+<span>  <span class="va">datetime</span>,</span>
 <span>  <span class="va">env_var</span>,</span>
-<span>  folder_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  cache_layers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  crop_layers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  full_timeperiod <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  station_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fill_gaps <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  buffer <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  nrt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  output_format <span class="op">=</span> <span class="st">".grd"</span>,</span>
+<span>  env_buffer <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  nrt <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .ncores <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -126,30 +124,21 @@ Time; UTC)</p></dd>
 'rs_current')</p></dd>
 
 
-<dt id="arg-folder-name">folder_name<a class="anchor" aria-label="anchor" href="#arg-folder-name"></a></dt>
-<dd><p>name of folder within 'imos.cache' where downloaded rasters
-should be saved. default NULL produces automatic folder names based on study extent</p></dd>
-
-
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>should function provide details of what operation is being conducted.
 Set to <code>FALSE</code> to keep it quiet</p></dd>
 
 
-<dt id="arg-cache-layers">cache_layers<a class="anchor" aria-label="anchor" href="#arg-cache-layers"></a></dt>
-<dd><p>should the extracted environmental data be cached within
-the working directory? if FALSE stored in temporary folder and discarded
-after environmental extraction</p></dd>
-
-
-<dt id="arg-crop-layers">crop_layers<a class="anchor" aria-label="anchor" href="#arg-crop-layers"></a></dt>
-<dd><p>should the extracted environmental data be cropped to
-within the study site</p></dd>
-
-
 <dt id="arg-full-timeperiod">full_timeperiod<a class="anchor" aria-label="anchor" href="#arg-full-timeperiod"></a></dt>
-<dd><p>should environmental variables extracted for each day
-across full monitoring period, time and memory consuming for long projects</p></dd>
+<dd><p>should environmental variables be extracted for each day
+across full monitoring period? This option is time and memory consuming for long projects. If this option is selected,
+the returned dataset will be standardized for the days with/without detections across all stations (station_name column) where animals were
+detected. For more details please see the package vignettes.</p></dd>
+
+
+<dt id="arg-station-name">station_name<a class="anchor" aria-label="anchor" href="#arg-station-name"></a></dt>
+<dd><p>if full_timeperiod = TRUE, please provide the column that identifies the name of the
+acoustic stations</p></dd>
 
 
 <dt id="arg-fill-gaps">fill_gaps<a class="anchor" aria-label="anchor" href="#arg-fill-gaps"></a></dt>
@@ -166,18 +155,16 @@ buffer will be chosen based on the resolution of environmental layer. A
 numeric value (in m) can be used here to customise buffer radius.</p></dd>
 
 
+<dt id="arg-env-buffer">env_buffer<a class="anchor" aria-label="anchor" href="#arg-env-buffer"></a></dt>
+<dd><p>distance (in decimal degrees) to expand the study area beyond the coordinates to extract environmental data. Default value is 1°.</p></dd>
+
+
 <dt id="arg-nrt">nrt<a class="anchor" aria-label="anchor" href="#arg-nrt"></a></dt>
 <dd><p>should Near Real-Time current data be used if Delayed-Mode current
 data is missing. Default is <code>FALSE</code>, in which case NA's are appended to current
 variables for years (currently, all years after 2020) when current data are
 missing. Note that Near Real-Time data are subject to less quality control
 than Delayed-Mode data.</p></dd>
-
-
-<dt id="arg-output-format">output_format<a class="anchor" aria-label="anchor" href="#arg-output-format"></a></dt>
-<dd><p>File format for cached environmental layers. You can use
-<code>gdal(drivers=TRUE)</code> to see what drivers are available in your installation.
-The default format is '.grd'.</p></dd>
 
 
 <dt id="arg--parallel">.parallel<a class="anchor" aria-label="anchor" href="#arg--parallel"></a></dt>
@@ -227,26 +214,20 @@ available can be accessed using the <code><a href="imos_variables.html">imos_var
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Extract daily interpolated sea surface temperature</span></span></span>
-<span class="r-in"><span><span class="co">## cache_layers &amp; fill_gaps args set to FALSE for speed</span></span></span>
 <span class="r-in"><span><span class="va">data_with_sst</span> <span class="op">&lt;-</span> </span></span>
 <span class="r-in"><span>  <span class="fu">extractEnv</span><span class="op">(</span>df <span class="op">=</span> <span class="va">qc_data</span>,</span></span>
 <span class="r-in"><span>              X <span class="op">=</span> <span class="st">"receiver_deployment_longitude"</span>, </span></span>
 <span class="r-in"><span>              Y <span class="op">=</span> <span class="st">"receiver_deployment_latitude"</span>, </span></span>
 <span class="r-in"><span>              datetime <span class="op">=</span> <span class="st">"detection_datetime"</span>, </span></span>
 <span class="r-in"><span>              env_var <span class="op">=</span> <span class="st">"rs_sst_interpolated"</span>,</span></span>
-<span class="r-in"><span>              cache_layers <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>              crop_layers <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>              full_timeperiod <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>              fill_gaps <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>              folder_name <span class="op">=</span> <span class="st">"test"</span>,</span></span>
+<span class="r-in"><span>              buffer <span class="op">=</span> <span class="fl">20000</span>,</span></span>
 <span class="r-in"><span>              .parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting environmental data only on days detections were present; between 2013-08-18 and 2013-09-05 (3 days)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> This may take a little while...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Accessing and downloading IMOS environmental variable: rs_sst_interpolated</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking if files exist on IMOS server...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                                              |                                                                      |   0%  |                                                                              |=======================                                               |  33%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================================| 100%</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting and appending environmental data</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Filling gaps in environmental data by extracting median values from a 15km buffer around detections that fall on 'NA' values</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Accessing and extracting IMOS data: rs_sst_interpolated</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                          |                                                  |   0%  |                                                          |=================                                 |  33%  |                                                          |=================================                 |  67%  |                                                          |==================================================| 100%</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -262,7 +243,7 @@ available can be accessed using the <code><a href="imos_variables.html">imos_var
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

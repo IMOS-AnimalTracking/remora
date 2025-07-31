@@ -24,9 +24,11 @@
 <url><loc>https://imos-animaltracking.github.io/remora/reference/dot-build_urls.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/dot-extract_var.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/dot-pull_env.html</loc></url>
+<url><loc>https://imos-animaltracking.github.io/remora/reference/ext_find.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/extractBlue.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/extractEnv.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/extractMoor.html</loc></url>
+<url><loc>https://imos-animaltracking.github.io/remora/reference/extract_func.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/getDistance.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/getOverlap.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/get_data.html</loc></url>
@@ -36,6 +38,7 @@
 <url><loc>https://imos-animaltracking.github.io/remora/reference/imos_variables.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/imos_variables_table.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/index.html</loc></url>
+<url><loc>https://imos-animaltracking.github.io/remora/reference/locs_match.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/merge.moor.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/mooringDownload.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/mooringTable.html</loc></url>
@@ -48,6 +51,8 @@
 <url><loc>https://imos-animaltracking.github.io/remora/reference/qc.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/remora-package.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/remoteNCDF.html</loc></url>
+<url><loc>https://imos-animaltracking.github.io/remora/reference/remote_open.html</loc></url>
+<url><loc>https://imos-animaltracking.github.io/remora/reference/remote_urls.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/runQC.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/sei.html</loc></url>
 <url><loc>https://imos-animaltracking.github.io/remora/reference/shinyReport.html</loc></url>
