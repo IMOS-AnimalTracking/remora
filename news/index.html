@@ -71,12 +71,21 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.9" id="remora-09-31072025">remora 0.9 (31/07/2025)<a class="anchor" aria-label="anchor" href="#remora-09-31072025"></a></h2>
+<ul><li>
+<code>extractBlue</code> and <code>extractEnv</code> updated with faster environmental data download via tidync</li>
+<li>TownsvilleReefQC example data and underlying raw data updated to reflect IMOS-ATF/AODN change in metadata variable from <code>tagging_project_name</code> to <code>tag_device_project_name</code> and <code>tag_deployment_project_name</code>
+</li>
+<li>minor fixes</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.8-0" id="remora-08-0-14112023">remora 0.8-0 (14/11/2023)<a class="anchor" aria-label="anchor" href="#remora-08-0-14112023"></a></h2>
 <p>First major update to remora:</p>
 <ul><li>addresses retirement of underlying R spatial packages - rgeos and rdgal</li>
-<li>fixes environmental data access issues when using extractEnv()</li>
-<li>adds extractBlue() function for accessing CSIRO Bluelink (BRAN) reanalysis environmental data with global, 3-D coverage from 0 - 4905 m depth</li>
-<li>adds an interactive plotQC() function for visualizing quality-controlled detection locations. This function replaces the original static plotQC function.</li>
+<li>fixes environmental data access issues when using <code><a href="../reference/extractEnv.html">extractEnv()</a></code>
+</li>
+<li>adds <code><a href="../reference/extractBlue.html">extractBlue()</a></code> function for accessing CSIRO Bluelink (BRAN) reanalysis environmental data with global, 3-D coverage from 0 - 4905 m depth</li>
+<li>adds an interactive <code><a href="../reference/plotQC.html">plotQC()</a></code> function for visualizing quality-controlled detection locations. This function replaces the original static <code>plotQC</code> function.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.1" id="remora-071-07122021">remora 0.7.1 (07/12/2021)<a class="anchor" aria-label="anchor" href="#remora-071-07122021"></a></h2>
