@@ -79,7 +79,7 @@
 ##'               env_var = "rs_sst_interpolated",
 ##'               full_timeperiod = FALSE,
 ##'               fill_gaps = TRUE,
-##'               folder_name = "test",
+##'               buffer = 20000,
 ##'               .parallel = FALSE)
 ##'
 ##' @importFrom dplyr %>% mutate distinct pull left_join select
@@ -111,6 +111,10 @@ extractEnv <- function(df, X, Y, datetime,
   if(full_timeperiod) {
     if(is.null(station_name))
       stop("Please provide column with station names in the 'station_name' argument.")
+  }
+  if (fill_gaps & is.null(buffer)) {
+    stop("Please provide a 'buffer' size to fill gaps.")
+
   }
   # Define spatial and temporal extent of data fetch:
   data_details <- ext_find(

@@ -10,7 +10,8 @@
   env_var,
   .fill_gaps,
   .buffer = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  .full_timeperiod = FALSE
 )
 }
 \arguments{

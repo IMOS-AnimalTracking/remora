@@ -6,19 +6,17 @@
 \usage{
 extractEnv(
   df,
-  X = "longitude",
-  Y = "latitude",
-  datetime = "detection_timestamp",
+  X,
+  Y,
+  datetime,
   env_var,
-  folder_name = NULL,
   verbose = TRUE,
-  cache_layers = TRUE,
-  crop_layers = TRUE,
   full_timeperiod = FALSE,
+  station_name = NULL,
   fill_gaps = FALSE,
   buffer = NULL,
-  nrt = FALSE,
-  output_format = ".grd",
+  env_buffer = 1,
+  nrt = TRUE,
   .parallel = TRUE,
   .ncores = NULL
 )
@@ -38,21 +36,16 @@ Time; UTC)}
 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'bathy', 'dist_to_land',
 'rs_current')}
 
-\item{folder_name}{name of folder within 'imos.cache' where downloaded rasters
-should be saved. default NULL produces automatic folder names based on study extent}
-
 \item{verbose}{should function provide details of what operation is being conducted.
 Set to \code{FALSE} to keep it quiet}
 
-\item{cache_layers}{should the extracted environmental data be cached within
-the working directory? if FALSE stored in temporary folder and discarded
-after environmental extraction}
+\item{full_timeperiod}{should environmental variables be extracted for each day
+across full monitoring period? This option is time and memory consuming for long projects. If this option is selected,
+the returned dataset will be standardized for the days with/without detections across all stations (station_name column) where animals were
+detected. For more details please see the package vignettes.}
 
-\item{crop_layers}{should the extracted environmental data be cropped to
-within the study site}
-
-\item{full_timeperiod}{should environmental variables extracted for each day
-across full monitoring period, time and memory consuming for long projects}
+\item{station_name}{if full_timeperiod = TRUE, please provide the column that identifies the name of the
+acoustic stations}
 
 \item{fill_gaps}{should the function use a spatial buffer to estimate
 environmental variables for detections where there is missing data. Default
@@ -64,15 +57,13 @@ that fall within the buffer will be used if \code{fill_gaps = TRUE}. If \code{NU
 buffer will be chosen based on the resolution of environmental layer. A
 numeric value (in m) can be used here to customise buffer radius.}
 
+\item{env_buffer}{distance (in decimal degrees) to expand the study area beyond the coordinates to extract environmental data. Default value is 1°.}
+
 \item{nrt}{should Near Real-Time current data be used if Delayed-Mode current
 data is missing. Default is \code{FALSE}, in which case NA's are appended to current
 variables for years (currently, all years after 2020) when current data are
 missing. Note that Near Real-Time data are subject to less quality control
 than Delayed-Mode data.}
-
-\item{output_format}{File format for cached environmental layers. You can use
-\code{gdal(drivers=TRUE)} to see what drivers are available in your installation.
-The default format is '.grd'.}
 
 \item{.parallel}{should the function be run in parallel}
 
@@ -117,18 +108,15 @@ qc_data <-
   slice(5:8)
 
 ## Extract daily interpolated sea surface temperature
-## cache_layers & fill_gaps args set to FALSE for speed
 data_with_sst <- 
   extractEnv(df = qc_data,
               X = "receiver_deployment_longitude", 
               Y = "receiver_deployment_latitude", 
               datetime = "detection_datetime", 
               env_var = "rs_sst_interpolated",
-              cache_layers = FALSE,
-              crop_layers = TRUE,
               full_timeperiod = FALSE,
               fill_gaps = TRUE,
-              folder_name = "test",
+              buffer = 20000,
               .parallel = FALSE)
 
 }

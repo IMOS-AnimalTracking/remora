@@ -12,5 +12,11 @@ utils::globalVariables(c("Time",
   "yt_ocean",
   "yu_ocean",
   "error",
-  "locs"
+  "locs",
+  "LONGITUDE",
+  "LATITUDE",
+  "aux", 
+  "ii",
+  "tag_device_project_name.x",
+  "tag_device_project_name.y"
   ))

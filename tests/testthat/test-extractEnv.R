@@ -14,11 +14,9 @@ test_that("extractEnv adds rs_current data", {
                          Y = "receiver_deployment_latitude", 
                          datetime = "detection_datetime", 
                          env_var = "rs_current",
-                         cache_layers = FALSE,
-                         crop_layers = TRUE,
                          full_timeperiod = FALSE,
                          fill_gaps = TRUE,
-                         folder_name = "test",
+                         buffer = 20000,
                          .parallel = FALSE)
 
   sub <- qc_data1[1, 57:62]
@@ -44,11 +42,9 @@ test_that("extractEnv adds rs_sst_interpolated data", {
                          Y = "receiver_deployment_latitude", 
                          datetime = "detection_datetime", 
                          env_var = "rs_sst_interpolated",
-                         cache_layers = FALSE,
-                         crop_layers = TRUE,
                          full_timeperiod = FALSE,
                          fill_gaps = TRUE,
-                         folder_name = "test",
+                         buffer = 20000,
                          .parallel = FALSE)
   sub <- qc_data1[1, ncol(qc_data1)]
   expect_named(sub, c("rs_sst_interpolated"))
@@ -68,12 +64,11 @@ test_that("extractEnv adds rs_chl data", {
                          Y = "receiver_deployment_latitude", 
                          datetime = "detection_datetime", 
                          env_var = "rs_chl",
-                         cache_layers = FALSE,
-                         crop_layers = TRUE,
                          full_timeperiod = FALSE,
                          fill_gaps = TRUE,
-                         folder_name = "test",
+                         buffer = 20000,
                          .parallel = FALSE)
+
   sub <- qc_data1[1, ncol(qc_data1)]
   expect_named(sub, c("rs_chl"))
 })

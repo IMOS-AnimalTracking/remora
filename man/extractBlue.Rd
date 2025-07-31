@@ -12,9 +12,7 @@ extractBlue(
   env_var,
   extract_depth = 0,
   var_name = paste(env_var, extract_depth, sep = "_"),
-  folder_name = "Bluelink",
   env_buffer = 1,
-  cache_layers = FALSE,
   full_timeperiod = FALSE,
   station_name = NULL,
   export_step = FALSE,
@@ -46,16 +44,7 @@ the nearest available layer. By default the data will be extracted at the water 
 download the same environmental data at different depths. If not specified, it will be chosen based on the env_var and
 extract_depth arguments.}
 
-\item{folder_name}{name of folder within the working directory where the downloaded and processed
-netCDF files should be saved. Default (NULL) produces automatic folder names based on study extent and deletes
-processed files after processing.}
-
 \item{env_buffer}{distance (in decimal degrees) to expand the study area beyond the coordinates to extract environmental data. Default value is 1°.}
-
-\item{cache_layers}{should the downloaded and processed environmental data be cached within
-the working directory? If FALSE (default), the Bluelink data will be stored in a temporary folder
-and discarded after environmental extraction. Otherwise, it will be saved in the "cached" folder
-within folder_name.}
 
 \item{full_timeperiod}{should environmental variables be extracted for each day
 across full monitoring period? This option is time and memory consuming for long projects. If this option is selected,
@@ -118,7 +107,6 @@ qc_data <-
   slice(1:20)
 
 ## Extract daily interpolated sea surface temperature
-## cache_layers & fill_gaps args set to FALSE for speed
 data_with_temp <- 
    extractBlue(df = qc_data,
                X = "receiver_deployment_longitude", 

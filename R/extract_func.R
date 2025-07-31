@@ -16,7 +16,8 @@
 #'
 #' @importFrom dplyr %>%
 #'
-#' @export
+#' @keywords internal
+
 
 extract_func <- function(dataset, data_details, lon.min, lon.max, lat.min, lat.max,
   var_name, .fill_gaps, .buffer) {
@@ -37,7 +38,7 @@ extract_func <- function(dataset, data_details, lon.min, lon.max, lat.min, lat.m
       }
     )
   }
-  if (class(remote_nc) == "character") {
+  if (inherits(remote_nc, what = "character")) {
     # Environmental data not available
     if (var_name == "rs_current") {
         df_exp <- data_details$unique_positions %>%
@@ -152,7 +153,7 @@ extract_func <- function(dataset, data_details, lon.min, lon.max, lat.min, lat.m
                 remote_rast <- ("Non-regular grid!")
               }
           )
-          if (class(remote_rast) == "character") {
+          if (inherits(remote_rast, what = "character")) {
             # Use interpolation when cell sizes are not even
             aux_df <- remote_df[,c("LON", "LAT", var_name)]
             names(aux_df)[3] <- "var" 
