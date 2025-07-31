@@ -77,16 +77,31 @@
 ##'                extract_depth = 0,
 ##'                verbose = TRUE)
 ##'
-##' @importFrom foreach %dopar%
+##' @importFrom foreach %dopar% foreach
+##' @importFrom parallel detectCores makeCluster stopCluster
+##' @importFrom doParallel registerDoParallel
+##' @importFrom geosphere distm
+##' @importFrom stringr str_split_fixed
+##' @importFrom utils write.csv
+##' @importFrom tibble as_tibble
 ##'
 ##' @export
 
-extractBlue <- function(df, X, Y, datetime, 
-                        env_var, extract_depth = 0, var_name = paste(env_var, extract_depth, sep = "_"), 
+extractBlue <- function(df, 
+                        X, 
+                        Y, 
+                        datetime, 
+                        env_var, 
+                        extract_depth = 0, 
+                        var_name = paste(env_var, extract_depth, sep = "_"), 
                         env_buffer = 1,
-                        full_timeperiod = FALSE, station_name = NULL, 
-                        export_step = FALSE, export_path = "Processed_data",
-                        .parallel = FALSE, .ncores = NULL, verbose = TRUE) {
+                        full_timeperiod = FALSE, 
+                        station_name = NULL, 
+                        export_step = FALSE, 
+                        export_path = "Processed_data",
+                        .parallel = FALSE, 
+                        .ncores = NULL, 
+                        verbose = TRUE) {
   
   # Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
@@ -171,10 +186,10 @@ extractBlue <- function(df, X, Y, datetime,
       }
       dates <- unique(df$aux.date)
       # Remove dates with no data:
-      index <- which(as.numeric(stringr::str_split_fixed(dates, pattern = "-", n = 2)[,1]) < 1993)
+      index <- which(as.numeric(str_split_fixed(dates, pattern = "-", n = 2)[,1]) < 1993)
       if (length(index) > 0)
         dates <- dates[-index]
-      index <- which(as.numeric(stringr::str_split_fixed(dates, pattern = "-", n = 2)[,1]) > 2023)
+      index <- which(as.numeric(str_split_fixed(dates, pattern = "-", n = 2)[,1]) > 2023)
       if (length(index) > 0)
         dates <- dates[-index]
     }   
@@ -200,20 +215,20 @@ extractBlue <- function(df, X, Y, datetime,
   }   
   # Processing begins
   if (.parallel) { # Run in parallel
-    `%dopar%` <- foreach::`%dopar%`
+    `%dopar%` <- `%dopar%`
     if (is.null(.ncores)) {
-      .ncores = parallel::detectCores()
-      cl <- parallel::makeCluster(.ncores[1]-1)
-      doParallel::registerDoParallel(cl)
+      .ncores = detectCores()
+      cl <- makeCluster(.ncores[1]-1)
+      registerDoParallel(cl)
     } else {
-      cl <- parallel::makeCluster(.ncores)
-      doParallel::registerDoParallel(cl)
+      cl <- makeCluster(.ncores)
+      registerDoParallel(cl)
     }
     if (verbose) {
       message(paste("Extracting", env_var, "data:",
                     min(dates), "|", max(dates), "in parallel..."))
     }
-    nc.bran <- foreach::foreach(i = 1:length(dates),
+    nc.bran <- foreach(i = 1:length(dates),
                                 .combine = rbind, .packages = c('remora', 'dplyr')) %dopar% {
                                   if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
                                     if (env_var == "BRAN_cur") {
@@ -272,7 +287,7 @@ extractBlue <- function(df, X, Y, datetime,
                                     )
                                   }
                                 }  
-    parallel::stopCluster(cl)
+    stopCluster(cl)
     nc.bran$x <- as.numeric(nc.bran$x)
     nc.bran$y <- as.numeric(nc.bran$y)
   } else { # Not in parallel
@@ -359,6 +374,7 @@ extractBlue <- function(df, X, Y, datetime,
     if (verbose)
       close(pb)
   }
+
   # Process data  
   # Run processing by year to avoid memory kill
   if (full_timeperiod) {
@@ -376,6 +392,7 @@ extractBlue <- function(df, X, Y, datetime,
     }  
     pb <- txtProgressBar(min = 0, max = length(year.data), initial = 0, style = 3, width = 50)
   }
+  
   for (aux.year in 1:length(year.data)) {
     year.run <- year.data[aux.year]
     if (full_timeperiod) {
@@ -385,24 +402,26 @@ extractBlue <- function(df, X, Y, datetime,
     }
     if (.parallel) { # Run in parallel
       if (is.null(.ncores)) {
-        .ncores = parallel::detectCores()
-        cl <- parallel::makeCluster(.ncores[1]-1)
-        doParallel::registerDoParallel(cl)
+        .ncores = detectCores()
+        cl <- makeCluster(.ncores[1]-1)
+        registerDoParallel(cl)
       } else {
-        cl <- parallel::makeCluster(.ncores)
-        doParallel::registerDoParallel(cl)
+        cl <- makeCluster(.ncores)
+        registerDoParallel(cl)
       }
       if (full_timeperiod) {
         index.day <- unique(as.Date(df.run[,datetime]))
-        var.save <- foreach::foreach(i = 1:length(index.day),
+        var.save <- foreach(i = 1:length(index.day),
           .combine = 'c', 
           .packages = c('foreach', 'geosphere')) %dopar% {  
             aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
             index.locs <- which(as.Date(df.run[,datetime]) == index.day[i]) 
-            var.run <- foreach::foreach(ii = 1:length(index.locs), 
+
+            var.run <- foreach(ii = 1:length(index.locs), 
           .combine = 'c',
           .packages = 'geosphere') %dopar% {
-            aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
+            aux.nc$Distance <- as.numeric(distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
+
               x = aux.nc[,c("x","y")]))
             if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
               if (env_var == "BRAN_cur") {
@@ -424,15 +443,15 @@ extractBlue <- function(df, X, Y, datetime,
         }
       } else { 
         index.day <- unique(as.Date(df.run[,datetime])) 
-        var.save <- foreach::foreach(i = 1:length(index.day),
+        var.save <- foreach(i = 1:length(index.day),
           .combine = 'c', 
           .packages = c('foreach', 'geosphere')) %dopar% {  
             aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
             index.locs <- which(as.Date(df.run[,datetime]) == index.day[i])      
-            var.run <- foreach::foreach(ii = 1:length(index.locs), 
+            var.run <- foreach(ii = 1:length(index.locs), 
           .combine = 'c', 
           .packages = 'geosphere') %dopar% {
-            aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
+            aux.nc$Distance <- as.numeric(distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
               x = aux.nc[,c("x","y")]))
             if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
               if (env_var == "BRAN_cur") {
@@ -453,7 +472,7 @@ extractBlue <- function(df, X, Y, datetime,
           }     
         }      
       }
-      parallel::stopCluster(cl)
+      stopCluster(cl)
       if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
         if (env_var == "BRAN_cur") {
           var.mat <- matrix(var.save, ncol = length(var.save) / 4) 
@@ -505,7 +524,7 @@ extractBlue <- function(df, X, Y, datetime,
           aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
           index.locs <- which(as.Date(df.run[,datetime]) == index.day[i])
           for (ii in 1:length(index.locs)) {
-            aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
+            aux.nc$Distance <- as.numeric(distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
                                                            x = aux.nc[,c("x","y")]
             ))
             if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
@@ -541,7 +560,7 @@ extractBlue <- function(df, X, Y, datetime,
           aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
           index.locs <- which(as.Date(df.run[,datetime]) == index.day[i])
           for (ii in 1:length(index.locs)) {
-            aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
+            aux.nc$Distance <- as.numeric(distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
                                                            x = aux.nc[,c("x","y")]
             ))
             if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
@@ -564,7 +583,7 @@ extractBlue <- function(df, X, Y, datetime,
     # Export extracted data 
     df.save <- rbind(df.save, df.run)
     if (export_step) 
-      utils::write.csv(df.save, paste0(export_path, ".csv"), row.names = FALSE)  
+      write.csv(df.save, paste0(export_path, ".csv"), row.names = FALSE)  
     if (verbose)
       setTxtProgressBar(pb, aux.year)     
   }
@@ -583,7 +602,8 @@ extractBlue <- function(df, X, Y, datetime,
         df.save <- rbind(df.save, df[aux.index,])
     }
     df.save <- df.save[order(df.save[,datetime]),]
-  df.save <- tibble::as_tibble(df.save[,-which(names(df.save) %in% c("aux.date", "year"))])
+  df.save <- as_tibble(df.save[,-which(names(df.save) %in% c("aux.date", "year"))])
+  
   if (full_timeperiod) {
     names(df.save)[c(1,3:4)] <- c(datetime, X, Y)
   }
