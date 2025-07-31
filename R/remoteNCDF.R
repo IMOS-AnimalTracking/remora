@@ -14,6 +14,9 @@
 #' @details Returns a dataframe with environmental data
 #' 
 #' @importFrom dplyr %>%
+#' @importFrom tidync activate hyper_tibble hyper_filter
+#' @importFrom dplyr mutate group_by summarise
+#' @importFrom lubridate ymd_hms
 #' 
 #' @export
  
@@ -36,35 +39,35 @@ remoteNCDF <- function(year, month, var, depth, lon.min, lon.max, lat.min, lat.m
     if (var %in% c("ocean_temp", "ocean_salt", "ocean_u", "ocean_v")) {
       # Find nearest depth layer of interest
       bran_depth <- nc %>% 
-        tidync::activate("st_ocean") %>% 
-        tidync::hyper_tibble()
+        activate("st_ocean") %>% 
+        hyper_tibble()
       bran_depth$st_ocean <- as.numeric(bran_depth$st_ocean) * -1
       if (depth > 0)
         depth <- depth * -1
       depth_layer <- which.min(abs(bran_depth$st_ocean - depth))
       # Subset data for only depth layer of interest
       nc <- nc %>% 
-        tidync::hyper_filter(st_ocean = index == depth_layer)
+        hyper_filter(st_ocean = index == depth_layer)
     }
     # Subset data for geographical area of interest and export
     if (var %in% c("ocean_u", "ocean_v", "atm_flux_diag")) {
       if (var %in% c("ocean_u", "ocean_v")) {
         df.nc <- nc %>% 
-        tidync::hyper_filter(xu_ocean = xu_ocean > lon.min & xu_ocean < lon.max,
+        hyper_filter(xu_ocean = xu_ocean > lon.min & xu_ocean < lon.max,
           yu_ocean = yu_ocean > lat.min & yu_ocean < lat.max) %>%
-        tidync::hyper_tibble()
+        hyper_tibble()
       } else {
         df.nc <- nc %>% 
-        tidync::hyper_filter(lon = lon > lon.min & lon < lon.max,
+        hyper_filter(lon = lon > lon.min & lon < lon.max,
           lat = lat > lat.min & lat < lat.max) %>%
-        tidync::hyper_tibble()
+        hyper_tibble()
         df.nc <- df.nc[, c("u_atm", "v_atm", "lon", "lat", "Time")]
       }
     } else {
       df.nc <- nc %>% 
-      tidync::hyper_filter(xt_ocean = xt_ocean > lon.min & xt_ocean < lon.max,
+      hyper_filter(xt_ocean = xt_ocean > lon.min & xt_ocean < lon.max,
         yt_ocean = yt_ocean > lat.min & yt_ocean < lat.max) %>%
-      tidync::hyper_tibble()
+      hyper_tibble()
     }
     # Convert time and depth variables
     # tunit <- ncmeta::nc_atts(filename, "Time") %>% dplyr::filter(name == "units")
@@ -76,7 +79,9 @@ remoteNCDF <- function(year, month, var, depth, lon.min, lon.max, lat.min, lat.m
     #           time_parts[,"hour"], 
     #           time_parts[,"minute"], 
     #           time_parts[,"second"])
-    df.nc$Time <- as.POSIXct(df.nc$Time, format = "%Y-%m-%dT%H:%M:%S", tz = "UTC")
+    
+    df.nc$Time <- ymd_hms(df.nc$Time, tz = "UTC")
+#     as.POSIXct(df.nc$Time, format = "%Y-%m-%dT%H:%M:%S", tz = "UTC")
     if (var == "atm_flux_diag") 
       names(df.nc) <- c("u", "v", "x", "y", "Time")
     if (var %in% c("ocean_eta_t", "ocean_mld"))
@@ -96,9 +101,9 @@ remoteNCDF <- function(year, month, var, depth, lon.min, lon.max, lat.min, lat.m
       df.nc$height <- aux.depths$height[match(df.nc$depth, aux.depths$depth)]
       df.nc$Each <- df.nc$ocean_w * df.nc$height
       df.nc <- df.nc %>%
-        dplyr::mutate(loc = paste(x, y, sep = "_")) %>%
-        dplyr::group_by(loc, x, y, Time) %>%
-        dplyr::summarise(sum_cur = sum(Each), 
+        mutate(loc = paste(x, y, sep = "_")) %>%
+        group_by(loc, x, y, Time) %>%
+        summarise(sum_cur = sum(Each), 
           sum_height = sum(height))
       df.nc$loc <- df.nc$sum_cur / df.nc$sum_height
       df.nc$depth <- 5
