@@ -17,15 +17,8 @@
 ##' @param var_name name for the column including the extracted environmental data. Can be usefull if the user wants to 
 ##' download the same environmental data at different depths. If not specified, it will be chosen based on the env_var and
 ##' extract_depth arguments.
-##' @param folder_name name of folder within the working directory where the downloaded and processed 
-##' netCDF files should be saved. Default (NULL) produces automatic folder names based on study extent and deletes 
-##' processed files after processing. 
 ##' @param verbose should function provide details of what operation is being conducted. 
 ##' Set to `FALSE` to keep it quiet
-##' @param cache_layers should the downloaded and processed environmental data be cached within
-##' the working directory? If FALSE (default), the Bluelink data will be stored in a temporary folder 
-##' and discarded after environmental extraction. Otherwise, it will be saved in the "cached" folder
-##' within folder_name. 
 ##' @param env_buffer distance (in decimal degrees) to expand the study area beyond the coordinates to extract environmental data. Default value is 1°.
 ##' @param full_timeperiod should environmental variables be extracted for each day
 ##' across full monitoring period? This option is time and memory consuming for long projects. If this option is selected, 
@@ -75,7 +68,6 @@
 ##'   slice(1:20)
 ##' 
 ##' ## Extract daily interpolated sea surface temperature
-##' ## cache_layers & fill_gaps args set to FALSE for speed
 ##' data_with_temp <- 
 ##'    extractBlue(df = qc_data,
 ##'                X = "receiver_deployment_longitude", 
@@ -91,7 +83,7 @@
 
 extractBlue <- function(df, X, Y, datetime, 
                         env_var, extract_depth = 0, var_name = paste(env_var, extract_depth, sep = "_"), 
-                        folder_name = "Bluelink", env_buffer = 1, cache_layers = FALSE,
+                        env_buffer = 1,
                         full_timeperiod = FALSE, station_name = NULL, 
                         export_step = FALSE, export_path = "Processed_data",
                         .parallel = FALSE, .ncores = NULL, verbose = TRUE) {
@@ -107,8 +99,23 @@ extractBlue <- function(df, X, Y, datetime,
   if(is.character(extract_depth)) {
     stop("Please provide the extract_depth argument as numeric")
   }
-  # Check if data needs to be download for full timeperiod or not
+
+  # Date checks
   df <- as.data.frame(df)
+  date_range <- range(df[,datetime])
+  if (min(date_range) < "1993-01-01" & max(date_range) > "2023-12-31" |
+    min(date_range) > "2023-12-31" | max(date_range) < "1993-01-01") {
+    stop("Bluelink data is not available for the requested dates.")
+  }
+  if (min(date_range) >= "1993-01-01" & min(date_range) <= "2023-12-31" & max(date_range) > "2023-12-31") {
+    message("Bluelink data is not available after 2023-12-31. NAs will be added to these dates.")
+  }
+  if (min(date_range) < "1993-01-01" & max(date_range) >= "1993-01-01" & max(date_range) <= "2023-12-31") {
+    message("Bluelink data is not available before 1993-01-01. NAs will be added to these dates.")
+  }
+
+
+  # Check if data needs to be download for full timeperiod or not
   if (full_timeperiod) {
     if (is.null(station_name)) {
       stop("Please provide column with station names in the 'station_name' argument.")
@@ -121,38 +128,55 @@ extractBlue <- function(df, X, Y, datetime,
       names(df.all) <- c("date", station_name)
       df.all$lon <- df[,X][match(df.all[,station_name], df[,station_name])]
       df.all$lat <- df[,Y][match(df.all[,station_name], df[,station_name])]
-      df.all$Var <- NA 
-      names(df.all)[length(names(df.all))] <- var_name
-      # For data download!
-      df.all$aux.date <- substr(df.all$date, 1, 7) 
-      dates <- unique(df.all$aux.date)
-      if (cache_layers) {
-        if (dir.exists(folder_name) == FALSE)  
-          dir.create(folder_name)
+      names(df.all)[c(1,3:4)] <- c(datetime, X, Y)
+      if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
+        if (env_var == "BRAN_cur") {
+          df.all$BRAN_vcur <- NA
+          df.all$BRAN_ucur <- NA
+          df.all$BRAN_current_velocity <- NA
+          df.all$BRAN_current_bearing <- NA
+        }
+        if (env_var == "BRAN_wind") {
+          df.all$BRAN_wind_velocity <- NA
+          df.all$BRAN_wind_bearing <- NA
+        }
+      } else {
+        df.all$Var <- NA 
+        names(df.all)[length(names(df.all))] <- var_name
       }
+      # For data download!
+      df.all$aux.date <- substr(df.all[,datetime], 1, 7) 
+      dates <- unique(df.all$aux.date)
     }
   } else {
     # Check for previous function runs
-    if (dir.exists(folder_name) == FALSE & cache_layers) 
-      dir.create(folder_name)
     df$aux.date <- substr(df[,which(names(df) == datetime)], 1, 7)
-    if (env_var %in% names(df)) {
+    if (var_name %in% names(df)) {
       message(paste("The", env_var, "variable was found. Continuing data download."))
-      dates <- unique(df$aux.date[is.na(df[which(names(df) == var_name)])])  
+      dates <- unique(df$aux.date[is.na(df[which(names(df) == env_var)])])  
     } else {
       if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
         if (env_var == "BRAN_cur") {
-          df$BRAN_dir <- NA            
-          df$BRAN_spd <- NA
+          df$BRAN_vcur <- NA            
+          df$BRAN_ucur <- NA            
+          df$BRAN_current_velocity <- NA            
+          df$BRAN_current_bearing <- NA
         } else {
-          df$BRAN_wind_dir <- NA
-          df$BRAN_wind_spd <- NA
+          df$BRAN_wind_velocity <- NA
+          df$BRAN_wind_bearing <- NA
         }        
       } else {
         df$Var <- NA
-        names(df)[length(names(df))] <- var_name  
+        names(df)[length(names(df))] <- var_name
       }
       dates <- unique(df$aux.date)
+      # Remove dates with no data:
+      index <- which(as.numeric(stringr::str_split_fixed(dates, pattern = "-", n = 2)[,1]) < 1993)
+      if (length(index) > 0)
+        dates <- dates[-index]
+      index <- which(as.numeric(stringr::str_split_fixed(dates, pattern = "-", n = 2)[,1]) > 2023)
+      if (length(index) > 0)
+        dates <- dates[-index]
     }   
   }
   # Change variable names for data download
@@ -186,7 +210,7 @@ extractBlue <- function(df, X, Y, datetime,
       doParallel::registerDoParallel(cl)
     }
     if (verbose) {
-      message(paste("Downloading", env_var, "data:",
+      message(paste("Extracting", env_var, "data:",
                     min(dates), "|", max(dates), "in parallel..."))
     }
     nc.bran <- foreach::foreach(i = 1:length(dates),
@@ -218,7 +242,7 @@ extractBlue <- function(df, X, Y, datetime,
                                       save.bran$ocean_v <- save.bran_v$ocean_v
                                       save.bran$BRAN_dir <- windDir(u = save.bran$ocean_u, v = save.bran$ocean_v)
                                       save.bran$BRAN_spd <- windSpd(u = save.bran$ocean_u, v = save.bran$ocean_v)
-                                      save.bran <- save.bran[,c(7,8,2:5)]
+                                      save.bran <- save.bran[,c("x","y","Time","ocean_v", "ocean_u", "BRAN_dir", "BRAN_spd")]
                                     } else {
                                       save.bran <- remoteNCDF(
                                         year = as.numeric(substr(dates[i], 1, 4)),
@@ -230,8 +254,8 @@ extractBlue <- function(df, X, Y, datetime,
                                         lat.min = min(df[,Y]) - env_buffer,
                                         lat.max = max(df[,Y]) + env_buffer
                                       )
-                                      save.bran$BRAN_wind_dir <- windDir(u = save.bran$u, v = save.bran$v)
-                                      save.bran$BRAN_wind_spd <- windSpd(u = save.bran$u, v = save.bran$v)
+                                      save.bran$BRAN_wind_velocity <- windDir(u = save.bran$u, v = save.bran$v)
+                                      save.bran$BRAN_wind_bearing <- windSpd(u = save.bran$u, v = save.bran$v)
                                       save.bran <- save.bran[,c(6,7,3:5)]
                                     }
                                   } else {
@@ -253,7 +277,11 @@ extractBlue <- function(df, X, Y, datetime,
     nc.bran$y <- as.numeric(nc.bran$y)
   } else { # Not in parallel
     if (verbose) {
-      message(paste("Downloading", env_var, "data:", min(dates), "|", max(dates)))
+      if(.parallel) {
+        message(paste("Accessing and extracting BRAN data in parallel:", env_var, "between", min(dates), "|", max(dates)))
+      } else {
+        message(paste("Accessing and extracting BRAN data:", env_var, "between", min(dates), "|", max(dates)))
+      }
       pb <- txtProgressBar(min = 0, max = length(dates), initial = 0, style = 3, width = 50)
     }
     nc.bran <- NULL
@@ -286,7 +314,7 @@ extractBlue <- function(df, X, Y, datetime,
           save.bran$ocean_v <- save.bran_v$ocean_v
           save.bran$BRAN_dir <- windDir(u = save.bran$ocean_u, v = save.bran$ocean_v)
           save.bran$BRAN_spd <- windSpd(u = save.bran$ocean_u, v = save.bran$ocean_v)
-          save.bran <- save.bran[,c(7,8,2:5)]
+          save.bran <- save.bran[,c("x","y","Time","ocean_v", "ocean_u", "BRAN_dir", "BRAN_spd")]
           nc.bran <- rbind(nc.bran, save.bran)
           gc()
         } else {
@@ -301,8 +329,8 @@ extractBlue <- function(df, X, Y, datetime,
             lat.min = min(df[,Y]) - env_buffer,
             lat.max = max(df[,Y]) + env_buffer
           )
-          save.bran$BRAN_wind_dir <- windDir(u = save.bran$u, v = save.bran$v)
-          save.bran$BRAN_wind_spd <- windSpd(u = save.bran$u, v = save.bran$v)
+          save.bran$BRAN_wind_velocity <- windDir(u = save.bran$u, v = save.bran$v)
+          save.bran$BRAN_wind_bearing <- windSpd(u = save.bran$u, v = save.bran$v)
           save.bran <- save.bran[,c(6,7,3:5)]
           nc.bran <- rbind(nc.bran, save.bran)
           gc()
@@ -331,9 +359,6 @@ extractBlue <- function(df, X, Y, datetime,
     if (verbose)
       close(pb)
   }
-  # Export environmental data 
-  if (cache_layers)
-    utils::write.csv(nc.bran, paste0(folder_name, "/", var_name, ".csv"), row.names = FALSE) 
   # Process data  
   # Run processing by year to avoid memory kill
   if (full_timeperiod) {
@@ -368,93 +393,130 @@ extractBlue <- function(df, X, Y, datetime,
         doParallel::registerDoParallel(cl)
       }
       if (full_timeperiod) {
-        index.day <- unique(as.Date(df.run[,"date"]))
+        index.day <- unique(as.Date(df.run[,datetime]))
         var.save <- foreach::foreach(i = 1:length(index.day),
-                                     .combine = 'c', 
-                                     .packages = c('foreach', 'geosphere')) %dopar% {  
-                                       aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
-                                       index.locs <- which(as.Date(df.run[,datetime]) == index.day[i]) 
-                                       var.run <- foreach::foreach(ii = 1:length(index.locs), 
-                                                                   .combine = 'c',
-                                                                   .packages = 'geosphere') %dopar% {
-                                                                     aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
-                                                                                                                    x = aux.nc[,c("x","y")]
-                                                                     ))
-                                                                     if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
-                                                                       var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),1]
-                                                                       var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),2]
-                                                                       var.run <- c(var1, var2)
-                                                                     } else {
-                                                                       var.run <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),1]
-                                                                     }
-                                                                   }
-                                     }
+          .combine = 'c', 
+          .packages = c('foreach', 'geosphere')) %dopar% {  
+            aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
+            index.locs <- which(as.Date(df.run[,datetime]) == index.day[i]) 
+            var.run <- foreach::foreach(ii = 1:length(index.locs), 
+          .combine = 'c',
+          .packages = 'geosphere') %dopar% {
+            aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
+              x = aux.nc[,c("x","y")]))
+            if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
+              if (env_var == "BRAN_cur") {
+                var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "ocean_v"]
+                var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "ocean_u"]
+                var3 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_spd"]
+                var4 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_dir"]
+                return(c(var1, var2, var3, var4))
+              }
+              if (env_var == "BRAN_wind") {
+                var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_wind_velocity"]
+                var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_wind_bearing"]
+                return(c(var1, var2))
+              }
+            } else {
+              return(aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),1])
+            }
+          }
+        }
       } else { 
         index.day <- unique(as.Date(df.run[,datetime])) 
         var.save <- foreach::foreach(i = 1:length(index.day),
-                                     .combine = 'c', 
-                                     .packages = c('foreach', 'geosphere')) %dopar% {  
-                                       aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
-                                       index.locs <- which(as.Date(df.run[,datetime]) == index.day[i])      
-                                       var.run <- foreach::foreach(ii = 1:length(index.locs), 
-                                                                   .combine = 'c', 
-                                                                   .packages = 'geosphere') %dopar% {
-                                                                     aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
-                                                                                                                    x = aux.nc[,c("x","y")]
-                                                                     ))
-                                                                     if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
-                                                                       var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
-                                                                       var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],2]
-                                                                       var.run <- c(var1, var2)
-                                                                     } else {
-                                                                       var.run <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
-                                                                     } 
-                                                                   }     
-                                     }      
+          .combine = 'c', 
+          .packages = c('foreach', 'geosphere')) %dopar% {  
+            aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
+            index.locs <- which(as.Date(df.run[,datetime]) == index.day[i])      
+            var.run <- foreach::foreach(ii = 1:length(index.locs), 
+          .combine = 'c', 
+          .packages = 'geosphere') %dopar% {
+            aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
+              x = aux.nc[,c("x","y")]))
+            if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
+              if (env_var == "BRAN_cur") {
+                var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "ocean_v"]
+                var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "ocean_u"]
+                var3 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_spd"]
+                var4 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_dir"]
+                var.run <- c(var1, var2, var3, var4)
+              } 
+              if (env_var == "BRAN_wind") {
+                var1 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_wind_velocity"]
+                var2 <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_wind_bearing"]
+                var.run <- c(var1, var2)
+              }
+            } else {
+              var.run <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
+            } 
+          }     
+        }      
       }
       parallel::stopCluster(cl)
       if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
-        var.mat <- matrix(var.save, ncol = length(var.save) / 2) 
-        var1 <- var.mat[1,] 
-        var2 <- var.mat[2,] 
         if (env_var == "BRAN_cur") {
+          var.mat <- matrix(var.save, ncol = length(var.save) / 4) 
+          var1 <- var.mat[1,] 
+          var2 <- var.mat[2,] 
+          var3 <- var.mat[3,] 
+          var4 <- var.mat[4,] 
           for (rows in 1:nrow(df.run)) {
-            df.run[rows, "BRAN_dir"] <- var1[rows]
+            df.run[rows, "BRAN_vcur"] <- var1[rows]
           }
           for (rows in 1:nrow(df.run)) {
-            df.run[rows, "BRAN_spd"] <- var2[rows]
+            df.run[rows, "BRAN_ucur"] <- var2[rows]
           }
-        }
+          for (rows in 1:nrow(df.run)) {
+            df.run[rows, "BRAN_current_velocity"] <- var3[rows]
+          }
+          for (rows in 1:nrow(df.run)) {
+            df.run[rows, "BRAN_current_bearing"] <- var4[rows]
+          }
+        }      
         if (env_var == "BRAN_wind") {
+          var.mat <- matrix(var.save, ncol = length(var.save) / 2) 
+          var1 <- var.mat[1,] 
+          var2 <- var.mat[2,] 
           for (rows in 1:nrow(df.run)) {
-            df.run[rows, "BRAN_wind_dir"] <- var1[rows]
+            df.run[rows, "BRAN_wind_velocity"] <- var1[rows]
           }
           for (rows in 1:nrow(df.run)) {
-            df.run[rows, "BRAN_wind_spd"] <- var2[rows]
+            df.run[rows, "BRAN_wind_bearing"] <- var2[rows]
           }
         }
       } else {
         for (rows in 1:nrow(df.run)) {
           df.run[rows, var_name] <- var.save[rows]
         }
-      }   
+      }
+      # Match detection dates to total dataset
+      df$aux <- paste(df[,station_name], as.Date(df[,datetime]), sep = "_")
+      df$Detection <- 1
+      detecs <- unique(df$aux)
+      df.run$aux <- paste(df.run[,station_name], as.Date(df.run[,datetime]), sep = "_")
+      df.run$number_detections <- df$Detection[match(df.run$aux, df$aux)]
+      df.run$number_detections[is.na(df.run$number_detections)] <- 0
+      df.run <- df.run[,-which(names(df.run) == "aux")]
     } else { # Not in parallel
       if (full_timeperiod) { # Full timeperiod
-        index.day <- unique(as.Date(df.run[,"date"]))
+        index.day <- unique(as.Date(df.run[,datetime]))
         for (i in 1:length(index.day)) {
           aux.nc <- subset(nc.bran, as.Date(Time) == index.day[i])
-          index.locs <- which(as.Date(df.run[,"date"]) == index.day[i])
+          index.locs <- which(as.Date(df.run[,datetime]) == index.day[i])
           for (ii in 1:length(index.locs)) {
-            aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], "lon"], df.run[index.locs[ii], "lat"]),
+            aux.nc$Distance <- as.numeric(geosphere::distm(y = c(df.run[index.locs[ii], X], df.run[index.locs[ii], Y]),
                                                            x = aux.nc[,c("x","y")]
             ))
             if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
               if(env_var == "BRAN_cur") {
-                df.run[index.locs[ii], "BRAN_dir"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
-                df.run[index.locs[ii], "BRAN_spd"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],2]
+                df.run[index.locs[ii], "BRAN_vcur"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "ocean_v"]
+                df.run[index.locs[ii], "BRAN_ucur"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "ocean_u"]
+                df.run[index.locs[ii], "BRAN_current_velocity"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_spd"]
+                df.run[index.locs[ii], "BRAN_current_bearing"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_dir"]
               } else {
-                df.run[index.locs[ii], "BRAN_wind_dir"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
-                df.run[index.locs[ii], "BRAN_wind_spd"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],2]
+                df.run[index.locs[ii], "BRAN_wind_velocity"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
+                df.run[index.locs[ii], "BRAN_wind_bearing"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],2]
               }
             } else {
               df.run[index.locs[ii], var_name] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance)),1]
@@ -469,9 +531,9 @@ extractBlue <- function(df, X, Y, datetime,
         df$aux <- paste(df[,station_name], as.Date(df[,datetime]), sep = "_")
         df$Detection <- 1
         detecs <- unique(df$aux)
-        df.run$aux <- paste(df.run[,station_name], as.Date(df.run[,"date"]), sep = "_")
-        df.run$Detection <- df$Detection[match(df.run$aux, df$aux)]
-        df.run$Detection[is.na(df.run$Detection)] <- 0
+        df.run$aux <- paste(df.run[,station_name], as.Date(df.run[,datetime]), sep = "_")
+        df.run$number_detections <- df$Detection[match(df.run$aux, df$aux)]
+        df.run$number_detections[is.na(df.run$number_detections)] <- 0
         df.run <- df.run[,-which(names(df.run) == "aux")]
       } else {  # Only tracking locations
         index.day <- unique(as.Date(df.run[,datetime]))
@@ -484,11 +546,13 @@ extractBlue <- function(df, X, Y, datetime,
             ))
             if (env_var %in% c("BRAN_cur", "BRAN_wind")) {
               if(env_var == "BRAN_cur") {
-                df.run[index.locs[ii], "BRAN_dir"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
-                df.run[index.locs[ii], "BRAN_spd"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],2]
+                df.run[index.locs[ii], "BRAN_vcur"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "ocean_v"]
+                df.run[index.locs[ii], "BRAN_ucur"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "ocean_u"]
+                df.run[index.locs[ii], "BRAN_current_velocity"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_spd"]
+                df.run[index.locs[ii], "BRAN_current_bearing"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1], "BRAN_dir"]
               } else {
-                df.run[index.locs[ii], "BRAN_wind_dir"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
-                df.run[index.locs[ii], "BRAN_wind_spd"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],2]
+                df.run[index.locs[ii], "BRAN_wind_velocity"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
+                df.run[index.locs[ii], "BRAN_wind_bearing"] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],2]
               }
             } else {
               df.run[index.locs[ii], var_name] <- aux.nc[which(aux.nc$Distance == min(aux.nc$Distance))[1],1]
@@ -507,7 +571,23 @@ extractBlue <- function(df, X, Y, datetime,
   if (verbose)
     close(pb)
   # Tidy up data
-  df.save <- df.save[,-which(names(df.save) %in% c("aux.date", "year"))]
+    # Add rows with NAs if any
+    if (min(df[,datetime]) < "1993-01-01") {
+      aux.index <- which(df[,which(names(df) == datetime)] < as.Date("1993-01-01", tz = "UTC"))
+      if (length(aux.index) > 0)
+        df.save <- rbind(df.save, df[aux.index,])
+    }
+    if (max(df[,datetime]) > "2023-12-31") {
+      aux.index <- which(df[,which(names(df) == datetime)] > as.Date("2023-12-31", tz = "UTC"))
+      if (length(aux.index) > 0)
+        df.save <- rbind(df.save, df[aux.index,])
+    }
+    df.save <- df.save[order(df.save[,datetime]),]
+  df.save <- tibble::as_tibble(df.save[,-which(names(df.save) %in% c("aux.date", "year"))])
+  if (full_timeperiod) {
+    names(df.save)[c(1,3:4)] <- c(datetime, X, Y)
+  }
+  
   # Export results
   return(df.save) 
 }

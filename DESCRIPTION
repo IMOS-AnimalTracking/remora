@@ -1,7 +1,7 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.8-05
-Date: 2024-01-07
+Version: 0.8-05.9137
+Date: 2024-01-27
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
@@ -69,15 +69,16 @@ Imports:
     lubridate,
     magrittr,
     ncdf4,
-    ncmeta,
     parallel,
     doParallel,
     foreach,
+    geosphere,
+    gstat,
+    methods,
     plotly,
     purrr,
     RColorBrewer,
     R.utils,
-    RNetCDF,
     readr,
     sf (>= 1.0-14),
     shiny,
@@ -85,6 +86,7 @@ Imports:
     tibble,
     tidyr,
     tidync,
+    tidyterra,
     viridis,
     xml2,
     htmlwidgets,
@@ -95,7 +97,6 @@ Suggests:
     crosstalk,
     DT,
     geojsonio,
-    geosphere,
     ggdist,
     gghalves,
     ggraph,
