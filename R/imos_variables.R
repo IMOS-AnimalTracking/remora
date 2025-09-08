@@ -16,7 +16,7 @@
 ##' ## If there is a specific variable you are interested in
 ##' imos_variables(variable = "rs_sst_interpolated")
 ##'
-##' @importFrom dplyr '%>%' 
+##' @importFrom dplyr %>% 
 ##' @importFrom knitr kable
 ##' @importFrom kableExtra kable_paper column_spec
 ##' 
@@ -26,9 +26,11 @@
 imos_variables <- function(variable = NULL){
   
   if(!is.null(variable)){
-    if(!variable %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land')){
-      stop("Environmental variable not recognised, options include:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'
-Or leave as 'NULL' to see all variables available")} 
+    if(!variable %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land',
+      'BRAN_temp', 'BRAN_salt', 'BRAN_ssh', 'BRAN_mld', 'BRAN_cur', 'BRAN_wind')){
+      stop("Environmental variable not recognised, options include:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land',
+        'BRAN_temp', 'BRAN_salt', 'BRAN_ssh', 'BRAN_mld', 'BRAN_cur', 'BRAN_wind'
+        Or leave as 'NULL' to see all variables available")} 
   }
   
   data("imos_variables_table", envir = environment())

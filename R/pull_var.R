@@ -69,8 +69,7 @@
     if(var_name %in% "bathy"){
       ## Update with IMOS github repo link
       url <- "https://github.com/IMOS-AnimalTracking/environmental_layers/blob/main/bathymetry_AustralianEEZ.tif?raw=true"
-      out_brick <-
-        try(rast(url) %>%
+      out_brick <- try(rast(url) %>%
               {if (.crop) crop(., study_extent) else .} , silent=TRUE)
       names(out_brick) <- "bathy"
     }
@@ -78,8 +77,7 @@
     # Distance to land
     if(var_name %in% "dist_to_land"){
       url <- "https://github.com/IMOS-AnimalTracking/environmental_layers/blob/main/dist_to_land_AustralianEEZ.tif?raw=true"
-      out_brick <-
-        try(rast(url) %>%
+      out_brick <- try(rast(url) %>%
               {if (.crop) crop(., study_extent) else .} , silent=TRUE)
       names(out_brick) <- "dist_to_land"
     }

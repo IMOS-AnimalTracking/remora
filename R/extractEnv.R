@@ -12,17 +12,14 @@
 ##' @param env_var variable needed options include ('rs_sst', 'rs_sst_interpolated', 
 ##' 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'bathy', 'dist_to_land', 
 ##' 'rs_current')
-##' @param folder_name name of folder within 'imos.cache' where downloaded rasters 
-##' should be saved. default NULL produces automatic folder names based on study extent
 ##' @param verbose should function provide details of what operation is being conducted. 
 ##' Set to `FALSE` to keep it quiet
-##' @param cache_layers should the extracted environmental data be cached within
-##' the working directory? if FALSE stored in temporary folder and discarded 
-##' after environmental extraction
-##' @param crop_layers should the extracted environmental data be cropped to 
-##' within the study site
-##' @param full_timeperiod should environmental variables extracted for each day
-##' across full monitoring period, time and memory consuming for long projects
+##' @param full_timeperiod should environmental variables be extracted for each day
+##' across full monitoring period? This option is time and memory consuming for long projects. If this option is selected, 
+##' the returned dataset will be standardized for the days with/without detections across all stations (station_name column) where animals were 
+##' detected. For more details please see the package vignettes.
+##' @param station_name if full_timeperiod = TRUE, please provide the column that identifies the name of the 
+##' acoustic stations
 ##' @param fill_gaps should the function use a spatial buffer to estimate 
 ##' environmental variables for detections where there is missing data. Default 
 ##' is `FALSE` to save computational time.
@@ -76,15 +73,12 @@
 ##'   slice(5:8)
 ##' 
 ##' ## Extract daily interpolated sea surface temperature
-##' ## cache_layers & fill_gaps args set to FALSE for speed
 ##' data_with_sst <- 
 ##'   extractEnv(df = qc_data,
 ##'               X = "receiver_deployment_longitude", 
 ##'               Y = "receiver_deployment_latitude", 
 ##'               datetime = "detection_datetime", 
 ##'               env_var = "rs_sst_interpolated",
-##'               cache_layers = FALSE,
-##'               crop_layers = TRUE,
 ##'               full_timeperiod = FALSE,
 ##'               fill_gaps = TRUE,
 ##'               folder_name = "test",
@@ -95,7 +89,6 @@
 ##' @importFrom lubridate date 
 ##'
 ##' @export
-##'
 
 extractEnv <-
   function(df,
@@ -120,8 +113,8 @@ extractEnv <-
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
   if(!Y %in% colnames(df)){stop("Cannot find Y coordinate in dataset, provide column name where variable can be found")}
   if(!datetime %in% colnames(df)){stop("Cannot find date timestamp column in dataset, provide column name where variable can be found")}
-  if(!env_var %in% c('rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land')){
-    stop("Environmental variable not recognised, options include:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
+  if(!env_var %in% c('rs_sst', 'rs_sst_interpolated', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land')){
+    stop("Environmental variable not recognised, options include:\n'rs_sst', 'rs_sst_interpolated', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
   if(length(env_var) > 1){stop("This function currently only supports extracting a single variable at a time. Please only select one of:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
   
   ## Turn of un-needed parallelising or gap filling if extracting 'bathy', 'dist_to_land'
@@ -237,6 +230,7 @@ extractEnv <-
     message("Returning original input data")
     return(df)
   }
+
 }
 
 

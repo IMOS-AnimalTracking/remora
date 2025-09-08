@@ -15,7 +15,7 @@ shapefile is required}
 is required}
 }
 \value{
-shp_b is a SpatialPolygons object of the species' distribution
+shp_b is a spatial polygon sf data.frame object of the species' distribution
 }
 \description{
 Get expert distribution shapefile, if available, from CSIRO's
@@ -25,7 +25,7 @@ each species' known range.
 }
 \details{
 For a few species acoustically tagged no shapefile exists, for a
-few others multiple shapefiles need to be merged into a single one. gBuffer
+few others multiple shapefiles need to be merged into a single one. \code{sf::st_buffer}
 extends the boundary of the original shapefile.
 }
 \keyword{internal}

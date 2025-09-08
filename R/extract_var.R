@@ -20,7 +20,7 @@
 ##'
 ##' @keywords internal
 
-.extract_var <- function(unique_positions, env_stack, env_var, .fill_gaps, .buffer = NULL, verbose = TRUE){
+.extract_var <- function(unique_positions, env_stack, env_var, .fill_gaps, .buffer = NULL, verbose = TRUE, .full_timeperiod = FALSE){
   
   ## Check arguments
   
@@ -33,7 +33,7 @@
   ## setup output dataset
   out_data <-
     pos_sf %>% 
-    st_drop_geometry()
+    sf::st_drop_geometry()
   
   if(env_var %in% "rs_current"){
     env_names <- c("rs_gsla", "rs_vcur", "rs_ucur")
@@ -129,11 +129,13 @@
     }
   }
   
-  
   if(env_var %in% c("rs_sst", "rs_sst_interpolated", "rs_salinity", "rs_chl", "rs_turbidity", "rs_npp")) {
     ## extraction for time-series raster stacks
     ext_matrix <- terra::extract(env_stack, pos_sf)
     variable <- vector()
+
+    message(paste("Extracting IMOS", env_var, "data"))
+    pb <- txtProgressBar(min = 0, max = nrow(ext_matrix), initial = 0, style = 3, width = 50)
     for (i in 1:nrow(ext_matrix)) {
       val <-
         ext_matrix[i, ][which(colnames(ext_matrix) %in% pos_sf$date[i])]
@@ -142,23 +144,35 @@
       } else {
         variable[i] <- NA 
       }
+      setTxtProgressBar(pb, i) 
     }
+    close(pb)
     
     ## gap filling
     if(.fill_gaps){
       pos_sf_buffer <- st_buffer(pos_sf, dist = .buffer)
       ext_matrix_fill <- terra::extract(env_stack, pos_sf_buffer, fun = median)
       variable_fill <- vector()
-      for (i in 1:nrow(ext_matrix)) {
-        val <-
-          ext_matrix_fill[i,][which(colnames(ext_matrix_fill) %in% pos_sf$date[i])]
+      message(paste("Filling gaps in the data by", .buffer, "meters"))
+      pb <- txtProgressBar(min = 0, max = nrow(ext_matrix_fill), initial = 0, style = 3, width = 50)
+      for (i in 1:nrow(ext_matrix_fill)) {
+        val <- ext_matrix_fill[i,][which(colnames(ext_matrix_fill) %in% pos_sf$date[i])]
         if (length(val) > 0) {
           variable_fill[i] <- val[[1]]
         } else {
           variable_fill[i] <- NA
         }
-      } 
+        setTxtProgressBar(pb, i) 
+      }
+      close(pb)
     }
+
+    # Add gap filling values to total variable values
+    index <- which(is.na(variable)) 
+    for (i in 1:length(index)) {
+      variable[index[i]] <- variable_fill[i]
+    }
+
     ## Append extracted variables to pos_sf dataset
     if(length(variable) > 0){
       out_data <- 

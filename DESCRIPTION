@@ -1,7 +1,7 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.7.4.9501
-Date: 2024-07-02
+Version: 0.9.8
+Date: 2025-09-08
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
@@ -42,7 +42,12 @@ Authors@R:
            family = "Huveneers",
            role = c("aut", "ctb"),
            email = "charlie.huveneers@flinders.edu.au",
-           comment = c(ORCID = "0000-0001-8937-1358")))
+           comment = c(ORCID = "0000-0001-8937-1358")),
+           person(given = "Yuri",
+           family = "Niella",
+           role = c("aut", "ctb"),
+           email = "yuri.niella@sims.org.au",
+           comment = c(ORCID = "0000-0003-1878-6091")))
 Maintainer: Ian Jonsen <ian.jonsen@mq.edu.au>
 Description: R Package to access and integrate animal tracking data from the IMOS Animal Tracking Facility database and web-app, and environmental data from the AODN database.
 URL: https://github.com/IMOS-AnimalTracking/remora/,
@@ -52,68 +57,67 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    colormap,
-    crosstalk,
     data.table,
     dplyr,
-    DT,
     fasttime,
-    fs,
     furrr,
     future,
     gdistance,
-    geojsonio,
-    geosphere,
-    ggdist,
-    gghalves,
-    ggraph,
-    ggplot2,
-    gmt,
-    igraph,
     kableExtra,
     knitr,
     leaflet,
     lubridate,
     magrittr,
-    maps,
-    mapview,
     ncdf4,
     parallel,
+    doParallel,
+    foreach,
+    geosphere,
+    gstat,
+    methods,
     plotly,
-    plyr,
-    progressr,
     purrr,
     RColorBrewer,
     R.utils,
-    raster (>= 3.0-2),
     readr,
-    rgdal,
-    rgeos,
-    scales,
-    sf,
+    sf (>= 1.0-14),
     shiny,
-    shinycssloaders,
-    shinythemes,
-    shinyWidgets,
-    sp,
     stringr,
     tibble,
     tidyr,
-    tools,
+    tidync,
+    tidyterra,
     viridis,
     xml2,
-    zip,
-    htmlwidgets
+    htmlwidgets,
+    terra (>= 1.7-30),
+    geodist (>= 0.0.8)
 Suggests: 
+    colormap,
+    crosstalk,
+    DT,
+    geojsonio,
+    ggdist,
+    gghalves,
+    ggraph,
+    igraph,
+    scales,
+    shinycssloaders,
+    shinythemes,
+    shinyWidgets,
     testthat (>= 3.0.0),
+    tcltk,    
+    tidyverse,
+    tools,   
     rnaturalearth,
-    tcltk,
     rmarkdown,
     hrbrthemes,
     classInt,
-    tidyverse
-Depends: R (>= 3.6.0)
-SystemRequirements: GDAL (>= 2.4.2), GEOS (>= 3.7.0), PROJ (>= 5.2.0)
+    sp (>= 2.0-0)
+Depends: R (>= 4.1.0)
+SystemRequirements: GDAL (>= 3.6.2), GEOS (>= 3.11.0), PROJ (>= 9.2.0)
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
+Config/testthat/edition: 3
+Config/testthat/parallel: true

@@ -8,7 +8,7 @@
 ##' @return summary outcome text file is written to user-specified path
 ##'
 ##' @importFrom readr write_delim
-##' @importFrom dplyr "%>%" filter
+##' @importFrom dplyr %>% filter
 ##'
 ##' @keywords internal
 ##'

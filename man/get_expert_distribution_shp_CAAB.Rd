@@ -13,7 +13,7 @@ is required}
 \item{spe}{species scientific name}
 }
 \value{
-shp is a SpatialPolygons object of the species' distribution
+shp is a multipolygon sf data.frame object of the species' distribution
 }
 \description{
 Get expert distribution shapefile, if available, from CSIRO's
