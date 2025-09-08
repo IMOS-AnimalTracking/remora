@@ -177,22 +177,16 @@
   ## 
   if(var_name %in% "rs_current"){
     ## check if IMOS Ocean Current DM data covers detection data range 
-    ## Ocean current (delayed mode): 1993-01-01 - 2020-12-31
-    ## IMOS near real time data: 2011-09-01 ongoing
-    
+    ## Ocean current: 1993-01-01 - 2020-12-31
 
     ## example : "http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/"
     # 
     if(date_range[1] < as.Date("1993-01-01")){
       warning("IMOS ocean current data is currently only available from 1993-01-01 onwards,\ndetections prior to this date will not have current data associated")
-    } 
-    if(date_range[2] > as.Date("2020-12-31") & !.nrt) {
+
+    } else if(date_range[2] > as.Date("2020-12-31") & !.nrt) {
       warning("IMOS Ocean Current Delayed-Mode data is currently only available from 1993-01-01 to 2020-12-31,\ndetections after this date range will not have current data associated")
     }
-    if(date_range[2] > as.Date("2020-12-31") & .nrt) {
-      message("IMOS Ocean Current Near-real-time data will be used for locations after 2020-12-31")
-    }
-
     sub_dates <-  dates[dates > as.Date("1993-01-01")]
 
     ## IDJ - 19/05/2023: directory name on thredds server has changed from: http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM00/ 
@@ -211,6 +205,20 @@
       catalog$start_url[catalog$year > 2020] <- paste0(paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/NRT/", catalog$year[catalog$year > 2020], "/IMOS_OceanCurrent_HV_"))
 #      catalog$end_url[catalog$year > 2020] <- "T000000Z_GSLA_FV02_NRT.nc"
     } 
+    
+    ## if .nrt == TRUE then substitute NRT data for DM when year > 2020
+    if(.nrt) {
+      catalog <- catalog %>%
+        mutate(base_url = ifelse(year > 2020, 
+                                 paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/NRT/", year, "/"),
+                                 paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/OceanCurrent/GSLA/DM/", year, "/")
+        )) %>%
+        mutate(start_url = ifelse(year > 2020, 
+                                  paste0("http://thredds.aodn.org.au/thredds/fileServer/IMOS/OceanCurrent/GSLA/NRT/", year, "/"),
+                                  paste0("http://thredds.aodn.org.au/thredds/fileServer/IMOS/OceanCurrent/GSLA/DM/", year, "/")
+        ))
+        
+    }
     
     if(verbose){
       message("Finding IMOS Ocean Current data...")
@@ -305,9 +313,9 @@
       url_df %>%
       mutate(valid = sapply(url_name, valid_url))
     
-    # if(verbose){
-    #   message('Data for the following dates are not available on IMOS:\n', paste(as.Date(url_tab[url_tab$valid %in% FALSE, "date"]), sep = "\n"))
-    # }
+    if(verbose){
+      message('Data for the following dates are not available on IMOS:\n', paste(as.Date(url_tab[url_tab$valid %in% FALSE, "date"]), sep = "\n"))
+    }
     
     url_df <- filter(url_tab, valid %in% TRUE)
     
