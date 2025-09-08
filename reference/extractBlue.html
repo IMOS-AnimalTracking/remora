@@ -89,6 +89,8 @@ server and append variables to detection data based on date of detection</p>
 <span>  env_buffer <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  full_timeperiod <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  station_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill_gaps <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  buffer <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  export_step <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  export_path <span class="op">=</span> <span class="st">"Processed_data"</span>,</span>
 <span>  .parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -150,6 +152,20 @@ detected. For more details please see the package vignettes.</p></dd>
 <dt id="arg-station-name">station_name<a class="anchor" aria-label="anchor" href="#arg-station-name"></a></dt>
 <dd><p>if full_timeperiod = TRUE, please provide the column that identifies the name of the
 acoustic stations</p></dd>
+
+
+<dt id="arg-fill-gaps">fill_gaps<a class="anchor" aria-label="anchor" href="#arg-fill-gaps"></a></dt>
+<dd><p>should the function use a spatial buffer to estimate
+environmental variables for detections where there is missing data. Default
+is <code>FALSE</code> to save computational time.</p></dd>
+
+
+<dt id="arg-buffer">buffer<a class="anchor" aria-label="anchor" href="#arg-buffer"></a></dt>
+<dd><p>radius of buffer (in m) around each detection from which
+environmental variables should be extracted from. A median value of pixels
+that fall within the buffer will be used if <code>fill_gaps = TRUE</code>. If <code>NULL</code> a
+buffer will be chosen based on the resolution of environmental layer. A
+numeric value (in m) can be used here to customise buffer radius.</p></dd>
 
 
 <dt id="arg-export-step">export_step<a class="anchor" aria-label="anchor" href="#arg-export-step"></a></dt>
@@ -233,10 +249,10 @@ available can be accessed using the <code><a href="imos_variables.html">imos_var
 <span class="r-in"><span>               env_var <span class="op">=</span> <span class="st">"BRAN_temp"</span>,</span></span>
 <span class="r-in"><span>               extract_depth <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>               verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Accessing and extracting BRAN data: BRAN_temp between 2013-08 | 2013-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                          |                                                  |   0%  |                                                          |=========================                         |  50%  |                                                          |==================================================| 100%</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting environmental data...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                          |                                                  |   0%  |                                                          |==================================================| 100%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting environmental data only on days detections were present; between 2013-08-10 and 2013-09-15 (11 days)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> This may take a little while...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Accessing and extracting Bluelink data: BRAN_temp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                          |                                                  |   0%  |                                                          |=====                                             |   9%  |                                                          |=========                                         |  18%  |                                                          |==============                                    |  27%  |                                                          |==================                                |  36%  |                                                          |=======================                           |  45%  |                                                          |===========================                       |  55%  |                                                          |================================                  |  64%  |                                                          |====================================              |  73%  |                                                          |=========================================         |  82%  |                                                          |=============================================     |  91%  |                                                          |==================================================| 100%</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
