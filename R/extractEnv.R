@@ -28,14 +28,12 @@
 ##' that fall within the buffer will be used if `fill_gaps = TRUE`. If `NULL` a 
 ##' buffer will be chosen based on the resolution of environmental layer. A 
 ##' numeric value (in m) can be used here to customise buffer radius.
+##' @param env_buffer distance (in decimal degrees) to expand the study area beyond the coordinates to extract environmental data. Default value is 1°.
 ##' @param nrt should Near Real-Time current data be used if Delayed-Mode current 
 ##' data is missing. Default is `FALSE`, in which case NA's are appended to current
 ##' variables for years (currently, all years after 2020) when current data are 
 ##' missing. Note that Near Real-Time data are subject to less quality control 
 ##' than Delayed-Mode data.
-##' @param output_format File format for cached environmental layers. You can use 
-##' \code{gdal(drivers=TRUE)} to see what drivers are available in your installation.
-##' The default format is '.grd'.
 ##' @param .parallel should the function be run in parallel 
 ##' @param .ncores number of cores to use if set to parallel. If none provided, 
 ##' uses \code{\link[parallel]{detectCores}} to determine number.
@@ -81,34 +79,28 @@
 ##'               env_var = "rs_sst_interpolated",
 ##'               full_timeperiod = FALSE,
 ##'               fill_gaps = TRUE,
-##'               folder_name = "test",
+##'               buffer = 20000,
 ##'               .parallel = FALSE)
 ##'
 ##' @importFrom dplyr %>% mutate distinct pull left_join select
 ##' @importFrom terra ext
 ##' @importFrom lubridate date 
+##' @importFrom foreach %dopar%
 ##'
 ##' @export
 
-extractEnv <-
-  function(df,
-           X = "longitude",
-           Y = "latitude",
-           datetime = "detection_timestamp",
+extractEnv <- function(df, X, Y, datetime,
            env_var,
-           folder_name = NULL,
            verbose = TRUE,
-           cache_layers = TRUE,
-           crop_layers = TRUE,
            full_timeperiod = FALSE,
+           station_name = NULL,
            fill_gaps = FALSE,
            buffer = NULL,
-           nrt = FALSE,
-           output_format = ".grd",
+           env_buffer = 1,
+           nrt = TRUE,
            .parallel = TRUE,
            .ncores = NULL) {
     
-  
   ## Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
   if(!Y %in% colnames(df)){stop("Cannot find Y coordinate in dataset, provide column name where variable can be found")}
@@ -116,121 +108,55 @@ extractEnv <-
   if(!env_var %in% c('rs_sst', 'rs_sst_interpolated', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land')){
     stop("Environmental variable not recognised, options include:\n'rs_sst', 'rs_sst_interpolated', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
   if(length(env_var) > 1){stop("This function currently only supports extracting a single variable at a time. Please only select one of:\n'rs_sst', 'rs_sst_interpolated', 'rs_salinity', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 'bathy', 'dist_to_land'")}
-  
-  ## Turn of un-needed parallelising or gap filling if extracting 'bathy', 'dist_to_land'
-  if(env_var %in% c("bathy", "dist_to_land")){
-    .parallel = FALSE
-    fill_gaps = FALSE}
-  
-#  if(env_var %in% "rs_current"){.parallel = FALSE}
-  
-  ## define date range
-  unique_dates <- 
-    df %>%
-    mutate(date = date(!!as.name(datetime))) %>%
-    distinct(date) %>%
-    pull(date) 
-  
-  date_range <- range(unique_dates)
-  
-  ## define spatial extent and extend by 40%
-  study_extent <- ext(c(min(df[[X]]), max(df[[X]]), min(df[[Y]]), max(df[[Y]]))) * 1.4
-  
-  ## define unique positions (for quicker environmental variable extraction)
-  unique_positions <-
-    ungroup(df) %>% 
-    mutate(date = date(!!as.name(datetime))) %>%
-    distinct(!!as.name(X), !!as.name(Y), date) %>% 
-    dplyr::select(!!as.name(X), !!as.name(Y), date)
-  
-  ## define dates of detection and date range and catalog all dates between start and end if .full_timeperiod = TRUE
-  if(full_timeperiod){
-    if(verbose){
-      message("Extracting environmental data for each day between ", 
-              date_range[1], " and ", date_range[2], " (", 
-              difftime(date_range[2], date_range[1], units = "days"), " days)",
-              "\nThis may take a little while...") 
-    }
-    dates <- seq(date_range[1], date_range[2], by = 1)
-  } else {
-    if(verbose){
-      message("Extracting environmental data only on days detections were present; between ", 
-              date_range[1], " and ", date_range[2], " (", 
-              length(unique_dates), " days)",
-              "\nThis may take a little while...")
-    }
-    dates <- unique_dates
+  if(full_timeperiod) {
+    if(is.null(station_name))
+      stop("Please provide column with station names in the 'station_name' argument.")
   }
-  
-  # Pull environmental netcdf from THREDDS server
-  if(verbose){
-    message("Accessing and downloading IMOS environmental variable: ", env_var)
-  }
+  if (fill_gaps & is.null(buffer)) {
+    stop("Please provide a 'buffer' size to fill gaps.")
 
-  suppressWarnings(
-    env_stack <- .pull_env(
-      dates = dates,
-      study_extent = study_extent,
-      var_name = env_var,
-      .cache = cache_layers,
-      folder_name = folder_name,
-      .crop = crop_layers,
-      .nrt = nrt,
-      .output_format = output_format,
-      verbose = verbose,
-      .parallel = .parallel,
-      .ncores = .ncores
+  }
+  # Define spatial and temporal extent of data fetch:
+  data_details <- ext_find(
+    .df = df, 
+    .X = X,
+    .Y = Y,
+    .datetime = datetime,
+    .full_timeperiod = full_timeperiod,
+    verbose = verbose
     )
-  )
-  
-  if (cache_layers & verbose) {
-    message("\nDownloaded layers are cached in the `imos.cache` folder in your working directory")
-  }
-
-  if(!is.null(env_stack)) {
-    ## Extract environmental variable from env_stack
-    if(verbose){
-      message("Extracting and appending environmental data")
+  # Create URLs to open data remotely
+  var_urls <- remote_urls(input = data_details,
+                        var_name = env_var,
+                        .nrt = nrt,
+                        verbose = TRUE)
+  # Open data remotely 
+  if(verbose){
+    if (.parallel) {
+      message("Accessing and extracting IMOS data in parallel: ", env_var)
+    } else {
+      message("Accessing and extracting IMOS data: ", env_var)
     }
-
-    env_data <- .extract_var(unique_positions, env_stack, env_var, .fill_gaps = fill_gaps, .buffer = buffer, verbose = verbose)
-  
-  
-  ## Combine environmental data with input detection data
-  output <- df %>% 
-    mutate(date = date(!!as.name(datetime))) %>%
-    left_join(env_data, by = c(X, Y, "date"))
-  
-  
-  ## Calculate additional variables for current data (current direction and velocity)
-  if(env_var %in% "rs_current"){
-    
-    windDir <- function(u, v) {(180 / pi) * atan(u/v) + ifelse(v>0,180,ifelse(u>0,360,0))}
-    
-    output <- output %>% 
-      mutate(rs_current_velocity = sqrt(rs_vcur^2 + rs_ucur^2),
-             rs_current_bearing = windDir(u = rs_ucur, v = rs_vcur))
-    
-    # ## Adjust bearing to 0 - 360 degrees clockwise
-    # output <- 
-    #   output %>% 
-    #   mutate(rs_current_bearing = 
-    #            case_when(rs_current_bearing < 0 ~ rs_current_bearing + 360, 
-    #                      TRUE ~ rs_current_bearing))
   }
-  
-  # output$date <- NULL
-  if(max(date_range) >= as.Date("2021-01-01") & nrt) {
-    message("Near Real-Time Ocean Current data appended in place of unavailable Delayed-Mode data")
-  }
-  return(output)
-  
-  } else {
-    ## if no viable urls found then return input data
-    message("Returning original input data")
-    return(df)
-  }
-
+  df_env <- remote_open(input = var_urls,
+    data_details = data_details,
+    .fill_gaps = fill_gaps,
+    .buffer = buffer,
+    env_buffer = env_buffer,
+    .parallel = .parallel,
+    .ncores = .ncores,
+    var_name = env_var)
+  # Match detections 
+  df_output <- locs_match(aux_df = df,
+    X = X, 
+    Y = Y,
+    datetime = datetime, 
+    aux_env = df_env,
+    full_timeperiod = full_timeperiod, 
+    station_name = station_name,
+    var_name = env_var)  
+  # Export
+  return(df_output) 
 }
 
 

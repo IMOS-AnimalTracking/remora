@@ -49,24 +49,54 @@ locs_match <- function(aux_df, aux_env, X, Y, datetime, full_timeperiod, station
 		aux_df$aux <- stringr::str_split_fixed(aux_df$aux, pattern = "_", n = 2)[,2]
 		names(aux_df)[which(names(aux_df) == station_name)] <- "station_name"
 		aux_env$station_name <- aux_df$station_name[match(aux_env$aux, aux_df$aux)]
-		if (var_name == "rs_current") {
-			aux_env <- aux_env[,c('date', X, Y, "station_name", 
+		if (var_name %in% c("rs_current", "BRAN_wind", "BRAN_cur")) {
+			if (var_name == "rs_current") {
+				aux_env <- aux_env[,c('date', X, Y, "station_name", 
 				"rs_gsla", "rs_vcur", "rs_ucur", "rs_current_velocity", "rs_current_bearing", 
 				"number_detections")]
-			names(aux_env)[which(names(aux_env) == "station_name")] <- station_name
+				names(aux_env)[which(names(aux_env) == "station_name")] <- station_name
+			}
+			if (var_name == "BRAN_wind") {
+				aux_env <- aux_env[,c('date', X, Y, "station_name", 
+				"BRAN_vwind", "BRAN_uwind", "BRAN_wind_velocity", "BRAN_wind_bearing", 
+				"number_detections")]
+				names(aux_env)[which(names(aux_env) == "station_name")] <- station_name
+			}
+			if (var_name == "BRAN_cur") {
+				aux_env <- aux_env[,c('date', X, Y, "station_name", 
+				"BRAN_vcur", "BRAN_ucur", "BRAN_current_velocity", "BRAN_current_bearing", 
+				"number_detections")]
+				names(aux_env)[which(names(aux_env) == "station_name")] <- station_name
+			}
 		} else {
 			aux_env <- aux_env[,c('date', X, Y, "station_name", var_name, "number_detections")]
 			names(aux_env)[which(names(aux_env) == "station_name")] <- station_name
 		}
 		df_save <- tibble::as_tibble(aux_env)
 	} else {
-		if (var_name == "rs_current") {
-			aux_df$date <- aux_env$date[match(aux_df$aux, aux_env$aux)]
-			aux_df$rs_gsla <- aux_env$rs_gsla[match(aux_df$aux, aux_env$aux)]
-			aux_df$rs_vcur <- aux_env$rs_vcur[match(aux_df$aux, aux_env$aux)]
-			aux_df$rs_ucur <- aux_env$rs_ucur[match(aux_df$aux, aux_env$aux)]
-			aux_df$rs_current_velocity <- aux_env$rs_current_velocity[match(aux_df$aux, aux_env$aux)]
-			aux_df$rs_current_bearing <- aux_env$rs_current_bearing[match(aux_df$aux, aux_env$aux)]
+		if (var_name %in% c("rs_current", "BRAN_wind", "BRAN_cur")) {
+			if (var_name == "rs_current") {
+				aux_df$date <- aux_env$date[match(aux_df$aux, aux_env$aux)]
+				aux_df$rs_gsla <- aux_env$rs_gsla[match(aux_df$aux, aux_env$aux)]
+				aux_df$rs_vcur <- aux_env$rs_vcur[match(aux_df$aux, aux_env$aux)]
+				aux_df$rs_ucur <- aux_env$rs_ucur[match(aux_df$aux, aux_env$aux)]
+				aux_df$rs_current_velocity <- aux_env$rs_current_velocity[match(aux_df$aux, aux_env$aux)]
+				aux_df$rs_current_bearing <- aux_env$rs_current_bearing[match(aux_df$aux, aux_env$aux)]
+			}
+			if (var_name == "BRAN_wind") {
+				aux_df$date <- aux_env$date[match(aux_df$aux, aux_env$aux)]
+				aux_df$BRAN_vwind <- aux_env$BRAN_vwind[match(aux_df$aux, aux_env$aux)]
+				aux_df$BRAN_uwind <- aux_env$BRAN_uwind[match(aux_df$aux, aux_env$aux)]
+				aux_df$BRAN_wind_velocity <- aux_env$BRAN_wind_velocity[match(aux_df$aux, aux_env$aux)]
+				aux_df$BRAN_wind_bearing <- aux_env$BRAN_wind_bearing[match(aux_df$aux, aux_env$aux)]
+			}
+			if (var_name == "BRAN_cur") {
+				aux_df$date <- aux_env$date[match(aux_df$aux, aux_env$aux)]
+				aux_df$BRAN_vcur <- aux_env$BRAN_vcur[match(aux_df$aux, aux_env$aux)]
+				aux_df$BRAN_ucur <- aux_env$BRAN_ucur[match(aux_df$aux, aux_env$aux)]
+				aux_df$BRAN_current_velocity <- aux_env$BRAN_current_velocity[match(aux_df$aux, aux_env$aux)]
+				aux_df$BRAN_current_bearing <- aux_env$BRAN_current_bearing[match(aux_df$aux, aux_env$aux)]
+			}
 		} else {
 			names(aux_env)[4] <- "var"
 			aux_df$date <- aux_env$date[match(aux_df$aux, aux_env$aux)]
@@ -75,6 +105,6 @@ locs_match <- function(aux_df, aux_env, X, Y, datetime, full_timeperiod, station
 		}
 		aux_df <- aux_df[,-which(names(aux_df) == "aux")]
 		df_save <- aux_df
-	}
+		}
 	return(df_save)
 }

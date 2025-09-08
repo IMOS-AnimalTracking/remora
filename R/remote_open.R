@@ -7,6 +7,7 @@
 ##' @param .fill_gaps Should NAs be filled? 
 ##' @param .buffer Size of the buffer area to be user to fill NAs
 ##' @param env_buffer distance (in decimal degrees) to expand the study area beyond the coordinates to extract environmental data. Default value is 1°.
+##' @param depth For Bluelink variables, the depth of interest to extract data
 ##' @param .parallel Should data extraction be performed in parallel?
 ##'
 ##' @details Internal help function to initiate IMOS data extraction
@@ -15,7 +16,7 @@
 ##'
 ##' @keywords internal
 
-remote_open <- function(input, data_details, env_buffer,
+remote_open <- function(input, data_details, env_buffer, depth = NULL,
 	.fill_gaps, .buffer, .parallel, .ncores, var_name) {
 
 	# Check if area is too small for data extraction: add 1° each side otherwise
@@ -66,6 +67,7 @@ remote_open <- function(input, data_details, env_buffer,
 			    	.combine = rbind,
 			    	.packages = c("remora", "dplyr", "tidync")) %dopar% {
 			            extract_func(dataset = input_run[ii,],
+			            	depth = depth,
 			            	data_details = data_details,
 			            	lon.min = lon.min,
 							lon.max = lon.max,
@@ -87,6 +89,7 @@ remote_open <- function(input, data_details, env_buffer,
 			pb <- txtProgressBar(min = 0, max = nrow(input), initial = 0, style = 3, width = 50)
 			for (i in 1:nrow(input)) {
 				df_exp <- extract_func(dataset = input[i,],
+					depth = depth,
 					data_details = data_details,
 					lon.min = as.numeric(data_details$ext[1]) - env_buffer,
 					lon.max = as.numeric(data_details$ext[2]) + env_buffer,
