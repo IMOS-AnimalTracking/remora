@@ -23,7 +23,7 @@
 ##' ## return all detections
 ##' d.qc <- grabQC(TownsvilleReefQC, what = "dQC")
 ##'
-##' @importFrom dplyr "%>%" select ungroup distinct nest_by
+##' @importFrom dplyr %>% select ungroup distinct nest_by
 ##' @importFrom tidyr unnest
 ##'
 ##' @export
@@ -83,14 +83,20 @@ grabQC <-
         fl <- 1:4
       }
 
+    ## account for late 2024 AODN variable name changes for "tagging_project_name"
+    if("tagging_project_name" %in% names(unnest(x, cols = QC))) {
+      tag_id_vars <- c("transmitter_id","tag_id","transmitter_deployment_id","tagging_project_name")
+      tag_meta_vars <- c("transmitter_id","transmitter_serial_number","tagging_project_name")
+    } else {
+      tag_id_vars <- c("transmitter_id","tag_id","transmitter_deployment_id","tag_device_project_name","tag_deployment_project_name") 
+      tag_meta_vars <- c("transmitter_id","transmitter_serial_number","tag_device_project_name","tag_deployment_project_name")
+    }
+    
   out <- switch(what,
          detections = {
            suppressMessages(unnest(x, cols = QC) %>%
              select(
-               transmitter_id,
-               tag_id,
-               transmitter_deployment_id,
-               tagging_project_name,
+               tag_id_vars,
                species_common_name,
                species_scientific_name,
                detection_datetime,
@@ -126,10 +132,7 @@ grabQC <-
          dQC = {
            suppressMessages(unnest(x, cols = QC) %>%
              select(
-               transmitter_id,
-               tag_id,
-               transmitter_deployment_id,
-               tagging_project_name,
+               tag_id_vars,
                species_common_name,
                species_scientific_name,
                detection_datetime,
@@ -154,9 +157,7 @@ grabQC <-
          tag_meta = {
            try(suppressMessages(unnest(x, cols = QC) %>%
              select(
-               transmitter_id,
-               transmitter_serial_number,
-               tagging_project_name,
+               tag_meta_vars,
                transmitter_type,
                transmitter_sensor_type,
                transmitter_sensor_slope,

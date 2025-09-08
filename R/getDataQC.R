@@ -11,9 +11,10 @@
 ##'
 ##' @return a list of data.frames by individual tag deployments ready for QC
 ##'
+##' @importFrom utils read.csv
 ##' @importFrom readr read_csv cols_only col_character col_integer col_guess
 ##' @importFrom readr col_logical col_datetime col_double
-##' @importFrom dplyr '%>%' mutate left_join select group_by ungroup distinct
+##' @importFrom dplyr %>% mutate left_join select group_by ungroup distinct
 ##' @importFrom dplyr transmute any_of everything
 ##' @importFrom lubridate dmy_hms dmy
 ##'
@@ -26,38 +27,77 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
 
   ## detections
   if(is.null(det)) stop("\033[31;1mCan not run QC without a detections file!\033[0m\n")
+ 
+  ## account for old & new tag project name variables: tagging_project_name (old);
+  ##  tag_deployment_project_name (new)
+  tpdet.log <- "tagging_project_name" %in% names(read.csv(det))
   
+  if(tpdet.log) {
+    det.cols <- cols(
+      detection_datetime = "T",
+      detection_corrected_datetime = "T",
+      transmitter_id = "c",
+      tag_id = "i",
+      transmitter_deployment_id = "i",
+      tagging_project_name = "c",
+      species_common_name = "c",
+      species_scientific_name = "c",
+      CAAB_species_id = "i",
+      WORMS_species_aphia_id = "i",
+      animal_sex = "c",
+      receiver_project_name = "c",
+      installation_name = "c",
+      station_name = "c",
+      receiver_id = "i",
+      receiver_name = "c",
+      receiver_deployment_id = "i",
+      transmitter_sensor_type = "c",
+      transmitter_sensor_unit = "c",
+      transmitter_type = "c",
+      transmitter_serial_number = "?",
+      transmitter_estimated_battery_life = "i",
+      transmitter_status = "c",
+      transmitter_deployment_datetime = "T",
+      transmitter_dual_sensor = "l",
+      .default = "d"
+    )
+  } else {
+    det.cols <- cols(
+      detection_datetime = "T",
+      detection_corrected_datetime = "T",
+      transmitter_id = "c",
+      tag_id = "i",
+      transmitter_deployment_id = "i",
+      tag_device_project_name = "c",
+      tag_deployment_project_name = "c",
+      species_common_name = "c",
+      species_scientific_name = "c",
+      CAAB_species_id = "i",
+      WORMS_species_aphia_id = "i",
+      animal_sex = "c",
+      receiver_project_name = "c",
+      installation_name = "c",
+      station_name = "c",
+      receiver_id = "i",
+      receiver_name = "c",
+      receiver_deployment_id = "i",
+      transmitter_sensor_type = "c",
+      transmitter_sensor_unit = "c",
+      transmitter_type = "c",
+      transmitter_serial_number = "?",
+      transmitter_estimated_battery_life = "i",
+      transmitter_status = "c",
+      transmitter_deployment_datetime = "T",
+      transmitter_dual_sensor = "l",
+      .default = "d"
+    )
+  }
+
   det_data <- suppressWarnings(read_csv(det,
-                                          col_types = cols(
-                                            detection_datetime = col_datetime(),
-                                            transmitter_id = col_character(),
-                                            tag_id = col_integer(),
-                                            transmitter_deployment_id = col_integer(),
-                                            tagging_project_name = col_character(),
-                                            species_common_name = col_character(),
-                                            species_scientific_name = col_character(),
-                                            CAAB_species_id = col_integer(),
-                                            WORMS_species_aphia_id = col_integer(),
-                                            animal_sex = col_character(),
-                                            receiver_project_name = col_character(),
-                                            installation_name = col_character(),
-                                            station_name = col_character(),
-                                            receiver_id = col_integer(),
-                                            receiver_name = col_character(),
-                                            receiver_deployment_id = col_integer(),
-                                            transmitter_sensor_type = col_character(),
-                                            transmitter_sensor_unit = col_character(),
-                                            transmitter_type = col_character(),
-                                            transmitter_serial_number = col_guess(),
-                                            transmitter_estimated_battery_life = col_integer(),
-                                            transmitter_status = col_character(),
-                                            transmitter_deployment_datetime = col_datetime(),
-                                            transmitter_dual_sensor = col_logical(),
-                                            .default = col_double()
-                                          ),
+                                          col_types = det.cols,
                                         na = c("","null","NA")
                                         ))
-
+  
   ## drop any unnamed columns, up to a possible 20 of them...
   if(any(paste0("X",1:20) %in% names(det_data))) {
     drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(det_data)]
@@ -83,42 +123,127 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
 
   ## tag deployment metadata
   if(!is.null(tmeta)) {
+    ## account for old & new tag project name variables: tagging_project_name (old);
+    ##  tag_deployment_project_name (new)
+    tpmeta.log <- "tagging_project_name" %in% names(read.csv(tmeta))
+    
+    if(tpmeta.log) {
+      tmeta.cols <- cols(
+        transmitter_id = "c",
+        transmitter_serial_number = "i",
+        tagging_project_name = "c",
+        transmitter_type = "c",
+        transmitter_sensor_type = "c",
+        transmitter_sensor_slope = "c",
+        transmitter_sensor_intercept = "c",
+        transmitter_sensor_unit = "c",
+        transmitter_estimated_battery_life = "i",
+        transmitter_status = "c",
+        transmitter_deployment_id = "i",
+        species_common_name = "c",
+        species_scientific_name = "c",
+        animal_sex = "c",
+        placement = "c",
+        transmitter_deployment_locality = "c",
+        transmitter_deployment_latitude = "d",
+        transmitter_deployment_longitude = "d",
+        transmitter_deployment_datetime = "T",
+        transmitter_deployment_comments = "c",
+        embargo_date = "T",
+        transmitter_recovery_datetime = "T",
+        transmitter_recovery_latitude = "d",
+        transmitter_recovery_longitude = "d",
+        .default = "d"
+      )
+      
+    } else {
+      tmeta.cols <- cols(
+        transmitter_id = "c",
+        transmitter_serial_number = "i",
+        tag_device_project_name = "c",
+        tag_deployment_project_name = "c",
+        transmitter_type = "c",
+        transmitter_sensor_type = "c",
+        transmitter_sensor_slope = "c",
+        transmitter_sensor_intercept = "c",
+        transmitter_sensor_unit = "c",
+        transmitter_estimated_battery_life = "i",
+        transmitter_status = "c",
+        transmitter_deployment_id = "i",
+        species_common_name = "c",
+        species_scientific_name = "c",
+        animal_sex = "c",
+        placement = "c",
+        transmitter_deployment_locality = "c",
+        transmitter_deployment_latitude = "d",
+        transmitter_deployment_longitude = "d",
+        transmitter_deployment_datetime = "T",
+        transmitter_deployment_comments = "c",
+        embargo_date = "T",
+        transmitter_recovery_datetime = "T",
+        transmitter_recovery_latitude = "d",
+        transmitter_recovery_longitude = "d",
+        .default = "d"
+      )
+    }
+    
     tag_meta <- suppressWarnings(read_csv(tmeta,
-                                          col_types = cols(
-                                            transmitter_id = col_character(),
-                                            transmitter_serial_number = col_integer(),
-                                            tagging_project_name = col_character(),
-                                            transmitter_type = col_character(),
-                                            transmitter_sensor_type = col_character(),
-                                            transmitter_sensor_slope = col_character(),
-                                            transmitter_sensor_intercept = col_character(),
-                                            transmitter_sensor_unit = col_character(),
-                                            transmitter_estimated_battery_life = col_integer(),
-                                            transmitter_status = col_character(),
-                                            transmitter_deployment_id = col_integer(),
-                                            species_common_name = col_character(),
-                                            species_scientific_name = col_character(),
-                                            animal_sex = col_character(),
-                                            placement = col_character(),
-                                            transmitter_deployment_locality = col_character(),
-                                            transmitter_deployment_latitude = col_double(),
-                                            transmitter_deployment_longitude = col_double(),
-                                            transmitter_deployment_datetime = col_datetime(),
-                                            transmitter_deployment_comments = col_character(),
-                                            embargo_date = col_datetime(),
-                                            transmitter_recovery_datetime = col_datetime(),
-                                            transmitter_recovery_latitude = col_double(),
-                                            transmitter_recovery_longitude = col_double()
-                                            ),
+                                          col_types = tmeta.cols,
                                           na = c("","null","NA")
                                           ))
+
+    ## retain only the metadata for the current tagging_project_name/tag_deployment_project_name
+    if(tpmeta.log) {
+      tag_meta <- tag_meta |> 
+        filter(tagging_project_name %in% unique(det_data$tagging_project_name))
+    } else {
+      tag_meta <- tag_meta |> 
+        filter(tag_deployment_project_name %in% unique(det_data$tag_deployment_project_name))
+    }
+    
+
     ## drop any unnamed columns, up to a possible 20 of them...
     if(any(paste0("X",1:20) %in% names(tag_meta))) {
       drops <- paste0("X",1:20)[paste0("X",1:20) %in% names(tag_meta)]
       tag_meta <- tag_meta %>% select(-any_of(drops))
     }
+    
+    ## check for duplicate entries of same transmitter_id & retain only the most
+    ##  recent deployment date with valid deployment lon, lat entries (not NA's)
+    tmp <- split(tag_meta, tag_meta$transmitter_id)
+    tmp <- lapply(tmp, function(x) {
+      if (nrow(x) > 1) {
+        xx <- x |> filter(
+          !is.na(transmitter_deployment_longitude) |
+            !is.na(transmitter_deployment_latitude)
+        )
+        if (nrow(xx) != 0) {
+          xx <- x |>
+            arrange(transmitter_deployment_datetime)
+          xx <- xx[1, ]
+        } 
+        xx
+      } else {
+        x
+      }
+    }) |>
+      bind_rows()
+    
+    ## check for NA's in deployment lat,lon entries & use mean reported value
+    ##  for NA's at same transmitter_deployment_locality
+    tag_meta <- tmp |> 
+      group_by(transmitter_deployment_locality) |>
+      mutate(transmitter_deployment_longitude = 
+               ifelse(is.na(transmitter_deployment_longitude),
+                      mean(transmitter_deployment_longitude, na.rm = TRUE),
+                      transmitter_deployment_longitude),
+             transmitter_deployment_latitude = 
+               ifelse(is.na(transmitter_deployment_latitude),
+                      mean(transmitter_deployment_latitude, na.rm = TRUE),
+                      transmitter_deployment_latitude)) |>
+      ungroup()
   }
-
+  
   ## animal measurements data
   if(!is.null(meas)) {
     anim_meas <- suppressWarnings(read_csv(meas,
@@ -211,13 +336,20 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   if(!is.null(rec_meta)) {
   ## merge detections with receiver metadata - to get receiver_depth,
   ##    but merge everything & keep detections data version of common variables
+    
+    ## coerce old tag project name variable to new variable in detections data
+    if("tagging_project_name" %in% names(det_data)) {
+      id.r <- which(names(det_data) == "tagging_project_name")
+      names(det_data)[id.r] <- "tag_deployment_project_name"
+    }
+    
   dd <-
     left_join(det_data, rec_meta, by = "receiver_deployment_id") %>%
     select(
       transmitter_id,
       tag_id,
       transmitter_deployment_id,
-      tagging_project_name,
+      tag_deployment_project_name,
       species_common_name,
       species_scientific_name,
       CAAB_species_id = ifelse(
@@ -258,7 +390,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         transmitter_id,
         tag_id,
         transmitter_deployment_id,
-        tagging_project_name,
+        tag_deployment_project_name,
         species_common_name,
         species_scientific_name,
         CAAB_species_id = ifelse(
@@ -283,12 +415,18 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
   }
 
   if(!is.null(tag_meta)) {
+    ## coerce old tag project name variable to new variable in tag metadata
+    if("tagging_project_name" %in% names(tag_meta)) {
+      id.t <- which(names(tag_meta) == "tagging_project_name")
+      names(tag_meta)[id.t] <- "tag_deployment_project_name"
+    }
+    
     dd <- left_join(dd,
                     tag_meta,
-                    by = c("transmitter_id", "transmitter_deployment_id")) %>%
+                    by = c("transmitter_id", "transmitter_deployment_id")) |>
       select(
         -transmitter_serial_number.y,
-        -tagging_project_name.y,
+        -tag_deployment_project_name.y,
         -transmitter_type.y,
         -transmitter_sensor_type.y,
         -transmitter_sensor_slope.y,
@@ -300,9 +438,17 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         -species_scientific_name.y,
         -animal_sex.y,
         -embargo_date.x)
+    
+    if("tag_device_project_name.x" %in% names(dd)) {
+      dd <- dd |> 
+        rename(tag_device_project_name = tag_device_project_name.x) |>
+        select(-tag_device_project_name.y)
+    }
+    
 ## deal with any cases where deploy lon/lat is missing in detections but not metadata
     if(any(is.na(dd$transmitter_deployment_longitude.x)) |
        any(is.na(dd$transmitter_deployment_latitude.x))) {
+
       dd <- dd %>%
         mutate(transmitter_deployment_longitude.x =
                  ifelse(is.na(transmitter_deployment_longitude.x),
@@ -324,7 +470,7 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
         -transmitter_deployment_datetime.y
       ) %>%
       rename(
-        tagging_project_name = tagging_project_name.x,
+        tag_deployment_project_name = tag_deployment_project_name.x,
         species_common_name = species_common_name.x,
         species_scientific_name = species_scientific_name.x,
         animal_sex = animal_sex.x,
@@ -360,6 +506,18 @@ get_data <- function(det=NULL, rmeta=NULL, tmeta=NULL, meas=NULL, logfile) {
       }
     }
   }
+  
+  ## ensure old tagging_project_name variable is returned if exists in input data
+  if(exists("id.r")) {
+    id <- which(names(dd) == "tag_deployment_project_name")
+    names(dd)[id] <- "tagging_project_name"
+  }
+  ## ensure old tagging_project_name variable is returned if exists in input tag_metadata
+  if(exists("id.t")) {
+    id <- which(names(dd) == "tag_deployment_project_name")
+    names(dd)[id] <- "tagging_project_name"
+  }
+  
   
   if(!is.null(anim_meas)) {
     ## concatenate all measurements into single record by unique id

@@ -63,18 +63,18 @@
 ##'               "IMOS_animal_measurements.csv"),
 ##'                     package = "remora"))
 ##' qc.out <- runQC(files)
-##' plotQC(qc.out, path = NULL) # plots to default graphics device
+##' plotQC(qc.out, path = ".") # saves .html file to working directory
 ##'
 ##' ## get detections with QC flags
 ##' d.qc <- grabQC(qc.out, what = "dQC")
 ##' 
 ##' ## clean up
-##' system("rm QC_logfile.txt")
+##' system("rm QC_logfile.txt *_QCmap.html")
 ##'
 ##' @importFrom stringr str_split
 ##' @importFrom readr read_csv cols col_character col_double col_integer col_datetime
 ##' @importFrom lubridate ymd_hms dmy_hm
-##' @importFrom dplyr '%>%' rename mutate nest_by bind_rows
+##' @importFrom dplyr %>% rename mutate nest_by bind_rows
 ##' @importFrom parallel detectCores
 ##' @importFrom future plan
 ##' @importFrom furrr future_map furrr_options
@@ -90,7 +90,8 @@ runQC <- function(x,
 
   ## check if n_cores <= detectCores else return warning
   if(.ncores > detectCores())
-    warning("process to be run across more cores than available, this may not be efficient")
+    warning("process to be run across more cores than available, this may not be efficient",
+            call. = FALSE, immediate. = TRUE)
   
   ## create logfile object to record QC warnings
   ## write logfile to working directory
@@ -142,8 +143,9 @@ runQC <- function(x,
     warning(paste(nfail, "tag detection file(s) could not be QC'd"),
             call. = FALSE, immediate. = TRUE)
     xfail <- all_data[fails]
+    idx.fails <- which(fails)
     lapply(1:length(xfail), function(i) {
-      write(paste0(xfail[[i]]$filename[1], ":  QC error: ", QC_result[[i]]),
+      write(paste0(xfail[[i]]$filename[1], ":  QC error: ", QC_result[[idx.fails[i]]]),
             file = logfile,
             append = TRUE
       )

@@ -10,9 +10,9 @@
 ##' 
 ##' @details For a few species acoustically tagged no shapefile exists.
 ##'
-##' @return shp is a SpatialPolygons object of the species' distribution
+##' @return shp is a multipolygon sf data.frame object of the species' distribution
 ##'
-##' @importFrom rgdal readOGR
+##' @importFrom sf st_read
 ##' @importFrom utils download.file unzip
 ##'
 ##' @examples
@@ -50,10 +50,10 @@ get_expert_distribution_shp_CAAB <- function(CAAB_species_id, spe){
   }
 
 	if(file.exists(file.path(tmp, CAAB_species_id, "CAAB_FISHMAPPolygon.shp"))){
-	  shp <- suppressWarnings(readOGR(dsn = file.path(tmp,
+	  shp <- suppressWarnings(st_read(dsn = file.path(tmp,
 	                                                  CAAB_species_id,
 	                                                  "CAAB_FISHMAPPolygon.shp"),
-	                                  verbose = F))
+	                                  quiet = TRUE))
 	} else {
 	  ## need "_" in species name to find ALA_Shapefile
 	  spe <- gsub(" ", "_", spe)
@@ -70,13 +70,13 @@ get_expert_distribution_shp_CAAB <- function(CAAB_species_id, spe){
 	  
 	    if (!is.na(k)){
 	      shp <- suppressWarnings(
-	        readOGR(dsn = system.file(file.path("ALA_Shapefile", 
+	        st_read(dsn = system.file(file.path("ALA_Shapefile", 
 	                                            k, 
 	                                            paste0(k, ".shp")
 	        ),
 	        package = "remora"),
-	        k,
-	        verbose = FALSE)
+	        layer = k,
+	        quiet = TRUE)
 	      )
 	    }
 	  } 
