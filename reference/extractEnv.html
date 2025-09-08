@@ -18,7 +18,7 @@ server and append variables to detection data based on date of detection"><!-- m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">remora</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.9</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="">0.9.8</span>
       </span>
     </div>
 
@@ -68,7 +68,7 @@ server and append variables to detection data based on date of detection"><!-- m
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Extract and append remote sensing environmental data to detection data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/IMOS-AnimalTracking/remora/blob/v0.9/R/extractEnv.R" class="external-link"><code>R/extractEnv.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/IMOS-AnimalTracking/remora/blob/main/R/extractEnv.R" class="external-link"><code>R/extractEnv.R</code></a></small>
     <div class="hidden name"><code>extractEnv.Rd</code></div>
     </div>
 
@@ -226,8 +226,9 @@ available can be accessed using the <code><a href="imos_variables.html">imos_var
 <span class="r-in"><span>              .parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Extracting environmental data only on days detections were present; between 2013-08-18 and 2013-09-05 (3 days)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> This may take a little while...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Accessing and extracting IMOS data: rs_sst_interpolated</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                          |                                                  |   0%  |                                                          |=================                                 |  33%  |                                                          |=================================                 |  67%  |                                                          |==================================================| 100%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Accessing and downloading IMOS environmental variable: rs_sst_interpolated</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking if files exist on IMOS server...</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in as.Date.default(url_tab[url_tab$valid %in% FALSE, "date"]):</span> do not know how to convert 'url_tab[url_tab$valid %in% FALSE, "date"]' to class “Date”</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
