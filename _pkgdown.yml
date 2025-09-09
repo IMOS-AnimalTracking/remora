@@ -24,6 +24,8 @@ navbar:
           href: articles/runQC.html
         - text: extractEnv
           href: articles/extractEnv.html
+        - text: extractBlue
+          href: articles/extractBlue.html
         - text: extractMoor
           href: articles/extractMoor.html
     github:

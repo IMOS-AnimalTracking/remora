@@ -47,3 +47,8 @@ QC_logfile.txt
 /doc/
 /Meta/
 docs
+/data_testing/
+imos.cache
+*_errorlog.txt
+Processed_data.csv
+inst/ALA_Shapefile/.DS_Store

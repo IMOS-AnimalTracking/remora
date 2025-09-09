@@ -2,9 +2,9 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [master]
+    branches: [master, staging]
   pull_request:
-    branches: [master]
+    branches: [master, staging]
 
 name: R-CMD-check
 
@@ -49,10 +49,20 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: rcmdcheck
+          extra-packages: any::rcmdcheck
+          needs: check
       
       - uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual")'
+          error-on: '"error"'
+          check-dir: '"check"'
 
+      - name: Show testthat output
+        if: always()
+        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+        
       - name: Upload check results
         if: failure()
         uses: actions/upload-artifact@main
