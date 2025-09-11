@@ -111,7 +111,6 @@ Suggests:
     tools,   
     rnaturalearth,
     rmarkdown,
-    hrbrthemes,
     classInt,
     sp (>= 2.0-0)
 Depends: R (>= 4.1.0)
