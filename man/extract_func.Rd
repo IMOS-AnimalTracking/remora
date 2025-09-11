@@ -6,6 +6,7 @@
 \usage{
 extract_func(
   dataset,
+  depth,
   data_details,
   lon.min,
   lon.max,
@@ -18,6 +19,8 @@ extract_func(
 }
 \arguments{
 \item{dataset}{Environmental data details (URL and netCDF variable names)}
+
+\item{depth}{For Bluelink variables, the depth of interest to extract data for}
 
 \item{data_details}{Spatial and temporal details of data extraction, created with ext_find}
 

@@ -15,6 +15,8 @@ extractBlue(
   env_buffer = 1,
   full_timeperiod = FALSE,
   station_name = NULL,
+  fill_gaps = FALSE,
+  buffer = NULL,
   export_step = FALSE,
   export_path = "Processed_data",
   .parallel = FALSE,
@@ -53,6 +55,16 @@ detected. For more details please see the package vignettes.}
 
 \item{station_name}{if full_timeperiod = TRUE, please provide the column that identifies the name of the
 acoustic stations}
+
+\item{fill_gaps}{should the function use a spatial buffer to estimate
+environmental variables for detections where there is missing data. Default
+is \code{FALSE} to save computational time.}
+
+\item{buffer}{radius of buffer (in m) around each detection from which
+environmental variables should be extracted from. A median value of pixels
+that fall within the buffer will be used if \code{fill_gaps = TRUE}. If \code{NULL} a
+buffer will be chosen based on the resolution of environmental layer. A
+numeric value (in m) can be used here to customise buffer radius.}
 
 \item{export_step}{should the processed dataset be exported to file? This is particularly usefull for large
 datasets, to avoid function failure due to issues with internet connexion. The rows with missing data will be
