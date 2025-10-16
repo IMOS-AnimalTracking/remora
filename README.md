@@ -6,8 +6,8 @@
 [![watchers - remora](https://img.shields.io/github/watchers/IMOS-AnimalTracking/remora?style=social)](https://github.com/IMOS-AnimalTracking/remora)
 
 
-master branch:
-[![R-CMD-check](https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/IMOS-AnimalTracking/remora/actions)
+main branch:
+[![R-CMD-check](https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg?branch=main)](https://github.com/IMOS-AnimalTracking/remora/actions)
 
 staging branch:
 [![R-CMD-check](https://github.com/IMOS-AnimalTracking/remora/workflows/R-CMD-check/badge.svg?branch=staging)](https://github.com/IMOS-AnimalTracking/remora/actions)

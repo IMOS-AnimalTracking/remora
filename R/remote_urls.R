@@ -27,11 +27,18 @@ remote_urls <- function(input,
     'rs_chl',
     'rs_turbidity',
     'rs_npp',
-	'rs_current'
+	   'rs_current',
+     'BRAN_temp', 
+     'BRAN_salt', 
+     'BRAN_ssh', 
+     'BRAN_mld', 
+     'BRAN_cur', 
+     'BRAN_wcur', 
+     'BRAN_wind'
   	)) {
-    	stop("Environmental variable not recognised, options include:\n 'bathy', 'dist_to_land', 'rs_sst', 'rs_sst_interpolated', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current'")
+    	stop("Environmental variable not recognised, options include:\n 'bathy', 'dist_to_land', 'rs_sst', 'rs_sst_interpolated', 'rs_chl', 'rs_turbidity', 'rs_npp', 'rs_current', 
+        \n'BRAN_temp', 'BRAN_salt', 'BRAN_ssh', 'BRAN_mld', 'BRAN_cur', 'BRAN_wcur', 'BRAN_wind'")
 	}
-
 
   if (var_name %in% c("bathy", "dist_to_land")) {
     # Bathymetry
@@ -123,73 +130,56 @@ remote_urls <- function(input,
         layer <- "npp_vgpm_eppley_oc3"
       }
     }
+
+    ## Bluelink BRAN2020 variables
+    ## 
+    if(var_name %in% c('BRAN_temp', 'BRAN_salt', 'BRAN_ssh', 'BRAN_mld', 'BRAN_cur', 'BRAN_wcur', 'BRAN_wind')){
+      
+      ## BRAN2020 dataset: 1993-01-01 - 2023-12-31
+      if(date_range[1] < as.Date("1993-01-01") |
+        date_range[2] > as.Date("2023-12-31")){
+        warning("Bluelink data is currently only available from 1993-01-01 to 2023-12-31,\ndetections prior or after these dates will not have envrionmental data associated")}
+      
+      sub_dates <- dates[dates >= as.Date("1993-01-01") & 
+        dates <= as.Date("2023-12-31")]
+      fdates <- sub_dates %>% format("%Y%m%d")
+      
+      ## define start and mid url, and define end of THREDDS based on variable name
+      ## example :"http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/SST/ghrsst/L3S-1d/dn/2013/20130501092000-ABOM-L3S_GHRSST-SSTfnd-AVHRR_D-1d_dn.nc"
+      start_url <- "https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily/"
+      end_url <- ".nc"
+
+      # Select BRAN2020 variables
+      if (var_name == "BRAN_temp") {
+        layer.name <- "ocean_temp"
+        layer <- "temp"
+      }
+      if (var_name == "BRAN_salt") {
+        layer.name <- "ocean_salt"
+        layer <- "salt"
+      }
+      if (var_name == "BRAN_mld") {
+        layer.name <- "ocean_mld"
+        layer <- "mld"
+      }
+      if (var_name == "BRAN_wcur") {
+        layer.name <- "ocean_w"
+        layer <- "w"
+      }
+      if (var_name == "BRAN_ssh") {
+        layer.name <- "ocean_eta_t"
+        layer <- "eta_t"
+      }
+      if (var_name == "BRAN_wind") {
+        layer.name <- "atm_flux_diag"
+        layer <- ""
+      }
+      if (var_name == "BRAN_cur") {
+        layer.name <- "ocean_u"
+        layer <- ""
+      }  
     
-    # ## Weekly Salinity composite
-    # ## 
-    # if(var_name %in% "rs_salinity"){
-    #   ## check if IMOS remote sensing data covers detection data range for weekly (7day composite product)
-    #   ## salinity: 2011-08-25 - 2015-06-07
-    #   if(date_range[1] <= as.Date("2011-08-27") | date_range[2] >= as.Date("2015-06-10")) {
-    #     warning("IMOS weekly salinity data is currently only available between 2011-08-27 and 2015-06-10,\ndetections outside this period will not have salinity data associated")
-    #   }
-    #   if (date_range[1] <= as.Date("2011-08-27") & date_range[2] >= as.Date("2015-06-10")) { 
-    #     stop("IMOS weekly salinity data does not overlap with your detection data\n[currently only available between 2011-08-27 and 2015-06-10]")
-    #   }
-
-    #   sub_dates <-  dates[dates > as.Date("2011-08-27") & dates < as.Date("2015-06-10")]
-    #   # fdates <- sub_dates %>% format("%Y%m%d")
-      
-    #   catalog <-
-    #     tibble(date = sub_dates, 
-    #                    fdates = format(date, "%Y%m%d"),
-    #                    year = format(date, "%Y"),
-    #                    base_url = paste0("http://thredds.aodn.org.au/thredds/catalog/IMOS/SRS/SSS/aquarius/L3/7day/", year, "/"),
-    #                    start_url =  paste0("http://thredds.aodn.org.au/thredds/fileServer/IMOS/SRS/SSS/aquarius/L3/7day/", year, "/"))
-      
-    #   if(verbose){
-    #     message("Finding weekly IMOS salinity data...")
-    #   }
-      
-    #   find_url <- function(m){
-    #     base <- unique(m$base_url)[1]
-    #     url_list <-
-    #       paste0(base, "catalog.html") %>% 
-    #       xml2::read_html() %>%
-    #       xml2::as_list() %$%
-    #       html %$%
-    #       body %$%
-    #       table %>% 
-    #       map_dfr(function(x){if(is.null(x$td$a$tt[[1]])) return(NULL)
-    #         tibble(end_url = x$td$a$tt[[1]],
-    #                        fromdate = as.Date(substr(end_url, start = 2, stop = 9), "%Y%m%d"),
-    #                        todate = as.Date(substr(end_url, start = 11, stop = 18), "%Y%m%d"),
-    #                        type = substr(end_url, start = 30, stop = 30))}) %>% 
-    #       filter(type %in% "_") %>% 
-    #       select(-type) %>% 
-    #       slice(-1) %>% 
-    #       mutate(a = "a")
-        
-    #     out_join <-
-    #       m %>% 
-    #       mutate(a = "a") %>% 
-    #       left_join(url_list, by = "a") %>% 
-    #       select(-a) %>% 
-    #       filter(date >= fromdate & date <= todate)
-
-    #     return(out_join)
-    #   }
-      
-    #   find_df <-
-    #     catalog %>%
-    #     split(., .$year) %>%
-    #     map_dfr( ~ find_url(.x), .progress = T) 
-      
-    #   url_df <-
-    #     find_df %>% 
-    #     transmute(date = date,
-    #                      url_name = paste0(start_url, end_url),
-    #                      layer = "SSS")
-    # }
+    }
     
     ## Daily Ocean Current
     ## 
@@ -240,107 +230,36 @@ remote_urls <- function(input,
         message("Finding IMOS Ocean Current data...")
       }
     }
-      
-    #   find_url <- function(m) {
-
-    #     base <- unique(m$base_url)[1]
-    #     url_list <-
-    #      paste0(base, "catalog.html") %>% 
-    #      xml2::read_html() %>%
-    #      xml2::as_list() %$%
-    #      html %$%
-    #      body %$%
-    #      table %>% 
-    #      purrr::map_dfr(function(x){if(is.null(x$td$a$tt[[1]])) return(NULL)
-    #        tibble(end_url = x$td$a$tt[[1]],
-    #                       fdates = substr(end_url, start = 22, stop = 29),
-    #                       date = as.Date(fdates, "%Y%m%d"))}) %>% 
-    #      slice(-1)
-       
-    #     out_join <-
-    #       m %>% 
-    #       left_join(url_list, by = c("date", "fdates"))
-    #     return(out_join)
-    #   }
-      
-    #   find_df <-
-    #     catalog %>%
-    #     split(., .$year) %>%
-    #     map( ~ try(find_url(.x), silent = T), .progress = T)
-      
-    #   idx <- sapply(find_df, function(x) inherits(x, "try-error"))
-      
-    #   if(any(idx)) {
-    #     message(paste0("Unable to find IMOS Ocean Current data for the following year(s): ", 
-    #                 names(idx)[idx]))
-    #     find_df <- find_df[!idx]
-    #   }
-      
-    #   if(length(find_df) >= 1) {
-    #       find_df <- find_df %>% list_rbind()
-          
-    #       url_df <-
-    #         find_df %>% 
-    #         transmute(date = date,
-    #                   url_name = paste0(start_url, end_url),
-    #                   layer = case_when(!is.na(end_url) ~ 1))
-    #     } else {
-    #       url_df <- NULL
-    #     }
-    # }
     
     ## build urls from which to download environmental data (current and salinity have different formats)
-    if(!var_name %in% c("rs_current", "rs_salinity")){
-      if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
-        url_name <- paste0(start_url, 
-                           substr(fdates, start = 1, stop = 4), "/",
-                           fdates, end_url)
-      } else {
-        url_name <- paste0(start_url, 
-                           substr(fdates, start = 1, stop = 4), "/",
-                           substr(fdates, start = 5, stop = 6), "/",
-                           mid_url,
-                           fdates, end_url) 
-      }
-      
-      url_df <- tibble(date = sub_dates, url_name, layer) 
-    } else {
-       url_name <- paste0(start_url, 
-                           fdates, end_url)     
-      url_df <- tibble(date = sub_dates, url_name, layer) 
+    if(var_name %in% c("rs_sst_interpolated", "rs_sst")){
+      url_name <- paste0(start_url, 
+                         substr(fdates, start = 1, stop = 4), "/",
+                         fdates, end_url)
     }
-    
 
-    # if(var_name %in% c("rs_sst_interpolated", "rs_sst", "rs_chl", "rs_chl", "rs_turbidity", "rs_npp")){
-      
-    #   if(verbose){
-    #     message('Checking if files exist on IMOS server...')
-    #   }
-      
-    #   ## URL verification using base R functions (slower but doesnt require additional dependencies)
-    #   valid_url <-
-    #     function(url_in, t = 2){
-    #       con <- url(url_in)
-    #       check <- suppressWarnings(try(open.connection(con, open = "rt", timeout = t), silent = T)[1])
-    #       suppressWarnings(try(close.connection(con), silent = T))
-    #       ifelse(is.null(check), TRUE, FALSE)
-    #     }
-      
-    #   ## using RCurl to speed up the URL verification (but requires an additional dependency `RCurl`)
-    #   # url_df$valid <- RCurl::url.exists(url_df$url_name)
-      
-    #   url_tab <-
-    #     url_df %>%
-    #     mutate(valid = sapply(url_name, valid_url))
-      
-    #   # if(verbose){
-    #   #   message('Data for the following dates are not available on IMOS:\n', paste(as.Date(url_tab[url_tab$valid %in% FALSE, "date"]), sep = "\n"))
-    #   # }
-      
-    #   url_df <- filter(url_tab, valid %in% TRUE)
-      
-    # }
+    if(var_name %in% c("rs_chl", "rs_turbidity", "rs_npp")){
+      url_name <- paste0(start_url, 
+                         substr(fdates, start = 1, stop = 4), "/",
+                         substr(fdates, start = 5, stop = 6), "/",
+                         mid_url,
+                         fdates, end_url) 
+    }
 
+    if (var_name %in% c('BRAN_temp', 'BRAN_salt', 'BRAN_ssh', 'BRAN_mld', 'BRAN_cur', 'BRAN_wcur', 'BRAN_wind')){
+      url_name <- paste0(start_url, 
+                         layer.name, "_",
+                         substr(fdates, start = 1, stop = 4), "_",
+                         substr(fdates, start = 5, stop = 6),
+                         end_url)
+    }
+
+    if(var_name %in% c("rs_current", "rs_salinity")){
+      url_name <- paste0(start_url, 
+                         fdates, end_url)     
+    }
+
+    url_df <- tibble(date = sub_dates, url_name, layer) 
   }
 
   if (var_name %in% c("bathy", "dist_to_land")) {

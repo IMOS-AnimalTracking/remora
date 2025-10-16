@@ -434,7 +434,6 @@ ggplot(summarised_data_id, aes(x=date,y=installation_name,
 Finally, we can plot the sensor values associated to a detection as a histogram showing the number of detection records associated with each sensor value.
 
 ```{r, eval = FALSE, message=FALSE, warning=FALSE}
-library(hrbrthemes)
 # First plot the temperature data
 data_with_mooring_sst_shallow %>% 
   tidyr::unnest(cols = c(data)) %>% 
@@ -456,7 +455,7 @@ data_with_mooring_sst_shallow %>%
   ggplot(aes(x=moor_depth)) +
   geom_histogram(binwidth=5, fill="#69b3a2", color="#e9ecef", alpha=0.9) +
   ggtitle("Depths of sea water temperature readings (m)") +
-  theme_ipsum() +
+#  theme_ipsum() +
   theme(
     plot.title = element_text(size=15)
   )
@@ -466,7 +465,7 @@ data_with_mooring_sst_shallow %>%
 ---------------------------------------
 
 **Vignette version**
-0.1.2 (05 Nov 2021)
+0.1.2 (11 Sep 2025)
 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>

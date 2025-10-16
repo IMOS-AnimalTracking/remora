@@ -8,6 +8,7 @@ remote_open(
   input,
   data_details,
   env_buffer,
+  depth = NULL,
   .fill_gaps,
   .buffer,
   .parallel,
@@ -21,6 +22,8 @@ remote_open(
 \item{data_details}{Spatial and temporal details of data extraction, created with ext_find}
 
 \item{env_buffer}{distance (in decimal degrees) to expand the study area beyond the coordinates to extract environmental data. Default value is 1°.}
+
+\item{depth}{For Bluelink variables, the depth of interest to extract data}
 
 \item{.fill_gaps}{Should NAs be filled?}
 
