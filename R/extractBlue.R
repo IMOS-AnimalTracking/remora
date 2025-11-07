@@ -112,7 +112,7 @@ extractBlue <- function(df,
                         .parallel = FALSE, 
                         .ncores = NULL, 
                         verbose = TRUE) {
-  
+
   # Initial checks of parameters
   if(!X %in% colnames(df)){stop("Cannot find X coordinate in dataset, provide column name where variable can be found")}
   if(!Y %in% colnames(df)){stop("Cannot find Y coordinate in dataset, provide column name where variable can be found")}
@@ -125,13 +125,21 @@ extractBlue <- function(df,
     stop("Please provide the extract_depth argument as numeric")
   }
   if(full_timeperiod) {
-    if(is.null(station_name))
-      stop("Please provide column with station names in the 'station_name' argument.")
+  if(is.null(station_name))
+    stop("Please provide column with station names in the 'station_name' argument.")
   }
   if (fill_gaps & is.null(buffer)) {
     stop("Please provide a 'buffer' size to fill gaps.")
-    
+
   }
+
+  # Tranform longitudes because BRAN is 0-360
+  long_neg <- which(df[,X] < 0)
+  long_pos <- which(df[,X] > 0)
+  if (length(long_neg) > 0)
+    df[long_neg,X] <- df[long_neg,X] + 180.001
+  if (length(long_pos) > 0)
+    df[long_pos,X] <- df[long_pos,X] + 179.001
   
   # Define spatial and temporal extent of data fetch:
   data_details <- ext_find(
@@ -141,13 +149,13 @@ extractBlue <- function(df,
     .datetime = datetime,
     .full_timeperiod = full_timeperiod,
     verbose = verbose
-  )
-  
+    )
+
   # Create URLs to open data remotely
   var_urls <- remote_urls(input = data_details,
-                          var_name = env_var,
-                          verbose = TRUE)
-  
+                        var_name = env_var,
+                        verbose = TRUE)
+
   # Open data remotely 
   if(verbose){
     if (.parallel) {
@@ -157,26 +165,33 @@ extractBlue <- function(df,
     }
   }
   df_env <- remote_open(input = var_urls,
-                        depth = extract_depth,
-                        data_details = data_details,
-                        .fill_gaps = fill_gaps,
-                        .buffer = buffer,
-                        env_buffer = env_buffer,
-                        .parallel = .parallel,
-                        .ncores = .ncores,
-                        var_name = env_var)
-  
+    depth = extract_depth,
+    data_details = data_details,
+    .fill_gaps = fill_gaps,
+    .buffer = buffer,
+    env_buffer = env_buffer,
+    .parallel = .parallel,
+    .ncores = .ncores,
+    var_name = env_var)
+
   # Match detections 
   df_output <- locs_match(aux_df = df,
-                          X = X, 
-                          Y = Y,
-                          datetime = datetime, 
-                          aux_env = df_env,
-                          full_timeperiod = full_timeperiod, 
-                          station_name = station_name,
-                          var_name = env_var)  
-  
+    X = X, 
+    Y = Y,
+    datetime = datetime, 
+    aux_env = df_env,
+    full_timeperiod = full_timeperiod, 
+    station_name = station_name,
+    var_name = env_var)  
+
+  # Revert longitudes back to original to export in lat/lon
+  long_neg <- which(df_output[,X] < 180)
+  long_pos <- which(df_output[,X] > 180)
+  if (length(long_neg) > 0)
+    df_output[long_neg,X] <- df[long_neg,X] - 180.001
+  if (length(long_pos) > 0)
+    df_output[long_pos,X] <- df_output[long_pos,X] - 179.001
+
   # Export
   return(df_output) 
-  
 }
