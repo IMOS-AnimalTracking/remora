@@ -80,7 +80,6 @@ remote_urls <- function(input,
       start_url <- "https://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/SST/ghrsst/L4/RAMSSA/"
       end_url <- "120000-ABOM-L4_GHRSST-SSTfnd-RAMSSA_09km-AUS-v02.0-fv01.0.nc"
       layer <- "analysed_sst"
-      
     } 
 
     ## Daily SST 'raw' dataset (~2km resolution)
@@ -137,16 +136,16 @@ remote_urls <- function(input,
       
       ## BRAN2020 dataset: 1993-01-01 - 2023-12-31
       if(date_range[1] < as.Date("1993-01-01") |
-        date_range[2] > as.Date("2023-12-31")){
-        warning("Bluelink data is currently only available from 1993-01-01 to 2023-12-31,\ndetections prior or after these dates will not have envrionmental data associated")}
+        date_range[2] > as.Date("2025-12-31")){
+        warning("Bluelink data is currently only available from 1993-01-01 to 2025-12-31,\ndetections prior or after these dates will not have envrionmental data associated")}
       
       sub_dates <- dates[dates >= as.Date("1993-01-01") & 
-        dates <= as.Date("2023-12-31")]
+        dates <= as.Date("2025-12-31")]
       fdates <- sub_dates %>% format("%Y%m%d")
       
       ## define start and mid url, and define end of THREDDS based on variable name
       ## example :"http://thredds.aodn.org.au/thredds/dodsC/IMOS/SRS/SST/ghrsst/L3S-1d/dn/2013/20130501092000-ABOM-L3S_GHRSST-SSTfnd-AVHRR_D-1d_dn.nc"
-      start_url <- "https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2020/daily/"
+      start_url <- "https://thredds.nci.org.au/thredds/dodsC/gb6/BRAN/BRAN2023/daily/"
       end_url <- ".nc"
 
       # Select BRAN2020 variables
