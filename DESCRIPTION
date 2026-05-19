@@ -1,7 +1,7 @@
 Package: remora
 Title: Rapid Extraction of Marine Observations for Roving Animals
-Version: 0.9.9
-Date: 2025-10-16
+Version: 0.9.10.9002
+Date: 2026-05-19
 Authors@R: 
     c(person(given = "Fabrice",
            family = "Jaine",
@@ -117,6 +117,8 @@ Depends: R (>= 4.1.0)
 SystemRequirements: GDAL (>= 3.6.2), GEOS (>= 3.11.0), PROJ (>= 9.2.0)
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+Remotes: 
+  erocoar/gghalves
+RoxygenNote: 7.3.3
 Config/testthat/edition: 3
 Config/testthat/parallel: true
