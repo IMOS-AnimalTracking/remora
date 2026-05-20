@@ -62,7 +62,8 @@ writeQC <- function(x, path = NULL, summary = TRUE, csv = TRUE) {
           file = paste0(file.path(path, files[i]), ".csv"),
           delim = ";",
           col_names = TRUE,
-          quote_escape = FALSE
+          quote = "none",
+          escape = "none"
         )
       }
     })
